@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_0" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Title-->
+        <scene sceneID="hzK-Um-Wt9">
+            <objects>
+                <viewController storyboardIdentifier="TestViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="0gs-J4-zAP" customClass="TestViewController" customModule="Tooda" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="6c2-NR-YS8">
+                        <rect key="frame" x="0.0" y="0.0" width="390" height="844"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="XRs-pA-F2Q">
+                                <rect key="frame" x="0.0" y="44" width="390" height="766"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <prototypes>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="TestTableViewCell" id="v9w-4Z-x41" customClass="TestTableViewCell" customModule="Tooda" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="28" width="390" height="43.666667938232422"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="v9w-4Z-x41" id="RcO-pV-Ie4">
+                                            <rect key="frame" x="0.0" y="0.0" width="390" height="43.666667938232422"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Omm-9X-rkH">
+                                                    <rect key="frame" x="20" y="11" width="42" height="21"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="Omm-9X-rkH" firstAttribute="leading" secondItem="RcO-pV-Ie4" secondAttribute="leading" constant="20" symbolic="YES" id="UlW-o4-4tG"/>
+                                                <constraint firstItem="Omm-9X-rkH" firstAttribute="top" secondItem="RcO-pV-Ie4" secondAttribute="top" constant="11" id="dtA-ms-Lky"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="title" destination="Omm-9X-rkH" id="xaf-3B-LCe"/>
+                                        </connections>
+                                    </tableViewCell>
+                                </prototypes>
+                            </tableView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="QgS-Z1-Lj5"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="QgS-Z1-Lj5" firstAttribute="bottom" secondItem="XRs-pA-F2Q" secondAttribute="bottom" id="5sE-c2-Ak7"/>
+                            <constraint firstItem="XRs-pA-F2Q" firstAttribute="top" secondItem="QgS-Z1-Lj5" secondAttribute="top" id="vIN-mS-MF8"/>
+                            <constraint firstItem="XRs-pA-F2Q" firstAttribute="leading" secondItem="QgS-Z1-Lj5" secondAttribute="leading" id="yOJ-Di-cw9"/>
+                            <constraint firstItem="QgS-Z1-Lj5" firstAttribute="trailing" secondItem="XRs-pA-F2Q" secondAttribute="trailing" id="zIC-US-Tg5"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" title="Title" id="8CM-Ev-BPl">
+                        <barButtonItem key="rightBarButtonItem" title="Edit" id="KP5-wP-2So">
+                            <connections>
+                                <action selector="didTapEditButton:" destination="0gs-J4-zAP" id="AwO-Dt-Wnk"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="editBarButtonItem" destination="KP5-wP-2So" id="OcU-hK-sd3"/>
+                        <outlet property="tableView" destination="XRs-pA-F2Q" id="G1c-Na-4k5"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="J2v-7r-7p3" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="629.23076923076917" y="-64.691943127962077"/>
+        </scene>
+    </scenes>
+    <resources>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>
