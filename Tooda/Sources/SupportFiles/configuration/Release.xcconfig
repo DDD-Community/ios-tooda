@@ -1,0 +1,14 @@
+//
+//  Debug.xcconfig
+//  Toda
+//
+//  Created by lyine on 2021/04/06.
+//  Copyright © 2021 DTS. All rights reserved.
+//
+
+// Configuration settings file format documentation can be found at:
+// https://help.apple.com/xcode/#/dev745c5c974
+APP_NAME = Tooda
+APP_IDENTIFIER = com.dts.tooda
+APP_VERSION = 1.0.0
+APP_BUILD = 0
