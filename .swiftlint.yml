@@ -1,0 +1,69 @@
+disabled_rules:
+- line_length
+- trailing_whitespace
+- vertical_whitespace
+- identifier_name
+- file_length
+- vertical_parameter_alignment
+- function_body_length
+- unused_optional_binding
+- cyclomatic_complexity
+- large_tuple
+- type_body_length
+- type_name
+- switch_case_alignment
+- todo
+- nesting
+- opening_brace
+- function_parameter_count
+- unneeded_break_in_switch
+- overridden_super_call
+- notification_center_detachment
+
+opt_in_rules: # some rules are only opt-in
+  - control_statement
+  - opening_brace
+  - trailing_newline
+  - colon
+  - comma
+
+included:
+
+excluded:
+- Carthage
+- Pods
+- Generated/R.generated.swift
+- Project/R.generated.swift
+
+
+# configurable rules can be customized from this configuration file
+# binary rules can set their severity level
+force_cast: warning # implicitly. Give warning only for force casting
+
+force_try:
+  severity: warning # explicitly. Give warning only for force try
+
+type_body_length:
+  - 300 # warning
+  - 400 # error
+
+# or they can set both explicitly
+file_length:
+  warning: 500
+  error: 800
+
+large_tuple: # warn user when using 3 values in tuple, give error if there are 4
+   - 3
+   - 4
+
+# naming rules can set warnings/errors for min_length and max_length
+# additionally they can set excluded names
+type_name:
+  min_length: 4 # only warning
+  max_length: # warning and error
+    warning: 30
+    error: 35
+  excluded: iPhone # excluded via string
+reporter: "xcode"
+
+
