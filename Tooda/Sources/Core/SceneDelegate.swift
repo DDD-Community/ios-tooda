@@ -7,16 +7,27 @@
 
 import UIKit
 
+import Swinject
+
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
+    private let appInject = AppInject(container: Container())
 	var window: UIWindow?
 
-
 	func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
-		// Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
-		// If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
-		// This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
-		self.makeRootWindow(scene: scene)
+        
+        guard let scene = (scene as? UIWindowScene) else { return }
+        
+        self.register()
+        
+        let viewController = self.appInject.makeViewController(from: .home)
+        let rootViewController = UINavigationController(rootViewController: viewController)
+        
+        let window = UIWindow(windowScene: scene)
+        window.rootViewController = rootViewController
+        window.makeKeyAndVisible()
+        
+        self.window = window
 	}
 
 	func sceneDidDisconnect(_ scene: UIScene) {
@@ -51,6 +62,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 }
 
 extension SceneDelegate {
+    private func register() {
+        self.appInject.registerCore()
+    }
+    
 	func testStoryBoard() -> UIViewController {
 		return UIStoryboard(name: "Test", bundle: nil).instantiateViewController(identifier: TestViewController.identier)
 	}
