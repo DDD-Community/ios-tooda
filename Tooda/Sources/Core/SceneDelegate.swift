@@ -51,19 +51,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 }
 
 extension SceneDelegate {
-	func makeRootWindow(scene: UIScene) {
-		guard let scene = (scene as? UIWindowScene) else { return }
-		let viewController = HomeNavigator.main.viewController
-		
-		let rootViewController = UINavigationController(rootViewController: viewController)
-		
-		let window = UIWindow(windowScene: scene)
-		window.rootViewController = rootViewController
-		window.makeKeyAndVisible()
-		
-		self.window = window
-	}
-	
 	func testStoryBoard() -> UIViewController {
 		return UIStoryboard(name: "Test", bundle: nil).instantiateViewController(identifier: TestViewController.identier)
 	}
