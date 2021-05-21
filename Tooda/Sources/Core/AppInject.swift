@@ -9,29 +9,43 @@
 import Swinject
 import Foundation
 
-class AppInject {
-	
-	private init() { }
-	
-	static let rootContainer: Container = {
-		let container = Container()
-		
-		// MARK: Networking
-		container.register(Networking.self) { _ in
-			return Networking(logger: [AccessTokenPlugin()])
-		}.inObjectScope(.container)
-		
-		// MARK: Repositories
-		container.register(ColorRepository.self) { r in
-			return DefaultColorRepository(networking: r.resolve(Networking.self)!)
-		}.inObjectScope(.container)
-		
-		// MARK: UseCases
-		
-		container.register(ColorUseCase.self) { r in
-			return DefaultColorUseCase(repository: r.resolve(ColorRepository.self)!)
-		}.inObjectScope(.container)
-		
-		return container
-	}()
+protocol AppInjectRegister {
+    func registerCore()
+}
+
+protocol AppInjectResolve{
+    func resolve<Object>(_ serviceType: Object.Type) -> Object
+    func makeViewController(from scene: Scene) -> UIViewController
+}
+
+final class AppInject: AppInjectRegister, AppInjectResolve {
+    
+    private let container: Container
+    
+    init(container: Container) {
+        self.container = container
+    }
+    
+    func registerCore() {
+        container.register(NetworkingProtocol.self) { _ in
+            Networking(logger: [AccessTokenPlugin()])
+        }
+    }
+    
+    func resolve<Object>(_ serviceType: Object.Type) -> Object {
+        return container.resolve(serviceType)!
+    }
+    
+    // TODO: 분리할 예정
+    func makeViewController(from scene: Scene) -> UIViewController {
+        switch scene {
+        case .home:
+            let reactor = HomeReactor(
+                dependency: .init(
+                    service: resolve(NetworkingProtocol.self)
+                )
+            )
+            return HomeViewController(reactor: reactor)
+        }
+    }
 }
