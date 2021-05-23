@@ -11,9 +11,22 @@ import Foundation
 import ReactorKit
 
 class BaseViewController<T: Reactor>: UIViewController, View {
-    typealias Reactor = T
-    
-    var disposeBag: DisposeBag = DisposeBag()
-    
-    func bind(reactor: T) {}
+  typealias Reactor = T
+  
+  var disposeBag: DisposeBag = DisposeBag()
+  
+  init() {
+    super.init(nibName: nil, bundle: nil)
+    self.configureUI()
+    self.configureConstraints()
+  }
+  
+  required init?(coder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
+  }
+  
+  func bind(reactor: T) {}
+  
+  func configureUI() {}
+  func configureConstraints() {}
 }

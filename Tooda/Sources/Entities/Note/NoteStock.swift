@@ -1,5 +1,5 @@
 //
-//  DiaryStock.swift
+//  NoteStock.swift
 //  Tooda
 //
 //  Created by lyine on 2021/05/18.
@@ -14,7 +14,7 @@ enum StockChangeState: String, Codable {
 	case fall
 }
 
-struct DiaryStock: Codable {
+struct NoteStock: Codable {
 	var id: Int
 	var name: String
 	var change: StockChangeState?

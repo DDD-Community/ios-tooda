@@ -1,5 +1,5 @@
 //
-//  DiaryImage.swift
+//  NoteImage.swift
 //  Tooda
 //
 //  Created by lyine on 2021/05/18.
@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct DiaryImage: Codable {
+struct NoteImage: Codable {
 	var id: Int
 	var imageURL: String
 	
