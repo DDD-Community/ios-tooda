@@ -1,5 +1,5 @@
 //
-//  Diary.swift
+//  Note.swift
 //  Tooda
 //
 //  Created by lyine on 2021/05/18.
@@ -13,16 +13,16 @@ enum Comment: String, Codable {
 	case smile, sad
 }
 
-struct Diary: Codable {
+struct Note: Codable {
 	var id: Int
 	var title: String
 	var content: String
 	var createdAt: String
 	var updatedAt: String
 	var comment: Comment
-	var diaryStocks: [DiaryStock]
-	var diaryLinks: [DiaryLink]
-	var diaryImages: [DiaryImage]
+	var noteStocks: [NoteStock]
+	var noteLinks: [NoteLink]
+	var noteImages: [NoteImage]
 	
 	private enum CodingKeys: String, CodingKey {
 		case id = "id"
@@ -31,9 +31,9 @@ struct Diary: Codable {
 		case createdAt = "created_at"
 		case updatedAt = "updated_at"
 		case comment = "comment"
-		case diaryStocks = "diary_stocks"
-		case diaryLinks = "diary_links"
-		case diaryImages = "diary_images"
+		case noteStocks = "diary_stocks"
+		case noteLinks = "diary_links"
+		case noteImages = "diary_images"
 	}
 	
 	init(from decoder: Decoder) throws {
@@ -44,8 +44,8 @@ struct Diary: Codable {
 		createdAt = try values.decode(String.self, forKey: .createdAt)
 		updatedAt = try values.decode(String.self, forKey: .updatedAt)
 		comment = try values.decode(Comment.self, forKey: .comment)
-		diaryStocks = try values.decode([DiaryStock].self, forKey: .diaryStocks)
-		diaryLinks = try values.decode([DiaryLink].self, forKey: .diaryLinks)
-		diaryImages = try values.decode([DiaryImage].self, forKey: .diaryImages)
+		noteStocks = try values.decode([NoteStock].self, forKey: .noteStocks)
+		noteLinks = try values.decode([NoteLink].self, forKey: .noteLinks)
+		noteImages = try values.decode([NoteImage].self, forKey: .noteImages)
 	}
 }

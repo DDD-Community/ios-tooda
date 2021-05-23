@@ -1,5 +1,5 @@
 //
-//  DiaryLink.swift
+//  NoteLink.swift
 //  Tooda
 //
 //  Created by lyine on 2021/05/18.
@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct DiaryLink: Codable {
+struct NoteLink: Codable {
 	var id: Int
 	var title: String
 	var description: String?
