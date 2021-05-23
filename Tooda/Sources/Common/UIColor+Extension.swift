@@ -1,5 +1,5 @@
 //
-//  UIColor+Hex.swift
+//  UIColor+Extension.swift
 //  Tooda
 //
 //  Created by lyine on 2021/04/08.
@@ -7,6 +7,8 @@
 //
 
 import UIKit
+
+// MARK: Hex
 
 extension UIColor {
   convenience init(hex: String) {
@@ -41,7 +43,11 @@ extension UIColor {
 
     return NSString(format: "#%06x", rgb) as String
   }
+}
 
+// MARK: RGB
+
+extension UIColor {
   convenience init(r: Int, g: Int, b: Int, a: CGFloat = 1.0) {
     self.init(red: CGFloat(r) / 255, green: CGFloat(g) / 255, blue: CGFloat(b) / 255, alpha: a)
   }
