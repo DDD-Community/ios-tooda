@@ -32,10 +32,6 @@ class CreateDiaryViewController: UIViewController, View {
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		// Do any additional setup after loading the view.
-		
-		configureNavigation()
-		configureUI()
-		setupConstraints()
 	}
 	
 	func bind(reactor: Reactor) {
@@ -46,19 +42,16 @@ class CreateDiaryViewController: UIViewController, View {
 			.bind(to: reactor.action)
 			.disposed(by: self.disposeBag)
 	}
-}
-
-// MARK: ViewController Configuration
-
-extension CreateDiaryViewController: ViewControllerConfiguration {
-	func configureNavigation() {
-		//		self.navigationItem.title = ""
-	}
 	
-	func configureUI() {
-		self.view.backgroundColor = .white
-	}
-	
-	func setupConstraints() {
-	}
+//	// TODO: BaseViewController 변경된 브랜치에서 오픈
+//	func configureNavigation() {
+//		//		self.navigationItem.title = ""
+//	}
+//
+//	func configureUI() {
+//		self.view.backgroundColor = .white
+//	}
+//
+//	func setupConstraints() {
+//	}
 }
