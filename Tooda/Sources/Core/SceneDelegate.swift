@@ -67,11 +67,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 }
 
 extension SceneDelegate {
-  private func register() {
-    self.appInject.registerCore()
-  }
-  
-  func testStoryBoard() -> UIViewController {
-    return UIStoryboard(name: "Test", bundle: nil).instantiateViewController(identifier: TestViewController.identier)
-  }
+	private func register() {
+		self.appInject.registerCore()
+	}
 }
