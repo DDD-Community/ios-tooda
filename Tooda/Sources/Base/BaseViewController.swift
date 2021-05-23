@@ -11,9 +11,9 @@ import Foundation
 import ReactorKit
 
 class BaseViewController<T: Reactor>: UIViewController, View {
-    typealias Reactor = T
-    
-    var disposeBag: DisposeBag = DisposeBag()
-    
-    func bind(reactor: T) {}
+  typealias Reactor = T
+  
+  var disposeBag: DisposeBag = DisposeBag()
+  
+  func bind(reactor: T) {}
 }

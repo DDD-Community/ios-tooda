@@ -12,24 +12,24 @@ import ReactorKit
 import RxSwift
 
 final class HomeReactor: Reactor {
-    struct Dependency {
-        let service: NetworkingProtocol
-    }
+  struct Dependency {
+    let service: NetworkingProtocol
+  }
+  
+  enum Action {
     
-    enum Action {
-        
-    }
+  }
+  
+  struct State {
     
-    struct State {
-        
-    }
-    
-    private let dependency: Dependency
-    
-    let initialState: State = State()
-    
-    
-    init(dependency: Dependency) {
-        self.dependency = dependency
-    }
+  }
+  
+  private let dependency: Dependency
+  
+  let initialState: State = State()
+  
+  
+  init(dependency: Dependency) {
+    self.dependency = dependency
+  }
 }
