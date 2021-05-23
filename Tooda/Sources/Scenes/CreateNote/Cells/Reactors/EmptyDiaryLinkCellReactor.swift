@@ -9,30 +9,30 @@
 import ReactorKit
 
 final class EmptyDiaryLinkCellReactor: Reactor {
-	enum Action {
-		
-	}
-	
-	enum Mutation {
-		
-	}
-	
-	struct State {
-		
-	}
-	
-	let initialState: State
-	
-	init() {
-		initialState = State()
-	}
-	
-	func mutate(action: Action) -> Observable<Mutation> {
-		return .empty()
-	}
-	
-	func reduce(state: State, mutation: Action) -> State {
-		var newState = state
-		return newState
-	}
+  enum Action {
+
+  }
+
+  enum Mutation {
+
+  }
+
+  struct State {
+
+  }
+
+  let initialState: State
+
+  init() {
+    initialState = State()
+  }
+
+  func mutate(action: Action) -> Observable<Mutation> {
+    return .empty()
+  }
+
+  func reduce(state: State, mutation: Action) -> State {
+    var newState = state
+    return newState
+  }
 }

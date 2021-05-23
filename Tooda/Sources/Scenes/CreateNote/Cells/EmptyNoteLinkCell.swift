@@ -12,11 +12,11 @@ import ReactorKit
 import SnapKit
 
 class EmptyNoteLinkCell: BaseTableViewCell, View {
-	typealias Reactor = EmptyDiaryLinkCellReactor
-	
-	var disposeBag: DisposeBag = DisposeBag()
-	
-	func bind(reactor: Reactor) {
-		
-	}
+  typealias Reactor = EmptyDiaryLinkCellReactor
+
+  var disposeBag: DisposeBag = DisposeBag()
+
+  func bind(reactor: Reactor) {
+
+  }
 }

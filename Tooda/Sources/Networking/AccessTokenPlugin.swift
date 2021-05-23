@@ -10,9 +10,9 @@ import Foundation
 import Moya
 
 final class AccessTokenPlugin: PluginType {
-	
-	func prepare(_ request: URLRequest, target: TargetType) -> URLRequest {
-		
+
+  func prepare(_ request: URLRequest, target: TargetType) -> URLRequest {
+
 //		let token = AppManager.shared.accessToken
 //		let keychain = Keychain()
 //
@@ -21,7 +21,7 @@ final class AccessTokenPlugin: PluginType {
 //		if token.isNotEmpty {
 //			request.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
 //		}
-		
-		return request
-	}
+
+    return request
+  }
 }
