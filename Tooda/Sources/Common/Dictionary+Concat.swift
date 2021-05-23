@@ -10,9 +10,9 @@ import Foundation
 
 // MARK: - Dictionary
 extension Dictionary {
-	mutating func concat(dict: [Key: Value]) {
-		for (key, value) in dict {
-			updateValue(value, forKey: key)
-		}
-	}
+  mutating func concat(dict: [Key: Value]) {
+    for (key, value) in dict {
+      updateValue(value, forKey: key)
+    }
+  }
 }

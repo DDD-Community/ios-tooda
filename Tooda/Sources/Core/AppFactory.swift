@@ -15,7 +15,7 @@ protocol AppFactoryType {
 }
 
 final class AppFactory: AppFactoryType {
-
+  
   struct Dependency {
     let appInject: AppInjectRegister & AppInjectResolve
   }
@@ -28,14 +28,21 @@ final class AppFactory: AppFactoryType {
   
   func makeViewController(from scene: Scene) -> UIViewController {
     switch scene {
-    case .home:
-      let reactor = HomeReactor(
-        dependency: .init(
-          service: self.dependency.appInject.resolve(NetworkingProtocol.self),
-          coordinator: self.dependency.appInject.resolve(AppCoordinatorType.self)
+      case .home:
+        let reactor = HomeReactor(
+          dependency: .init(
+            service: self.dependency.appInject.resolve(NetworkingProtocol.self),
+            coordinator: self.dependency.appInject.resolve(AppCoordinatorType.self)
+          )
         )
-      )
-      return HomeViewController(reactor: reactor)
+        return HomeViewController(reactor: reactor)
+      case .createNote:
+        let reactor = CreateNoteViewReactor(createDiarySectionFactory: createDiarySectionFactory,
+                                             dependency: .init(
+                                              service: self.dependency.appInject.resolve(NetworkingProtocol.self),
+                                              coordinator: self.dependency.appInject.resolve(AppCoordinatorType.self)
+                                             ))
+        return CreateNoteViewController(reactor: reactor)
     }
   }
 }
