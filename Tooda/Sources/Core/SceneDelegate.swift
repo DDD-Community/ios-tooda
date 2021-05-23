@@ -19,6 +19,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     guard let scene = (scene as? UIWindowScene) else { return }
     
     self.register()
+    AppApppearance.configureAppeance()
     
     let appCoordinator = appInject.resolve(AppCoordinatorType.self)
     let appFactory = appInject.resolve(AppFactoryType.self)
@@ -67,11 +68,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 }
 
 extension SceneDelegate {
-  private func register() {
-    self.appInject.registerCore()
-  }
-  
-  func testStoryBoard() -> UIViewController {
-    return UIStoryboard(name: "Test", bundle: nil).instantiateViewController(identifier: TestViewController.identier)
-  }
+	private func register() {
+		self.appInject.registerCore()
+	}
 }

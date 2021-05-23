@@ -14,6 +14,14 @@ import Then
 
 final class HomeViewController: BaseViewController<HomeReactor> {
   
+  private let searchBarButton = UIBarButtonItem().then {
+    $0.image = UIImage(type: .searchBarButton)
+  }
+  
+  private let settingBarButton = UIBarButtonItem().then {
+    $0.image = UIImage(type: .settingBarButton)
+  }
+  
   init(reactor: HomeReactor) {
     defer {
       self.reactor = reactor
@@ -27,11 +35,18 @@ final class HomeViewController: BaseViewController<HomeReactor> {
   
   override func viewDidLoad() {
     super.viewDidLoad()
-    self.title = "홈"
+    self.title = nil
     self.view.backgroundColor = .white
   }
   
   override func bind(reactor: HomeReactor) {
+  }
+  
+  override func configureUI() {
+    self.navigationItem.rightBarButtonItems = [
+      self.settingBarButton,
+      self.searchBarButton
+    ]
   }
   
 }

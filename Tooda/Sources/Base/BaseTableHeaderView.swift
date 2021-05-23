@@ -9,30 +9,30 @@
 import UIKit
 
 class BaseTableHeaderView: UITableViewHeaderFooterView {
-	private(set) var didSetupConstraints = false
-	
-	override func updateConstraints() {
-		if self.didSetupConstraints == false {
-			self.setupConstraints()
-			self.didSetupConstraints = true
-		}
-		super.updateConstraints()
-	}
-	
-	func configure() {
-		self.setNeedsUpdateConstraints()
-	}
-	
-	override init(reuseIdentifier: String?) {
-		super.init(reuseIdentifier: reuseIdentifier)
-		configureUI()
-	}
-	
-	required init?(coder aDecoder: NSCoder) {
-		fatalError("init(coder:) has not been implemented")
-	}
-	
-	
-	func configureUI() {}
-	func setupConstraints() { }
+  private(set) var didSetupConstraints = false
+
+  override func updateConstraints() {
+    if self.didSetupConstraints == false {
+      self.setupConstraints()
+      self.didSetupConstraints = true
+    }
+    super.updateConstraints()
+  }
+
+  func configure() {
+    self.setNeedsUpdateConstraints()
+  }
+
+  override init(reuseIdentifier: String?) {
+    super.init(reuseIdentifier: reuseIdentifier)
+    configureUI()
+  }
+
+  required init?(coder aDecoder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
+  }
+
+
+  func configureUI() { }
+  func setupConstraints() { }
 }
