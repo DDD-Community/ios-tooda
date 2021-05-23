@@ -1,5 +1,5 @@
 //
-//  DiaryImageCellReactor.swift
+//  DiaryLinkCellReactor.swift
 //  Tooda
 //
 //  Created by Lyine on 2021/05/19.
@@ -8,7 +8,7 @@
 
 import ReactorKit
 
-final class DiaryImageCellReactor: Reactor {
+final class NoteLinkCellReactor: Reactor {
 	enum Action {
 		
 	}

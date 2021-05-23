@@ -1,5 +1,5 @@
 //
-//  DiaryLinkCellReactor.swift
+//  DiaryContentCellReactor.swift
 //  Tooda
 //
 //  Created by Lyine on 2021/05/19.
@@ -8,7 +8,8 @@
 
 import ReactorKit
 
-final class DiaryLinkCellReactor: Reactor {
+final class NoteContentCellReactor: Reactor {
+	
 	enum Action {
 		
 	}
@@ -27,12 +28,13 @@ final class DiaryLinkCellReactor: Reactor {
 		initialState = State()
 	}
 	
-	func mutate(action: Action) -> Observable<Mutation> {
-		return .empty()
-	}
+//	func mutate(action: Action) -> Observable<Mutation> {
+//		return .empty()
+//	}
 	
 	func reduce(state: State, mutation: Action) -> State {
 		var newState = state
 		return newState
 	}
+	
 }

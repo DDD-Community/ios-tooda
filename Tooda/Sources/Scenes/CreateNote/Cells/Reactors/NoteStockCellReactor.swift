@@ -8,7 +8,7 @@
 
 import ReactorKit
 
-final class DiaryStockCellReactor: Reactor {
+final class NoteStockCellReactor: Reactor {
 	enum Action {
 		
 	}

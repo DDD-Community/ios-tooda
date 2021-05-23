@@ -8,7 +8,7 @@
 
 import RxDataSources
 
-struct DiarySection {
+struct NoteSection {
 	enum Identity: Int {
 		case content
 		case stock
@@ -18,18 +18,18 @@ struct DiarySection {
 		case image
 	}
 	let identity: Identity
-	var items: [DiarySectionItem]
+	var items: [NoteSectionItem]
 }
 
-extension DiarySection: SectionModelType {
-	init(original: DiarySection, items: [DiarySectionItem]) {
+extension NoteSection: SectionModelType {
+	init(original: NoteSection, items: [NoteSectionItem]) {
 		self = .init(identity: original.identity, items: items)
 	}
 }
 
-enum DiarySectionItem {
-	case content(DiaryContentCellReactor)
-	case stock(DiaryStockCellReactor)
-	case link(DiaryLinkCellReactor)
-	case image(DiaryImageCellReactor)
+enum NoteSectionItem {
+	case content(NoteContentCellReactor)
+	case stock(NoteStockCellReactor)
+	case link(NoteLinkCellReactor)
+	case image(NoteImageCellReactor)
 }

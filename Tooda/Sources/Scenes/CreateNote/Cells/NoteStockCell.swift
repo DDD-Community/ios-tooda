@@ -1,5 +1,5 @@
 //
-//  DiaryLinkCell.swift
+//  NoteStockCell.swift
 //  Tooda
 //
 //  Created by Lyine on 2021/05/19.
@@ -11,8 +11,8 @@ import UIKit
 import ReactorKit
 import SnapKit
 
-class DiaryLinkCell: BaseTableViewCell, View {
-	typealias Reactor = DiaryLinkCellReactor
+class NoteStockCell: BaseTableViewCell, View {
+	typealias Reactor = NoteStockCellReactor
 	
 	var disposeBag: DisposeBag = DisposeBag()
 	
