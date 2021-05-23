@@ -23,7 +23,7 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
   lazy var dataSource: Section = Section(configureCell: { _, tableView, indexPath, item -> UITableViewCell in
     switch item {
     case .content(let reactor):
-      guard let cell = tableView.dequeueReusableCell(withIdentifier: DiaryContentCell.reuseIdentifierName, for: indexPath) as? DiaryContentCell else { return UITableViewCell() }
+      guard let cell = tableView.dequeueReusableCell(withIdentifier: NoteContentCell.reuseIdentifierName, for: indexPath) as? NoteContentCell else { return UITableViewCell() }
       cell.configure(reactor: reactor)
       return cell
     default:
@@ -42,7 +42,7 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
 
     $0.alwaysBounceHorizontal = false
 
-    $0.register(DiaryContentCell.self, forCellReuseIdentifier: DiaryContentCell.reuseIdentifierName)
+    $0.register(NoteContentCell.self, forCellReuseIdentifier: NoteContentCell.reuseIdentifierName)
   }
 
   // MARK: Initialize
