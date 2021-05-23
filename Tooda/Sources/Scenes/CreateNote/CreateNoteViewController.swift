@@ -57,6 +57,16 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
     }
     super.init()
   }
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    
+    configureNavigation()
+  }
+  
+  override func viewWillAppear(_ animated: Bool) {
+    super.viewWillAppear(animated)
+  }
 
   override func configureUI() {
     super.configureUI()
@@ -83,7 +93,7 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
     super.bind(reactor: reactor)
 
     // Action
-    self.rx.viewDidLoad
+    Observable.just(())
       .map { _ in Reactor.Action.initializeForm }
       .bind(to: reactor.action)
       .disposed(by: self.disposeBag)

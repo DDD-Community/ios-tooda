@@ -37,9 +37,9 @@ final class CreateNoteViewReactor: Reactor {
 
   init(createDiarySectionFactory: @escaping CreateNoteSectionType,
        dependency: Dependency) {
-    self.initialState = State(sections: [])
     self.createDiarySectionFactory = createDiarySectionFactory
     self.dependency = dependency
+    self.initialState = State(sections: [])
   }
 
   func mutate(action: Action) -> Observable<Mutation> {
