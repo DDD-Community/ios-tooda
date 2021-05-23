@@ -11,5 +11,5 @@ import UIKit
 import ReactorKit
 
 enum Scene {
-    case home
+  case home
 }

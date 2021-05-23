@@ -10,42 +10,44 @@ import Swinject
 import Foundation
 
 protocol AppInjectRegister {
-    func registerCore()
+  func registerCore()
 }
 
-protocol AppInjectResolve{
-    func resolve<Object>(_ serviceType: Object.Type) -> Object
-    func makeViewController(from scene: Scene) -> UIViewController
+protocol AppInjectResolve {
+  func resolve<Object>(_ serviceType: Object.Type) -> Object
 }
 
 final class AppInject: AppInjectRegister, AppInjectResolve {
-    
-    private let container: Container
-    
-    init(container: Container) {
-        self.container = container
+  
+  private let container: Container
+  
+  init(container: Container) {
+    self.container = container
+  }
+  
+  func registerCore() {
+    container.register(NetworkingProtocol.self) { _ in
+      Networking(logger: [AccessTokenPlugin()])
     }
     
-    func registerCore() {
-        container.register(NetworkingProtocol.self) { _ in
-            Networking(logger: [AccessTokenPlugin()])
-        }
+    container.register(AppCoordinatorType.self) { _ in
+      AppCoordinator(
+        dependency: .init(
+          appFactory: self.resolve(AppFactoryType.self)
+        )
+      )
     }
     
-    func resolve<Object>(_ serviceType: Object.Type) -> Object {
-        return container.resolve(serviceType)!
+    container.register(AppFactoryType.self) { _ in
+      AppFactory(
+        dependency: .init(
+          appInject: self
+        )
+      )
     }
-    
-    // TODO: 분리할 예정
-    func makeViewController(from scene: Scene) -> UIViewController {
-        switch scene {
-        case .home:
-            let reactor = HomeReactor(
-                dependency: .init(
-                    service: resolve(NetworkingProtocol.self)
-                )
-            )
-            return HomeViewController(reactor: reactor)
-        }
-    }
+  }
+  
+  func resolve<Object>(_ serviceType: Object.Type) -> Object {
+    return container.resolve(serviceType)!
+  }
 }
