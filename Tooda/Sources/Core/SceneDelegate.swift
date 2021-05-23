@@ -19,6 +19,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     guard let scene = (scene as? UIWindowScene) else { return }
     
     self.register()
+    AppApppearance.configureAppeance()
     
     let appCoordinator = appInject.resolve(AppCoordinatorType.self)
     let appFactory = appInject.resolve(AppFactoryType.self)
