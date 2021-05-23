@@ -15,5 +15,18 @@ class BaseViewController<T: Reactor>: UIViewController, View {
   
   var disposeBag: DisposeBag = DisposeBag()
   
+  init() {
+    super.init(nibName: nil, bundle: nil)
+    self.configureUI()
+    self.configureConstraints()
+  }
+  
+  required init?(coder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
+  }
+  
   func bind(reactor: T) {}
+  
+  func configureUI() {}
+  func configureConstraints() {}
 }

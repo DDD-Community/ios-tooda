@@ -18,7 +18,7 @@ final class HomeViewController: BaseViewController<HomeReactor> {
     defer {
       self.reactor = reactor
     }
-    super.init(nibName: nil, bundle: nil)
+    super.init()
   }
   
   required init?(coder: NSCoder) {
