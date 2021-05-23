@@ -29,12 +29,6 @@ final class AppInject: AppInjectRegister, AppInjectResolve {
     container.register(NetworkingProtocol.self) { _ in
       Networking(logger: [AccessTokenPlugin()])
     }
-  }
-  
-  func resolve<Object>(_ serviceType: Object.Type) -> Object {
-    return container.resolve(serviceType)!
-  }
-  
     
     container.register(AppCoordinatorType.self) { _ in
       AppCoordinator(
@@ -52,5 +46,8 @@ final class AppInject: AppInjectRegister, AppInjectResolve {
       )
     }
   }
+  
+  func resolve<Object>(_ serviceType: Object.Type) -> Object {
+    return container.resolve(serviceType)!
   }
 }
