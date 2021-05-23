@@ -69,7 +69,7 @@ class BolderTextField: UITextField {
   fileprivate func configureTextField() {
     clipsToBounds = false
     // Only draw suffix when we have a suffix and a text
-    if (suffix ?? "").isEmpty == false && (text ?? "").isEmpty == false {
+    if (self.suffix ?? "").isEmpty == false && (text ?? "").isEmpty == false {
       
       // We use some handy methods on NSString
       let text = (self.text ?? "") as NSString
@@ -81,7 +81,7 @@ class BolderTextField: UITextField {
       let spacing: CGFloat = 3.0
       
       // Font and color for the suffix
-      let color = suffixTextColor ?? self.textColor ?? placeHolderTextColor
+      let color = self.suffixTextColor ?? self.textColor ?? self.placeHolderTextColor
       let attrs: [NSAttributedString.Key: Any] = [NSAttributedString.Key(rawValue: NSAttributedString.Key.font.rawValue): self.font!, NSAttributedString.Key(rawValue: NSAttributedString.Key.foregroundColor.rawValue): color]
       
       // Calc the x position of the suffix
@@ -97,16 +97,17 @@ class BolderTextField: UITextField {
       let height = text.size(withAttributes: attrs).height
       let verticalCenter = height / 2.0
       let top: CGFloat = frame.size.height / 2 - ceil(verticalCenter)
-      let width = (suffix! as NSString).size(withAttributes: attrs).width
+      
+      let width = (self.suffix! as NSString).size(withAttributes: attrs).width
       let offset = (width + spacing) / 2
       let rect = CGRect(x: suffixXPosition + spacing + offset, y: top, width: width, height: height)
       
       // Draw it
-      (suffix! as NSString).draw(in: rect, withAttributes: attrs)
+      (self.suffix! as NSString).draw(in: rect, withAttributes: attrs)
     }
     
     // Only prefix when we have a prefix and a text
-    if (prefix ?? "").isEmpty == false && (text ?? "").isEmpty == false {
+    if (self.prefix ?? "").isEmpty == false && (text ?? "").isEmpty == false {
       
       // We use some handy methods on NSString
       let text = (self.text ?? "") as NSString
@@ -118,7 +119,7 @@ class BolderTextField: UITextField {
       let spacing: CGFloat = 3.0
       
       // Font and color for the prefix
-      let color = prefixTextColor ?? self.textColor ?? placeHolderTextColor
+      let color = self.prefixTextColor ?? self.textColor ?? self.placeHolderTextColor
       let attrs: [NSAttributedString.Key: Any] = [NSAttributedString.Key(rawValue: NSAttributedString.Key.font.rawValue): self.font!, NSAttributedString.Key(rawValue: NSAttributedString.Key.foregroundColor.rawValue): color]
       
       // Calc the x position of the prefix
@@ -132,31 +133,31 @@ class BolderTextField: UITextField {
         prefixXPosition = fieldWidth - textWidth
       }
       
-      prefixXPosition -= (prefix! as NSString).size(withAttributes: attrs).width
+      prefixXPosition -= (self.prefix! as NSString).size(withAttributes: attrs).width
       prefixXPosition -= spacing
       
       // Calc the rect to draw the suffix in
       let height = text.size(withAttributes: attrs).height
       let verticalCenter = height / 2.0
       let top: CGFloat = frame.size.height / 2 - ceil(verticalCenter)
-      let width = (prefix! as NSString).size(withAttributes: attrs).width
+      let width = (self.prefix! as NSString).size(withAttributes: attrs).width
       let offset = (width + spacing) / 2
       let rect = CGRect(x: prefixXPosition + offset, y: top, width: width, height: height)
       
       
       // Draw it
-      (prefix! as NSString).draw(in: rect, withAttributes: attrs)
-      centerWithPrefix(offset: offset)
+      (self.prefix! as NSString).draw(in: rect, withAttributes: attrs)
+      self.centerWithPrefix(offset: offset)
     } else {
-      centerWithPrefix(offset: 0)
+      self.centerWithPrefix(offset: 0)
     }
     
     layer.masksToBounds = true
     borderStyle = .none
     layer.borderWidth = 1.0
-    layer.borderColor = defaultBorderColor.cgColor
+    layer.borderColor = self.defaultBorderColor.cgColor
     
-    placeholderColor(placeholderColor)
+    self.placeholderColor(placeholderColor)
     
     addTarget(self, action: #selector(textFieldDidChange), for: UIControl.Event.editingChanged)
   }
@@ -174,11 +175,11 @@ class BolderTextField: UITextField {
   }
 
   @objc open func textFieldDidBeginEditing() {
-    layer.borderColor = defaultBorderColor.cgColor
+    layer.borderColor = self.defaultBorderColor.cgColor
   }
 
   @objc open func textFieldDidEndEditing() {
-    layer.borderColor = defaultBorderColor.cgColor
+    layer.borderColor = self.defaultBorderColor.cgColor
   }
 
   @objc func textFieldDidChange(sender: AnyObject) {
