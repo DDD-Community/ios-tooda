@@ -20,7 +20,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     self.register()
     
-    let viewController = self.appInject.makeViewController(from: .home)
+    let appCoordinator = appInject.resolve(AppCoordinatorType.self)
+    let appFactory = appInject.resolve(AppFactoryType.self)
+    
+    let viewController = appFactory.makeViewController(from: .home)
     let rootViewController = UINavigationController(rootViewController: viewController)
     
     let window = UIWindow(windowScene: scene)
@@ -28,6 +31,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     window.makeKeyAndVisible()
     
     self.window = window
+    
+    appCoordinator.start(from: viewController)
   }
   
   func sceneDidDisconnect(_ scene: UIScene) {
