@@ -15,7 +15,6 @@ protocol AppInjectRegister {
 
 protocol AppInjectResolve {
   func resolve<Object>(_ serviceType: Object.Type) -> Object
-  func makeViewController(from scene: Scene) -> UIViewController
 }
 
 final class AppInject: AppInjectRegister, AppInjectResolve {
@@ -36,16 +35,10 @@ final class AppInject: AppInjectRegister, AppInjectResolve {
     return container.resolve(serviceType)!
   }
   
-  // TODO: 분리할 예정
-  func makeViewController(from scene: Scene) -> UIViewController {
-    switch scene {
-    case .home:
-      let reactor = HomeReactor(
         dependency: .init(
           service: resolve(NetworkingProtocol.self)
         )
       )
-      return HomeViewController(reactor: reactor)
     }
   }
 }
