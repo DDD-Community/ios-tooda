@@ -39,12 +39,12 @@ extension AuthAPI: BaseAPI {
 		switch self {
 			case .signUp(let uuid):
 				
-				body.merge(dict: ["deviceId": uuid])
+				body.concat(dict: ["deviceId": uuid])
 				
 				return .requestCompositeParameters(bodyParameters: body, bodyEncoding: JSONEncoding.default, urlParameters: parameters)
 			case .refresh(let refreshToken):
 				
-				body.merge(dict: ["refreshToken": refreshToken])
+				body.concat(dict: ["refreshToken": refreshToken])
 				
 				return .requestCompositeParameters(bodyParameters: body, bodyEncoding: JSONEncoding.default, urlParameters: parameters)
 		}
