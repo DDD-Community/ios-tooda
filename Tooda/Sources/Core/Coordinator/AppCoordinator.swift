@@ -16,33 +16,83 @@ enum TransitionStyle {
   case modal
 }
 
-protocol AppCoordinatorType {
-  func transition(to scene: Scene, using style: TransitionStyle, animated: Bool)
+enum CloseStyle {
+  case root
+  case target(UIViewController)
+  case pop
+  case dismiss
 }
 
-final class AppCoordinator {
+protocol AppCoordinatorType {
+  func start(from root: UIViewController)
+  func transition(to scene: Scene, using style: TransitionStyle, animated: Bool, completion: (() -> Void)?)
+  func close(style: CloseStyle, animated: Bool, completion: (() -> Void)?)
+}
+
+extension AppCoordinatorType {
+  func transition(to scene: Scene, using style: TransitionStyle, animated: Bool, completion: (() -> Void)? = nil) {
+    self.transition(to: scene, using: style, animated: animated, completion: completion)
+  }
+  func close(style: CloseStyle, animated: Bool, completion: (() -> Void)? = nil) {
+    self.close(style: style, animated: animated, completion: completion)
+  }
+}
+
+final class AppCoordinator: AppCoordinatorType {
   
   struct Dependency {
-    let appInject: AppInjectRegister & AppInjectResolve
-    let navigationController: UINavigationController
+    let appFactory: AppFactoryType
   }
   
   private let dependency: Dependency
   
-  private var currentViewController: UIViewController
+  private var currentViewController: UIViewController?
   
   init(dependency: Dependency) {
     self.dependency = dependency
-    self.currentViewController = dependency.navigationController
   }
   
-  func transition(to scene: Scene, using style: TransitionStyle, animated: Bool) {
-    let viewController = self.dependency.appInject.makeViewController(from: scene)
+  func start(from root: UIViewController) {
+    self.currentViewController = root
+//    self.transition(to: .home, using: .push, animated: true)
+  }
+  
+  func transition(to scene: Scene, using style: TransitionStyle, animated: Bool, completion: (() -> Void)?) {
+    let viewController = self.dependency.appFactory.makeViewController(from: scene)
     switch style {
     case .push:
-      self.dependency.navigationController.pushViewController(viewController, animated: animated)
+      self.currentViewController?.navigationController?
+        .pushViewController(viewController, animated: animated)
+      completion?()
+      
     case .modal:
-      self.currentViewController.present(viewController, animated: animated)
+      self.currentViewController?
+        .present(viewController, animated: animated, completion: completion)
+    }
+  }
+  
+  func close(style: CloseStyle, animated: Bool, completion: (() -> Void)?) {
+    switch style {
+    case .root:
+      self.currentViewController?
+        .navigationController?
+        .popToRootViewController(animated: animated)
+      completion?()
+      
+    case .target(let viewController):
+      self.currentViewController?
+        .navigationController?
+        .popToViewController(viewController, animated: animated)
+      completion?()
+      
+    case .pop:
+      self.currentViewController?
+        .navigationController?
+        .popViewController(animated: animated)
+      completion?()
+      
+    case .dismiss:
+      self.currentViewController?.dismiss(animated: animated, completion: completion)
     }
   }
 }
