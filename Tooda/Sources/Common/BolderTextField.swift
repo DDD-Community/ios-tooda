@@ -1,5 +1,5 @@
 //
-//  CustomTextField.swift
+//  BolderTextField.swift
 //  Tooda
 //
 //  Created by Lyine on 2021/05/22.
@@ -8,7 +8,7 @@
 
 import UIKit
 
-class CustomTextField: UITextField {
+class BolderTextField: UITextField {
 
   var inset: UIEdgeInsets = UIEdgeInsets(top: 0.0, left: 16.0, bottom: 0.0, right: 16.0)
 //	var focusedBorderColor: UIColor = UIColor(r: 255, g: 219, b: 0)
@@ -28,15 +28,7 @@ class CustomTextField: UITextField {
   }
 
   func configureUI() {
-    layer.masksToBounds = true
-    borderStyle = .none
-    layer.borderWidth = 1.0
-    layer.borderColor = defaultBorderColor.cgColor
-
-    placeholderColor(placeholderColor)
-
-    addTarget(self, action: #selector(textFieldDidChange), for: UIControl.Event.editingChanged)
-    clipsToBounds = false
+    self.configureTextField()
   }
 
   // A suffix string that will appear just to the right of visible text
@@ -74,25 +66,24 @@ class CustomTextField: UITextField {
     }
   }
 
-  override public func draw(_ rect: CGRect) {
-    super.draw(rect)
+  fileprivate func configureTextField() {
     clipsToBounds = false
     // Only draw suffix when we have a suffix and a text
     if (suffix ?? "").isEmpty == false && (text ?? "").isEmpty == false {
-
+      
       // We use some handy methods on NSString
       let text = (self.text ?? "") as NSString
-
+      
       // The x position of the suffix
       var suffixXPosition: CGFloat = 0
-
+      
       // Spacing between suffix and text
       let spacing: CGFloat = 3.0
-
+      
       // Font and color for the suffix
       let color = suffixTextColor ?? self.textColor ?? placeHolderTextColor
       let attrs: [NSAttributedString.Key: Any] = [NSAttributedString.Key(rawValue: NSAttributedString.Key.font.rawValue): self.font!, NSAttributedString.Key(rawValue: NSAttributedString.Key.foregroundColor.rawValue): color]
-
+      
       // Calc the x position of the suffix
       if textAlignment == .center {
         let fieldWidth = frame.size.width
@@ -101,7 +92,7 @@ class CustomTextField: UITextField {
       } else {
         suffixXPosition = text.size(withAttributes: attrs).width
       }
-
+      
       // Calc the rect to draw the suffix in
       let height = text.size(withAttributes: attrs).height
       let verticalCenter = height / 2.0
@@ -109,27 +100,27 @@ class CustomTextField: UITextField {
       let width = (suffix! as NSString).size(withAttributes: attrs).width
       let offset = (width + spacing) / 2
       let rect = CGRect(x: suffixXPosition + spacing + offset, y: top, width: width, height: height)
-
+      
       // Draw it
       (suffix! as NSString).draw(in: rect, withAttributes: attrs)
     }
-
+    
     // Only prefix when we have a prefix and a text
     if (prefix ?? "").isEmpty == false && (text ?? "").isEmpty == false {
-
+      
       // We use some handy methods on NSString
       let text = (self.text ?? "") as NSString
-
+      
       // The x position of the prefix
       var prefixXPosition: CGFloat = 0
-
+      
       // Spacing between prefix and text
       let spacing: CGFloat = 3.0
-
+      
       // Font and color for the prefix
       let color = prefixTextColor ?? self.textColor ?? placeHolderTextColor
       let attrs: [NSAttributedString.Key: Any] = [NSAttributedString.Key(rawValue: NSAttributedString.Key.font.rawValue): self.font!, NSAttributedString.Key(rawValue: NSAttributedString.Key.foregroundColor.rawValue): color]
-
+      
       // Calc the x position of the prefix
       if textAlignment == .center {
         let fieldWidth = frame.size.width
@@ -140,10 +131,10 @@ class CustomTextField: UITextField {
         let textWidth = text.size(withAttributes: attrs).width
         prefixXPosition = fieldWidth - textWidth
       }
-
+      
       prefixXPosition -= (prefix! as NSString).size(withAttributes: attrs).width
       prefixXPosition -= spacing
-
+      
       // Calc the rect to draw the suffix in
       let height = text.size(withAttributes: attrs).height
       let verticalCenter = height / 2.0
@@ -151,14 +142,23 @@ class CustomTextField: UITextField {
       let width = (prefix! as NSString).size(withAttributes: attrs).width
       let offset = (width + spacing) / 2
       let rect = CGRect(x: prefixXPosition + offset, y: top, width: width, height: height)
-
-
+      
+      
       // Draw it
       (prefix! as NSString).draw(in: rect, withAttributes: attrs)
       centerWithPrefix(offset: offset)
     } else {
       centerWithPrefix(offset: 0)
     }
+    
+    layer.masksToBounds = true
+    borderStyle = .none
+    layer.borderWidth = 1.0
+    layer.borderColor = defaultBorderColor.cgColor
+    
+    placeholderColor(placeholderColor)
+    
+    addTarget(self, action: #selector(textFieldDidChange), for: UIControl.Event.editingChanged)
   }
 
   override func textRect(forBounds bounds: CGRect) -> CGRect {
@@ -183,15 +183,5 @@ class CustomTextField: UITextField {
 
   @objc func textFieldDidChange(sender: AnyObject) {
     setNeedsDisplay()
-  }
-}
-
-extension UITextField {
-  func placeholderColor(_ color: UIColor) {
-    var placeholderText = ""
-    if self.placeholder != nil {
-      placeholderText = self.placeholder!
-    }
-    self.attributedPlaceholder = NSAttributedString(string: placeholderText, attributes: [NSAttributedString.Key.foregroundColor: color])
   }
 }

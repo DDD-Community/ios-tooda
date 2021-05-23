@@ -17,7 +17,7 @@ class NoteContentCell: BaseTableViewCell, View {
 
   var disposeBag: DisposeBag = DisposeBag()
 
-  let titleTextField = CustomTextField(frame: .zero).then {
+  let titleTextField = BolderTextField(frame: .zero).then {
     $0.font = UIFont.systemFont(ofSize: 13, weight: .bold)
     $0.textColor = ToodaAsset.Colors.gray1.color
     $0.placeholder = "제목을 입력해 주세요"
