@@ -1,5 +1,5 @@
 //
-//  DiaryAPI.swift
+//  NoteAPI.swift
 //  Tooda
 //
 //  Created by lyine on 2021/05/21.
@@ -10,14 +10,14 @@ import Foundation
 
 import Moya
 
-enum DiaryAPI {
-	case create(diary: Diary)
+enum NoteAPI {
+	case create(diary: Note)
 	case list(limit: Int, cursor: Int)
 	case delete(id: String)
-	//TODO: update는 서버 스펙 전달 받는대로
+	// TODO: update는 서버 스펙 전달 받는대로
 }
 
-extension DiaryAPI: BaseAPI {
+extension NoteAPI: BaseAPI {
 	var path: String {
 		switch self {
 			case .create:
@@ -45,8 +45,8 @@ extension DiaryAPI: BaseAPI {
 		var body: [String: Any] = [:]
 		
 		switch self {
-			case .create(let diary):
-				//TODO: diary 파라미터 작성
+			case .create(let note):
+				// TODO: diary 파라미터 작성
 				return .requestCompositeParameters(bodyParameters: body, bodyEncoding: JSONEncoding.default, urlParameters: parameters)
 			case .list, .delete:
 				return .requestParameters(parameters: parameters, encoding: parameterEncoding)
