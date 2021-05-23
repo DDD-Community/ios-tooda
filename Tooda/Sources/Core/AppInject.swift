@@ -35,10 +35,22 @@ final class AppInject: AppInjectRegister, AppInjectResolve {
     return container.resolve(serviceType)!
   }
   
+    
+    container.register(AppCoordinatorType.self) { _ in
+      AppCoordinator(
         dependency: .init(
-          service: resolve(NetworkingProtocol.self)
+          appFactory: self.resolve(AppFactoryType.self)
         )
       )
     }
+    
+    container.register(AppFactoryType.self) { _ in
+      AppFactory(
+        dependency: .init(
+          appInject: self
+        )
+      )
+    }
+  }
   }
 }
