@@ -10,10 +10,13 @@ import Foundation
 import ReactorKit
 
 final class CreateNoteViewReactor: Reactor {
+  
+  let scheduler: Scheduler = MainScheduler.asyncInstance
 
   struct Dependency {
     let service: NetworkingProtocol
     let coordinator: AppCoordinatorType
+    let createDiarySectionFactory: CreateNoteSectionType
   }
 
   enum Action {
@@ -33,11 +36,8 @@ final class CreateNoteViewReactor: Reactor {
   let initialState: State
 
   let dependency: Dependency
-  let createDiarySectionFactory: CreateNoteSectionType
 
-  init(createDiarySectionFactory: @escaping CreateNoteSectionType,
-       dependency: Dependency) {
-    self.createDiarySectionFactory = createDiarySectionFactory
+  init(dependency: Dependency) {
     self.dependency = dependency
     self.initialState = State(sections: [])
   }
@@ -62,7 +62,7 @@ final class CreateNoteViewReactor: Reactor {
   }
 
   private func makeSections() -> [NoteSection] {
-    let sections = self.createDiarySectionFactory()
+    let sections = self.dependency.createDiarySectionFactory()
     return sections
   }
 }
@@ -72,8 +72,10 @@ typealias CreateNoteSectionType = () -> [NoteSection]
 let createDiarySectionFactory: CreateNoteSectionType = {
   var sections: [NoteSection] = [
     NoteSection(identity: .content, items: []),
+    NoteSection(identity: .stock, items: []),
     NoteSection(identity: .addStock, items: []),
-    NoteSection(identity: .image, items: [])
+    NoteSection(identity: .image, items: []),
+    NoteSection(identity: .link, items: [])
   ]
 
   let contentReactor: NoteContentCellReactor = NoteContentCellReactor()
