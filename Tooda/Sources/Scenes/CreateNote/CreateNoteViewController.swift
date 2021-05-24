@@ -30,6 +30,10 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
       guard let cell = tableView.dequeueReusableCell(withIdentifier: EmptyNoteStockCell.reuseIdentifierName, for: indexPath) as? EmptyNoteStockCell else { return UITableViewCell() }
       cell.configure(reactor: reactor)
       return cell
+    case .image(let reactor):
+      guard let cell = tableView.dequeueReusableCell(withIdentifier: NoteImageCell.reuseIdentifierName, for: indexPath) as? NoteImageCell else { return UITableViewCell() }
+      cell.configure(reactor: reactor)
+      return cell
     default:
       return UITableViewCell()
     }
@@ -41,13 +45,12 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
   let tableView = UITableView().then {
     $0.separatorStyle = .none
     $0.backgroundColor = .white
-    $0.rowHeight = UITableView.automaticDimension
     $0.estimatedRowHeight = UITableView.automaticDimension
-
     $0.alwaysBounceHorizontal = false
 
     $0.register(NoteContentCell.self, forCellReuseIdentifier: NoteContentCell.reuseIdentifierName)
     $0.register(EmptyNoteStockCell.self, forCellReuseIdentifier: EmptyNoteStockCell.reuseIdentifierName)
+    $0.register(NoteImageCell.self, forCellReuseIdentifier: NoteImageCell.reuseIdentifierName)
   }
 
   // MARK: Initialize
@@ -104,7 +107,7 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
       .disposed(by: self.disposeBag)
 
     // State
-    self.reactor?.state
+    reactor.state
       .map { $0.sections }
       .debug()
       .bind(to: self.tableView.rx.items(dataSource: dataSource))
@@ -117,12 +120,5 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
 extension CreateNoteViewController {
   func configureNavigation() {
     self.navigationItem.title = Date().description
-  }
-}
-
-// MARK: UITableViewCell
-extension UITableViewCell {
-  static var reuseIdentifierName: String {
-    return String(describing: self)
   }
 }
