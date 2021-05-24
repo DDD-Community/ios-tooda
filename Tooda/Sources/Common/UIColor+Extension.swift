@@ -52,3 +52,23 @@ extension UIColor {
     self.init(red: CGFloat(r) / 255, green: CGFloat(g) / 255, blue: CGFloat(b) / 255, alpha: a)
   }
 }
+
+// MARK: UIColor from Asset
+
+enum AppColor: String {
+  case mainGreem
+  case gray1
+  case gray2
+  case gray3
+  case gray4
+  case subBlue
+  case subRed
+  case white
+  case backgroundWithAlpha40
+}
+
+extension UIColor {
+  convenience init?(type: AppColor) {
+    self.init(named: type.rawValue)
+  }
+}
