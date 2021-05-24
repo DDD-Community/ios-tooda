@@ -45,6 +45,10 @@ final class AppInject: AppInjectRegister, AppInjectResolve {
         )
       )
     }
+    
+    container.register(UserDefaultsServiceType.self) { _ in
+      UserDefaultsService()
+    }
   }
   
   func resolve<Object>(_ serviceType: Object.Type) -> Object {
