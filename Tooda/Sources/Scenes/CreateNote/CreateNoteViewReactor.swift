@@ -81,9 +81,31 @@ let createDiarySectionFactory: CreateNoteSectionType = {
   
   let addStockReactor: EmptyNoteStockCellReactor = EmptyNoteStockCellReactor()
   let addStockSectionItem: NoteSectionItem = NoteSectionItem.addStock(addStockReactor)
+  
+  let imageReactor: NoteImageCellReactor = NoteImageCellReactor(dependency: .init(factory: noteImageSectionFactory))
+  let imageSectionItem: NoteSectionItem = NoteSectionItem.image(imageReactor)
 
   sections[NoteSection.Identity.content.rawValue].items = [contentSectionItem]
   sections[NoteSection.Identity.addStock.rawValue].items = [addStockSectionItem]
+  sections[NoteSection.Identity.image.rawValue].items = [imageSectionItem]
 
+  return sections
+}
+
+typealias NoteImageSectionType = ([NoteImage]) -> [NoteImageSection]
+
+let noteImageSectionFactory: NoteImageSectionType = { images -> [NoteImageSection] in
+  var sections: [NoteImageSection] = [
+    NoteImageSection.init(identity: .empty, items: []),
+    NoteImageSection.init(identity: .item, items: [])
+  ]
+  
+  let emptyReactor: EmptyNoteImageItemCellReactor = EmptyNoteImageItemCellReactor()
+  let emptySectionItem: NoteImageSectionItem = NoteImageSectionItem.empty(emptyReactor)
+  sections[NoteImageSection.Identity.empty.rawValue].items = [emptySectionItem]
+  
+  let imageSectionItems = images.map { NoteImageItemCellReactor(item: $0) }.map { NoteImageSectionItem.item($0)}
+  sections[NoteImageSection.Identity.item.rawValue].items = imageSectionItems
+  
   return sections
 }
