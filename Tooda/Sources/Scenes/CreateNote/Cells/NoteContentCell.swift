@@ -16,25 +16,34 @@ class NoteContentCell: BaseTableViewCell, View {
   typealias Reactor = NoteContentCellReactor
 
   var disposeBag: DisposeBag = DisposeBag()
+  
+  private enum Constants {
+    static let baseColor: UIColor? = UIColor(type: .gray3)
+    static let titlePlaceHolderText: String = "제목을 입력해 주세요"
+    static let contentPlaceHolderText: String = "오늘 알게된 투자 정보, 매매 기록 등을 입력해보세요."
+  }
 
   let titleTextField = BolderTextField(frame: .zero).then {
     $0.font = UIFont.systemFont(ofSize: 13, weight: .bold)
-    $0.textColor = ToodaAsset.Colors.gray1.color
-    $0.placeholder = "제목을 입력해 주세요"
-    $0.placeholderColor = ToodaAsset.Colors.gray4.color
+    $0.textColor = UIColor(type: .gray3)
+    $0.placeholder = Constants.titlePlaceHolderText
+    $0.placeholderColor = UIColor(type: .gray2) ?? UIColor(hex: "#D1D2D1")
+    $0.layer.borderColor = Constants.baseColor?.cgColor
+    $0.layer.cornerRadius = 8.0
   }
 
   let contentTextFieldBackgroundView = UIView().then {
     $0.clipsToBounds = true
     $0.layer.cornerRadius = 8.0
-    $0.layer.borderColor = ToodaAsset.Colors.gray4.color.cgColor
+    $0.layer.borderColor = Constants.baseColor?.cgColor
     $0.layer.borderWidth = 1.0
   }
 
   let contentTextField = UITextField().then {
     $0.font = UIFont.systemFont(ofSize: 13, weight: .regular)
-    $0.textColor = ToodaAsset.Colors.gray1.color
-    $0.placeholder = "제목을 입력해 주세요"
+    $0.textColor = Constants.baseColor
+    $0.contentVerticalAlignment = .top
+    $0.placeholder = Constants.contentPlaceHolderText
   }
 
   func configure(reactor: Reactor) {
