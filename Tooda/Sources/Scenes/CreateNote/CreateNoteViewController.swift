@@ -41,6 +41,17 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
 
 
   // MARK: UI-Properties
+  
+  let addNoteBackgroundView = UIButton().then {
+    $0.setTitle("등록", for: .normal)
+    $0.setTitleColor(UIColor(type: .white), for: .normal)
+    $0.backgroundColor = UIColor(type: .gray3)
+    $0.layer.cornerRadius = 8.0
+    $0.layer.masksToBounds = true
+    $0.frame = CGRect(x: 0, y: 0, width: 53, height: 28)
+  }
+  
+  private lazy var addNoteBarButton = UIBarButtonItem(customView: self.addNoteBackgroundView)
 
   let tableView = UITableView().then {
     $0.separatorStyle = .none
@@ -105,6 +116,17 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
       .map { _ in Reactor.Action.initializeForm }
       .bind(to: reactor.action)
       .disposed(by: self.disposeBag)
+    
+    tableView.rx.itemSelected
+      .map { Reactor.Action.didSelectedItem($0) }
+      .bind(to: reactor.action)
+      .disposed(by: self.disposeBag)
+    
+    addNoteBackgroundView.rx.tap
+      .throttle(.milliseconds(5), scheduler: MainScheduler.instance)
+      .map { _ in Reactor.Action.regist }
+      .bind(to: reactor.action)
+      .disposed(by: self.disposeBag)
 
     // State
     reactor.state
@@ -120,5 +142,7 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
 extension CreateNoteViewController {
   func configureNavigation() {
     self.navigationItem.title = Date().description
+    
+    self.navigationItem.rightBarButtonItem = self.addNoteBarButton
   }
 }

@@ -19,13 +19,15 @@ final class NoteContentCellReactor: Reactor {
   }
 
   struct State {
-
+    var title: String
+    var content: String
   }
 
   let initialState: State
 
   init() {
-    initialState = State()
+    // TODO: 데이터 테스트용, 변경 예정
+    initialState = State(title: "aaa", content: "bbb")
   }
 
 //	func mutate(action: Action) -> Observable<Mutation> {

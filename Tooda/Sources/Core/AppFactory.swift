@@ -40,6 +40,7 @@ final class AppFactory: AppFactoryType {
         let reactor = CreateNoteViewReactor(dependency: .init(
           service: self.dependency.appInject.resolve(NetworkingProtocol.self),
           coordinator: self.dependency.appInject.resolve(AppCoordinatorType.self),
+          authorizationService: self.dependency.appInject.resolve(AuthorizationServiceType.self),
           createDiarySectionFactory: createDiarySectionFactory
                                              ))
         return CreateNoteViewController(reactor: reactor)
