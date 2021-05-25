@@ -25,7 +25,7 @@ class NoteContentCell: BaseTableViewCell, View {
 
   let titleTextField = BolderTextField(frame: .zero).then {
     $0.font = UIFont.systemFont(ofSize: 13, weight: .bold)
-    $0.textColor = UIColor(type: .gray3)
+    $0.textColor = UIColor(type: .gray1)
     $0.placeholder = Constants.titlePlaceHolderText
     $0.placeholderColor = UIColor(type: .gray2) ?? UIColor(hex: "#D1D2D1")
     $0.layer.borderColor = Constants.baseColor?.cgColor
@@ -41,7 +41,7 @@ class NoteContentCell: BaseTableViewCell, View {
 
   let contentTextField = UITextField().then {
     $0.font = UIFont.systemFont(ofSize: 13, weight: .regular)
-    $0.textColor = Constants.baseColor
+	$0.textColor = UIColor(type: .gray1)
     $0.contentVerticalAlignment = .top
     $0.placeholder = Constants.contentPlaceHolderText
   }

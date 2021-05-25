@@ -17,7 +17,7 @@ class NoteImageCell: BaseTableViewCell, View {
   typealias Section = RxCollectionViewSectionedReloadDataSource<NoteImageSection>
   
   private enum Constants {
-    static let baseItemValue: CGFloat = 74
+    static let baseItemValue: CGFloat = 94
   }
 
   var disposeBag: DisposeBag = DisposeBag()
@@ -42,8 +42,8 @@ class NoteImageCell: BaseTableViewCell, View {
   lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: self.flowLayout).then {
     $0.backgroundColor = .white
     self.flowLayout.scrollDirection = .horizontal
-    self.flowLayout.minimumLineSpacing = 0
-    self.flowLayout.minimumInteritemSpacing = 0
+    self.flowLayout.minimumLineSpacing = 10
+    self.flowLayout.minimumInteritemSpacing = 10
     self.flowLayout.sectionHeadersPinToVisibleBounds = true
     
     $0.alwaysBounceVertical = false
@@ -87,9 +87,58 @@ class NoteImageCell: BaseTableViewCell, View {
       .bind(to: reactor.action)
       .disposed(by: self.disposeBag)
     
+    collectionView.rx.itemSelected
+      .map { Reactor.Action.didSelectedItem($0) }
+      .bind(to: reactor.action)
+      .disposed(by: self.disposeBag)
+    
     reactor.state
       .map { $0.sections }
       .bind(to: collectionView.rx.items(dataSource: dataSource))
       .disposed(by: self.disposeBag)
+    
+    reactor.state
+      .map { $0.showAlert }
+      .filter { $0 != nil }
+      .subscribe(onNext: { [weak self] in
+        self?.showAlertAndOpenAppSetting(message: $0)
+      })
+      .disposed(by: self.disposeBag)
+    
+    self.collectionView.rx.setDelegate(self).disposed(by: self.disposeBag)
+  }
+}
+
+// MARK: UICollectionViewDelegate
+
+extension NoteImageCell: UICollectionViewDelegateFlowLayout {
+  func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+    return .init(top: 0, left: 0, bottom: 0, right: 10)
+  }
+}
+
+extension NoteImageCell {
+  func showAlertAndOpenAppSetting(message: String?) {
+    let alertActions: [BaseAlertAction] = [.ok]
+    AlertService.shared
+      .show(title: "",
+            message: message,
+            preferredStyle: .alert,
+            actions: alertActions)
+      .do(onNext: { [weak self] alertAction in
+        switch alertAction {
+          case .ok:
+            self?.openAppSettingMenu()
+          default:
+            return
+        }
+      })
+      .subscribe()
+      .disposed(by: self.disposeBag)
+  }
+  
+  private func openAppSettingMenu() {
+    guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
+    openURL(url: url)
   }
 }
