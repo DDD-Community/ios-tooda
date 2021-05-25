@@ -6,7 +6,7 @@
 //  Copyright © 2021 DTS. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 func appName() -> String {
   guard let name = Bundle.main.infoDictionary?["CFBundleDisplayName"] as? String else { return "" }
@@ -19,5 +19,10 @@ func appBundleID() -> String {
 }
 
 func baseUrl() -> String {
-  return "https://raw.githubusercontent.com/wlsdms0122/RxMVVM/develop"
+	guard let url = Bundle.main.infoDictionary?["APP_SERVER_URL"] as? String else { return "" }
+	return url
+}
+
+func openURL(url: URL) {
+  UIApplication.shared.open(url, options: [:], completionHandler: nil)
 }
