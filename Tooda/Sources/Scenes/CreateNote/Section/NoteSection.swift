@@ -9,7 +9,7 @@
 import RxDataSources
 
 struct NoteSection {
-  enum Identity: Int {
+  enum Identity: Int, CaseIterable {
     case content
     case stock
     case addStock

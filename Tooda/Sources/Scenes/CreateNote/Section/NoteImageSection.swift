@@ -9,7 +9,7 @@
 import RxDataSources
 
 struct NoteImageSection {
-  enum Identity: Int {
+  enum Identity: Int, CaseIterable {
     case empty
     case item
   }
