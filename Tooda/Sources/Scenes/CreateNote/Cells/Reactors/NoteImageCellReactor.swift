@@ -32,7 +32,8 @@ final class NoteImageCellReactor: Reactor {
   enum Mutation {
     case fetchSection([NoteImageSection])
     case didSelctedItem(IndexPath)
-    case showAlert(String)
+    case requestPermissionMessage(String)
+    case showAlertMessage(String?)
     case addImage
     case detailImage
 //    case addImage([NoteImageSectionItem])
@@ -40,7 +41,8 @@ final class NoteImageCellReactor: Reactor {
 
   struct State {
     var sections: [NoteImageSection]
-    var showAlert: String?
+    var requestPermissionMessage: String?
+    var showAlertMessage: String?
   }
 
   let initialState: State
@@ -67,8 +69,10 @@ final class NoteImageCellReactor: Reactor {
     switch mutation {
       case .fetchSection(let sections):
         newState.sections = sections
-      case .showAlert(let alertText):
-        newState.showAlert = alertText
+      case .requestPermissionMessage(let message):
+        newState.requestPermissionMessage = message
+      case .showAlertMessage(let message):
+        newState.showAlertMessage = message
       case .addImage:
         print("이미지 추가")
       case .detailImage:
@@ -93,7 +97,7 @@ final class NoteImageCellReactor: Reactor {
           guard let mutation = self?.didSelectedItem(indexPath) else { return .empty() }
           return mutation
         default:
-          return .just(Mutation.showAlert("테스트"))
+          return .just(Mutation.requestPermissionMessage("테스트"))
       }
     }
   }
@@ -105,9 +109,14 @@ final class NoteImageCellReactor: Reactor {
     
     switch matched {
       case .empty:
-        return .just(.addImage)
+        
+        let sectionItemsCount = self.currentState.sections[NoteImageSection.Identity.item.rawValue].items.count
+        
+        guard sectionItemsCount < 3 else { return .just(.showAlertMessage("아이템은 최대 3개 까지 등록 가능합니다.")) }
+        
+        return .concat([.just(.showAlertMessage(nil)), .just(.addImage)])
       case .item:
-        return .just(.detailImage)
+        return .concat([.just(.showAlertMessage(nil)), .just(.detailImage)])
     }
   }
 }

@@ -98,10 +98,18 @@ class NoteImageCell: BaseTableViewCell, View {
       .disposed(by: self.disposeBag)
     
     reactor.state
-      .map { $0.showAlert }
+      .map { $0.requestPermissionMessage }
       .filter { $0 != nil }
       .subscribe(onNext: { [weak self] in
         self?.showAlertAndOpenAppSetting(message: $0)
+      })
+      .disposed(by: self.disposeBag)
+    
+    reactor.state
+      .map { $0.showAlertMessage }
+      .filter { $0 != nil }
+      .subscribe(onNext: { [weak self] in
+        self?.showAlert(message: $0)
       })
       .disposed(by: self.disposeBag)
     
@@ -118,6 +126,17 @@ extension NoteImageCell: UICollectionViewDelegateFlowLayout {
 }
 
 extension NoteImageCell {
+  func showAlert(message: String?) {
+    let alertActions: [BaseAlertAction] = [.ok]
+    AlertService.shared
+      .show(title: "",
+            message: message,
+            preferredStyle: .alert,
+            actions: alertActions)
+      .subscribe()
+      .disposed(by: self.disposeBag)
+  }
+  
   func showAlertAndOpenAppSetting(message: String?) {
     let alertActions: [BaseAlertAction] = [.ok]
     AlertService.shared
