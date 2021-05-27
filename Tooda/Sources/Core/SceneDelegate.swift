@@ -19,12 +19,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     guard let scene = (scene as? UIWindowScene) else { return }
     
     self.register()
-    AppApppearance.configureAppeance()
+    AppApppearance.configureAppearance()
     
     let appCoordinator = appInject.resolve(AppCoordinatorType.self)
     let appFactory = appInject.resolve(AppFactoryType.self)
     
-    let viewController = appFactory.makeViewController(from: .home)
+    let viewController = appFactory.makeViewController(from: .createNote)
     let rootViewController = UINavigationController(rootViewController: viewController)
     
     let window = UIWindow(windowScene: scene)

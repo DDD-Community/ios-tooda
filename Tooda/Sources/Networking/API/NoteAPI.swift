@@ -11,7 +11,7 @@ import Foundation
 import Moya
 
 enum NoteAPI {
-  case create(diary: Note)
+  case create(dto: RequestNoteDTO)
   case list(limit: Int, cursor: Int)
   case delete(id: String)
   // TODO: update는 서버 스펙 전달 받는대로
@@ -42,12 +42,13 @@ extension NoteAPI: BaseAPI {
 
   var task: Task {
     guard let parameters = parameters else { return .requestPlain }
-    var body: [String: Any] = [:]
+    let body: [String: Any] = [:]
 
     switch self {
     case .create(let note):
-      // TODO: diary 파라미터 작성
-      return .requestCompositeParameters(bodyParameters: body, bodyEncoding: JSONEncoding.default, urlParameters: parameters)
+      let formLists = note.asParameters()
+      return .uploadMultipart(formLists)
+      
     case .list, .delete:
       return .requestParameters(parameters: parameters, encoding: parameterEncoding)
     }
@@ -67,9 +68,9 @@ extension NoteAPI: BaseAPI {
 
   var parameterEncoding: ParameterEncoding {
     switch self {
-    case .create, .delete:
+    case .delete:
       return JSONEncoding.default
-    case .list:
+	case .create, .list:
       return URLEncoding.queryString
     }
   }

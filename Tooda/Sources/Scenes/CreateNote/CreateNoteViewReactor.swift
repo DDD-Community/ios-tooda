@@ -39,10 +39,13 @@ final class CreateNoteViewReactor: Reactor {
   let initialState: State
 
   let dependency: Dependency
+  
+  let disposeBag: DisposeBag = DisposeBag()
 
   init(dependency: Dependency) {
     self.dependency = dependency
     self.initialState = State(sections: [])
+    self.requestCreateNote()
   }
 
   func mutate(action: Action) -> Observable<Mutation> {
@@ -144,6 +147,46 @@ final class CreateNoteViewReactor: Reactor {
     dump(linkReactors)
     
     return .empty()
+  }
+  
+  func requestCreateNote() {
+    let dto = generateNoteDTO()
+    self.dependency.service.request(NoteAPI.create(dto: dto))
+    .asObservable()
+    .mapString()
+    .flatMap { data -> Observable<String> in
+        return Observable.just(data)
+    }
+    .compactMap { JSONDecoder.decodeOptional($0, type: Note.self)}
+    .subscribe(onNext: {
+      dump($0)
+    }).disposed(by: self.disposeBag)
+  }
+  
+  func generateNoteDTO() -> RequestNoteDTO {
+    
+    let title = "비트코인 가즈아"
+    let content = "빨리 집에가고 싶다"
+    
+    let links = [
+      "https://news.naver.com/main/read.nhn?mode=LSD&mid=shm&sid1=100&oid=011&aid=0003915508",
+		"https://news.naver.com/main/read.nhn?mode=LSD&mid=shm&sid1=100&oid=088&aid=0000704803"
+    ]
+    
+    let stocks = [
+      NoteStockDTO(name: "samsun", change: .rise, changeRate: 3.0),
+      NoteStockDTO(name: "lg", change: .fall, changeRate: 3.0),
+      NoteStockDTO(name: "hyundai", change: .even, changeRate: 0.0)
+    ]
+    
+    let dto = RequestNoteDTO.init(title: title,
+                                  content: content,
+                                  links: links,
+                                  stocks: stocks,
+                                  sticker: .omg,
+                                  imageRawData: [])
+    
+    return dto
   }
 }
 
