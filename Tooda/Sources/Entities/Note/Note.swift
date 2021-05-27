@@ -8,9 +8,8 @@
 
 import Foundation
 
-// TODO:재봉님께 양식 전달 받은 이후에 값 변경
 enum Comment: String, Codable {
-	case smile, sad
+	case sad, omg, angry, thinking, chicken, pencl
 }
 
 struct Note: Codable {
