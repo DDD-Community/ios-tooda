@@ -9,9 +9,9 @@
 import Foundation
 
 enum StockChangeState: String, Codable {
-	case rise
-	case even
-	case fall
+	case RISE
+	case EVEN
+	case FALL
 }
 
 struct NoteStock: Codable {
@@ -24,7 +24,7 @@ struct NoteStock: Codable {
 		case id = "id"
 		case name = "name"
 		case change = "change"
-		case changeRate = "change_rate"
+		case changeRate = "changeRate"
 	}
 	
 	init(from decoder: Decoder) throws {

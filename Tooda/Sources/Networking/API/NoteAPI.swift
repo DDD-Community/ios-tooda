@@ -42,13 +42,12 @@ extension NoteAPI: BaseAPI {
 
   var task: Task {
     guard let parameters = parameters else { return .requestPlain }
-    let body: [String: Any] = [:]
+    var body: [String: Any] = [:]
 
     switch self {
     case .create(let note):
-      let formLists = note.asParameters()
-      return .uploadMultipart(formLists)
-      
+			body = note.asParameters()
+      return .requestCompositeParameters(bodyParameters: body, bodyEncoding: JSONEncoding.default, urlParameters: parameters)
     case .list, .delete:
       return .requestParameters(parameters: parameters, encoding: parameterEncoding)
     }
@@ -68,9 +67,9 @@ extension NoteAPI: BaseAPI {
 
   var parameterEncoding: ParameterEncoding {
     switch self {
-    case .delete:
+    case .create, .delete:
       return JSONEncoding.default
-	case .create, .list:
+    case .list:
       return URLEncoding.queryString
     }
   }

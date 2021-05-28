@@ -151,13 +151,13 @@ final class CreateNoteViewReactor: Reactor {
   
   func requestCreateNote() {
     let dto = generateNoteDTO()
-    self.dependency.service.request(NoteAPI.create(dto: dto))
+		self.dependency.service.request(NoteAPI.create(dto: dto))
     .asObservable()
     .mapString()
     .flatMap { data -> Observable<String> in
         return Observable.just(data)
     }
-    .compactMap { JSONDecoder.decodeOptional($0, type: Note.self)}
+    .compactMap { JSONDecoder.decodeOptional($0, type: Note.self) }
     .subscribe(onNext: {
       dump($0)
     }).disposed(by: self.disposeBag)
@@ -174,17 +174,16 @@ final class CreateNoteViewReactor: Reactor {
     ]
     
     let stocks = [
-      NoteStockDTO(name: "samsun", change: .rise, changeRate: 3.0),
-      NoteStockDTO(name: "lg", change: .fall, changeRate: 3.0),
-      NoteStockDTO(name: "hyundai", change: .even, changeRate: 0.0)
+      NoteStockDTO(name: "samsun", change: .RISE, changeRate: 3.0),
+      NoteStockDTO(name: "lg", change: .FALL, changeRate: 3.0),
+      NoteStockDTO(name: "hyundai", change: .EVEN, changeRate: 0.0)
     ]
     
     let dto = RequestNoteDTO.init(title: title,
                                   content: content,
                                   links: links,
                                   stocks: stocks,
-                                  sticker: .omg,
-                                  imageRawData: [])
+                                  sticker: .OMG)
     
     return dto
   }

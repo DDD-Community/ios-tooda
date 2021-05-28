@@ -22,7 +22,8 @@ extension JSONDecoder {
 
     do {
       return try JSONDecoder().decode(type, from: data)
-    } catch {
+    } catch let error {
+			print(error)
       return nil
     }
   }

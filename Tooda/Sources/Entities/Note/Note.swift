@@ -10,7 +10,7 @@ import Foundation
 
 // TODO:재봉님께 양식 전달 받은 이후에 값 변경
 enum Comment: String, Codable {
-	case sad, omg, angry, thinking, chicken, pencl
+	case SAD, OMG, ANGRY, THINKING, CHICKEN, PENCIL
 }
 
 struct Note: Codable {
@@ -28,12 +28,12 @@ struct Note: Codable {
 		case id = "id"
 		case title = "title"
 		case content = "content"
-		case createdAt = "created_at"
-		case updatedAt = "updated_at"
-		case comment = "comment"
-		case noteStocks = "diary_stocks"
-		case noteLinks = "diary_links"
-		case noteImages = "diary_images"
+		case comment = "sticker"
+		case noteStocks = "stocks"
+		case noteLinks = "links"
+		case noteImages = "images"
+		case createdAt = "createdAt"
+		case updatedAt = "updatedAt"
 	}
 	
 	init(from decoder: Decoder) throws {

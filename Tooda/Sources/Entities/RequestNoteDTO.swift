@@ -15,7 +15,6 @@ struct RequestNoteDTO {
   var links: [String]
   var stocks: [NoteStockDTO]
   var sticker: Comment
-  var imageRawData: [Data]
 }
 
 extension RequestNoteDTO {
@@ -25,56 +24,53 @@ extension RequestNoteDTO {
     self.content = ""
     self.links = []
     self.stocks = []
-    self.sticker = .omg
-    self.imageRawData = []
+    self.sticker = .OMG
   }
   
-  func asParameters() -> [MultipartFormData] {
-    var form: [MultipartFormData] = []
-    
-    let title = MultipartFormData(provider: .data(self.title.data(using: .utf8)!), name: "title", mimeType: "text/plain")
-    let content = MultipartFormData(provider: .data(self.content.data(using: .utf8)!), name: "content", mimeType: "text/plain")
-    
-	
-	if let linksData = try? JSONSerialization.data(withJSONObject: self.links, options: []) {
-		let links = MultipartFormData(provider: .data(linksData), name: "links", mimeType: "text/plain")
-		form.append(links)
+	func asParameters() -> [String: Any] {
+		var parameter: [String: Any] = [:]
+		
+		parameter.concat(dict: [
+			"title": title,
+			"sticker": sticker.rawValue.uppercased()
+		])
+		
+		if !content.isEmpty {
+			parameter.concat(dict: [
+				"content": content
+			])
+		}
+		
+		if !links.isEmpty {
+			parameter.concat(dict: [
+				"links": links
+			])
+		}
+		
+		if !stocks.isEmpty {
+			parameter.concat(dict: [
+				"stocks": stocks.map { $0.dictionary } 
+			])
+		}
+		
+		return parameter
 	}
-	
-	let stockJsonString = self.stocks.compactMap({ $0.jsonString })
-	
-	if let stocksData = try? JSONSerialization.data(withJSONObject: stockJsonString, options: []) {
-		let stocks = MultipartFormData(provider: .data(stocksData), name: "stocks", mimeType: "text/plain")
-		form.append(stocks)
-	}
-    
-    let sticker = MultipartFormData(provider: .data(self.sticker.rawValue.uppercased().data(using: .utf8)!), name: "sticker", mimeType: "text/plain")
-    
-    let images: [MultipartFormData] = self.imageRawData.enumerated().map { key, imageData -> MultipartFormData in
-      return MultipartFormData(provider: .data(imageData), name: "files", fileName: "\(key).jpeg", mimeType: "image/jpeg")
-    }
-    
-    form.append(title)
-    form.append(content)
-    
-    for image in images.enumerated() {
-      form.append(image.element)
-    }
-    
-    form.append(sticker)
-    
-    return form
-  }
 }
 
 struct NoteStockDTO {
   var name: String
   var change: StockChangeState?
   var changeRate: Float?
+	
+	init(name: String, change: StockChangeState?, changeRate: Float?) {
+		self.name = name
+		self.change = change
+		self.changeRate = changeRate
+	}
 }
 
 extension NoteStockDTO {
-  var jsonString: String? {
+  var dictionary: [String: Any] {
     var parameter: [String: Any] = [:]
     
     parameter.concat(dict: [
@@ -89,10 +85,10 @@ extension NoteStockDTO {
     
     if let change = self.change {
       parameter.concat(dict: [
-		"change": change.rawValue.uppercased()
+				"change": change.rawValue.uppercased()
       ])
     }
     
-	return parameter.jsonStringRepresentation
+	return parameter
   }
 }
