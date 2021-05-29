@@ -58,16 +58,24 @@ final class AppCoordinator: AppCoordinatorType {
   }
   
   func transition(to scene: Scene, using style: TransitionStyle, animated: Bool, completion: (() -> Void)?) {
+    guard let currentViewController = self.currentViewController else { return }
     let viewController = self.dependency.appFactory.makeViewController(from: scene)
     switch style {
     case .push:
-      self.currentViewController?.navigationController?
-        .pushViewController(viewController, animated: animated)
+      currentViewController.navigationController?.pushViewController(
+        viewController,
+        animated: animated
+      )
+      self.currentViewController = viewController
       completion?()
-      
+
     case .modal:
-      self.currentViewController?
-        .present(viewController, animated: animated, completion: completion)
+      currentViewController.present(
+        viewController,
+        animated: animated,
+        completion: completion
+      )
+      self.currentViewController = viewController
     }
   }
   
