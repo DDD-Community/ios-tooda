@@ -18,8 +18,8 @@ protocol UserDefaultsServiceType {
 	func value<T>(forKey key: UserDefaultsKey) -> T?
 	func set<T>(value: T?, forKey key: UserDefaultsKey)
 	
-	func structValue<T: Codable>(forKey key: UserDefaultsKey) -> T?
-	func setStruct<T: Codable>(value: T?, forKey key: UserDefaultsKey)
+	func objectValue<T: Codable>(forKey key: UserDefaultsKey) -> T?
+	func setObject<T: Codable>(value: T?, forKey key: UserDefaultsKey)
 }
 
 final class UserDefaultsService: UserDefaultsServiceType {
@@ -36,7 +36,7 @@ final class UserDefaultsService: UserDefaultsServiceType {
 		self.defaults.set(value, forKey: key.rawValue)
 	}
 	
-	func setStruct<T: Codable>(value: T?, forKey key: UserDefaultsKey) {
+	func setObject<T: Codable>(value: T?, forKey key: UserDefaultsKey) {
 		let encoder = JSONEncoder()
 		guard let encodedData = try? encoder.encode(value) else {
 			return
@@ -44,7 +44,7 @@ final class UserDefaultsService: UserDefaultsServiceType {
 		self.defaults.set(encodedData, forKey: key.rawValue)
 	}
 	
-	func structValue<T: Codable>(forKey key: UserDefaultsKey) -> T? {
+	func objectValue<T: Codable>(forKey key: UserDefaultsKey) -> T? {
 		guard let storedValue = self.defaults.value(forKey: key.rawValue) as? Data else { return nil }
 		
 		let decoder = JSONDecoder()
