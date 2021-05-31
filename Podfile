@@ -14,6 +14,7 @@ target 'Tooda' do
   pod 'Swinject'
 	pod 'RxViewController'
 	pod 'SwiftLint'
+	pod 'netfox', configuration: %w(Debug)
 
   # Pods for TodaTest
 
