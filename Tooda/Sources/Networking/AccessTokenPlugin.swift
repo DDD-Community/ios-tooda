@@ -18,7 +18,7 @@ final class AccessTokenPlugin: PluginType {
 //
 		var request = request
     
-    let token = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZGV2aWNlSWQiOiJCQTBGODFFQi05RkY4LTQ5OEEtODYyMy1EMjVCMTQ2QzhFNUUiLCJpYXQiOjE2MjIxNjQ1NTYsImV4cCI6MTYyMjI1MDk1Nn0.pMah9unEGfg46Gh9m6Rem69cHFfKBDEv2xsGIFc0lsU"
+    let token = ""
     
     request.addValue(token, forHTTPHeaderField: "Authorization")
 
