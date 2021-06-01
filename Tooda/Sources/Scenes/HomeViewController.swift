@@ -13,13 +13,6 @@ import RxSwift
 import Then
 
 final class HomeViewController: BaseViewController<HomeReactor> {
-
-  // MARK: Constants
-
-  private enum Typo {
-    static let title = TextStyle.body(color: .white)
-  }
-
   
   private let searchBarButton = UIBarButtonItem().then {
     $0.image = UIImage(type: .searchBarButton)
@@ -54,8 +47,6 @@ final class HomeViewController: BaseViewController<HomeReactor> {
       self.settingBarButton,
       self.searchBarButton
     ]
-
-    UILabel().attributedText = "test".styled(with: Typo.title)
   }
   
 }
