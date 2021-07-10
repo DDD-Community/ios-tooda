@@ -25,6 +25,19 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
     case .content(let reactor):
       guard let cell = tableView.dequeueReusableCell(withIdentifier: NoteContentCell.reuseIdentifierName, for: indexPath) as? NoteContentCell else { return UITableViewCell() }
       cell.configure(reactor: reactor)
+      
+      cell.rx.didTitleTextChanged
+        .asObservable()
+        .subscribe(onNext: {
+          print($0)
+        }).disposed(by: cell.disposeBag)
+      
+      cell.rx.didContentTextChanged
+        .asObservable()
+        .subscribe(onNext: {
+          print($0)
+        }).disposed(by: cell.disposeBag)
+      
       return cell
     case .addStock(let reactor):
       guard let cell = tableView.dequeueReusableCell(withIdentifier: EmptyNoteStockCell.reuseIdentifierName, for: indexPath) as? EmptyNoteStockCell else { return UITableViewCell() }

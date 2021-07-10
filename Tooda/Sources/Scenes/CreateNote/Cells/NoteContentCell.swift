@@ -89,3 +89,15 @@ class NoteContentCell: BaseTableViewCell, View {
 
   }
 }
+
+extension Reactive where Base: NoteContentCell {
+  var didTitleTextChanged: Observable<String> {
+    return self.base.titleTextField.rx.controlEvent([.editingChanged])
+      .compactMap { self.base.titleTextField.text }
+  }
+  
+  var didContentTextChanged: Observable<String> {
+    return self.base.contentTextField.rx.controlEvent([.editingChanged])
+      .compactMap { self.base.contentTextField.text }
+  }
+}
