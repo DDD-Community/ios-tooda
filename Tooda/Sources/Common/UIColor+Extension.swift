@@ -55,6 +55,7 @@ extension UIColor {
 
 // MARK: UIColor from Asset
 
+@available(*, deprecated, message: "class var 변경으로 제거 예정")
 enum AppColor: String {
   case mainGreem
   case gray1
@@ -70,5 +71,37 @@ enum AppColor: String {
 extension UIColor {
   convenience init?(type: AppColor) {
     self.init(named: type.rawValue)
+  }
+}
+
+// MARK: - Class Var
+
+extension UIColor {
+  class var gray1: UIColor {
+    return .init(hex: "#292A2E")
+  }
+  
+  class var gray2: UIColor {
+    return .init(hex: "#D1D2D1")
+  }
+  
+  class var gray3: UIColor {
+    return .init(hex: "#EFF0F3")
+  }
+  
+  class var gray4: UIColor {
+    return .init(hex: "#F7F8FA")
+  }
+  
+  class var mainGreen: UIColor {
+    return .init(hex: "#80EFA6")
+  }
+  
+  class var subBlue: UIColor {
+    return .init(hex: "#3986F1")
+  }
+  
+  class var subRed: UIColor {
+    return .init(hex: "#FC4A4A")
   }
 }
