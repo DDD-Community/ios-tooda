@@ -10,12 +10,29 @@ import UIKit
 
 
 extension String {
-  typealias  Style = [NSAttributedString.Key: Any]
+  typealias Style = [NSAttributedString.Key: Any]
 
   func styled(with style: Style) -> NSAttributedString {
     return NSAttributedString(
       string: self,
       attributes: style
+    )
+  }
+
+  func underline(
+    _ style: NSUnderlineStyle,
+    color: UIColor? = nil,
+    with textStyle: Style
+  ) -> NSAttributedString {
+    var mutableTextStyle = textStyle
+    mutableTextStyle.updateValue(style.rawValue, forKey: .underlineStyle)
+    if let color = color {
+      mutableTextStyle.updateValue(color, forKey: .underlineColor)
+    }
+
+    return NSAttributedString(
+      string: self,
+      attributes: mutableTextStyle
     )
   }
 }
