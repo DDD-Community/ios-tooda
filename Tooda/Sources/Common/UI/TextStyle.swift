@@ -10,7 +10,7 @@ import UIKit
 
 
 extension String {
-  typealias  Style = [NSAttributedString.Key: Any]
+  typealias Style = [NSAttributedString.Key: Any]
 
   func styled(with style: Style) -> NSAttributedString {
     return NSAttributedString(
