@@ -51,19 +51,12 @@ final class AppInject: AppInjectRegister, AppInjectResolve {
     }
     
     
-    // TODO: git merge 이후 메소드 분리
-    addAuthorizationService()
+    container.register(AuthorizationServiceType.self) { _ in
+      AuthorizationService()
+    }
   }
   
   func resolve<Object>(_ serviceType: Object.Type) -> Object {
     return container.resolve(serviceType)!
-  }
-}
-
-extension AppInject {
-  func addAuthorizationService() {
-    container.register(AuthorizationServiceType.self) { _ in
-      AuthorizationService()
-    }
   }
 }
