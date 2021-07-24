@@ -1,8 +1,11 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13122.16" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13104.12"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -11,10 +14,40 @@
             <objects>
                 <viewController id="01J-lp-oVM" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Ze5-6b-2t3">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" xcode11CocoaTouchSystemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="splash" translatesAutoresizingMaskIntoConstraints="NO" id="PMc-xa-3Cp">
+                                <rect key="frame" x="157" y="274" width="100" height="102"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="102" id="39K-O0-vFV"/>
+                                    <constraint firstAttribute="width" constant="100" id="jFJ-Rw-WYY"/>
+                                </constraints>
+                            </imageView>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="tooda" translatesAutoresizingMaskIntoConstraints="NO" id="IU3-NU-r1w">
+                                <rect key="frame" x="156.5" y="406" width="101" height="32"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="101" id="cxg-hU-rk8"/>
+                                    <constraint firstAttribute="height" constant="32" id="zVq-E8-JPq"/>
+                                </constraints>
+                            </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="투자 다이어리" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6Ze-ps-8sC">
+                                <rect key="frame" x="171" y="447" width="72" height="16"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                <color key="textColor" red="0.50980392156862742" green="0.58431372549019611" blue="0.56470588235294117" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="PMc-xa-3Cp" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="230" id="Bhl-gJ-pnj"/>
+                            <constraint firstItem="IU3-NU-r1w" firstAttribute="top" secondItem="PMc-xa-3Cp" secondAttribute="bottom" constant="30" id="T2R-2L-Hrx"/>
+                            <constraint firstItem="IU3-NU-r1w" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="Twj-9D-dhe"/>
+                            <constraint firstItem="6Ze-ps-8sC" firstAttribute="top" secondItem="IU3-NU-r1w" secondAttribute="bottom" constant="9" id="VWY-tf-bUP"/>
+                            <constraint firstItem="6Ze-ps-8sC" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="e0d-Ek-StX"/>
+                            <constraint firstItem="PMc-xa-3Cp" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="noj-wk-lf9"/>
+                        </constraints>
                     </view>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="iYj-Kq-Ea1" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -22,4 +55,11 @@
             <point key="canvasLocation" x="53" y="375"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="splash" width="100" height="102"/>
+        <image name="tooda" width="99" height="25"/>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
 </document>
