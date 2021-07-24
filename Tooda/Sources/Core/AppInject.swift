@@ -46,7 +46,7 @@ final class AppInject: AppInjectRegister, AppInjectResolve {
       )
     }
     
-    container.register(UserDefaultsServiceType.self) { _ in
+    container.register(LocalPersistenceServiceType.self) { _ in
       UserDefaultsService()
     }
   }
