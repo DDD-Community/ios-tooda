@@ -46,12 +46,37 @@ final class AppInject: AppInjectRegister, AppInjectResolve {
       )
     }
     
-    container.register(UserDefaultsServiceType.self) { _ in
-      UserDefaultsService()
+    container.register(
+      LocalPersistenceServiceType.self,
+      name: LocalPersistenceType.keyChain.rawValue) { _ in
+      LocalPersistanceManager.KeyChainService()
+    }
+    
+    container.register(
+      LocalPersistenceServiceType.self,
+      name: LocalPersistenceType.userDefaults.rawValue) { _ in
+      LocalPersistanceManager.UserDefaultsService()
+    }
+    
+    container.register(LocalPersistanceManagerType.self) { _ in
+      LocalPersistanceManager(
+        keyChainService: self.resolve(
+          LocalPersistenceServiceType.self,
+          name: LocalPersistenceType.keyChain.rawValue
+        ),
+        userDefaultService: self.resolve(
+          LocalPersistenceServiceType.self,
+          name: LocalPersistenceType.userDefaults.rawValue
+        )
+      )
     }
   }
   
   func resolve<Object>(_ serviceType: Object.Type) -> Object {
     return container.resolve(serviceType)!
+  }
+  
+  func resolve<Object>(_ serviceType: Object.Type, name: String?) -> Object {
+    return container.resolve(serviceType, name: name)!
   }
 }
