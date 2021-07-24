@@ -46,8 +46,10 @@ final class AppInject: AppInjectRegister, AppInjectResolve {
       )
     }
     
-    container.register(LocalPersistenceServiceType.self) { _ in
-      UserDefaultsService()
+    container.register(LocalPersistanceManagerType.self) { _ in
+      LocalPersistanceManager(
+        keyChainService: LocalPersistanceManager.KeyChainService(),
+        userDefaultService: LocalPersistanceManager.UserDefaultsService())
     }
   }
   

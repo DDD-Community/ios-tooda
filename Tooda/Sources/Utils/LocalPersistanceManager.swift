@@ -8,35 +8,59 @@
 
 import Foundation
 
-enum LocalPersistanceManager {
-  case userDefaults
-  case keychain
+protocol LocalPersistanceManagerType {
+  func value<T>(forKey key: LocalPersistenceKey) -> T?
+  func set<T>(value: T?, forKey key: LocalPersistenceKey)
   
-  private static let keyChainService = KeyChainService()
-  private static let userDefaultService = UserDefaultsService()
+  func objectValue<T: Codable>(forKey key: LocalPersistenceKey) -> T?
+  func setObject<T: Codable>(value: T?, forKey key: LocalPersistenceKey)
+}
+
+final class LocalPersistanceManager: LocalPersistanceManagerType {
+  private let keyChainService: LocalPersistenceServiceType
+  private let userDefaultService: LocalPersistenceServiceType
   
-  private var service: LocalPersistenceServiceType {
-    switch self {
-    case .userDefaults:
-      return LocalPersistanceManager.userDefaultService
-    case .keychain:
-      return LocalPersistanceManager.keyChainService
-    }
+  init(
+    keyChainService: LocalPersistenceServiceType,
+    userDefaultService: LocalPersistenceServiceType
+  ) {
+    self.keyChainService = keyChainService
+    self.userDefaultService = userDefaultService
   }
   
   func value<T>(forKey key: LocalPersistenceKey) -> T? {
-    service.value(forKey: key)
+    switch key {
+    case .appToken:
+      return keyChainService.value(forKey: key)
+    default:
+      return userDefaultService.value(forKey: key)
+    }
   }
   
   func set<T>(value: T?, forKey key: LocalPersistenceKey) {
-    service.set(value: value, forKey: key)
+    switch key {
+    case .appToken:
+      return keyChainService.set(value: value, forKey: key)
+    default:
+      return userDefaultService.set(value: value, forKey: key)
+    }
   }
   
   func objectValue<T: Codable>(forKey key: LocalPersistenceKey) -> T? {
-    service.objectValue(forKey: key)
+    switch key {
+    case .appToken:
+      return keyChainService.objectValue(forKey: key)
+    default:
+      return userDefaultService.objectValue(forKey: key)
+    }
   }
   
   func setObject<T: Codable>(value: T?, forKey key: LocalPersistenceKey) {
-    service.setObject(value: value, forKey: key)
+    switch key {
+    case .appToken:
+      return keyChainService.setObject(value: value, forKey: key)
+    default:
+      return userDefaultService.setObject(value: value, forKey: key)
+    }
   }
 }
