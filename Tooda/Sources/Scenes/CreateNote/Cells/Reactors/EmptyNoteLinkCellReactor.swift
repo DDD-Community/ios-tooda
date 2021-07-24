@@ -1,5 +1,5 @@
 //
-//  EmptyDiaryLinkCellReactor.swift
+//  EmptyNoteLinkCellReactor.swift
 //  Tooda
 //
 //  Created by Lyine on 2021/05/19.
@@ -8,7 +8,7 @@
 
 import ReactorKit
 
-final class EmptyDiaryLinkCellReactor: Reactor {
+final class EmptyNoteLinkCellReactor: Reactor {
   enum Action {
 
   }

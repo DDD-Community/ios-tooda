@@ -26,6 +26,10 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
       guard let cell = tableView.dequeueReusableCell(withIdentifier: NoteContentCell.reuseIdentifierName, for: indexPath) as? NoteContentCell else { return UITableViewCell() }
       cell.configure(reactor: reactor)
       return cell
+    case .addStock(let reactor):
+      guard let cell = tableView.dequeueReusableCell(withIdentifier: EmptyNoteStockCell.reuseIdentifierName, for: indexPath) as? EmptyNoteStockCell else { return UITableViewCell() }
+      cell.configure(reactor: reactor)
+      return cell
     default:
       return UITableViewCell()
     }
@@ -43,6 +47,7 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
     $0.alwaysBounceHorizontal = false
 
     $0.register(NoteContentCell.self, forCellReuseIdentifier: NoteContentCell.reuseIdentifierName)
+    $0.register(EmptyNoteStockCell.self, forCellReuseIdentifier: EmptyNoteStockCell.reuseIdentifierName)
   }
 
   // MARK: Initialize

@@ -14,7 +14,6 @@ struct NoteSection {
     case stock
     case addStock
     case link
-    case addLink
     case image
   }
   let identity: Identity
@@ -29,7 +28,8 @@ extension NoteSection: SectionModelType {
 
 enum NoteSectionItem {
   case content(NoteContentCellReactor)
+  case addStock(EmptyNoteStockCellReactor)
   case stock(NoteStockCellReactor)
-  case link(NoteLinkCellReactor)
   case image(NoteImageCellReactor)
+  case link(NoteLinkCellReactor)
 }
