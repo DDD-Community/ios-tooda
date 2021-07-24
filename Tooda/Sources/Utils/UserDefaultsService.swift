@@ -8,35 +8,35 @@
 
 import Foundation
 
-enum UserDefaultsKey: String {
+enum LocalPersistenceKey: String {
 	case firstLaunch
 	case searchHistory
 	case appToken
 }
 
-protocol UserDefaultsServiceType {
-	func value<T>(forKey key: UserDefaultsKey) -> T?
-	func set<T>(value: T?, forKey key: UserDefaultsKey)
+protocol LocalPersistenceServiceType {
+	func value<T>(forKey key: LocalPersistenceKey) -> T?
+	func set<T>(value: T?, forKey key: LocalPersistenceKey)
 	
-	func objectValue<T: Codable>(forKey key: UserDefaultsKey) -> T?
-	func setObject<T: Codable>(value: T?, forKey key: UserDefaultsKey)
+	func objectValue<T: Codable>(forKey key: LocalPersistenceKey) -> T?
+	func setObject<T: Codable>(value: T?, forKey key: LocalPersistenceKey)
 }
 
-final class UserDefaultsService: UserDefaultsServiceType {
+final class UserDefaultsService: LocalPersistenceServiceType {
 	
 	private var defaults: UserDefaults {
 		return UserDefaults.standard
 	}
 	
-	func value<T>(forKey key: UserDefaultsKey) -> T? {
+	func value<T>(forKey key: LocalPersistenceKey) -> T? {
 		return self.defaults.value(forKey: key.rawValue) as? T
 	}
 	
-	func set<T>(value: T?, forKey key: UserDefaultsKey) {
+	func set<T>(value: T?, forKey key: LocalPersistenceKey) {
 		self.defaults.set(value, forKey: key.rawValue)
 	}
 	
-	func setObject<T: Codable>(value: T?, forKey key: UserDefaultsKey) {
+	func setObject<T: Codable>(value: T?, forKey key: LocalPersistenceKey) {
 		let encoder = JSONEncoder()
 		guard let encodedData = try? encoder.encode(value) else {
 			return
@@ -44,7 +44,7 @@ final class UserDefaultsService: UserDefaultsServiceType {
 		self.defaults.set(encodedData, forKey: key.rawValue)
 	}
 	
-	func objectValue<T: Codable>(forKey key: UserDefaultsKey) -> T? {
+	func objectValue<T: Codable>(forKey key: LocalPersistenceKey) -> T? {
 		guard let storedValue = self.defaults.value(forKey: key.rawValue) as? Data else { return nil }
 		
 		let decoder = JSONDecoder()
@@ -52,4 +52,3 @@ final class UserDefaultsService: UserDefaultsServiceType {
 		return decodedData
 	}
 }
-
