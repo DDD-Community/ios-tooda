@@ -14,6 +14,11 @@ enum LocalPersistenceKey: String {
 	case appToken
 }
 
+enum LocalPersistenceType: String {
+  case keyChain
+  case userDefaults
+}
+
 protocol LocalPersistenceServiceType {
 	func value<T>(forKey key: LocalPersistenceKey) -> T?
 	func set<T>(value: T?, forKey key: LocalPersistenceKey)
