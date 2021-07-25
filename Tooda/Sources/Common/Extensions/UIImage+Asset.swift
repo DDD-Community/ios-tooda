@@ -12,6 +12,7 @@ enum AppImage: String {
   case backBarButton = "back"
   case searchBarButton = "search"
   case settingBarButton = "setting"
+  case login = "login"
 }
 
 extension UIImage {
