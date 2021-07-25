@@ -92,6 +92,8 @@ final class AppCoordinator: AppCoordinatorType {
       guard let viewControllers = currentViewController.navigationController?.viewControllers else { return }
       guard let target = viewControllers.first(where: {
         switch scene {
+        case .login:
+          return $0 is LoginViewController
         case .home:
           return $0 is HomeViewController
         case .createNote:

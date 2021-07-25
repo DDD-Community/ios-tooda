@@ -37,6 +37,7 @@ final class AppInject: AppInjectRegister, AppInjectResolve {
         )
       )
     }
+    .inObjectScope(.container)
     
     container.register(AppFactoryType.self) { _ in
       AppFactory(
