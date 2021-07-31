@@ -17,8 +17,12 @@ class BaseViewController<T: Reactor>: UIViewController, View {
   
   init() {
     super.init(nibName: nil, bundle: nil)
-    self.configureUI()
-    self.configureConstraints()
+  }
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    configureUI()
+    configureConstraints()
   }
   
   required init?(coder: NSCoder) {
