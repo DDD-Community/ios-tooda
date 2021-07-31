@@ -43,6 +43,15 @@ final class AppFactory: AppFactoryType {
                                               coordinator: self.dependency.appInject.resolve(AppCoordinatorType.self)
                                              ))
         return CreateNoteViewController(reactor: reactor)
+    case .login:
+      let reactor = LoginReactor(
+        dependency: .init(
+          service: self.dependency.appInject.resolve(NetworkingProtocol.self),
+          coordinator: self.dependency.appInject.resolve(AppCoordinatorType.self)
+        )
+      )
+      return LoginViewController(reactor: reactor)
+    
     }
   }
 }
