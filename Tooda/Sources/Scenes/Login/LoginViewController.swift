@@ -21,6 +21,7 @@ class LoginViewController: BaseViewController<LoginReactor> {
   
   private let mainImageView = UIImageView().then {
     $0.contentMode = .scaleAspectFit
+    $0.image = UIImage(type: .login)
   }
   
   private let loginButton = UIButton().then {
@@ -28,6 +29,8 @@ class LoginViewController: BaseViewController<LoginReactor> {
       "시작하기".styled(with: Typo.title),
       for: .normal
     )
+    $0.backgroundColor = ToodaAsset.Colors.mainGreen.color
+    $0.layer.cornerRadius = 28
   }
   
   // MARK: - Con(De)structor
@@ -47,7 +50,31 @@ class LoginViewController: BaseViewController<LoginReactor> {
     print("\(#file) deinitialized")
   }
   
+  // MARK: - Bind
+  
+  override func bind(reactor: LoginReactor) {
+    super.bind(reactor: reactor)
+    
+    // Action
+    loginButton.rx.tap
+      .map { _ in LoginReactor.Action.login }
+      .bind(to: reactor.action)
+      .disposed(by: disposeBag)
+    
+    
+    // State
+    reactor.state.map { $0.isAuthorized }
+      .bind { isAuthorized in
+      // TODO:
+    }
+    .disposed(by: disposeBag)
+  }
+  
   // MARK: - SetupUI
+  
+  override func configureUI() {
+    view.backgroundColor = .white
+  }
   
   override func configureConstraints() {
     view.addSubviews(
