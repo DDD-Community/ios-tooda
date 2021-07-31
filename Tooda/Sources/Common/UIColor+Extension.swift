@@ -52,3 +52,56 @@ extension UIColor {
     self.init(red: CGFloat(r) / 255, green: CGFloat(g) / 255, blue: CGFloat(b) / 255, alpha: a)
   }
 }
+
+// MARK: UIColor from Asset
+
+@available(*, deprecated, message: "class var 변경으로 제거 예정")
+enum AppColor: String {
+  case mainGreem
+  case gray1
+  case gray2
+  case gray3
+  case gray4
+  case subBlue
+  case subRed
+  case white
+  case backgroundWithAlpha40
+}
+
+extension UIColor {
+  convenience init?(type: AppColor) {
+    self.init(named: type.rawValue)
+  }
+}
+
+// MARK: - Class Var
+
+extension UIColor {
+  class var gray1: UIColor {
+    return .init(hex: "#292A2E")
+  }
+  
+  class var gray2: UIColor {
+    return .init(hex: "#D1D2D1")
+  }
+  
+  class var gray3: UIColor {
+    return .init(hex: "#EFF0F3")
+  }
+  
+  class var gray4: UIColor {
+    return .init(hex: "#F7F8FA")
+  }
+  
+  class var mainGreen: UIColor {
+    return .init(hex: "#80EFA6")
+  }
+  
+  class var subBlue: UIColor {
+    return .init(hex: "#3986F1")
+  }
+  
+  class var subRed: UIColor {
+    return .init(hex: "#FC4A4A")
+  }
+}

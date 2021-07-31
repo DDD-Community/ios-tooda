@@ -12,7 +12,7 @@ import ReactorKit
 import SnapKit
 
 class EmptyNoteLinkCell: BaseTableViewCell, View {
-  typealias Reactor = EmptyDiaryLinkCellReactor
+  typealias Reactor = EmptyNoteLinkCellReactor
 
   var disposeBag: DisposeBag = DisposeBag()
 

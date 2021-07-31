@@ -78,8 +78,12 @@ let createDiarySectionFactory: CreateNoteSectionType = {
 
   let contentReactor: NoteContentCellReactor = NoteContentCellReactor()
   let contentSectionItem: NoteSectionItem = NoteSectionItem.content(contentReactor)
+  
+  let addStockReactor: EmptyNoteStockCellReactor = EmptyNoteStockCellReactor()
+  let addStockSectionItem: NoteSectionItem = NoteSectionItem.addStock(addStockReactor)
 
   sections[NoteSection.Identity.content.rawValue].items = [contentSectionItem]
+  sections[NoteSection.Identity.addStock.rawValue].items = [addStockSectionItem]
 
   return sections
 }

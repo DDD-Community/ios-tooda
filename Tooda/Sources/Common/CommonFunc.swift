@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 
 func appName() -> String {
   guard let name = Bundle.main.infoDictionary?["CFBundleDisplayName"] as? String else { return "" }
@@ -19,5 +20,9 @@ func appBundleID() -> String {
 }
 
 func baseUrl() -> String {
-  return "https://raw.githubusercontent.com/wlsdms0122/RxMVVM/develop"
+  "http://15.164.46.210:3000/"
+}
+
+func deviceUUID() -> String? {
+  UIDevice.current.identifierForVendor?.uuidString
 }

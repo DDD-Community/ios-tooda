@@ -18,7 +18,7 @@ enum TransitionStyle {
 
 enum CloseStyle {
   case root
-  case target(UIViewController)
+  case target(Scene)
   case pop
   case dismiss
 }
@@ -58,20 +58,29 @@ final class AppCoordinator: AppCoordinatorType {
   }
   
   func transition(to scene: Scene, using style: TransitionStyle, animated: Bool, completion: (() -> Void)?) {
+    guard let currentViewController = self.currentViewController else { return }
     let viewController = self.dependency.appFactory.makeViewController(from: scene)
     switch style {
     case .push:
-      self.currentViewController?.navigationController?
-        .pushViewController(viewController, animated: animated)
+      currentViewController.navigationController?.pushViewController(
+        viewController,
+        animated: animated
+      )
+      self.currentViewController = viewController
       completion?()
-      
+
     case .modal:
-      self.currentViewController?
-        .present(viewController, animated: animated, completion: completion)
+      currentViewController.present(
+        viewController,
+        animated: animated,
+        completion: completion
+      )
+      self.currentViewController = viewController
     }
   }
   
   func close(style: CloseStyle, animated: Bool, completion: (() -> Void)?) {
+    guard let currentViewController = self.currentViewController else { return }
     switch style {
     case .root:
       self.currentViewController?
@@ -79,20 +88,41 @@ final class AppCoordinator: AppCoordinatorType {
         .popToRootViewController(animated: animated)
       completion?()
       
-    case .target(let viewController):
-      self.currentViewController?
+    case .target(let scene):
+      guard let viewControllers = currentViewController.navigationController?.viewControllers else { return }
+      guard let target = viewControllers.first(where: {
+        switch scene {
+        case .home:
+          return $0 is HomeViewController
+        case .createNote:
+          return $0 is CreateNoteViewController
+        }
+      }) else { return }
+
+      currentViewController
         .navigationController?
-        .popToViewController(viewController, animated: animated)
+        .popToViewController(target, animated: animated)
+
+      self.currentViewController = target
       completion?()
       
     case .pop:
-      self.currentViewController?
+      currentViewController
         .navigationController?
         .popViewController(animated: animated)
       completion?()
+
+      self.currentViewController = self.currentViewController?.navigationController?.viewControllers.last
       
     case .dismiss:
-      self.currentViewController?.dismiss(animated: animated, completion: completion)
+      currentViewController.dismiss(animated: animated, completion: completion)
+
+      if let presentingViewController = currentViewController.presentingViewController {
+        currentViewController.dismiss(animated: animated, completion: {
+          self.currentViewController = presentingViewController
+          completion?()
+        })
+      }
     }
   }
 }
