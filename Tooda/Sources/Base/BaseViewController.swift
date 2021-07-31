@@ -21,8 +21,8 @@ class BaseViewController<T: Reactor>: UIViewController, View {
   
   override func viewDidLoad() {
     super.viewDidLoad()
-    self.configureUI()
-    self.configureConstraints()
+    configureUI()
+    configureConstraints()
   }
   
   required init?(coder: NSCoder) {
