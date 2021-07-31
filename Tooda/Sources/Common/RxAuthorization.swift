@@ -1,5 +1,5 @@
 //
-//  AuthorizationService.swift
+//  RxAuthorization.swift
 //  Tooda
 //
 //  Created by lyine on 2021/05/24.
@@ -12,7 +12,7 @@ import Photos
 import RxSwift
 import RxCocoa
 
-protocol AuthorizationServiceType {
+protocol AppAuthorizationType {
   var pushStatus: Observable<AuthorizationStatus> { get }
   var requestPush: Observable<Bool> { get }
   var photoLibrary: Observable<AuthorizationStatus> { get }
@@ -24,7 +24,7 @@ enum AuthorizationStatus {
   case notDetermined
 }
 
-class AuthorizationService: AuthorizationServiceType {
+class RxAuthorization: AppAuthorizationType {
   var pushStatus: Observable<AuthorizationStatus> {
     return Observable.create { observer -> Disposable in
       let pushCenter = UNUserNotificationCenter.current()

@@ -51,8 +51,8 @@ final class AppInject: AppInjectRegister, AppInjectResolve {
     }
     
     
-    container.register(AuthorizationServiceType.self) { _ in
-      AuthorizationService()
+    container.register(AppAuthorizationType.self) { _ in
+      RxAuthorization()
     }
   }
   
