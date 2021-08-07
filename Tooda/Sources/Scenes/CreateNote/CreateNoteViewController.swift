@@ -119,10 +119,3 @@ extension CreateNoteViewController {
     self.navigationItem.title = Date().description
   }
 }
-
-// MARK: UITableViewCell
-extension UITableViewCell {
-  static var reuseIdentifierName: String {
-    return String(describing: self)
-  }
-}
