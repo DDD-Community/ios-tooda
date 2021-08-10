@@ -72,6 +72,10 @@ final class AppInject: AppInjectRegister, AppInjectResolve {
       )
     }
     .inObjectScope(.container)
+    
+    container.register(AppAuthorizationType.self) { _ in
+      RxAuthorization()
+    }
   }
   
   func resolve<Object>(_ serviceType: Object.Type) -> Object {

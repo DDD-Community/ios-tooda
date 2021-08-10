@@ -43,7 +43,7 @@ extension Date {
     dateFormatter.dateFormat = type.rawValue
     dateFormatter.locale = Locale.current
     dateFormatter.timeZone = TimeZone.current
-    return formatter.string(from: self)
+    return dateFormatter.string(from: self)
   }
 
   func component(_ component: Calendar.Component) -> Int {
