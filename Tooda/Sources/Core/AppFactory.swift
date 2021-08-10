@@ -47,11 +47,11 @@ final class AppFactory: AppFactoryType {
       let reactor = LoginReactor(
         dependency: .init(
           service: self.dependency.appInject.resolve(NetworkingProtocol.self),
-          coordinator: self.dependency.appInject.resolve(AppCoordinatorType.self)
+          coordinator: self.dependency.appInject.resolve(AppCoordinatorType.self),
+          localPersistanceManager: self.dependency.appInject.resolve(LocalPersistanceManagerType.self)
         )
       )
       return LoginViewController(reactor: reactor)
-    
     }
   }
 }
