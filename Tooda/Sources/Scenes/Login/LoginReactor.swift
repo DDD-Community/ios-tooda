@@ -12,6 +12,9 @@ import ReactorKit
 import RxSwift
 
 final class LoginReactor: Reactor {
+  
+  // MARK: - Constants
+  
   struct Dependency {
     let service: NetworkingProtocol
     let coordinator: AppCoordinatorType
@@ -31,11 +34,15 @@ final class LoginReactor: Reactor {
     var isAuthorized: Bool
   }
   
+  // MARK: - Properties
+  
   private let dependency: Dependency
   
   private let disposeBag = DisposeBag()
   
   let initialState: State = State(isAuthorized: false)
+  
+  // MARK: - Con(De)structor
   
   init(dependency: Dependency) {
     self.dependency = dependency

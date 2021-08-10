@@ -45,12 +45,7 @@ class LoginViewController: BaseViewController<LoginReactor> {
     super.init()
     self.reactor = reactor
   }
-  
-  override func viewDidLoad() {
-    super.viewDidLoad()
-    bindUI()
-  }
-  
+
   required init?(coder: NSCoder) {
     fatalError("init(coder:) has not been implemented")
   }
@@ -59,11 +54,17 @@ class LoginViewController: BaseViewController<LoginReactor> {
     print("\(#file) deinitialized")
   }
   
+  // MARK: - Lifecycle Overridden
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    bindUI()
+  }
+  
   // MARK: - Bind
   
   override func bind(reactor: LoginReactor) {
     super.bind(reactor: reactor)
-    print(#function)
     // Action
     loginButton.rx.tap
       .map { _ in LoginReactor.Action.login }
