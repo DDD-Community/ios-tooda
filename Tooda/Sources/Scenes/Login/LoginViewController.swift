@@ -88,7 +88,7 @@ class LoginViewController: BaseViewController<LoginReactor> {
     )
     .asDriver(onErrorJustReturn: ())
     .drive { [weak self] _ in
-      self?.loginButton.layer.shadowOpacity = 0
+      self?.loginButton.layer.shadowOpacity = 1
     }
     .disposed(by: disposeBag)
     
