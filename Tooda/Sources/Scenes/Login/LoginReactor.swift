@@ -15,6 +15,7 @@ final class LoginReactor: Reactor {
   struct Dependency {
     let service: NetworkingProtocol
     let coordinator: AppCoordinatorType
+    let localPersistanceManager: LocalPersistanceManagerType
   }
   
   enum Action {
@@ -55,10 +56,24 @@ extension LoginReactor {
       .request(AuthAPI.signUp(uuidString: deviceUUID() ?? ""))
       .map(AppToken.self)
       .asObservable()
-      .flatMap { token -> Observable<Mutation> in
+      .flatMap { [weak self] token -> Observable<Mutation> in
+        guard let `self` = self else { return Observable.empty() }
         let mutation = Mutation.setAppToken(token: token)
-        return Observable<Mutation>.just(mutation)
+        return Observable<Mutation>.concat([
+          Observable<Mutation>.just(mutation),
+          self.routeToHomeMutation()
+        ])
     }
+  }
+  
+  private func routeToHomeMutation() -> Observable<Mutation> {
+    dependency.coordinator.transition(
+      to: .home,
+      using: .push,
+      animated: false,
+      completion: nil
+    )
+    return Observable<Mutation>.empty()
   }
 
   func reduce(state: State, mutation: Mutation) -> State {
@@ -66,7 +81,10 @@ extension LoginReactor {
     
     switch mutation {
     case let .setAppToken(token):
-      print(token)
+      dependency.localPersistanceManager.setObject(
+        value: token,
+        forKey: .appToken
+      )
     case let .setIsAuthorized(isAuthorized):
       newState.isAuthorized = isAuthorized
     }
