@@ -6,6 +6,8 @@
 //  Copyright © 2021 DTS. All rights reserved.
 //
 
+import RxSwift
+import RxCocoa
 import SnapKit
 import Then
 
@@ -13,8 +15,9 @@ class LoginViewController: BaseViewController<LoginReactor> {
   
   // MARK: Constants
 
-  private enum Typo {
+  private enum Constants {
     static let title = TextStyle.title(color: .white)
+    static let loginButtonHeight: CGFloat = 56
   }
   
   // MARK: - UI Components
@@ -26,20 +29,26 @@ class LoginViewController: BaseViewController<LoginReactor> {
   
   private let loginButton = UIButton().then {
     $0.setAttributedTitle(
-      "시작하기".styled(with: Typo.title),
+      "시작하기".styled(with: Constants.title),
       for: .normal
     )
     $0.backgroundColor = ToodaAsset.Colors.mainGreen.color
-    $0.layer.cornerRadius = 28
+    $0.layer.cornerRadius = CGFloat(Constants.loginButtonHeight / 2)
+    $0.layer.shadowColor = UIColor.black.withAlphaComponent(0.25).cgColor
+    $0.layer.shadowOffset = CGSize(width: 4, height: 4)
+    $0.layer.shadowOpacity = 1
   }
   
   // MARK: - Con(De)structor
   
   init(reactor: LoginReactor) {
-    defer {
-      self.reactor = reactor
-    }
     super.init()
+    self.reactor = reactor
+  }
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    bindUI()
   }
   
   required init?(coder: NSCoder) {
@@ -54,23 +63,42 @@ class LoginViewController: BaseViewController<LoginReactor> {
   
   override func bind(reactor: LoginReactor) {
     super.bind(reactor: reactor)
-    
+    print(#function)
     // Action
     loginButton.rx.tap
       .map { _ in LoginReactor.Action.login }
       .bind(to: reactor.action)
       .disposed(by: disposeBag)
     
-    
     // State
     reactor.state.map { $0.isAuthorized }
       .bind { isAuthorized in
-      // TODO:
+      // TODO: if sth changed when authorized
     }
     .disposed(by: disposeBag)
   }
   
   // MARK: - SetupUI
+  
+  private func bindUI() {
+    
+    Observable<Void>.merge(
+      loginButton.rx.controlEvent(.touchUpOutside).asObservable(),
+      loginButton.rx.controlEvent(.touchUpInside).asObservable()
+    )
+    .asDriver(onErrorJustReturn: ())
+    .drive { [weak self] _ in
+      self?.loginButton.layer.shadowOpacity = 0
+    }
+    .disposed(by: disposeBag)
+    
+    loginButton.rx.controlEvent(.touchDown)
+      .asDriver()
+      .drive { [weak self] _ in
+        self?.loginButton.layer.shadowOpacity = 0
+      }
+      .disposed(by: disposeBag)
+  }
   
   override func configureUI() {
     view.backgroundColor = .white
@@ -92,7 +120,7 @@ class LoginViewController: BaseViewController<LoginReactor> {
     loginButton.snp.makeConstraints {
       $0.leading.trailing.equalToSuperview().inset(20)
       $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-34)
-      $0.height.equalTo(56)
+      $0.height.equalTo(Constants.loginButtonHeight)
     }
   }
 }
