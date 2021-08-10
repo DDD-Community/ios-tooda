@@ -73,7 +73,8 @@ class LoginViewController: BaseViewController<LoginReactor> {
     // State
     reactor.state.map { $0.isAuthorized }
       .bind { isAuthorized in
-      // TODO: if sth changed when authorized
+      // TODO: if sth should changed when authorized
+      // for loadingview or whatever
     }
     .disposed(by: disposeBag)
   }
