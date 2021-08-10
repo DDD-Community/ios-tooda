@@ -71,6 +71,7 @@ final class AppInject: AppInjectRegister, AppInjectResolve {
         )
       )
     }
+    .inObjectScope(.container)
   }
   
   func resolve<Object>(_ serviceType: Object.Type) -> Object {
