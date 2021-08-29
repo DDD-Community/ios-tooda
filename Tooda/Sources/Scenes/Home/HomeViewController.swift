@@ -24,6 +24,11 @@ final class HomeViewController: BaseViewController<HomeReactor> {
   }
 
 
+  private enum Const {
+    static let notebookCellIdentifier = NotebookCell.description()
+  }
+
+
   // MARK: UI
 
   private let searchBarButton = UIBarButtonItem().then {
@@ -46,6 +51,21 @@ final class HomeViewController: BaseViewController<HomeReactor> {
   private let noteCountLabel = UILabel().then {
     $0.numberOfLines = 1
     $0.attributedText = "3".styled(with: Typo.noteCount) + "werwerwe".styled(with: Typo.noteCountSuffix)
+  }
+
+  private let notebookCollectionView = UICollectionView(
+    frame: .zero,
+    collectionViewLayout: UICollectionViewFlowLayout().then {
+      $0.scrollDirection = .horizontal
+      $0.minimumLineSpacing = 30.0
+      $0.minimumInteritemSpacing = 0.0
+      $0.sectionInset = .init(left: 72.0)
+    }
+  ).then {
+    $0.backgroundColor = .clear
+    $0.showsVerticalScrollIndicator = false
+    $0.showsHorizontalScrollIndicator = false
+    $0.register(NotebookCell.self, forCellWithReuseIdentifier: Const.notebookCellIdentifier)
   }
 
 
@@ -78,6 +98,7 @@ final class HomeViewController: BaseViewController<HomeReactor> {
     self.view.do {
       $0.addSubview(self.monthTitleButton)
       $0.addSubview(self.noteCountLabel)
+      $0.addSubview(self.notebookCollectionView)
     }
   }
 
@@ -92,5 +113,13 @@ final class HomeViewController: BaseViewController<HomeReactor> {
       $0.top.equalTo(self.monthTitleButton.snp.bottom).offset(5.0)
       $0.centerX.equalToSuperview()
     }
+
+    self.notebookCollectionView.snp.makeConstraints {
+      $0.left.equalToSuperview()
+      $0.right.equalToSuperview()
+      $0.top.equalTo(self.noteCountLabel.snp.bottom).offset(35.0)
+      $0.height.equalTo(Metric.noteboolCellSize.height)
+    }
+  }
   }
 }
