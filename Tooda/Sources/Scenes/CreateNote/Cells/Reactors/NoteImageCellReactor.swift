@@ -127,3 +127,21 @@ let testNotes: [NoteImage] = [
   .init(id: 1, url: "bbbbbbbbb"),
   .init(id: 2, url: "ccccccccc")
 ]
+
+typealias NoteImageSectionType = ([NoteImage]) -> [NoteImageSection]
+
+let noteImageSectionFactory: NoteImageSectionType = { images -> [NoteImageSection] in
+  var sections: [NoteImageSection] = [
+    NoteImageSection.init(identity: .empty, items: []),
+    NoteImageSection.init(identity: .item, items: [])
+  ]
+  
+  let emptyReactor: EmptyNoteImageItemCellReactor = EmptyNoteImageItemCellReactor()
+  let emptySectionItem: NoteImageSectionItem = NoteImageSectionItem.empty(emptyReactor)
+  sections[NoteImageSection.Identity.empty.rawValue].items = [emptySectionItem]
+  
+  let imageSectionItems = images.map { NoteImageItemCellReactor(item: $0) }.map { NoteImageSectionItem.item($0)}
+  sections[NoteImageSection.Identity.item.rawValue].items = imageSectionItems
+  
+  return sections
+}
