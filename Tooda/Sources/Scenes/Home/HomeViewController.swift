@@ -23,6 +23,12 @@ final class HomeViewController: BaseViewController<HomeReactor> {
     static let noteCountSuffix = TextStyle.body(color: .gray2)
   }
 
+  private enum Metric {
+    static let noteboolCellSize = CGSize(
+      width: ceil(230.0 / 375.0 * UIScreen.main.bounds.size.width),
+      height: ceil(323.0 / 812.0 * UIScreen.main.bounds.size.height)
+    )
+  }
 
   private enum Const {
     static let notebookCellIdentifier = NotebookCell.description()
@@ -88,6 +94,29 @@ final class HomeViewController: BaseViewController<HomeReactor> {
     self.title = nil
     self.view.backgroundColor = .white
   }
+
+
+  // MARK: Bind
+
+  override func bind(reactor: HomeReactor) {
+    self.notebookCollectionView.rx.setDelegate(self).disposed(by: self.disposeBag)
+
+    // Action
+    Observable<Void>.just(())
+      .map { HomeReactor.Action.load }
+      .bind(to: reactor.action)
+      .disposed(by: self.disposeBag)
+
+    // State
+    self.reactor?.state
+      .map { $0.notebooks }
+      .bind(to: self.notebookCollectionView.rx.items(
+        cellIdentifier: Const.notebookCellIdentifier,
+        cellType: NotebookCell.self
+      )) { _, notebook, cell in
+        cell.configure(viewModel: notebook)
+      }.disposed(by: self.disposeBag)
+  }
   
   override func configureUI() {
     self.navigationItem.rightBarButtonItems = [
@@ -121,5 +150,14 @@ final class HomeViewController: BaseViewController<HomeReactor> {
       $0.height.equalTo(Metric.noteboolCellSize.height)
     }
   }
+}
+
+
+// MARK: UICollectionViewDelegateFlowLayout
+
+extension HomeViewController: UICollectionViewDelegateFlowLayout {
+
+  func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+    return Metric.noteboolCellSize
   }
 }
