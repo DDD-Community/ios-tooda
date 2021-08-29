@@ -1,0 +1,13 @@
+{
+  "images" : [
+    {
+      "filename" : "note-gray.png",
+      "idiom" : "universal",
+      "locale" : "DTS"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}
