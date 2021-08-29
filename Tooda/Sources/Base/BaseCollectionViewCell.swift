@@ -36,9 +36,7 @@ class BaseCollectionViewCell: UICollectionViewCell {
     self.setNeedsUpdateConstraints()
   }
   
-  func configureUI() {
-    self.contentView.backgroundColor = .white
-  }
+  func configureUI() {}
   
   func setupConstraints() {}
 }

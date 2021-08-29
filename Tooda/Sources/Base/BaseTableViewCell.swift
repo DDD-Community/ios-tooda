@@ -38,9 +38,7 @@ class BaseTableViewCell: UITableViewCell {
     self.setNeedsUpdateConstraints()
   }
 
-  func configureUI() {
-    self.contentView.backgroundColor = .white
-  }
+  func configureUI() {}
 
   func setupConstraints() { }
 }
