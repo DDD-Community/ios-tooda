@@ -17,7 +17,7 @@ final class HomeViewController: BaseViewController<HomeReactor> {
 
   // MARK: Constants
 
-  private enum Typo {
+  private enum Font {
     static let monthTitle = TextStyle.headlineBold(color: .gray1)
     static let noteCount = TextStyle.bodyBold(color: .gray2)
     static let noteCountSuffix = TextStyle.body(color: .gray2)
@@ -51,12 +51,12 @@ final class HomeViewController: BaseViewController<HomeReactor> {
       UIImage(type: .iconDownGray),
       for: .normal
     )
-    $0.setAttributedTitle("wrewr".styled(with: Typo.monthTitle), for: .normal)
+    $0.setAttributedTitle("wrewr".styled(with: Font.monthTitle), for: .normal)
   }
 
   private let noteCountLabel = UILabel().then {
     $0.numberOfLines = 1
-    $0.attributedText = "3".styled(with: Typo.noteCount) + "werwerwe".styled(with: Typo.noteCountSuffix)
+    $0.attributedText = "3".styled(with: Font.noteCount) + "werwerwe".styled(with: Font.noteCountSuffix)
   }
 
   private let notebookCollectionView = UICollectionView(
