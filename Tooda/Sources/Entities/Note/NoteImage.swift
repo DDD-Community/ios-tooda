@@ -27,9 +27,9 @@ struct NoteImage: Codable {
 extension NoteImage {
   init() {
     self.id = 0
-    self.imageURL = "ccc"
+    self.imageURL = ""
   }
-  
+
   init(id: Int, url: String) {
     self.id = id
     self.imageURL = url
