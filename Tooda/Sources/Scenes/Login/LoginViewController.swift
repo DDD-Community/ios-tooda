@@ -15,8 +15,11 @@ class LoginViewController: BaseViewController<LoginReactor> {
   
   // MARK: Constants
 
-  private enum Constants {
+  private enum Font {
     static let title = TextStyle.title(color: .white)
+  }
+  
+  private enum Metric {
     static let loginButtonHeight: CGFloat = 56
   }
   
@@ -27,13 +30,13 @@ class LoginViewController: BaseViewController<LoginReactor> {
     $0.image = UIImage(type: .login)
   }
   
-  private let loginButton = UIButton().then {
+  private let loginButton = UIButton(type: .system).then {
     $0.setAttributedTitle(
-      "시작하기".styled(with: Constants.title),
+      "시작하기".styled(with: Font.title),
       for: .normal
     )
     $0.backgroundColor = ToodaAsset.Colors.mainGreen.color
-    $0.layer.cornerRadius = CGFloat(Constants.loginButtonHeight / 2)
+    $0.layer.cornerRadius = CGFloat(Metric.loginButtonHeight / 2)
     $0.layer.shadowColor = UIColor.black.withAlphaComponent(0.25).cgColor
     $0.layer.shadowOffset = CGSize(width: 4, height: 4)
     $0.layer.shadowOpacity = 1
@@ -84,11 +87,10 @@ class LoginViewController: BaseViewController<LoginReactor> {
   
   private func bindUI() {
     
-    Observable<Void>.merge(
-      loginButton.rx.controlEvent(.touchUpOutside).asObservable(),
-      loginButton.rx.controlEvent(.touchUpInside).asObservable()
+    Driver<Void>.merge(
+      loginButton.rx.controlEvent(.touchUpOutside).asDriver(),
+      loginButton.rx.controlEvent(.touchUpInside).asDriver()
     )
-    .asDriver(onErrorJustReturn: ())
     .drive { [weak self] _ in
       self?.loginButton.layer.shadowOpacity = 1
     }
@@ -122,7 +124,7 @@ class LoginViewController: BaseViewController<LoginReactor> {
     loginButton.snp.makeConstraints {
       $0.leading.trailing.equalToSuperview().inset(20)
       $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-34)
-      $0.height.equalTo(Constants.loginButtonHeight)
+      $0.height.equalTo(Metric.loginButtonHeight)
     }
   }
 }

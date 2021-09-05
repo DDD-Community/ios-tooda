@@ -64,7 +64,7 @@ extension LoginReactor {
       .map(AppToken.self)
       .asObservable()
       .flatMap { [weak self] token -> Observable<Mutation> in
-        guard let `self` = self else { return Observable.empty() }
+        guard let self = self else { return Observable.empty() }
         let mutation = Mutation.setAppToken(token: token)
         return Observable<Mutation>.concat([
           Observable<Mutation>.just(mutation),
