@@ -56,8 +56,8 @@ extension NSAttributedString {
     return mutableAttr
   }
 
-  class func composed(of strings: [NSAttributedString], separator: NSAttributedString) -> NSAttributedString {
-    return strings.reduce(strings[0], { (s1, s2) -> NSAttributedString in
+  class func composed(of strings: [NSAttributedString], separator: NSAttributedString = NSAttributedString(string: "")) -> NSAttributedString {
+    return strings.reduce(NSAttributedString(string: ""), { (s1, s2) -> NSAttributedString in
       let result = NSMutableAttributedString()
       result.append(s1)
       result.append(separator)

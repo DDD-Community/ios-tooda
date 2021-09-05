@@ -23,11 +23,11 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
   lazy var dataSource: Section = Section(configureCell: { _, tableView, indexPath, item -> UITableViewCell in
     switch item {
     case .content(let reactor):
-      guard let cell = tableView.dequeueReusableCell(withIdentifier: NoteContentCell.reuseIdentifierName, for: indexPath) as? NoteContentCell else { return UITableViewCell() }
+      let cell = tableView.dequeue(NoteContentCell.self, indexPath: indexPath)
       cell.configure(reactor: reactor)
       return cell
     case .addStock(let reactor):
-      guard let cell = tableView.dequeueReusableCell(withIdentifier: EmptyNoteStockCell.reuseIdentifierName, for: indexPath) as? EmptyNoteStockCell else { return UITableViewCell() }
+      let cell = tableView.dequeue(EmptyNoteStockCell.self, indexPath: indexPath)
       cell.configure(reactor: reactor)
       return cell
     default:
@@ -46,8 +46,8 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
 
     $0.alwaysBounceHorizontal = false
 
-    $0.register(NoteContentCell.self, forCellReuseIdentifier: NoteContentCell.reuseIdentifierName)
-    $0.register(EmptyNoteStockCell.self, forCellReuseIdentifier: EmptyNoteStockCell.reuseIdentifierName)
+    $0.register(NoteContentCell.self)
+    $0.register(EmptyNoteStockCell.self)
   }
 
   // MARK: Initialize
@@ -117,12 +117,5 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
 extension CreateNoteViewController {
   func configureNavigation() {
     self.navigationItem.title = Date().description
-  }
-}
-
-// MARK: UITableViewCell
-extension UITableViewCell {
-  static var reuseIdentifierName: String {
-    return String(describing: self)
   }
 }
