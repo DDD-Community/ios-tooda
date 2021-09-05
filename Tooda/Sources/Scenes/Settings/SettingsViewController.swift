@@ -18,11 +18,9 @@ class SettingsViewController: BaseViewController<HomeReactor> {
     super.viewDidLoad()
     
   }
-}
-
-// MARK: - configureUI
-private extension SettingsInteractiveCell {
-
+  
+  // MARK: - configureUI
+  
   override func configureUI() {
     
   }
@@ -31,4 +29,3 @@ private extension SettingsInteractiveCell {
     
   }
 }
-
