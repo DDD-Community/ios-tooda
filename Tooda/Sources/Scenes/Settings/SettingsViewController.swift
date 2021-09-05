@@ -8,11 +8,27 @@
 
 import UIKit
 
-class SettingsViewController: UIViewController {
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
-    }
+class SettingsViewController: BaseViewController<HomeReactor> {
+  
+  private lazy var tableView = UITableView().then {
+    $0.backgroundColor = .white
+  }
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    
+  }
 }
+
+// MARK: - configureUI
+private extension SettingsInteractiveCell {
+
+  override func configureUI() {
+    
+  }
+
+  override func configureConstraints() {
+    
+  }
+}
+
