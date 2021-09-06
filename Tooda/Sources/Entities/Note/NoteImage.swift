@@ -23,3 +23,15 @@ struct NoteImage: Codable {
 		imageURL = try values.decode(String.self, forKey: .imageURL)
 	}
 }
+
+extension NoteImage {
+  init() {
+    self.id = 0
+    self.imageURL = ""
+  }
+
+  init(id: Int, url: String) {
+    self.id = id
+    self.imageURL = url
+  }
+}

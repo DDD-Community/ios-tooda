@@ -37,11 +37,12 @@ final class AppFactory: AppFactoryType {
         )
         return HomeViewController(reactor: reactor)
       case .createNote:
-        let reactor = CreateNoteViewReactor(createDiarySectionFactory: createDiarySectionFactory,
-                                             dependency: .init(
-                                              service: self.dependency.appInject.resolve(NetworkingProtocol.self),
-                                              coordinator: self.dependency.appInject.resolve(AppCoordinatorType.self)
-                                             ))
+        let reactor = CreateNoteViewReactor(dependency: .init(
+          service: self.dependency.appInject.resolve(NetworkingProtocol.self),
+          coordinator: self.dependency.appInject.resolve(AppCoordinatorType.self),
+          authorization: self.dependency.appInject.resolve(AppAuthorizationType.self),
+          createDiarySectionFactory: createDiarySectionFactory)
+        )
         return CreateNoteViewController(reactor: reactor)
     }
   }

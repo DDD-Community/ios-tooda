@@ -15,6 +15,13 @@ class NoteStockCell: BaseTableViewCell, View {
   typealias Reactor = NoteStockCellReactor
 
   var disposeBag: DisposeBag = DisposeBag()
+  
+  // MARK: Cell Life Cycle
+  
+  override func prepareForReuse() {
+    super.prepareForReuse()
+    disposeBag = DisposeBag()
+  }
 
   func bind(reactor: Reactor) {
 
