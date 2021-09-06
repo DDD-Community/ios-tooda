@@ -121,7 +121,7 @@ final class NoteImageCellReactor: Reactor {
   }
 }
 
-// TODO: 
+// TODO: 이미지 셀 영역을 위한 코드, 제거 예정
 let testNotes: [NoteImage] = [
   .init(id: 0, url: "aaaaaaaaa"),
   .init(id: 1, url: "bbbbbbbbb"),
