@@ -48,9 +48,7 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
   let tableView = UITableView().then {
     $0.separatorStyle = .none
     $0.backgroundColor = .white
-    $0.rowHeight = UITableView.automaticDimension
     $0.estimatedRowHeight = UITableView.automaticDimension
-
     $0.alwaysBounceHorizontal = false
 
     $0.register(NoteContentCell.self)
@@ -112,7 +110,7 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
       .disposed(by: self.disposeBag)
 
     // State
-    self.reactor?.state
+    reactor.state
       .map { $0.sections }
       .debug()
       .bind(to: self.tableView.rx.items(dataSource: dataSource))
