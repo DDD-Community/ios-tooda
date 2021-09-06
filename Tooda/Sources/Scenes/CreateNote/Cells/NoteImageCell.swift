@@ -22,7 +22,7 @@ class NoteImageCell: BaseTableViewCell, View {
 
   var disposeBag: DisposeBag = DisposeBag()
   
-  lazy var dataSource: Section = Section(configureCell: { _, collectionView, indexPath, item -> UICollectionViewCell in
+  private lazy var dataSource: Section = Section(configureCell: { _, collectionView, indexPath, item -> UICollectionViewCell in
     switch item {
       case .empty(let reactor):
         let cell = collectionView.dequeue(EmptyNoteImageItemCell.self, indexPath: indexPath)
@@ -35,9 +35,10 @@ class NoteImageCell: BaseTableViewCell, View {
     }
   })
   
-  let flowLayout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
+  private let flowLayout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
   
-  lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: self.flowLayout).then {
+  private lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: self.flowLayout).then {
+    
     $0.backgroundColor = .white
     self.flowLayout.scrollDirection = .horizontal
     self.flowLayout.minimumLineSpacing = 10
