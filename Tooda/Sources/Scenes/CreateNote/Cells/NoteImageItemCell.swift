@@ -34,6 +34,13 @@ class NoteImageItemCell: BaseCollectionViewCell, View {
     
   }
   
+  // MARK: Cell Life Cycle
+  
+  override func prepareForReuse() {
+    super.prepareForReuse()
+    disposeBag = DisposeBag()
+  }
+  
   override func configureUI() {
     super.configureUI()
     
