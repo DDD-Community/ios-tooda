@@ -117,6 +117,7 @@ class NoteImageCell: BaseTableViewCell, View {
 
 // MARK: UICollectionViewDelegate
 
+// TODO: Master 병합 후 Extension 변경 처리
 extension NoteImageCell: UICollectionViewDelegateFlowLayout {
   func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
     return .init(top: 0, left: 0, bottom: 0, right: 10)
