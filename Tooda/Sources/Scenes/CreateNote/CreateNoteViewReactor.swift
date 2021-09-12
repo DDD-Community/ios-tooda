@@ -85,9 +85,7 @@ let createDiarySectionFactory: CreateNoteSectionType = { authorization, coordina
   let addStockReactor: EmptyNoteStockCellReactor = EmptyNoteStockCellReactor()
   let addStockSectionItem: NoteSectionItem = NoteSectionItem.addStock(addStockReactor)
   
-  let imageReactor: NoteImageCellReactor = NoteImageCellReactor(dependency: .init(factory: noteImageSectionFactory,
-                                                                                  authorizationService: authorization,
-                                                                                  coordinator: coordinator))
+  let imageReactor: NoteImageCellReactor = NoteImageCellReactor(dependency: .init(factory: noteImageSectionFactory))
   let imageSectionItem: NoteSectionItem = NoteSectionItem.image(imageReactor)
 
   sections[NoteSection.Identity.content.rawValue].items = [contentSectionItem]

@@ -93,30 +93,9 @@ class NoteImageCell: BaseTableViewCell, View {
       .bind(to: reactor.action)
       .disposed(by: self.disposeBag)
     
-    collectionView.rx.itemSelected
-      .map { Reactor.Action.didSelectedItem($0) }
-      .bind(to: reactor.action)
-      .disposed(by: self.disposeBag)
-    
     reactor.state
       .map { $0.sections }
       .bind(to: collectionView.rx.items(dataSource: dataSource))
-      .disposed(by: self.disposeBag)
-    
-    reactor.state
-      .map { $0.requestPermissionMessage }
-      .filter { $0 != nil }
-      .subscribe(onNext: { [weak self] in
-        self?.showAlertAndOpenAppSetting(message: $0)
-      })
-      .disposed(by: self.disposeBag)
-    
-    reactor.state
-      .map { $0.showAlertMessage }
-      .filter { $0 != nil }
-      .subscribe(onNext: { [weak self] in
-        self?.showAlert(message: $0)
-      })
       .disposed(by: self.disposeBag)
     
     self.collectionView.rx.setDelegate(self).disposed(by: self.disposeBag)
@@ -129,20 +108,5 @@ class NoteImageCell: BaseTableViewCell, View {
 extension NoteImageCell: UICollectionViewDelegateFlowLayout {
   func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
     return .init(top: 0, left: 0, bottom: 0, right: 10)
-  }
-}
-
-extension NoteImageCell {
-  func showAlert(message: String?) {
-    print(message)
-  }
-  
-  func showAlertAndOpenAppSetting(message: String?) {
-    print(message)
-  }
-  
-  private func openAppSettingMenu() {
-    guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
-    UIApplication.shared.open(url, options: [:], completionHandler: nil)
   }
 }
