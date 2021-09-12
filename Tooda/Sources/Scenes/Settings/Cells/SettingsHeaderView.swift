@@ -9,6 +9,10 @@
 import UIKit
 
 class SettingsHeaderView: UITableViewCell {
+  
+  private enum Font {
+    static let title = TextStyle.captionBold(color: .gray2)
+  }
 
   // MARK: - UI Components
   
@@ -18,11 +22,21 @@ class SettingsHeaderView: UITableViewCell {
     style: UITableViewCell.CellStyle,
     reuseIdentifier: String?
   ) {
-    super.init(style: style, reuseIdentifier: reuseIdentifier)
+    super.init(
+      style: style,
+      reuseIdentifier: reuseIdentifier
+    )
+    configureUI()
   }
   
   required init?(coder: NSCoder) {
     fatalError("init(coder:) has not been implemented")
+  }
+  
+  // MARK: - Internal methods
+  
+  func configure(with title: String) {
+    titleLabel.attributedText = title.styled(with: Font.title)
   }
 }
 
@@ -30,10 +44,13 @@ class SettingsHeaderView: UITableViewCell {
 private extension SettingsHeaderView {
 
   func configureUI() {
-    
+    contentView.addSubview(titleLabel)
   }
 
   func configureConstraints() {
-    
+    titleLabel.snp.makeConstraints {
+      $0.leading.equalToSuperview().inset(20)
+      $0.centerY.equalToSuperview()
+    }
   }
 }
