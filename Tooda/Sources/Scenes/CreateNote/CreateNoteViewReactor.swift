@@ -31,12 +31,14 @@ final class CreateNoteViewReactor: Reactor {
     case initializeForm([NoteSection])
     case requestPermissionMessage(String)
     case showAlertMessage(String?)
+    case showPhotoPicker
   }
 
   struct State {
     var sections: [NoteSection]
     var requestPermissionMessage: String?
     var showAlertMessage: String?
+    var showPhotoPicker: Void?
   }
 
   let initialState: State
@@ -68,6 +70,8 @@ final class CreateNoteViewReactor: Reactor {
       newState.requestPermissionMessage = message
     case .showAlertMessage(let message):
       newState.showAlertMessage = message
+    case .showPhotoPicker:
+      newState.showPhotoPicker = ()
     }
 
     return newState
@@ -100,7 +104,7 @@ final class CreateNoteViewReactor: Reactor {
           return .just(.showAlertMessage("이미지는 최대 3개까지 등록 가능합니다."))
         }
         
-        print("이미지 등록")
+        return .just(.showPhotoPicker)
       case .item(let reactor):
         print("이미지 삭제: \(reactor.currentState.item.imageURL)")
     }
