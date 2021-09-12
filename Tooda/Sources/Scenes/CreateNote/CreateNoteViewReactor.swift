@@ -22,6 +22,7 @@ final class CreateNoteViewReactor: Reactor {
 
   enum Action {
     case initializeForm
+//    case didSelectedItem(IndexPath)
     case dismissView
     case regist
     case didSelectedImageItem(IndexPath)
