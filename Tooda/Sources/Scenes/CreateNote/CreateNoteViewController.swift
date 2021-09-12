@@ -30,9 +30,17 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
       let cell = tableView.dequeue(EmptyNoteStockCell.self, indexPath: indexPath)
       cell.configure(reactor: reactor)
       return cell
-    case .image(let reactor):
+    case .image(let cellReactor):
       let cell = tableView.dequeue(NoteImageCell.self, indexPath: indexPath)
-      cell.configure(reactor: reactor)
+      cell.configure(reactor: cellReactor)
+      
+      cell.rx.didSelectedItemCell
+        .throttle(.milliseconds(5), scheduler: MainScheduler.instance)
+        .map { Reactor.Action.didSelectedImageItem($0) }
+        .subscribe(onNext: { [weak self] in
+          self?.reactor?.action.onNext($0)
+        })
+        .disposed(by: cell.disposeBag)
       
       cell.selectionStyle = .none
       
@@ -115,6 +123,22 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
       .debug()
       .bind(to: self.tableView.rx.items(dataSource: dataSource))
       .disposed(by: self.disposeBag)
+    
+    reactor.state
+      .map { $0.requestPermissionMessage }
+      .filter { $0 != nil }
+      .subscribe(onNext: { [weak self] in
+        self?.showAlertAndOpenAppSetting(message: $0)
+      })
+      .disposed(by: self.disposeBag)
+    
+    reactor.state
+      .map { $0.showAlertMessage }
+      .filter { $0 != nil }
+      .subscribe(onNext: { [weak self] in
+        self?.showAlert(message: $0)
+      })
+      .disposed(by: self.disposeBag)
   }
 }
 
@@ -123,5 +147,22 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
 extension CreateNoteViewController {
   func configureNavigation() {
     self.navigationItem.title = Date().description
+  }
+}
+
+// MARK: ETC
+
+extension CreateNoteViewController {
+  func showAlert(message: String?) {
+    print(message)
+  }
+  
+  func showAlertAndOpenAppSetting(message: String?) {
+    print(message)
+  }
+  
+  private func openAppSettingMenu() {
+    guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
+    UIApplication.shared.open(url, options: [:], completionHandler: nil)
   }
 }
