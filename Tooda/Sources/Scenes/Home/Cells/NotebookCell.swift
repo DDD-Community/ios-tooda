@@ -14,7 +14,7 @@ class NotebookCell: UICollectionViewCell {
 
   // MARK: Constants
 
-  private enum Typo {
+  private enum Font {
     static let titleMonth = TextStyle.subTitleBold(color: .white)
     static let title = TextStyle.subTitle(color: .white)
     static let historyDate = TextStyle.caption(color: .white)
@@ -94,18 +94,18 @@ class NotebookCell: UICollectionViewCell {
 
   func configure(viewModel: ViewModel) {
     self.viewModel = viewModel
-    print(Text.monthTitle.styled(with: Typo.titleMonth).replace(key: "month", value: viewModel.month).string)
+    print(Text.monthTitle.styled(with: Font.titleMonth).replace(key: "month", value: viewModel.month).string)
     self.titleLabel.attributedText = NSAttributedString.composed(
       of: [
-        Text.monthTitle.styled(with: Typo.titleMonth).replace(key: "month", value: viewModel.month),
-        Text.titleSuffix.styled(with: Typo.title)
+        Text.monthTitle.styled(with: Font.titleMonth).replace(key: "month", value: viewModel.month),
+        Text.titleSuffix.styled(with: Font.title)
       ]
     )
     guard let historyDate = viewModel.historyDate else {
-      self.historyDateLabel.attributedText = Text.emptyHistoryDate.styled(with: Typo.emptyHistoryDate)
+      self.historyDateLabel.attributedText = Text.emptyHistoryDate.styled(with: Font.emptyHistoryDate)
       return
     }
-    self.historyDateLabel.attributedText = Text.historyDate.styled(with: Typo.historyDate)
+    self.historyDateLabel.attributedText = Text.historyDate.styled(with: Font.historyDate)
       .replace(key: "day", value: historyDate)
   }
 

@@ -10,10 +10,14 @@ import Foundation
 import ReactorKit
 
 final class CreateNoteViewReactor: Reactor {
+  
+  let scheduler: Scheduler = MainScheduler.asyncInstance
 
   struct Dependency {
     let service: NetworkingProtocol
     let coordinator: AppCoordinatorType
+    let authorization: AppAuthorizationType
+    let createDiarySectionFactory: CreateNoteSectionType
   }
 
   enum Action {
@@ -33,11 +37,8 @@ final class CreateNoteViewReactor: Reactor {
   let initialState: State
 
   let dependency: Dependency
-  let createDiarySectionFactory: CreateNoteSectionType
 
-  init(createDiarySectionFactory: @escaping CreateNoteSectionType,
-       dependency: Dependency) {
-    self.createDiarySectionFactory = createDiarySectionFactory
+  init(dependency: Dependency) {
     self.dependency = dependency
     self.initialState = State(sections: [])
   }
@@ -62,18 +63,20 @@ final class CreateNoteViewReactor: Reactor {
   }
 
   private func makeSections() -> [NoteSection] {
-    let sections = self.createDiarySectionFactory()
+    let sections = self.dependency.createDiarySectionFactory(self.dependency.authorization, self.dependency.coordinator)
     return sections
   }
 }
 
-typealias CreateNoteSectionType = () -> [NoteSection]
+typealias CreateNoteSectionType = (AppAuthorizationType, AppCoordinatorType) -> [NoteSection]
 
-let createDiarySectionFactory: CreateNoteSectionType = {
+let createDiarySectionFactory: CreateNoteSectionType = { authorization, coordinator -> [NoteSection] in
   var sections: [NoteSection] = [
     NoteSection(identity: .content, items: []),
+    NoteSection(identity: .stock, items: []),
     NoteSection(identity: .addStock, items: []),
-    NoteSection(identity: .image, items: [])
+    NoteSection(identity: .image, items: []),
+    NoteSection(identity: .link, items: [])
   ]
 
   let contentReactor: NoteContentCellReactor = NoteContentCellReactor()
@@ -81,9 +84,15 @@ let createDiarySectionFactory: CreateNoteSectionType = {
   
   let addStockReactor: EmptyNoteStockCellReactor = EmptyNoteStockCellReactor()
   let addStockSectionItem: NoteSectionItem = NoteSectionItem.addStock(addStockReactor)
+  
+  let imageReactor: NoteImageCellReactor = NoteImageCellReactor(dependency: .init(factory: noteImageSectionFactory,
+                                                                                  authorizationService: authorization,
+                                                                                  coordinator: coordinator))
+  let imageSectionItem: NoteSectionItem = NoteSectionItem.image(imageReactor)
 
   sections[NoteSection.Identity.content.rawValue].items = [contentSectionItem]
   sections[NoteSection.Identity.addStock.rawValue].items = [addStockSectionItem]
+  sections[NoteSection.Identity.image.rawValue].items = [imageSectionItem]
 
   return sections
 }

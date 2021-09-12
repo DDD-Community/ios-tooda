@@ -50,6 +50,13 @@ class NoteContentCell: BaseTableViewCell, View {
     super.configure()
     self.reactor = reactor
   }
+  
+  // MARK: Cell Life Cycle
+  
+  override func prepareForReuse() {
+    super.prepareForReuse()
+    disposeBag = DisposeBag()
+  }
 
   override func configureUI() {
     super.configureUI()

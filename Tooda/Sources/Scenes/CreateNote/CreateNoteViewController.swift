@@ -30,6 +30,13 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
       let cell = tableView.dequeue(EmptyNoteStockCell.self, indexPath: indexPath)
       cell.configure(reactor: reactor)
       return cell
+    case .image(let reactor):
+      let cell = tableView.dequeue(NoteImageCell.self, indexPath: indexPath)
+      cell.configure(reactor: reactor)
+      
+      cell.selectionStyle = .none
+      
+      return cell
     default:
       return UITableViewCell()
     }
@@ -41,13 +48,12 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
   let tableView = UITableView().then {
     $0.separatorStyle = .none
     $0.backgroundColor = .white
-    $0.rowHeight = UITableView.automaticDimension
     $0.estimatedRowHeight = UITableView.automaticDimension
-
     $0.alwaysBounceHorizontal = false
 
     $0.register(NoteContentCell.self)
     $0.register(EmptyNoteStockCell.self)
+    $0.register(NoteImageCell.self)
   }
 
   // MARK: Initialize
@@ -104,7 +110,7 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
       .disposed(by: self.disposeBag)
 
     // State
-    self.reactor?.state
+    reactor.state
       .map { $0.sections }
       .debug()
       .bind(to: self.tableView.rx.items(dataSource: dataSource))

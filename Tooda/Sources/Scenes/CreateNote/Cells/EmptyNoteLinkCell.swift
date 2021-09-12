@@ -15,6 +15,12 @@ class EmptyNoteLinkCell: BaseTableViewCell, View {
   typealias Reactor = EmptyNoteLinkCellReactor
 
   var disposeBag: DisposeBag = DisposeBag()
+  
+  // MARK: Cell Life Cycle
+  
+  override func prepareForReuse() {
+    super.prepareForReuse()
+  }
 
   func bind(reactor: Reactor) {
 
