@@ -97,8 +97,7 @@ final class CreateNoteViewReactor: Reactor {
     switch imageSectionItem {
       case .empty:
         guard imageCellReactor.currentState.sections[NoteImageSection.Identity.item.rawValue].items.count < 3 else {
-          print("이미지는 최대 3개까지 등록 가능합니다.")
-          return .empty()
+          return .just(.showAlertMessage("이미지는 최대 3개까지 등록 가능합니다."))
         }
         
         print("이미지 등록")

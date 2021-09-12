@@ -127,6 +127,7 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
     reactor.state
       .map { $0.requestPermissionMessage }
       .filter { $0 != nil }
+      .observeOn(MainScheduler.asyncInstance)
       .subscribe(onNext: { [weak self] in
         self?.showAlertAndOpenAppSetting(message: $0)
       })
@@ -135,6 +136,7 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
     reactor.state
       .map { $0.showAlertMessage }
       .filter { $0 != nil }
+      .observeOn(MainScheduler.asyncInstance)
       .subscribe(onNext: { [weak self] in
         self?.showAlert(message: $0)
       })
@@ -154,11 +156,26 @@ extension CreateNoteViewController {
 
 extension CreateNoteViewController {
   func showAlert(message: String?) {
-    print(message)
+    let alertController = UIAlertController(title: nil, message: message, preferredStyle: .alert)
+    
+    let ok = UIAlertAction.init(title: "확인", style: .default, handler: nil)
+    
+    alertController.addAction(ok)
+    
+    self.present(alertController, animated: true, completion: nil)
   }
   
   func showAlertAndOpenAppSetting(message: String?) {
-    print(message)
+    
+    let alertController = UIAlertController(title: nil, message: message, preferredStyle: .alert)
+    
+    let ok = UIAlertAction.init(title: "확인", style: .default, handler: { [weak self] _ in
+      self?.openAppSettingMenu()
+    })
+    
+    alertController.addAction(ok)
+    
+    self.present(alertController, animated: true, completion: nil)
   }
   
   private func openAppSettingMenu() {
