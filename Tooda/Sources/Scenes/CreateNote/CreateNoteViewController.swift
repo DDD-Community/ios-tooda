@@ -139,6 +139,14 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
         self?.showAlert(message: $0)
       })
       .disposed(by: self.disposeBag)
+    
+    reactor.state
+      .map { $0.showPhotoPicker }
+      .compactMap { $0 }
+      .asDriver(onErrorJustReturn: ())
+      .drive(onNext: { [weak self] _ in
+        self?.actionSheetAlert()
+      }).disposed(by: self.disposeBag)
   }
 }
 
@@ -174,5 +182,20 @@ extension CreateNoteViewController {
     alertController.addAction(ok)
     
     self.present(alertController, animated: true, completion: nil)
+  }
+}
+
+extension CreateNoteViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+  func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+    picker.dismiss(animated: true, completion: nil)
+  }
+  
+  func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+    
+    if let image = info[.editedImage] as? UIImage {
+      dump(image)
+    }
+    
+    picker.dismiss(animated: true, completion: nil)
   }
 }
