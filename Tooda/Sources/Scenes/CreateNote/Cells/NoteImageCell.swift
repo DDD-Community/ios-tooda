@@ -7,8 +7,8 @@
 //
 
 import UIKit
-
 import ReactorKit
+import RxCocoa
 import RxDataSources
 import SnapKit
 
@@ -37,7 +37,7 @@ class NoteImageCell: BaseTableViewCell, View {
   
   private let flowLayout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
   
-  private lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: self.flowLayout).then {
+  lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: self.flowLayout).then {
     
     $0.backgroundColor = .white
     self.flowLayout.scrollDirection = .horizontal
@@ -108,5 +108,13 @@ class NoteImageCell: BaseTableViewCell, View {
 extension NoteImageCell: UICollectionViewDelegateFlowLayout {
   func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
     return .init(top: 0, left: 0, bottom: 0, right: 10)
+  }
+}
+
+// MARK: Reactive Extensions
+
+extension Reactive where Base: NoteImageCell {
+  var didSelectedItemCell: ControlEvent<IndexPath> {
+    return self.base.collectionView.rx.itemSelected
   }
 }
