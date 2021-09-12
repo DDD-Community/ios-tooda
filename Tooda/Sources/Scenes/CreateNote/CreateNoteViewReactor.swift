@@ -22,7 +22,6 @@ final class CreateNoteViewReactor: Reactor {
 
   enum Action {
     case initializeForm
-//    case didSelectedItem(IndexPath)
     case dismissView
     case regist
     case didSelectedImageItem(IndexPath)
@@ -78,23 +77,6 @@ final class CreateNoteViewReactor: Reactor {
     let sections = self.dependency.createDiarySectionFactory(self.dependency.authorization, self.dependency.coordinator)
     return sections
   }
-  
-//  private func didSelectedItem(index: IndexPath) {
-//    let selectedSection = index.section
-//
-//    guard let matched = NoteSection.Identity.allCases.first(where: { $0.rawValue == selectedSection }) else { return }
-//
-//    switch matched {
-//      case .content:
-//        print("컨텐츠 섹션")
-//      case .addStock:
-//        print("종목 섹션")
-//      case .link:
-//        print("링크 섹션")
-//      default:
-//        return
-//    }
-//  }
   
   private func didSelectedImageItem(_ indexPath: IndexPath) -> Observable<Mutation> {
     
