@@ -24,7 +24,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     let appCoordinator = appInject.resolve(AppCoordinatorType.self)
     let appFactory = appInject.resolve(AppFactoryType.self)
     
-    let viewController = appFactory.makeViewController(from: .home)
+    let viewController = appFactory.makeViewController(from: .login)
     let rootViewController = UINavigationController(rootViewController: viewController)
     
     let window = UIWindow(windowScene: scene)
