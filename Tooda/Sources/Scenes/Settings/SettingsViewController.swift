@@ -19,13 +19,20 @@ class SettingsViewController: BaseViewController<HomeReactor> {
     
   }
   
+  override func bind(reactor: HomeReactor) {
+    self.tableView.rx.setDelegate(self)
+      .disposed(by: disposeBag)
+  }
+  
   // MARK: - configureUI
   
   override func configureUI() {
-    
+    view.addSubview(tableView)
   }
 
   override func configureConstraints() {
-    
+    tableView.snp.makeConstraints {
+      $0.edges.equalToSuperview()
+    }
   }
 }

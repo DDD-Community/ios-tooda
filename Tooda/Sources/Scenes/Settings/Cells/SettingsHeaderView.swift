@@ -49,8 +49,8 @@ private extension SettingsHeaderView {
 
   func configureConstraints() {
     titleLabel.snp.makeConstraints {
+      $0.top.equalToSuperview().inset(24)
       $0.leading.equalToSuperview().inset(20)
-      $0.centerY.equalToSuperview()
     }
   }
 }

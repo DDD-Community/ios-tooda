@@ -46,7 +46,7 @@ class SettingsInteractiveCell: BaseTableViewCell {
     )
   }
 
-  override func configureConstraints() {
+  override func setupConstraints() {
     titleLabel.snp.makeConstraints {
       $0.top.equalToSuperview().inset(8)
       $0.leading.equalToSuperview().inset(20)
