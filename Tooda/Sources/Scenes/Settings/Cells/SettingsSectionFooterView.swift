@@ -8,6 +8,19 @@
 
 import UIKit
 
-class SettingsSectionFooterView: UITableViewCell {
+class SettingsSectionFooterView: BaseTableViewCell {
   
+  // MARK: - Con(De)structor
+  
+  override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+    super.init(style: style, reuseIdentifier: reuseIdentifier)
+  }
+  
+  required init?(coder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
+  }
+  
+  // MARK: - UI Components
+  
+  private let grayBottomView = UIView()
 }
