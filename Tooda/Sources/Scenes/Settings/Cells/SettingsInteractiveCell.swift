@@ -8,7 +8,7 @@
 
 import UIKit
 
-class SettingsInteractiveCell: UITableViewCell {
+class SettingsInteractiveCell: BaseTableViewCell {
   
   enum Font {
     
@@ -35,12 +35,10 @@ class SettingsInteractiveCell: UITableViewCell {
   required init?(coder: NSCoder) {
     fatalError("init(coder:) has not been implemented")
   }
-}
-
-// MARK: - configureUI
-private extension SettingsInteractiveCell {
-
-  func configureUI() {
+  
+  // MARK: - configureUI
+  
+  override func configureUI() {
     contentView.addSubviews(
       titleLabel,
       descriptionLabel,
@@ -48,7 +46,20 @@ private extension SettingsInteractiveCell {
     )
   }
 
-  func configureConstraints() {
+  override func configureConstraints() {
+    titleLabel.snp.makeConstraints {
+      $0.top.equalToSuperview().inset(8)
+      $0.leading.equalToSuperview().inset(20)
+    }
     
+    descriptionLabel.snp.makeConstraints {
+      $0.top.equalTo(titleLabel.snp.bottom).offset(4)
+      $0.leading.equalTo(titleLabel)
+    }
+    
+    cellSwitch.snp.makeConstraints {
+      $0.trailing.equalToSuperview().inset(20)
+      $0.centerY.equalToSuperview()
+    }
   }
 }
