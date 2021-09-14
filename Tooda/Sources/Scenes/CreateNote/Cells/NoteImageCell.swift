@@ -7,8 +7,8 @@
 //
 
 import UIKit
-
 import ReactorKit
+import RxCocoa
 import RxDataSources
 import SnapKit
 
@@ -37,7 +37,7 @@ class NoteImageCell: BaseTableViewCell, View {
   
   private let flowLayout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
   
-  private lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: self.flowLayout).then {
+  lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: self.flowLayout).then {
     
     $0.backgroundColor = .white
     self.flowLayout.scrollDirection = .horizontal
@@ -93,30 +93,9 @@ class NoteImageCell: BaseTableViewCell, View {
       .bind(to: reactor.action)
       .disposed(by: self.disposeBag)
     
-    collectionView.rx.itemSelected
-      .map { Reactor.Action.didSelectedItem($0) }
-      .bind(to: reactor.action)
-      .disposed(by: self.disposeBag)
-    
     reactor.state
       .map { $0.sections }
       .bind(to: collectionView.rx.items(dataSource: dataSource))
-      .disposed(by: self.disposeBag)
-    
-    reactor.state
-      .map { $0.requestPermissionMessage }
-      .filter { $0 != nil }
-      .subscribe(onNext: { [weak self] in
-        self?.showAlertAndOpenAppSetting(message: $0)
-      })
-      .disposed(by: self.disposeBag)
-    
-    reactor.state
-      .map { $0.showAlertMessage }
-      .filter { $0 != nil }
-      .subscribe(onNext: { [weak self] in
-        self?.showAlert(message: $0)
-      })
       .disposed(by: self.disposeBag)
     
     self.collectionView.rx.setDelegate(self).disposed(by: self.disposeBag)
@@ -132,17 +111,10 @@ extension NoteImageCell: UICollectionViewDelegateFlowLayout {
   }
 }
 
-extension NoteImageCell {
-  func showAlert(message: String?) {
-    print(message)
-  }
-  
-  func showAlertAndOpenAppSetting(message: String?) {
-    print(message)
-  }
-  
-  private func openAppSettingMenu() {
-    guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
-    UIApplication.shared.open(url, options: [:], completionHandler: nil)
+// MARK: Reactive Extensions
+
+extension Reactive where Base: NoteImageCell {
+  var didSelectedItemCell: ControlEvent<IndexPath> {
+    return self.base.collectionView.rx.itemSelected
   }
 }
