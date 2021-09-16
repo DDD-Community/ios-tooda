@@ -8,11 +8,17 @@
 
 import UIKit
 
-class SettingsInfoCell: UITableViewCell {
+class SettingsInfoCell: BaseTableViewCell {
+  
+  private enum Font {
+    static let title = TextStyle.body2(color: .gray2)
+  }
   
   private let titleLabel = UILabel()
   
-  private let trailingImageView = UIImageView()
+  private let trailingImageView = UIImageView().then {
+    $0.contentMode = .scaleAspectFit
+  }
 
   override init(
     style: UITableViewCell.CellStyle,
@@ -27,19 +33,31 @@ class SettingsInfoCell: UITableViewCell {
   required init?(coder: NSCoder) {
     fatalError("init(coder:) has not been implemented")
   }
-}
-
-// MARK: - configureUI
-private extension SettingsInfoCell {
-
-  func configureUI() {
+  
+  // MARK: - Internal methods
+  
+  func configure(with title: String) {
+    titleLabel.attributedText = title.styled(with: Font.title)
+  }
+  
+  // MARK: - configureUI
+  
+  override func configureUI() {
     contentView.addSubviews(
       titleLabel,
       trailingImageView
     )
   }
-
-  func configureConstraints() {
+  
+  override func setupConstraints() {
+    titleLabel.snp.makeConstraints {
+      $0.leading.equalToSuperview().inset(20)
+      $0.centerY.equalToSuperview()
+    }
     
+    trailingImageView.snp.makeConstraints {
+      $0.trailing.equalToSuperview().inset(20)
+      $0.centerY.equalToSuperview()
+    }
   }
 }
