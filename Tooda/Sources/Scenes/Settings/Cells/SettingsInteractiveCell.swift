@@ -10,8 +10,17 @@ import UIKit
 
 class SettingsInteractiveCell: BaseTableViewCell {
   
+  // MARK: - Constants
+  
+  struct Config {
+    let title: String
+    let description: String
+    let isOn: Bool
+  }
+  
   enum Font {
-    
+    static let title = TextStyle.body2(color: .gray2)
+    static let description = TextStyle.body2(color: .gray2)
   }
   
   // MARK: - UI Components
@@ -21,6 +30,8 @@ class SettingsInteractiveCell: BaseTableViewCell {
   private let descriptionLabel = UILabel()
   
   private let cellSwitch = UISwitch()
+  
+  // MARK: - Con(De)structor
   
   override init(
     style: UITableViewCell.CellStyle,
@@ -34,6 +45,14 @@ class SettingsInteractiveCell: BaseTableViewCell {
   
   required init?(coder: NSCoder) {
     fatalError("init(coder:) has not been implemented")
+  }
+  
+  // MARK: - Internal methods
+  
+  func configure(with data: Config) {
+    titleLabel.attributedText = data.title.styled(with: Font.title)
+    descriptionLabel.attributedText = data.title.styled(with: Font.title)
+    cellSwitch.isOn = data.isOn
   }
   
   // MARK: - configureUI
