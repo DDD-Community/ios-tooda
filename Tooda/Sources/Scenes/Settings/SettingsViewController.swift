@@ -12,6 +12,11 @@ class SettingsViewController: BaseViewController<HomeReactor> {
   
   private lazy var tableView = UITableView().then {
     $0.backgroundColor = .white
+    $0.register(SettingsHeaderView.self)
+    $0.register(SettingsInfoCell.self)
+    $0.register(SettingsInteractiveCell.self)
+    $0.register(SettingsSectionFooterView.self)
+    $0.register(SettingsTableFooterView.self)
   }
   
   override func viewDidLoad() {
