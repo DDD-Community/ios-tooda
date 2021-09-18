@@ -153,7 +153,6 @@ class NotebookCell: UICollectionViewCell {
 
   func configure(viewModel: ViewModel) {
     self.viewModel = viewModel
-    print(Text.monthTitle.styled(with: Font.titleMonth).replace(key: "month", value: viewModel.month).string)
     self.titleLabel.attributedText = NSAttributedString.composed(
       of: [
         Text.monthTitle
@@ -174,5 +173,4 @@ class NotebookCell: UICollectionViewCell {
     self.historyDateLabel.attributedText = Text.historyDate.styled(with: Font.historyDate)
       .replace(key: "day", value: historyDate)
   }
-
 }

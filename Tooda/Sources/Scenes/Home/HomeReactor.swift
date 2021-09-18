@@ -139,7 +139,7 @@ extension HomeReactor {
 }
 
 
-// MARK: - Mutate
+// MARK: - Reduce
 
 extension HomeReactor {
 

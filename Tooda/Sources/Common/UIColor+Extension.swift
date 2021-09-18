@@ -82,14 +82,18 @@ extension UIColor {
   }
   
   class var gray2: UIColor {
-    return .init(hex: "#D1D2D1")
+    return .init(hex: "#909496")
   }
   
   class var gray3: UIColor {
-    return .init(hex: "#EFF0F3")
+    return .init(hex: "#D1D2D1")
   }
   
   class var gray4: UIColor {
+    return .init(hex: "#EFF0F3")
+  }
+
+  class var gray5: UIColor {
     return .init(hex: "#F7F8FA")
   }
   
