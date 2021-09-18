@@ -21,6 +21,12 @@ enum AppImage: String {
   case noteRed = "note-red"
   case noteSkyblue = "note-skyblue"
   case noteYellow = "note-yellow"
+  case angry = "angry"
+  case chicken = "chicken"
+  case omg = "omg"
+  case pencil = "pencil"
+  case sad = "sad"
+  case thinking = "thinking"
 
   case login = "login"
   case iconDownGray = "icon_down_gray"
