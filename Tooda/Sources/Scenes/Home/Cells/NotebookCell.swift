@@ -16,7 +16,9 @@ class NotebookCell: UICollectionViewCell {
 
   private enum Font {
     static let titleMonth = TextStyle.subTitleBold(color: .white)
+    static let emptyTitleMonth = TextStyle.subTitleBold(color: .gray1)
     static let title = TextStyle.subTitle(color: .white)
+    static let emptyTitle = TextStyle.subTitle(color: .gray1)
     static let historyDate = TextStyle.caption(color: .white)
     static let emptyHistoryDate = TextStyle.caption(color: .gray1)
   }
@@ -36,6 +38,7 @@ class NotebookCell: UICollectionViewCell {
     let backgroundImage: UIImage?
     let historyDate: String?
     let stickers: [UIImage?]
+    let isPlaceholder: Bool
   }
 
 
@@ -153,8 +156,10 @@ class NotebookCell: UICollectionViewCell {
     print(Text.monthTitle.styled(with: Font.titleMonth).replace(key: "month", value: viewModel.month).string)
     self.titleLabel.attributedText = NSAttributedString.composed(
       of: [
-        Text.monthTitle.styled(with: Font.titleMonth).replace(key: "month", value: viewModel.month),
-        Text.titleSuffix.styled(with: Font.title)
+        Text.monthTitle
+          .styled(with: viewModel.isPlaceholder ? Font.emptyTitleMonth : Font.titleMonth)
+          .replace(key: "month", value: viewModel.month),
+        Text.titleSuffix.styled(with: viewModel.isPlaceholder ? Font.emptyTitle : Font.title)
       ]
     )
     self.backgroundImageView.image = viewModel.backgroundImage

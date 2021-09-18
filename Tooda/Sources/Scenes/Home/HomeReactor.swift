@@ -49,6 +49,7 @@ final class HomeReactor: Reactor {
   private let dependency: Dependency
 
   private var notebookImages: [UIImage?] = []
+  private var placeholderNotebookImage: UIImage?
   
   let initialState: State = State(
     date: Date(),
@@ -71,6 +72,8 @@ final class HomeReactor: Reactor {
       UIImage(type: .noteSkyblue),
       UIImage(type: .noteYellow)
     ]
+
+    self.placeholderNotebookImage = UIImage(type: .noteGray)
   }
 }
 
@@ -93,8 +96,8 @@ extension HomeReactor {
           year: 2021,
           month: 1,
           noteCount: 10,
-          createdAt: Date(),
-          updatedAt: Date(),
+          createdAt: Date(year: 2021, month: 9, day: 10),
+          updatedAt: Date(year: 2021, month: 9, day: 12),
           stickers: [
             .angry,
             .chicken,
@@ -152,21 +155,38 @@ extension HomeReactor {
   }
 
   private func mappingToNoteBooks(metas: [NotebookMeta]) -> [NotebookCell.ViewModel] {
-    return metas.enumerated().map { (index, item) in
-      let day = Calendar.current.dateComponents([.day], from: item.updatedAt, to: Date()).day
-      let historyDate: String? = {
-        guard let day = day, day > 0 else { return nil }
-        return "\(day)"
-      }()
+    var viewModels: [NotebookCell.ViewModel] = []
+    viewModels.append(
+      contentsOf:
+        metas.enumerated().map { (index, item) in
+          let day = Calendar.current.dateComponents([.day], from: item.updatedAt, to: Date()).day
+          let historyDate: String? = {
+            guard let day = day, day > 0 else { return nil }
+            return "\(day)"
+          }()
 
-      let backgroundImage: UIImage? = self.notebookImages[index % Const.notebookImagesCount]
+          let backgroundImage: UIImage? = self.notebookImages[index % Const.notebookImagesCount]
 
-      return NotebookCell.ViewModel(
-        month: "\(item.month)",
-        backgroundImage: backgroundImage,
-        historyDate: historyDate,
-        stickers: item.stickers.map { $0.image }
+          return NotebookCell.ViewModel(
+            month: "\(item.month)",
+            backgroundImage: backgroundImage,
+            historyDate: historyDate,
+            stickers: item.stickers.map { $0.image },
+            isPlaceholder: false
+          )
+        }
+    )
+
+    viewModels.append(
+      NotebookCell.ViewModel(
+        month: "\(metas.last?.month ?? Date().month)",
+        backgroundImage: self.placeholderNotebookImage,
+        historyDate: nil,
+        stickers: [],
+        isPlaceholder: true
       )
-    }
+    )
+
+    return viewModels
   }
 }
