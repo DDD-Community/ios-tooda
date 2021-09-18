@@ -94,21 +94,36 @@ extension HomeReactor {
           month: 1,
           noteCount: 10,
           createdAt: Date(),
-          updatedAt: Date()
+          updatedAt: Date(),
+          stickers: [
+            .angry,
+            .chicken,
+            .pencil
+          ]
         ),
         NotebookMeta(
           year: 2021,
           month: 1,
           noteCount: 10,
           createdAt: Date(),
-          updatedAt: Date()
+          updatedAt: Date(),
+          stickers: [
+            .omg,
+            .thinking,
+            .sad
+          ]
         ),
         NotebookMeta(
           year: 2021,
           month: 1,
           noteCount: 10,
           createdAt: Date(),
-          updatedAt: Date()
+          updatedAt: Date(),
+          stickers: [
+            .angry,
+            .chicken,
+            .chicken
+          ]
         )
       ])
     )
@@ -150,6 +165,7 @@ extension HomeReactor {
         month: "\(item.month)",
         backgroundImage: backgroundImage,
         historyDate: historyDate,
+        stickers: item.stickers.map { $0.image }
       )
     }
   }

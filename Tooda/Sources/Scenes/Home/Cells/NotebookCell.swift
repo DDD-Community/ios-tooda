@@ -35,6 +35,16 @@ class NotebookCell: UICollectionViewCell {
     let month: String
     let backgroundImage: UIImage?
     let historyDate: String?
+    let stickers: [UIImage?]
+  }
+
+
+  // MARK: Sticker Location
+
+  private enum StickerIndex: Int {
+    case first
+    case second
+    case third
   }
 
 
@@ -52,6 +62,8 @@ class NotebookCell: UICollectionViewCell {
   private let historyDateLabel = UILabel().then {
     $0.numberOfLines = 1
   }
+
+  private var stickers: [UIImageView] = []
 
 
   // MARK: Properties
@@ -83,6 +95,12 @@ class NotebookCell: UICollectionViewCell {
       $0.addSubview(self.titleLabel)
       $0.addSubview(self.historyDateLabel)
     }
+
+    for _ in 0..<3 {
+      let sticker = UIImageView().then { $0.contentMode = .scaleAspectFit }
+      self.stickers.append(sticker)
+      self.contentView.addSubview(sticker)
+    }
   }
 
   private func configureConstraints() {
@@ -101,6 +119,33 @@ class NotebookCell: UICollectionViewCell {
       $0.right.equalToSuperview().inset(22.0)
       $0.bottom.equalToSuperview().inset(16.0)
     }
+
+    self.stickers.enumerated().forEach { (offset, item) in
+      guard let index = StickerIndex(rawValue: offset) else { return }
+
+      switch index {
+      case .first:
+        item.snp.makeConstraints {
+          $0.size.equalTo(CGSize(width: 40.0, height: 40.0))
+          $0.top.equalToSuperview().inset(30.0)
+          $0.right.equalToSuperview().inset(80.0)
+        }
+
+      case .second:
+        item.snp.makeConstraints {
+          $0.size.equalTo(CGSize(width: 40.0, height: 40.0))
+          $0.top.equalToSuperview().inset(60.0)
+          $0.right.equalToSuperview().inset(30.0)
+        }
+
+      case .third:
+        item.snp.makeConstraints {
+          $0.size.equalTo(CGSize(width: 40.0, height: 40.0))
+          $0.top.equalToSuperview().inset(120.0)
+          $0.right.equalToSuperview().inset(50.0)
+        }
+      }
+    }
   }
 
   func configure(viewModel: ViewModel) {
@@ -113,6 +158,9 @@ class NotebookCell: UICollectionViewCell {
       ]
     )
     self.backgroundImageView.image = viewModel.backgroundImage
+    viewModel.stickers.enumerated().forEach {
+      self.stickers[$0.offset].image = $0.element
+    }
 
     guard let historyDate = viewModel.historyDate else {
       self.historyDateLabel.attributedText = Text.emptyHistoryDate.styled(with: Font.emptyHistoryDate)
