@@ -37,9 +37,18 @@ final class HomeReactor: Reactor {
   }
 
 
+  // MARK: Constants
+
+  private enum Const {
+    static let notebookImagesCount: Int = 7
+  }
+
+
   // MARK: Properties
 
   private let dependency: Dependency
+
+  private var notebookImages: [UIImage?] = []
   
   let initialState: State = State(
     date: Date(),
@@ -49,6 +58,19 @@ final class HomeReactor: Reactor {
   
   init(dependency: Dependency) {
     self.dependency = dependency
+    self.configureNotebookImages()
+  }
+
+  private func configureNotebookImages() {
+    self.notebookImages = [
+      UIImage(type: .noteRed),
+      UIImage(type: .noteGreen),
+      UIImage(type: .noteOrange),
+      UIImage(type: .notePurple),
+      UIImage(type: .noteRed),
+      UIImage(type: .noteSkyblue),
+      UIImage(type: .noteYellow)
+    ]
   }
 }
 
@@ -115,16 +137,19 @@ extension HomeReactor {
   }
 
   private func mappingToNoteBooks(metas: [NotebookMeta]) -> [NotebookCell.ViewModel] {
-    return metas.map {
-      let day = Calendar.current.dateComponents([.day], from: $0.updatedAt, to: Date()).day
+    return metas.enumerated().map { (index, item) in
+      let day = Calendar.current.dateComponents([.day], from: item.updatedAt, to: Date()).day
       let historyDate: String? = {
         guard let day = day, day > 0 else { return nil }
         return "\(day)"
       }()
 
+      let backgroundImage: UIImage? = self.notebookImages[index % Const.notebookImagesCount]
+
       return NotebookCell.ViewModel(
-        month: "\($0.month)",
-        historyDate: historyDate
+        month: "\(item.month)",
+        backgroundImage: backgroundImage,
+        historyDate: historyDate,
       )
     }
   }
