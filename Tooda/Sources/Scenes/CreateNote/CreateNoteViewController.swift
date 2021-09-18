@@ -125,8 +125,7 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
       .disposed(by: self.disposeBag)
     
     reactor.state
-      .map { $0.requestPermissionMessage }
-      .filter { $0 != nil }
+      .compactMap { $0.requestPermissionMessage }
       .observeOn(MainScheduler.asyncInstance)
       .subscribe(onNext: { [weak self] in
         self?.showAlertAndOpenAppSetting(message: $0)
@@ -134,8 +133,7 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
       .disposed(by: self.disposeBag)
     
     reactor.state
-      .map { $0.showAlertMessage }
-      .filter { $0 != nil }
+      .compactMap { $0.showAlertMessage }
       .observeOn(MainScheduler.asyncInstance)
       .subscribe(onNext: { [weak self] in
         self?.showAlert(message: $0)
