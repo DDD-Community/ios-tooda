@@ -35,7 +35,7 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
       cell.configure(reactor: cellReactor)
       
       cell.rx.didSelectedItemCell
-        .throttle(.milliseconds(5), scheduler: MainScheduler.instance)
+        .throttle(.milliseconds(500), scheduler: MainScheduler.instance)
         .map { Reactor.Action.didSelectedImageItem($0) }
         .subscribe(onNext: { [weak self] in
           self?.reactor?.action.onNext($0)
