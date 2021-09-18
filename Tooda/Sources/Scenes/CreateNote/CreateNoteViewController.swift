@@ -177,9 +177,4 @@ extension CreateNoteViewController {
     
     self.present(alertController, animated: true, completion: nil)
   }
-  
-  private func openAppSettingMenu() {
-    guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
-    UIApplication.shared.open(url, options: [:], completionHandler: nil)
-  }
 }
