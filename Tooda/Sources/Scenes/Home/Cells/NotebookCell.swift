@@ -91,7 +91,7 @@ class NotebookCell: UICollectionViewCell {
   // MARK: Configuring
 
   private func configureUI() {
-    self.backgroundColor = .black
+    self.backgroundColor = .clear
 
     self.contentView.do {
       $0.addSubview(self.backgroundImageView)
