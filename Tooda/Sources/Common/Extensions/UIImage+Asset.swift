@@ -13,6 +13,7 @@ enum AppImage: String {
   case searchBarButton = "search"
   case settingBarButton = "setting"
   case iconDownGray = "icon_down_gray"
+  case iconArrowRightGray = "icon_arrow_right_gray"
 }
 
 extension UIImage {
