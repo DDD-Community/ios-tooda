@@ -37,9 +37,19 @@ final class HomeReactor: Reactor {
   }
 
 
+  // MARK: Constants
+
+  private enum Const {
+    static let notebookImagesCount: Int = 7
+  }
+
+
   // MARK: Properties
 
   private let dependency: Dependency
+
+  private var notebookImages: [UIImage?] = []
+  private var placeholderNotebookImage: UIImage?
   
   let initialState: State = State(
     date: Date(),
@@ -49,6 +59,21 @@ final class HomeReactor: Reactor {
   
   init(dependency: Dependency) {
     self.dependency = dependency
+    self.configureNotebookImages()
+  }
+
+  private func configureNotebookImages() {
+    self.notebookImages = [
+      UIImage(type: .noteRed),
+      UIImage(type: .noteGreen),
+      UIImage(type: .noteOrange),
+      UIImage(type: .notePurple),
+      UIImage(type: .noteRed),
+      UIImage(type: .noteSkyblue),
+      UIImage(type: .noteYellow)
+    ]
+
+    self.placeholderNotebookImage = UIImage(type: .noteGray)
   }
 }
 
@@ -71,22 +96,37 @@ extension HomeReactor {
           year: 2021,
           month: 1,
           noteCount: 10,
-          createdAt: Date(),
-          updatedAt: Date()
+          createdAt: Date(year: 2021, month: 9, day: 10),
+          updatedAt: Date(year: 2021, month: 9, day: 12),
+          stickers: [
+            .angry,
+            .chicken,
+            .pencil
+          ]
         ),
         NotebookMeta(
           year: 2021,
           month: 1,
           noteCount: 10,
           createdAt: Date(),
-          updatedAt: Date()
+          updatedAt: Date(),
+          stickers: [
+            .wow,
+            .thinking,
+            .sad
+          ]
         ),
         NotebookMeta(
           year: 2021,
           month: 1,
           noteCount: 10,
           createdAt: Date(),
-          updatedAt: Date()
+          updatedAt: Date(),
+          stickers: [
+            .angry,
+            .chicken,
+            .chicken
+          ]
         )
       ])
     )
@@ -99,7 +139,7 @@ extension HomeReactor {
 }
 
 
-// MARK: - Mutate
+// MARK: - Reduce
 
 extension HomeReactor {
 
@@ -115,17 +155,38 @@ extension HomeReactor {
   }
 
   private func mappingToNoteBooks(metas: [NotebookMeta]) -> [NotebookCell.ViewModel] {
-    return metas.map {
-      let day = Calendar.current.dateComponents([.day], from: $0.updatedAt, to: Date()).day
-      let historyDate: String? = {
-        guard let day = day, day > 0 else { return nil }
-        return "\(day)"
-      }()
+    var viewModels: [NotebookCell.ViewModel] = []
+    viewModels.append(
+      contentsOf:
+        metas.enumerated().map { (index, item) in
+          let day = Calendar.current.dateComponents([.day], from: item.updatedAt, to: Date()).day
+          let historyDate: String? = {
+            guard let day = day, day > 0 else { return nil }
+            return "\(day)"
+          }()
 
-      return NotebookCell.ViewModel(
-        month: "\($0.month)",
-        historyDate: historyDate
+          let backgroundImage: UIImage? = self.notebookImages[index % Const.notebookImagesCount]
+
+          return NotebookCell.ViewModel(
+            month: "\(item.month)",
+            backgroundImage: backgroundImage,
+            historyDate: historyDate,
+            stickers: item.stickers.map { $0.image },
+            isPlaceholder: false
+          )
+        }
+    )
+
+    viewModels.append(
+      NotebookCell.ViewModel(
+        month: "\(metas.last?.month ?? Date().month)",
+        backgroundImage: self.placeholderNotebookImage,
+        historyDate: nil,
+        stickers: [],
+        isPlaceholder: true
       )
-    }
+    )
+
+    return viewModels
   }
 }

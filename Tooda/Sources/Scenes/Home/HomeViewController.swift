@@ -65,7 +65,7 @@ final class HomeViewController: BaseViewController<HomeReactor> {
       $0.scrollDirection = .horizontal
       $0.minimumLineSpacing = 30.0
       $0.minimumInteritemSpacing = 0.0
-      $0.sectionInset = .init(left: 72.0)
+      $0.sectionInset = .init(horizontal: 72.0)
     }
   ).then {
     $0.backgroundColor = .clear
