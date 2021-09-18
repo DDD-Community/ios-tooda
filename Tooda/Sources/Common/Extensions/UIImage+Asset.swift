@@ -9,9 +9,19 @@
 import UIKit
 
 enum AppImage: String {
+  // Home
   case backBarButton = "back"
   case searchBarButton = "search"
   case settingBarButton = "setting"
+  case noteBlue = "note-blue"
+  case noteGray = "note-gray"
+  case noteGreen = "note-green"
+  case noteOrange = "note-orange"
+  case notePurple = "note-purple"
+  case noteRed = "note-red"
+  case noteSkyblue = "note-skyblue"
+  case noteYellow = "note-yellow"
+
   case login = "login"
   case iconDownGray = "icon_down_gray"
 }
