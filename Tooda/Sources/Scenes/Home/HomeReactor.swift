@@ -111,7 +111,7 @@ extension HomeReactor {
           createdAt: Date(),
           updatedAt: Date(),
           stickers: [
-            .omg,
+            .wow,
             .thinking,
             .sad
           ]

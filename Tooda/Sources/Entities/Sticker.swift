@@ -10,7 +10,7 @@ import UIKit
 
 enum Sticker: String, Codable {
   case sad = "SAD"
-  case omg = "OMG"
+  case wow = "OMG"
   case angry = "ANGRY"
   case thinking = "THINKING"
   case chicken = "CHICKEN"
@@ -23,22 +23,22 @@ extension Sticker {
   var image: UIImage? {
     switch self {
     case .sad:
-      return UIImage(type: .sad)
+      return UIImage(type: .stickerSad)
 
-    case .omg:
-      return UIImage(type: .omg)
+    case .wow:
+      return UIImage(type: .stickerWow)
 
     case .angry:
-      return UIImage(type: .angry)
+      return UIImage(type: .stickerAngry)
 
     case .thinking:
-      return UIImage(type: .thinking)
+      return UIImage(type: .stickerThinking)
 
     case .chicken:
-      return UIImage(type: .chicken)
+      return UIImage(type: .stickerThinking)
 
     case .pencil:
-      return UIImage(type: .pencil)
+      return UIImage(type: .stickerPencil)
     }
   }
 }
