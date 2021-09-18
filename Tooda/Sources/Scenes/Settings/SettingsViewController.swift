@@ -16,7 +16,7 @@ class SettingsViewController: BaseViewController<HomeReactor> {
   
   // MARK: - UI Components
   
-  private lazy var tableView = UITableView().then {
+  private var tableView = UITableView().then {
     $0.backgroundColor = .white
     $0.register(SettingsHeaderView.self)
     $0.register(SettingsInfoCell.self)
