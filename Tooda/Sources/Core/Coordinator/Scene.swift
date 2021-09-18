@@ -11,6 +11,7 @@ import UIKit
 import ReactorKit
 
 enum Scene {
+  case login
   case home
   case createNote
 }

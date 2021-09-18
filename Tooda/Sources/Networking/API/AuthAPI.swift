@@ -19,7 +19,7 @@ extension AuthAPI: BaseAPI {
   var path: String {
     switch self {
     case .signUp:
-      return "/auth/sign-up"
+      return "auth/sign-up"
     case .refresh:
       return "/auth/refresh"
     }
