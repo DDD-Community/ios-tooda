@@ -33,11 +33,17 @@ class NotebookCell: UICollectionViewCell {
 
   struct ViewModel {
     let month: String
+    let backgroundImage: UIImage?
     let historyDate: String?
   }
 
 
   // MARK: UI
+
+  private let backgroundImageView = UIImageView().then {
+    $0.contentMode = .scaleAspectFill
+    $0.clipsToBounds = true
+  }
 
   private let titleLabel = UILabel().then {
     $0.numberOfLines = 1
@@ -73,12 +79,17 @@ class NotebookCell: UICollectionViewCell {
     self.backgroundColor = .black
 
     self.contentView.do {
+      $0.addSubview(self.backgroundImageView)
       $0.addSubview(self.titleLabel)
       $0.addSubview(self.historyDateLabel)
     }
   }
 
   private func configureConstraints() {
+    self.backgroundImageView.snp.makeConstraints {
+      $0.edges.equalToSuperview()
+    }
+
     self.titleLabel.snp.makeConstraints {
       $0.left.equalToSuperview().inset(22.0)
       $0.right.equalToSuperview().inset(22.0)
@@ -101,6 +112,8 @@ class NotebookCell: UICollectionViewCell {
         Text.titleSuffix.styled(with: Font.title)
       ]
     )
+    self.backgroundImageView.image = viewModel.backgroundImage
+
     guard let historyDate = viewModel.historyDate else {
       self.historyDateLabel.attributedText = Text.emptyHistoryDate.styled(with: Font.emptyHistoryDate)
       return
