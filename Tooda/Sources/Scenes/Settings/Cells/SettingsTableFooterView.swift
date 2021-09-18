@@ -15,20 +15,22 @@ class SettingsTableFooterView: BaseTableViewCell {
   enum Font {
     static let title = TextStyle.caption(color: .gray3)
   }
+  
+  enum Text {
+    static let copyright = "Copyright © tooda, All Rights Reserved."
+  }
 
   // MARK: - UI Components
   
-  private let titleLabel = UILabel()
-  
-  // MARK: - Internal methods
-  
-  func configure(with title: String) {
-    titleLabel.attributedText = title.styled(with: Font.title)
+  private let titleLabel = UILabel().then {
+    $0.attributedText = Text.copyright.styled(with: Font.title)
+    $0.textAlignment = .center
   }
   
   // MARK: - configureUI
   
   override func configureUI() {
+    backgroundColor = .gray5
     contentView.addSubview(titleLabel)
   }
 

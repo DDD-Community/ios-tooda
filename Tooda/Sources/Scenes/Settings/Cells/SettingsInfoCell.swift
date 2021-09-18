@@ -10,15 +10,22 @@ import UIKit
 
 class SettingsInfoCell: BaseTableViewCell {
   
+  // MARK: - Constants
+  
   private enum Font {
     static let title = TextStyle.body2(color: .gray2)
   }
+  
+  // MARK: - UI Components
   
   private let titleLabel = UILabel()
   
   private let trailingImageView = UIImageView().then {
     $0.contentMode = .scaleAspectFit
+    $0.image = UIImage(type: .iconArrowRightGray)
   }
+  
+  // MARK: - Con(De)structor
 
   override init(
     style: UITableViewCell.CellStyle,

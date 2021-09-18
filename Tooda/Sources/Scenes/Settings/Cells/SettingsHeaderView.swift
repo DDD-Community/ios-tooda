@@ -8,7 +8,9 @@
 
 import UIKit
 
-class SettingsHeaderView: UITableViewCell {
+class SettingsHeaderView: BaseTableViewCell {
+  
+  // MARK: - Constants
   
   private enum Font {
     static let title = TextStyle.captionBold(color: .gray2)
@@ -18,6 +20,8 @@ class SettingsHeaderView: UITableViewCell {
   
   private let titleLabel = UILabel()
   
+  // MARK: - Con(De)structor
+  
   override init(
     style: UITableViewCell.CellStyle,
     reuseIdentifier: String?
@@ -26,7 +30,6 @@ class SettingsHeaderView: UITableViewCell {
       style: style,
       reuseIdentifier: reuseIdentifier
     )
-    configureUI()
   }
   
   required init?(coder: NSCoder) {
@@ -38,19 +41,17 @@ class SettingsHeaderView: UITableViewCell {
   func configure(with title: String) {
     titleLabel.attributedText = title.styled(with: Font.title)
   }
-}
-
-// MARK: - configureUI
-private extension SettingsHeaderView {
-
-  func configureUI() {
+  
+  // MARK: - configureUI
+  
+  override func configureUI() {
     contentView.addSubview(titleLabel)
   }
 
-  func configureConstraints() {
+  override func setupConstraints() {
     titleLabel.snp.makeConstraints {
       $0.top.equalToSuperview().inset(24)
-      $0.leading.equalToSuperview().inset(20)
+      $0.leading.trailing.equalToSuperview().inset(20)
     }
   }
 }

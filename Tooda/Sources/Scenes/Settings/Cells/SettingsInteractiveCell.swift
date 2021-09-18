@@ -79,6 +79,8 @@ class SettingsInteractiveCell: BaseTableViewCell {
     cellSwitch.snp.makeConstraints {
       $0.trailing.equalToSuperview().inset(20)
       $0.centerY.equalToSuperview()
+      $0.width.equalTo(48)
+      $0.height.equalTo(24)
     }
   }
 }

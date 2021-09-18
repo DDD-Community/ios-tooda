@@ -8,7 +8,13 @@
 
 import UIKit
 
+import RxCocoa
+import RxSwift
+import RxDataSources
+
 class SettingsViewController: BaseViewController<HomeReactor> {
+  
+  // MARK: - UI Components
   
   private lazy var tableView = UITableView().then {
     $0.backgroundColor = .white
@@ -19,14 +25,15 @@ class SettingsViewController: BaseViewController<HomeReactor> {
     $0.register(SettingsTableFooterView.self)
   }
   
+  // MARK: - Overridden: ParentClass
+  
   override func viewDidLoad() {
     super.viewDidLoad()
     
   }
   
   override func bind(reactor: HomeReactor) {
-    self.tableView.rx.setDelegate(self)
-      .disposed(by: disposeBag)
+    
   }
   
   // MARK: - configureUI
