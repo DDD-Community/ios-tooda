@@ -25,6 +25,7 @@ final class CreateNoteViewReactor: Reactor {
     case dismissView
     case regist
     case didSelectedImageItem(IndexPath)
+    case uploadImage(Data)
   }
 
   enum Mutation {
@@ -56,6 +57,8 @@ final class CreateNoteViewReactor: Reactor {
       return .just(Mutation.initializeForm(makeSections()))
     case .didSelectedImageItem(let index):
       return checkAuthorizationAndSelectedItem(indexPath: index)
+    case .uploadImage(let data):
+      return .empty()
     default:
       return .empty()
     }
@@ -124,6 +127,16 @@ final class CreateNoteViewReactor: Reactor {
           return .just(Mutation.requestPermissionMessage("테스트"))
       }
     }
+  }
+}
+
+// MARK: Upload Images
+
+extension CreateNoteViewReactor {
+  private func uploadImage(_ data: Data) -> Observable<String> {
+    return self.dependency.service.request(NoteAPI.addImage(data: data))
+      .map(String.self)
+      .asObservable()
   }
 }
 

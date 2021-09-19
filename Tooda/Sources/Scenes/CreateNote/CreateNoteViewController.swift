@@ -219,8 +219,8 @@ extension CreateNoteViewController: UIImagePickerControllerDelegate, UINavigatio
   
   func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
     
-    if let image = info[.editedImage] as? UIImage {
-      dump(image)
+    if let image = info[.editedImage] as? UIImage, let imageData = image.jpegData(compressionQuality: 1.0) {
+      self.reactor?.action.onNext(.uploadImage(imageData))
     }
     
     picker.dismiss(animated: true, completion: nil)
