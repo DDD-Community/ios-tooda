@@ -30,9 +30,17 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
       let cell = tableView.dequeue(EmptyNoteStockCell.self, indexPath: indexPath)
       cell.configure(reactor: reactor)
       return cell
-    case .image(let reactor):
+    case .image(let cellReactor):
       let cell = tableView.dequeue(NoteImageCell.self, indexPath: indexPath)
-      cell.configure(reactor: reactor)
+      cell.configure(reactor: cellReactor)
+      
+      cell.rx.didSelectedItemCell
+        .throttle(.milliseconds(500), scheduler: MainScheduler.instance)
+        .map { Reactor.Action.didSelectedImageItem($0) }
+        .subscribe(onNext: { [weak self] in
+          self?.reactor?.action.onNext($0)
+        })
+        .disposed(by: cell.disposeBag)
       
       cell.selectionStyle = .none
       
@@ -115,6 +123,22 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
       .debug()
       .bind(to: self.tableView.rx.items(dataSource: dataSource))
       .disposed(by: self.disposeBag)
+    
+    reactor.state
+      .compactMap { $0.requestPermissionMessage }
+      .observeOn(MainScheduler.asyncInstance)
+      .subscribe(onNext: { [weak self] in
+        self?.showAlertAndOpenAppSetting(message: $0)
+      })
+      .disposed(by: self.disposeBag)
+    
+    reactor.state
+      .compactMap { $0.showAlertMessage }
+      .observeOn(MainScheduler.asyncInstance)
+      .subscribe(onNext: { [weak self] in
+        self?.showAlert(message: $0)
+      })
+      .disposed(by: self.disposeBag)
   }
 }
 
@@ -123,5 +147,32 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
 extension CreateNoteViewController {
   func configureNavigation() {
     self.navigationItem.title = Date().description
+  }
+}
+
+// MARK: ETC
+
+extension CreateNoteViewController {
+  func showAlert(message: String?) {
+    let alertController = UIAlertController(title: nil, message: message, preferredStyle: .alert)
+    
+    let ok = UIAlertAction.init(title: "확인", style: .default, handler: nil)
+    
+    alertController.addAction(ok)
+    
+    self.present(alertController, animated: true, completion: nil)
+  }
+  
+  func showAlertAndOpenAppSetting(message: String?) {
+    
+    let alertController = UIAlertController(title: nil, message: message, preferredStyle: .alert)
+    
+    let ok = UIAlertAction.init(title: "확인", style: .default, handler: { [weak self] _ in
+      self?.openAppSettingMenu()
+    })
+    
+    alertController.addAction(ok)
+    
+    self.present(alertController, animated: true, completion: nil)
   }
 }

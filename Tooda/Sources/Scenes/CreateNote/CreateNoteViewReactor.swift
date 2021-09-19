@@ -24,14 +24,19 @@ final class CreateNoteViewReactor: Reactor {
     case initializeForm
     case dismissView
     case regist
+    case didSelectedImageItem(IndexPath)
   }
 
   enum Mutation {
     case initializeForm([NoteSection])
+    case requestPermissionMessage(String)
+    case showAlertMessage(String?)
   }
 
   struct State {
     var sections: [NoteSection]
+    var requestPermissionMessage: String?
+    var showAlertMessage: String?
   }
 
   let initialState: State
@@ -47,6 +52,8 @@ final class CreateNoteViewReactor: Reactor {
     switch action {
     case .initializeForm:
       return .just(Mutation.initializeForm(makeSections()))
+    case .didSelectedImageItem(let index):
+      return checkAuthorizationAndSelectedItem(indexPath: index)
     default:
       return .empty()
     }
@@ -57,6 +64,10 @@ final class CreateNoteViewReactor: Reactor {
     switch mutation {
     case .initializeForm(let sections):
       newState.sections = sections
+    case .requestPermissionMessage(let message):
+      newState.requestPermissionMessage = message
+    case .showAlertMessage(let message):
+      newState.showAlertMessage = message
     }
 
     return newState
@@ -65,6 +76,50 @@ final class CreateNoteViewReactor: Reactor {
   private func makeSections() -> [NoteSection] {
     let sections = self.dependency.createDiarySectionFactory(self.dependency.authorization, self.dependency.coordinator)
     return sections
+  }
+  
+  private func didSelectedImageItem(_ indexPath: IndexPath) -> Observable<Mutation> {
+    
+    let section = self.currentState.sections[NoteSection.Identity.image.rawValue]
+    
+    guard let imageCellReactor = section.items.compactMap { items -> NoteImageCellReactor? in
+      if case let NoteSectionItem.image(value) = items {
+        return value
+      } else {
+        return nil
+      }
+    }.first else { return .empty() }
+    
+    let imageItemSection = imageCellReactor.currentState.sections[indexPath.section]
+    
+    let imageSectionItem = imageItemSection.items[indexPath.row]
+    
+    switch imageSectionItem {
+      case .empty:
+        guard imageCellReactor.currentState.sections[NoteImageSection.Identity.item.rawValue].items.count < 3 else {
+          return .just(.showAlertMessage("이미지는 최대 3개까지 등록 가능합니다."))
+        }
+        
+        print("이미지 등록")
+      case .item(let reactor):
+        print("이미지 삭제: \(reactor.currentState.item.imageURL)")
+    }
+    
+    return .empty()
+  }
+  
+  private func checkAuthorizationAndSelectedItem(indexPath: IndexPath) -> Observable<Mutation> {
+    let service = self.dependency.authorization
+    
+    return service.photoLibrary.flatMap { [weak self] status -> Observable<Mutation> in
+      switch status {
+        case .authorized:
+          guard let mutation = self?.didSelectedImageItem(indexPath) else { return .empty() }
+          return mutation
+        default:
+          return .just(Mutation.requestPermissionMessage("테스트"))
+      }
+    }
   }
 }
 
