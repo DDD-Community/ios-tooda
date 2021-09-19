@@ -8,7 +8,7 @@
 
 import UIKit
 
-class SettingsTableFooterView: BaseTableViewCell {
+final class SettingsTableFooterView: BaseTableViewCell {
   
   // MARK: - Constants
   

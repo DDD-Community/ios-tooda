@@ -8,7 +8,7 @@
 
 import UIKit
 
-class SettingsInteractiveCell: BaseTableViewCell {
+final class SettingsInteractiveCell: BaseTableViewCell {
   
   // MARK: - Constants
   

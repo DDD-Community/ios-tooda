@@ -8,7 +8,7 @@
 
 import UIKit
 
-class SettingsHeaderView: BaseTableViewCell {
+final class SettingsHeaderView: BaseTableViewCell {
   
   // MARK: - Constants
   
