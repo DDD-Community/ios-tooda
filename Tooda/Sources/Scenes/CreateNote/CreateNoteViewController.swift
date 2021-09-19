@@ -145,7 +145,7 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
       .compactMap { $0 }
       .asDriver(onErrorJustReturn: ())
       .drive(onNext: { [weak self] _ in
-        self?.actionSheetAlert()
+        self?.showPhotoPicker()
       }).disposed(by: self.disposeBag)
   }
 }
@@ -182,6 +182,33 @@ extension CreateNoteViewController {
     alertController.addAction(ok)
     
     self.present(alertController, animated: true, completion: nil)
+  }
+  
+  private func showPhotoPicker() {
+    let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+    
+    let cancel = UIAlertAction(title: "취소", style: .cancel, handler: nil)
+    let camera = UIAlertAction(title: "카메라", style: .default) { [weak self] _ in
+      self?.showPickView(by: .camera)
+    }
+    let album = UIAlertAction(title: "앨범", style: .default) { [weak self] _ in
+      self?.showPickView(by: .photoLibrary)
+    }
+    
+    alert.addAction(cancel)
+    alert.addAction(camera)
+    alert.addAction(album)
+    
+    present(alert, animated: true, completion: nil)
+  }
+  
+  private func showPickView(by: UIImagePickerController.SourceType) {
+    let vc = UIImagePickerController()
+    vc.sourceType = by
+    vc.delegate = self
+    vc.allowsEditing = true
+    
+    present(vc, animated: true, completion: nil)
   }
 }
 
