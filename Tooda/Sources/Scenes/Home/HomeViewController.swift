@@ -161,4 +161,27 @@ extension HomeViewController: UICollectionViewDelegateFlowLayout {
   func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
     return Metric.notebookCellSize
   }
+
+  func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+    targetContentOffset.pointee = scrollView.contentOffset
+
+    let maxCount = self.notebookCollectionView.numberOfItems(inSection: 0) - 1
+    let estimatedIndex = (scrollView.contentOffset.x + Metric.notebookContentInset.left) / Metric.notebookCellSize.width
+    let index: Int = {
+      if velocity.x > 0 {
+        return min(maxCount, Int(ceil(estimatedIndex)))
+      } else if velocity.x < 0 {
+        return max(0, Int(floor(estimatedIndex)))
+      } else {
+        let index = Int(round(estimatedIndex))
+        return index < 0 ? 0 : min(maxCount, index)
+      }
+    }()
+
+    self.notebookCollectionView.scrollToItem(
+      at: .init(item: index, section: 0),
+      at: .centeredHorizontally,
+      animated: true
+    )
+  }
 }
