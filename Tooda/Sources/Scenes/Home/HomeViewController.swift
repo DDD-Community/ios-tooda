@@ -24,7 +24,7 @@ final class HomeViewController: BaseViewController<HomeReactor> {
   }
 
   private enum Metric {
-    static let noteboolCellSize = CGSize(
+    static let notebookCellSize = CGSize(
       width: ceil(230.0 / 375.0 * UIScreen.main.bounds.size.width),
       height: ceil(323.0 / 812.0 * UIScreen.main.bounds.size.height)
     )
@@ -147,7 +147,7 @@ final class HomeViewController: BaseViewController<HomeReactor> {
       $0.left.equalToSuperview()
       $0.right.equalToSuperview()
       $0.top.equalTo(self.noteCountLabel.snp.bottom).offset(35.0)
-      $0.height.equalTo(Metric.noteboolCellSize.height)
+      $0.height.equalTo(Metric.notebookCellSize.height)
     }
   }
 }
@@ -158,6 +158,6 @@ final class HomeViewController: BaseViewController<HomeReactor> {
 extension HomeViewController: UICollectionViewDelegateFlowLayout {
 
   func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-    return Metric.noteboolCellSize
+    return Metric.notebookCellSize
   }
 }
