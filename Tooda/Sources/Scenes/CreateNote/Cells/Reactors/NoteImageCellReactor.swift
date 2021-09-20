@@ -104,13 +104,6 @@ final class NoteImageCellReactor: Reactor {
   }
 }
 
-// TODO: 이미지 셀 영역을 위한 코드, 제거 예정
-let testNotes: [NoteImage] = [
-  .init(id: 0, url: "aaaaaaaaa"),
-  .init(id: 1, url: "bbbbbbbbb"),
-  .init(id: 2, url: "ccccccccc")
-]
-
 typealias NoteImageSectionType = ([NoteImage]) -> [NoteImageSection]
 
 let noteImageSectionFactory: NoteImageSectionType = { images -> [NoteImageSection] in
