@@ -126,7 +126,6 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
     // State
     reactor.state
       .map { $0.sections }
-      .debug()
       .bind(to: self.tableView.rx.items(dataSource: dataSource))
       .disposed(by: self.disposeBag)
     
