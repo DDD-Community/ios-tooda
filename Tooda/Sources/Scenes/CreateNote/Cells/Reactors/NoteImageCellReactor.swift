@@ -21,7 +21,7 @@ final class NoteImageCellReactor: Reactor {
   }
   
   enum Action {
-    case initiailizeSection
+    case fetchSections
     case addImage(String)
   }
 
@@ -40,13 +40,13 @@ final class NoteImageCellReactor: Reactor {
 
   init(dependency: Dependency) {
     self.dependency = dependency
-    initialState = State(sections: [])
+    initialState = State(sections: dependency.factory([]))
   }
 
   func mutate(action: Action) -> Observable<Mutation> {
     switch action {
-      case .initiailizeSection:
-        return .just(Mutation.fetchSection(self.generateSection(images: [])))
+      case .fetchSections:
+        return self.fetchAlreadyExistSections()
       case .addImage(let url):
         return self.addImageSectionItem(imageURL: url)
     }
@@ -63,11 +63,12 @@ final class NoteImageCellReactor: Reactor {
   }
   
   private func generateSection(images: [NoteImage]) -> [NoteImageSection] {
-    
-    // testCode
-    
+    return self.dependency.factory(images)
+  }
+  
+  private func fetchAlreadyExistSections() -> Observable<Mutation> {
     guard let section = self.currentState.sections[safe: NoteImageSection.Identity.item.rawValue] else {
-      return self.dependency.factory([])
+      return .empty()
     }
     
     let imageItemCellReactors = section.items.compactMap { sectionItems -> NoteImageItemCellReactor? in
@@ -80,7 +81,9 @@ final class NoteImageCellReactor: Reactor {
     
     let images = imageItemCellReactors.map { $0.currentState.item }
     
-    return self.dependency.factory(images)
+    let sections = self.dependency.factory(images)
+    
+    return Observable.just(.fetchSection(sections))
   }
   
   private func addImageSectionItem(imageURL: String) -> Observable<Mutation> {
