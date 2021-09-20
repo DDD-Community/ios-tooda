@@ -28,6 +28,7 @@ final class HomeViewController: BaseViewController<HomeReactor> {
       width: ceil(230.0 / 375.0 * UIScreen.main.bounds.size.width),
       height: ceil(323.0 / 812.0 * UIScreen.main.bounds.size.height)
     )
+    static let notebookContentInset: UIEdgeInsets = .init(horizontal: 72.0)
   }
 
   private enum Const {
@@ -65,12 +66,12 @@ final class HomeViewController: BaseViewController<HomeReactor> {
       $0.scrollDirection = .horizontal
       $0.minimumLineSpacing = 30.0
       $0.minimumInteritemSpacing = 0.0
-      $0.sectionInset = .init(horizontal: 72.0)
     }
   ).then {
     $0.backgroundColor = .clear
     $0.showsVerticalScrollIndicator = false
     $0.showsHorizontalScrollIndicator = false
+    $0.contentInset = Metric.notebookContentInset
     $0.register(NotebookCell.self, forCellWithReuseIdentifier: Const.notebookCellIdentifier)
   }
 
