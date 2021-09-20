@@ -8,6 +8,7 @@
 
 import Foundation
 import ReactorKit
+import Then
 
 final class CreateNoteViewReactor: Reactor {
   
@@ -37,8 +38,8 @@ final class CreateNoteViewReactor: Reactor {
   }
 
   // TODO: sections외 다른 변수들을 하나의 enum으로 관리할 수 있는 방법으로 리팩토링 예정
-  struct State {
-    var sections: [NoteSection]
+  struct State: Then {
+    var sections: [NoteSection] = []
     var requestPermissionMessage: String?
     var showAlertMessage: String?
     var showPhotoPicker: Void?
@@ -50,7 +51,7 @@ final class CreateNoteViewReactor: Reactor {
 
   init(dependency: Dependency) {
     self.dependency = dependency
-    self.initialState = State(sections: [])
+    self.initialState = State()
   }
 
   func mutate(action: Action) -> Observable<Mutation> {
@@ -70,7 +71,15 @@ final class CreateNoteViewReactor: Reactor {
   }
 
   func reduce(state: State, mutation: Mutation) -> State {
-    var newState = state
+    
+    // do, then 을해서 초기값을 막아줄 수 있음
+    var newState = State().with {
+      $0.sections = state.sections
+      $0.requestPermissionMessage = nil
+      $0.showAlertMessage = nil
+      $0.showPhotoPicker = nil
+    }
+    
     switch mutation {
     case .initializeForm(let sections):
       newState.sections = sections
@@ -141,9 +150,7 @@ final class CreateNoteViewReactor: Reactor {
 
 extension CreateNoteViewReactor {
   private func uploadImage(_ data: Data) -> Observable<String> {
-    return self.dependency.service.request(NoteAPI.addImage(data: data))
-      .map(String.self)
-      .asObservable()
+    return Observable.just("aaaaa")
   }
 }
 
