@@ -33,6 +33,7 @@ final class CreateNoteViewReactor: Reactor {
     case requestPermissionMessage(String)
     case showAlertMessage(String?)
     case showPhotoPicker
+    case fetchImageSection(NoteSectionItem)
   }
 
   // TODO: sections외 다른 변수들을 하나의 enum으로 관리할 수 있는 방법으로 리팩토링 예정
@@ -59,7 +60,10 @@ final class CreateNoteViewReactor: Reactor {
     case .didSelectedImageItem(let index):
       return checkAuthorizationAndSelectedItem(indexPath: index)
     case .uploadImage(let data):
-      return .empty()
+      return self.uploadImage(data)
+        .flatMap { [weak self] response -> Observable<Mutation> in
+        return self?.fetchImageSection(with: response) ?? .empty()
+      }
     default:
       return .empty()
     }
@@ -76,6 +80,8 @@ final class CreateNoteViewReactor: Reactor {
       newState.showAlertMessage = message
     case .showPhotoPicker:
       newState.showPhotoPicker = ()
+    case .fetchImageSection(let sectionItem):
+      newState.sections[NoteSection.Identity.image.rawValue].items = [sectionItem]
     }
 
     return newState
@@ -138,6 +144,27 @@ extension CreateNoteViewReactor {
     return self.dependency.service.request(NoteAPI.addImage(data: data))
       .map(String.self)
       .asObservable()
+  }
+}
+
+// MARK: - Fetch ImageSections
+
+extension CreateNoteViewReactor {
+  private func fetchImageSection(with imageURL: String) -> Observable<Mutation> {
+    let section = self.currentState.sections[NoteSection.Identity.image.rawValue]
+
+    guard let imageCellReactor = section.items.compactMap({ items -> NoteImageCellReactor? in
+      if case let NoteSectionItem.image(value) = items {
+        return value
+      } else {
+        return nil
+      }
+    }).first else { return .empty() }
+
+
+    imageCellReactor.action.onNext(.addImage(imageURL))
+
+    return .empty()
   }
 }
 

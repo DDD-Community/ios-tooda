@@ -22,6 +22,7 @@ final class NoteImageCellReactor: Reactor {
   
   enum Action {
     case initiailizeSection
+    case addImage(String)
   }
 
   enum Mutation {
@@ -45,7 +46,9 @@ final class NoteImageCellReactor: Reactor {
   func mutate(action: Action) -> Observable<Mutation> {
     switch action {
       case .initiailizeSection:
-        return .just(Mutation.fetchSection(self.generateSection(images: testNotes)))
+        return .just(Mutation.fetchSection(self.generateSection(images: [])))
+      case .addImage(let url):
+        return self.addImageSectionItem(imageURL: url)
     }
   }
   
@@ -54,15 +57,47 @@ final class NoteImageCellReactor: Reactor {
     switch mutation {
       case .fetchSection(let sections):
         newState.sections = sections
-      default:
-        break
     }
     
     return newState
   }
   
   private func generateSection(images: [NoteImage]) -> [NoteImageSection] {
+    
+    // testCode
+    
+    guard let section = self.currentState.sections[safe: NoteImageSection.Identity.item.rawValue] else {
+      return self.dependency.factory([])
+    }
+    
+    let imageItemCellReactors = section.items.compactMap { sectionItems -> NoteImageItemCellReactor? in
+      if case let NoteImageSectionItem.item(value) = sectionItems {
+        return value
+      } else {
+        return nil
+      }
+    }
+    
+    let images = imageItemCellReactors.map { $0.currentState.item }
+    
     return self.dependency.factory(images)
+  }
+  
+  private func addImageSectionItem(imageURL: String) -> Observable<Mutation> {
+    // Todo: NoteImage 모델은 상세에서만 쓰일것 같아 ItemReactor 모델 추후변경 예정
+    let item = NoteImage.init(id: 0, url: imageURL)
+    let reactor = NoteImageItemCellReactor(item: item)
+    let sectionItem = NoteImageSectionItem.item(reactor)
+    
+    var sections = self.currentState.sections
+    
+    var sectionItems = sections[NoteImageSection.Identity.item.rawValue].items
+    
+    sectionItems.append(sectionItem)
+    
+    sections[NoteImageSection.Identity.item.rawValue].items = sectionItems
+    
+    return .just(.fetchSection(sections))
   }
 }
 
