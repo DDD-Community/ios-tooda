@@ -25,14 +25,16 @@ final class HomeReactor: Reactor {
   
   enum Action {
     case load
+    case paging(index: Int)
   }
 
   enum Mutation {
     case setNotebooks([NotebookMeta])
+    case selectNotebook(notebookIndex: Int)
   }
   
   struct State {
-    var date: Date
+    var selectedNotobook: NotebookMeta
     var notebooks: [NotebookCell.ViewModel]
   }
 
@@ -51,12 +53,20 @@ final class HomeReactor: Reactor {
   private var notebookImages: [UIImage?] = []
   private var placeholderNotebookImage: UIImage?
   
-  let initialState: State = State(
-    date: Date(),
-    notebooks: []
-  )
-  
-  
+  let initialState: State = {
+    let currentDate = Date()
+
+    return State(
+      selectedNotobook: NotebookMeta(
+        year: currentDate.year,
+        month: currentDate.month,
+        createdAt: currentDate,
+        updatedAt: currentDate
+      ),
+      notebooks: []
+    )
+  }()
+
   init(dependency: Dependency) {
     self.dependency = dependency
     self.configureNotebookImages()
@@ -86,6 +96,9 @@ extension HomeReactor {
     switch action {
     case .load:
       return self.loadMutation()
+
+    case let .paging(index):
+      return Observable<Mutation>.just(.selectNotebook(notebookIndex: index))
     }
   }
 
@@ -136,6 +149,8 @@ extension HomeReactor {
 //      .asObservable()
 //      .map { Mutation.setNotebooks($0) }
   }
+
+
 }
 
 
@@ -149,6 +164,9 @@ extension HomeReactor {
     switch mutation {
     case let .setNotebooks(metas):
       newState.notebooks = self.mappingToNoteBooks(metas: metas)
+
+    case let .selectNotebook(notebookIndex):
+      break
     }
 
     return newState

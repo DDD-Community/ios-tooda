@@ -17,6 +17,22 @@ struct NotebookMeta: Codable {
   var updatedAt: Date
   var stickers: [Sticker] = []
 
+  init(
+    year: Int,
+    month: Int,
+    noteCount: Int = 0,
+    createdAt: Date = Date(),
+    updatedAt: Date = Date(),
+    stickers: [Sticker] = []
+  ) {
+    self.year = year
+    self.month = month
+    self.noteCount = noteCount
+    self.createdAt = createdAt
+    self.updatedAt = updatedAt
+    self.stickers = []
+  }
+
   private enum CodingKeys: String, CodingKey {
     case year
     case month
