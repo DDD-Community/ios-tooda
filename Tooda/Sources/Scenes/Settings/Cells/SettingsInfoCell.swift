@@ -25,22 +25,6 @@ final class SettingsInfoCell: BaseTableViewCell {
     $0.image = UIImage(type: .iconArrowRightGray)
   }
   
-  // MARK: - Con(De)structor
-
-  override init(
-    style: UITableViewCell.CellStyle,
-    reuseIdentifier: String?
-  ) {
-    super.init(
-      style: style,
-      reuseIdentifier: reuseIdentifier
-    )
-  }
-  
-  required init?(coder: NSCoder) {
-    fatalError("init(coder:) has not been implemented")
-  }
-  
   // MARK: - Internal methods
   
   func configure(with title: String) {

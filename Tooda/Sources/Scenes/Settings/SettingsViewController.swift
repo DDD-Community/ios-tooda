@@ -12,7 +12,7 @@ import RxCocoa
 import RxSwift
 import RxDataSources
 
-class SettingsViewController: BaseViewController<SettingsReactor> {
+final class SettingsViewController: BaseViewController<SettingsReactor> {
   
   typealias Section = RxTableViewSectionedReloadDataSource<SettingsSectionModel>
   

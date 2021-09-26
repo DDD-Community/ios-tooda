@@ -11,7 +11,7 @@ import Foundation
 import ReactorKit
 import RxSwift
 
-class SettingsReactor: Reactor {
+final class SettingsReactor: Reactor {
   
   // MARK: Reactor
   

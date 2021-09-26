@@ -20,22 +20,6 @@ final class SettingsHeaderView: BaseTableViewCell {
   
   private let titleLabel = UILabel()
   
-  // MARK: - Con(De)structor
-  
-  override init(
-    style: UITableViewCell.CellStyle,
-    reuseIdentifier: String?
-  ) {
-    super.init(
-      style: style,
-      reuseIdentifier: reuseIdentifier
-    )
-  }
-  
-  required init?(coder: NSCoder) {
-    fatalError("init(coder:) has not been implemented")
-  }
-  
   // MARK: - Internal methods
   
   func configure(with title: String) {
