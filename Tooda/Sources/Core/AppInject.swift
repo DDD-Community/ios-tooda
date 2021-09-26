@@ -74,7 +74,11 @@ final class AppInject: AppInjectRegister, AppInjectResolve {
     }
     
     container.register(NetworkingProtocol.self) { _ in
-      Networking(logger: [AccessTokenPlugin(localPersistance: self.resolve(LocalPersistanceManagerType.self))])
+      Networking(
+        plugins: [
+          AccessTokenPlugin(localPersistance: self.resolve(LocalPersistanceManagerType.self))
+        ]
+      )
     }
   }
   
