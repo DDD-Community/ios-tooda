@@ -7,8 +7,9 @@
 //
 
 import UIKit
-import RxViewController
 
+import RxViewController
+import RxCocoa
 import RxDataSources
 import ReactorKit
 import SnapKit
@@ -18,7 +19,10 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
 
   typealias Section = RxTableViewSectionedReloadDataSource<NoteSection>
 
-
+  // MARK: Custom Action
+  
+  let imageItemCellDidTapRelay: PublishRelay<IndexPath> = PublishRelay()
+  
   // MARK: Properties
   lazy var dataSource: Section = Section(configureCell: { _, tableView, indexPath, item -> UITableViewCell in
     switch item {
@@ -36,10 +40,7 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
       
       cell.rx.didSelectedItemCell
         .throttle(.milliseconds(500), scheduler: MainScheduler.instance)
-        .map { Reactor.Action.didSelectedImageItem($0) }
-        .subscribe(onNext: { [weak self] in
-          self?.reactor?.action.onNext($0)
-        })
+        .bind(to: self.imageItemCellDidTapRelay)
         .disposed(by: cell.disposeBag)
       
       cell.selectionStyle = .none
@@ -116,7 +117,12 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
       .map { _ in Reactor.Action.initializeForm }
       .bind(to: reactor.action)
       .disposed(by: self.disposeBag)
-
+    
+    imageItemCellDidTapRelay
+      .map { Reactor.Action.didSelectedImageItem($0) }
+      .bind(to: reactor.action)
+      .disposed(by: self.disposeBag)
+    
     // State
     reactor.state
       .map { $0.sections }
@@ -139,6 +145,14 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
         self?.showAlert(message: $0)
       })
       .disposed(by: self.disposeBag)
+    
+    reactor.state
+      .map { $0.showPhotoPicker }
+      .compactMap { $0 }
+      .asDriver(onErrorJustReturn: ())
+      .drive(onNext: { [weak self] _ in
+        self?.showPhotoPicker()
+      }).disposed(by: self.disposeBag)
   }
 }
 
@@ -174,5 +188,47 @@ extension CreateNoteViewController {
     alertController.addAction(ok)
     
     self.present(alertController, animated: true, completion: nil)
+  }
+  
+  private func showPhotoPicker() {
+    let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+    
+    let cancel = UIAlertAction(title: "취소", style: .cancel, handler: nil)
+    let camera = UIAlertAction(title: "카메라", style: .default) { [weak self] _ in
+      self?.showPickView(by: .camera)
+    }
+    let album = UIAlertAction(title: "앨범", style: .default) { [weak self] _ in
+      self?.showPickView(by: .photoLibrary)
+    }
+    
+    alert.addAction(cancel)
+    alert.addAction(camera)
+    alert.addAction(album)
+    
+    present(alert, animated: true, completion: nil)
+  }
+  
+  private func showPickView(by: UIImagePickerController.SourceType) {
+    let vc = UIImagePickerController()
+    vc.sourceType = by
+    vc.delegate = self
+    vc.allowsEditing = true
+    
+    present(vc, animated: true, completion: nil)
+  }
+}
+
+extension CreateNoteViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+  func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+    picker.dismiss(animated: true, completion: nil)
+  }
+  
+  func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+    
+    if let image = info[.editedImage] as? UIImage, let imageData = image.jpegData(compressionQuality: 1.0) {
+      self.reactor?.action.onNext(.uploadImage(imageData))
+    }
+    
+    picker.dismiss(animated: true, completion: nil)
   }
 }

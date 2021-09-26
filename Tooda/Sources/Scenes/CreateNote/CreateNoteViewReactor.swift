@@ -25,18 +25,22 @@ final class CreateNoteViewReactor: Reactor {
     case dismissView
     case regist
     case didSelectedImageItem(IndexPath)
+    case uploadImage(Data)
   }
 
   enum Mutation {
     case initializeForm([NoteSection])
     case requestPermissionMessage(String)
     case showAlertMessage(String?)
+    case showPhotoPicker
   }
 
+  // TODO: sections외 다른 변수들을 하나의 enum으로 관리할 수 있는 방법으로 리팩토링 예정
   struct State {
     var sections: [NoteSection]
     var requestPermissionMessage: String?
     var showAlertMessage: String?
+    var showPhotoPicker: Void?
   }
 
   let initialState: State
@@ -54,6 +58,8 @@ final class CreateNoteViewReactor: Reactor {
       return .just(Mutation.initializeForm(makeSections()))
     case .didSelectedImageItem(let index):
       return checkAuthorizationAndSelectedItem(indexPath: index)
+    case .uploadImage(let data):
+      return .empty()
     default:
       return .empty()
     }
@@ -68,6 +74,8 @@ final class CreateNoteViewReactor: Reactor {
       newState.requestPermissionMessage = message
     case .showAlertMessage(let message):
       newState.showAlertMessage = message
+    case .showPhotoPicker:
+      newState.showPhotoPicker = ()
     }
 
     return newState
@@ -100,7 +108,7 @@ final class CreateNoteViewReactor: Reactor {
           return .just(.showAlertMessage("이미지는 최대 3개까지 등록 가능합니다."))
         }
         
-        print("이미지 등록")
+        return .just(.showPhotoPicker)
       case .item(let reactor):
         print("이미지 삭제: \(reactor.currentState.item.imageURL)")
     }
@@ -120,6 +128,16 @@ final class CreateNoteViewReactor: Reactor {
           return .just(Mutation.requestPermissionMessage("테스트"))
       }
     }
+  }
+}
+
+// MARK: Upload Images
+
+extension CreateNoteViewReactor {
+  private func uploadImage(_ data: Data) -> Observable<String> {
+    return self.dependency.service.request(NoteAPI.addImage(data: data))
+      .map(String.self)
+      .asObservable()
   }
 }
 
