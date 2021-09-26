@@ -119,11 +119,17 @@ extension SettingsViewController: UITableViewDelegate {
     }
   }
   
-  func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+  func tableView(
+    _ tableView: UITableView,
+    heightForHeaderInSection section: Int
+  ) -> CGFloat {
     50
   }
   
-  func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+  func tableView(
+    _ tableView: UITableView,
+    viewForHeaderInSection section: Int
+  ) -> UIView? {
     guard let title = dataSource.sectionModels[safe: section]?.identity.title else {
       return nil
     }
@@ -132,21 +138,22 @@ extension SettingsViewController: UITableViewDelegate {
     return header
   }
   
-  func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+  func tableView(
+    _ tableView: UITableView,
+    viewForFooterInSection section: Int
+  ) -> UIView? {
     guard let type = dataSource.sectionModels[safe: section]?.identity else {
       return nil
     }
     let footer = tableView.dequeueReusableCell(withIdentifier: String(describing: SettingsSectionFooterView.self)) as! SettingsSectionFooterView
-    switch type {
-    case .notification:
-      footer.configure(title: nil)
-    case .etc:
-      footer.configure(title: "현재 버전 1.0.0")
-    }
+    footer.configure(title: type.footerTitle)
     return footer
   }
   
-  func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+  func tableView(
+    _ tableView: UITableView,
+    heightForFooterInSection section: Int
+  ) -> CGFloat {
     guard let type = dataSource.sectionModels[safe: section]?.identity else {
       return 0
     }

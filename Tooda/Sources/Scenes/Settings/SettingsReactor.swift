@@ -70,6 +70,4 @@ final class SettingsReactor: Reactor {
   let dependency: Dependency
   
   let initialState: State
-  
-  
 }
