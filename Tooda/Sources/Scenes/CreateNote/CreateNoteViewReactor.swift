@@ -73,7 +73,6 @@ final class CreateNoteViewReactor: Reactor {
 
   func reduce(state: State, mutation: Mutation) -> State {
     
-    // do, then 을해서 초기값을 막아줄 수 있음
     var newState = State().with {
       $0.sections = state.sections
       $0.presentType = nil
