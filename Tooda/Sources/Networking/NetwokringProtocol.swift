@@ -27,7 +27,7 @@ final class Networking: MoyaProvider<MultiTarget>, NetworkingProtocol {
 
   let intercepter: ConnectChecker
 
-  init(logger: [PluginType]) {
+  init(plugins: [PluginType]) {
     let intercepter = ConnectChecker()
     self.intercepter = intercepter
 
@@ -45,7 +45,7 @@ final class Networking: MoyaProvider<MultiTarget>, NetworkingProtocol {
       } catch {
         completion(.failure(MoyaError.underlying(error, nil)))
       }
-    }, session: session, plugins: logger)
+    }, session: session, plugins: plugins)
   }
 
   func request(_ target: TargetType, file: StaticString = #file, function: StaticString = #function, line: UInt = #line) -> Single<Response> {
