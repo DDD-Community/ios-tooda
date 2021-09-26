@@ -34,8 +34,9 @@ final class HomeReactor: Reactor {
   }
   
   struct State {
+    var notebooks: [NotebookMeta]
     var selectedNotobook: NotebookMeta
-    var notebooks: [NotebookCell.ViewModel]
+    var notebookViewModels: [NotebookCell.ViewModel]
   }
 
 
@@ -57,13 +58,14 @@ final class HomeReactor: Reactor {
     let currentDate = Date()
 
     return State(
+      notebooks: [],
       selectedNotobook: NotebookMeta(
         year: currentDate.year,
         month: currentDate.month,
         createdAt: currentDate,
         updatedAt: currentDate
       ),
-      notebooks: []
+      notebookViewModels: []
     )
   }()
 
@@ -163,7 +165,8 @@ extension HomeReactor {
 
     switch mutation {
     case let .setNotebooks(metas):
-      newState.notebooks = self.mappingToNoteBooks(metas: metas)
+      newState.notebooks = metas
+      newState.notebookViewModels = self.mappingToNoteBooks(metas: metas)
 
     case let .selectNotebook(notebookIndex):
       break

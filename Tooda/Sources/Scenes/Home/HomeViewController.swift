@@ -110,7 +110,7 @@ final class HomeViewController: BaseViewController<HomeReactor> {
 
     // State
     self.reactor?.state
-      .map { $0.notebooks }
+      .map { $0.notebookViewModels }
       .bind(to: self.notebookCollectionView.rx.items(
         cellIdentifier: Const.notebookCellIdentifier,
         cellType: NotebookCell.self
