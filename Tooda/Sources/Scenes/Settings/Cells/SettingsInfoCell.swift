@@ -44,12 +44,14 @@ final class SettingsInfoCell: BaseTableViewCell {
   // MARK: - Internal methods
   
   func configure(with title: String) {
+    super.configure()
     titleLabel.attributedText = title.styled(with: Font.title)
   }
   
   // MARK: - configureUI
   
   override func configureUI() {
+    super.configureUI()
     contentView.addSubviews(
       titleLabel,
       trailingImageView
@@ -57,6 +59,7 @@ final class SettingsInfoCell: BaseTableViewCell {
   }
   
   override func setupConstraints() {
+    super.setupConstraints()
     titleLabel.snp.makeConstraints {
       $0.leading.equalToSuperview().inset(20)
       $0.centerY.equalToSuperview()

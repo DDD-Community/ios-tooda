@@ -20,7 +20,7 @@ final class SettingsInteractiveCell: BaseTableViewCell {
   
   enum Font {
     static let title = TextStyle.body2(color: .gray2)
-    static let description = TextStyle.body2(color: .gray2)
+    static let description = TextStyle.caption(color: .gray3)
   }
   
   // MARK: - UI Components
@@ -50,14 +50,16 @@ final class SettingsInteractiveCell: BaseTableViewCell {
   // MARK: - Internal methods
   
   func configure(with data: Config) {
+    super.configure()
     titleLabel.attributedText = data.title.styled(with: Font.title)
-    descriptionLabel.attributedText = data.title.styled(with: Font.title)
+    descriptionLabel.attributedText = data.description.styled(with: Font.description)
     cellSwitch.isOn = data.isOn
   }
   
   // MARK: - configureUI
   
   override func configureUI() {
+    super.configureUI()
     contentView.addSubviews(
       titleLabel,
       descriptionLabel,
@@ -66,6 +68,7 @@ final class SettingsInteractiveCell: BaseTableViewCell {
   }
 
   override func setupConstraints() {
+    super.setupConstraints()
     titleLabel.snp.makeConstraints {
       $0.top.equalToSuperview().inset(8)
       $0.leading.equalToSuperview().inset(20)
@@ -77,7 +80,7 @@ final class SettingsInteractiveCell: BaseTableViewCell {
     }
     
     cellSwitch.snp.makeConstraints {
-      $0.trailing.equalToSuperview().inset(20)
+      $0.trailing.equalToSuperview().offset(-20)
       $0.centerY.equalToSuperview()
       $0.width.equalTo(48)
       $0.height.equalTo(24)
