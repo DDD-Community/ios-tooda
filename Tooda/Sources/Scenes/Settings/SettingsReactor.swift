@@ -23,11 +23,53 @@ class SettingsReactor: Reactor {
     
   }
   
-  struct State {
+  struct Dependency {
     
+  }
+  
+  struct State {
+    let sectionModel: [SettingsSectionModel]
+    
+    static func generateInitialState() -> State {
+      return State(sectionModel: [
+        SettingsSectionModel(
+          identity: .notification,
+          items: [
+            SettingsItem.interactive(
+              InteractiveSettingsInfo(
+                title: "푸시 알림",
+                description: "매일 다이어리를 쓰도록 도와줍니다",
+                isOn: false
+              ))
+          ]),
+        SettingsSectionModel(
+          identity: .etc,
+          items: [
+            SettingsItem.plain(
+              PlainSettingsInfo(title: "공지사항")
+            ),
+            SettingsItem.plain(
+              PlainSettingsInfo(title: "자주 묻는 질문")
+            ),
+            SettingsItem.plain(
+              PlainSettingsInfo(title: "약관 및 정책")
+            )
+          ]
+        ) 
+      ])
+    }
+  }
+  
+  init(dependency: Dependency) {
+    self.dependency = dependency
+    self.initialState = State.generateInitialState()
   }
   
   // MARK: Properties
   
-  let initialState = State()
+  let dependency: Dependency
+  
+  let initialState: State
+  
+  
 }
