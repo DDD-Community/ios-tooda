@@ -22,6 +22,7 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
   // MARK: Custom Action
   
   let imageItemCellDidTapRelay: PublishRelay<IndexPath> = PublishRelay()
+  let imagePickerDataSelectedRelay: PublishRelay<Data> = PublishRelay()
   
   // MARK: Properties
   lazy var dataSource: Section = Section(configureCell: { _, tableView, indexPath, item -> UITableViewCell in
@@ -123,6 +124,11 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
       .bind(to: reactor.action)
       .disposed(by: self.disposeBag)
     
+    imagePickerDataSelectedRelay
+      .map { Reactor.Action.uploadImage($0) }
+      .bind(to: reactor.action)
+      .disposed(by: self.disposeBag)
+    
     // State
     reactor.state
       .map { $0.sections }
@@ -219,7 +225,7 @@ extension CreateNoteViewController: UIImagePickerControllerDelegate, UINavigatio
   func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
     
     if let image = info[.editedImage] as? UIImage, let imageData = image.jpegData(compressionQuality: 1.0) {
-      self.reactor?.action.onNext(.uploadImage(imageData))
+      self.imagePickerDataSelectedRelay.accept(imageData)
     }
     
     picker.dismiss(animated: true, completion: nil)
