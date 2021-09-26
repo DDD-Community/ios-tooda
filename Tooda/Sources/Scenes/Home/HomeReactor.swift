@@ -34,8 +34,11 @@ final class HomeReactor: Reactor {
   }
   
   struct State {
+    // Entities
     var notebooks: [NotebookMeta]
     var selectedNotobook: NotebookMeta
+
+    // ViewModels
     var notebookViewModels: [NotebookCell.ViewModel]
   }
 
@@ -121,8 +124,8 @@ extension HomeReactor {
         ),
         NotebookMeta(
           year: 2021,
-          month: 1,
-          noteCount: 10,
+          month: 2,
+          noteCount: 5,
           createdAt: Date(),
           updatedAt: Date(),
           stickers: [
@@ -133,8 +136,8 @@ extension HomeReactor {
         ),
         NotebookMeta(
           year: 2021,
-          month: 1,
-          noteCount: 10,
+          month: 3,
+          noteCount: 7,
           createdAt: Date(),
           updatedAt: Date(),
           stickers: [
@@ -169,7 +172,8 @@ extension HomeReactor {
       newState.notebookViewModels = self.mappingToNoteBooks(metas: metas)
 
     case let .selectNotebook(notebookIndex):
-      break
+      guard let notebook = state.notebooks[safe: notebookIndex] else { break }
+      newState.selectedNotobook = notebook
     }
 
     return newState
