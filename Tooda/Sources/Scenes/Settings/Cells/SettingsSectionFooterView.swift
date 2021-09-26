@@ -43,6 +43,7 @@ final class SettingsSectionFooterView: BaseTableViewCell {
   // MARK: - Internal methods
   
   func configure(title: String?) {
+    super.configure()
     if let title = title {
       titleLabel.isHidden = false
       titleLabel.attributedText = title.styled(with: Font.title)
@@ -51,16 +52,32 @@ final class SettingsSectionFooterView: BaseTableViewCell {
     }
   }
   
+  func configure(with title: String?) {
+    if let title = title {
+      titleLabel.isHidden = false
+      titleLabel.attributedText = title.styled(with: Font.title)
+    } else {
+      titleLabel.isHidden = true
+    }
+  }
+    
+  
   // MARK: - configureUI
   
   override func configureUI() {
-    contentView.addSubviews(
-      titleLabel,
-      grayBottomView
-    )
+    super.configureUI()
+    selectionStyle = .none
+    contentView.do {
+      $0.backgroundColor = .white
+      $0.addSubviews(
+        titleLabel,
+        grayBottomView
+      )
+    }
   }
   
   override func setupConstraints() {
+    super.setupConstraints()
     titleLabel.snp.makeConstraints {
       $0.leading.trailing.equalToSuperview().inset(20)
       $0.bottom.equalTo(grayBottomView.snp.top).offset(-20)
