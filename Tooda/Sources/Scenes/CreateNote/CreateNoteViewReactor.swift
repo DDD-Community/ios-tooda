@@ -144,7 +144,9 @@ final class CreateNoteViewReactor: Reactor {
 
 extension CreateNoteViewReactor {
   private func uploadImage(_ data: Data) -> Observable<String> {
-    return Observable.just("aaaaa")
+    return self.dependency.service.request(NoteAPI.addImage(data: data))
+      .asObservable()
+      .mapString()
   }
 }
 
