@@ -27,7 +27,11 @@ struct SettingsSectionModel {
       case .notification:
         return nil
       case .etc:
-        return "현재 버전 1.0.0"
+        if let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String {
+          return "현재 버전 \(appVersion)"
+        } else {
+          return nil
+        }
       }
     }
   }
