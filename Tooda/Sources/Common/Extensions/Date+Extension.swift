@@ -34,6 +34,7 @@ extension Date {
     case base = "yyyy-MM-dd'T'HH:mm:ss'Z'"
     case ko = "yyyy년 MM월 dd일"
     case dot = "yyyy.MM.dd"
+    case dotMonth = "yyyy.MM"
     case slash = "yyyy/MM/dd"
     case hyphen = "yyyy-MM-dd"
   }
