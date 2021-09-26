@@ -7,8 +7,9 @@
 //
 
 import UIKit
-import RxViewController
 
+import RxViewController
+import RxCocoa
 import RxDataSources
 import ReactorKit
 import SnapKit
@@ -18,7 +19,10 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
 
   typealias Section = RxTableViewSectionedReloadDataSource<NoteSection>
 
-
+  // MARK: Custom Action
+  
+  let imageItemCellDidTapRelay: PublishRelay<IndexPath> = PublishRelay()
+  
   // MARK: Properties
   lazy var dataSource: Section = Section(configureCell: { _, tableView, indexPath, item -> UITableViewCell in
     switch item {
@@ -36,10 +40,7 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
       
       cell.rx.didSelectedItemCell
         .throttle(.milliseconds(500), scheduler: MainScheduler.instance)
-        .map { Reactor.Action.didSelectedImageItem($0) }
-        .subscribe(onNext: { [weak self] in
-          self?.reactor?.action.onNext($0)
-        })
+        .bind(to: self.imageItemCellDidTapRelay)
         .disposed(by: cell.disposeBag)
       
       cell.selectionStyle = .none
@@ -116,7 +117,12 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
       .map { _ in Reactor.Action.initializeForm }
       .bind(to: reactor.action)
       .disposed(by: self.disposeBag)
-
+    
+    imageItemCellDidTapRelay
+      .map { Reactor.Action.didSelectedImageItem($0) }
+      .bind(to: reactor.action)
+      .disposed(by: self.disposeBag)
+    
     // State
     reactor.state
       .map { $0.sections }
