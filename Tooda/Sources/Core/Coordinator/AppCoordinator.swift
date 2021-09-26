@@ -98,6 +98,8 @@ final class AppCoordinator: AppCoordinatorType {
           return $0 is HomeViewController
         case .createNote:
           return $0 is CreateNoteViewController
+        case .settings:
+          return $0 is SettingsViewController
         }
       }) else { return }
 
