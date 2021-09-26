@@ -60,6 +60,7 @@ final class SettingsInteractiveCell: BaseTableViewCell {
   
   override func configureUI() {
     super.configureUI()
+    selectionStyle = .none
     contentView.addSubviews(
       titleLabel,
       descriptionLabel,

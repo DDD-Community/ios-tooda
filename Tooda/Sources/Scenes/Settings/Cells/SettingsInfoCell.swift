@@ -52,6 +52,7 @@ final class SettingsInfoCell: BaseTableViewCell {
   
   override func configureUI() {
     super.configureUI()
+    selectionStyle = .none
     contentView.addSubviews(
       titleLabel,
       trailingImageView

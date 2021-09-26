@@ -30,11 +30,16 @@ final class SettingsTableFooterView: BaseTableViewCell {
   // MARK: - configureUI
   
   override func configureUI() {
-    backgroundColor = .gray5
-    contentView.addSubview(titleLabel)
+    super.configureUI()
+    selectionStyle = .none
+    contentView.do {
+      $0.backgroundColor = .gray5
+      $0.addSubview(titleLabel)
+    }
   }
 
   override func setupConstraints() {
+    super.setupConstraints()
     titleLabel.snp.makeConstraints {
       $0.centerY.equalToSuperview()
       $0.leading.trailing.equalToSuperview().inset(20)
