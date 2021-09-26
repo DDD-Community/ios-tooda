@@ -12,6 +12,12 @@ import Then
 
 final class CreateNoteViewReactor: Reactor {
   
+  enum ViewPresentType {
+    case showAlert(String)
+    case showPermission(String)
+    case showPhotoPicker
+  }
+  
   let scheduler: Scheduler = MainScheduler.asyncInstance
 
   struct Dependency {
@@ -31,18 +37,14 @@ final class CreateNoteViewReactor: Reactor {
 
   enum Mutation {
     case initializeForm([NoteSection])
-    case requestPermissionMessage(String)
-    case showAlertMessage(String?)
-    case showPhotoPicker
+    case present(ViewPresentType)
     case fetchImageSection(NoteSectionItem)
   }
 
   // TODO: sections외 다른 변수들을 하나의 enum으로 관리할 수 있는 방법으로 리팩토링 예정
   struct State: Then {
     var sections: [NoteSection] = []
-    var requestPermissionMessage: String?
-    var showAlertMessage: String?
-    var showPhotoPicker: Void?
+    var presentType: ViewPresentType?
   }
 
   let initialState: State
@@ -75,20 +77,14 @@ final class CreateNoteViewReactor: Reactor {
     // do, then 을해서 초기값을 막아줄 수 있음
     var newState = State().with {
       $0.sections = state.sections
-      $0.requestPermissionMessage = nil
-      $0.showAlertMessage = nil
-      $0.showPhotoPicker = nil
+      $0.presentType = nil
     }
     
     switch mutation {
     case .initializeForm(let sections):
       newState.sections = sections
-    case .requestPermissionMessage(let message):
-      newState.requestPermissionMessage = message
-    case .showAlertMessage(let message):
-      newState.showAlertMessage = message
-    case .showPhotoPicker:
-      newState.showPhotoPicker = ()
+    case .present(let type):
+      newState.presentType = type
     case .fetchImageSection(let sectionItem):
       newState.sections[NoteSection.Identity.image.rawValue].items = [sectionItem]
     }
@@ -120,10 +116,10 @@ final class CreateNoteViewReactor: Reactor {
     switch imageSectionItem {
       case .empty:
         guard imageCellReactor.currentState.sections[NoteImageSection.Identity.item.rawValue].items.count < 3 else {
-          return .just(.showAlertMessage("이미지는 최대 3개까지 등록 가능합니다."))
+          return .just(.present(.showAlert("이미지는 최대 3개까지 등록 가능합니다.")))
         }
         
-        return .just(.showPhotoPicker)
+        return .just(.present(.showPhotoPicker))
       case .item(let reactor):
         print("이미지 삭제: \(reactor.currentState.item.imageURL)")
     }
@@ -140,7 +136,7 @@ final class CreateNoteViewReactor: Reactor {
           guard let mutation = self?.didSelectedImageItem(indexPath) else { return .empty() }
           return mutation
         default:
-          return .just(Mutation.requestPermissionMessage("테스트"))
+          return .just(.present(.showPermission("테스트")))
       }
     }
   }

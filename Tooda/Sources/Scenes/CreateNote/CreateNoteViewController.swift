@@ -130,27 +130,10 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
       .disposed(by: self.disposeBag)
     
     reactor.state
-      .compactMap { $0.requestPermissionMessage }
-      .observeOn(MainScheduler.asyncInstance)
-      .subscribe(onNext: { [weak self] in
-        self?.showAlertAndOpenAppSetting(message: $0)
-      })
-      .disposed(by: self.disposeBag)
-    
-    reactor.state
-      .compactMap { $0.showAlertMessage }
-      .observeOn(MainScheduler.asyncInstance)
-      .subscribe(onNext: { [weak self] in
-        self?.showAlert(message: $0)
-      })
-      .disposed(by: self.disposeBag)
-    
-    reactor.state
-      .map { $0.showPhotoPicker }
-      .compactMap { $0 }
-      .asDriver(onErrorJustReturn: ())
-      .drive(onNext: { [weak self] _ in
-        self?.showPhotoPicker()
+      .compactMap { $0.presentType }
+      .asDriver(onErrorJustReturn: .showPhotoPicker)
+      .drive(onNext: { [weak self] in
+        self?.present(by: $0)
       }).disposed(by: self.disposeBag)
   }
 }
@@ -166,6 +149,17 @@ extension CreateNoteViewController {
 // MARK: ETC
 
 extension CreateNoteViewController {
+  func present(by: Reactor.ViewPresentType) {
+    switch by {
+      case .showAlert(let message):
+        self.showAlert(message: message)
+      case .showPermission(let message):
+        self.showAlertAndOpenAppSetting(message: message)
+      case .showPhotoPicker:
+        self.showPhotoPicker()
+    }
+  }
+  
   func showAlert(message: String?) {
     let alertController = UIAlertController(title: nil, message: message, preferredStyle: .alert)
     
