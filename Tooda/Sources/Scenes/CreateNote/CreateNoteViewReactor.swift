@@ -35,6 +35,7 @@ final class CreateNoteViewReactor: Reactor {
     case showPhotoPicker
   }
 
+  // TODO: sections외 다른 변수들을 하나의 enum으로 관리할 수 있는 방법으로 리팩토링 예정
   struct State {
     var sections: [NoteSection]
     var requestPermissionMessage: String?
