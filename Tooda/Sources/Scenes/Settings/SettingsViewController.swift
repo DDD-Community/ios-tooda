@@ -14,12 +14,19 @@ import RxDataSources
 
 final class SettingsViewController: BaseViewController<SettingsReactor> {
   
+  // MARK: - Constants
+  
   typealias Section = RxTableViewSectionedReloadDataSource<SettingsSectionModel>
+  
+  private enum Font {
+    static let title = TextStyle.subTitle(color: .gray1)
+  }
+  
+  // MARK: - Con(De)structor
   
   init(reactor: SettingsReactor) {
     super.init()
     self.reactor = reactor
-    
   }
   
   required init?(coder: NSCoder) {
@@ -56,6 +63,10 @@ final class SettingsViewController: BaseViewController<SettingsReactor> {
   })
   
   // MARK: - UI Components
+  
+  private lazy var titleLabel = UILabel().then {
+    $0.attributedText = "앱 설정".styled(with: Font.title)
+  }
   
   private let tableFooterView: UITableViewCell = SettingsTableFooterView().then {
     $0.frame = CGRect(
@@ -94,6 +105,8 @@ final class SettingsViewController: BaseViewController<SettingsReactor> {
   // MARK: - configureUI
   
   override func configureUI() {
+    navigationItem.titleView = titleLabel
+    navigationController?.navigationBar.backItem?.title = ""
     view.addSubview(tableView)
   }
 
@@ -133,7 +146,8 @@ extension SettingsViewController: UITableViewDelegate {
     guard let title = dataSource.sectionModels[safe: section]?.identity.title else {
       return nil
     }
-    let header = tableView.dequeueReusableCell(withIdentifier: String(describing: SettingsHeaderView.self)) as! SettingsHeaderView
+    
+    let header = tableView.dequeue(SettingsHeaderView.self)
     header.configure(with: title)
     return header
   }
@@ -145,7 +159,8 @@ extension SettingsViewController: UITableViewDelegate {
     guard let type = dataSource.sectionModels[safe: section]?.identity else {
       return nil
     }
-    let footer = tableView.dequeueReusableCell(withIdentifier: String(describing: SettingsSectionFooterView.self)) as! SettingsSectionFooterView
+    
+    let footer = tableView.dequeue(SettingsSectionFooterView.self)
     footer.configure(title: type.footerTitle)
     return footer
   }
