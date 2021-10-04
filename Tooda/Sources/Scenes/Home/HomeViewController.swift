@@ -10,6 +10,7 @@ import UIKit
 
 import ReactorKit
 import RxSwift
+import RxCocoa
 import Then
 import SnapKit
 
@@ -33,6 +34,10 @@ final class HomeViewController: BaseViewController<HomeReactor> {
 
   private enum Const {
     static let notebookCellIdentifier = NotebookCell.description()
+  }
+
+  private enum Text {
+    static let noteCount = "{count}개의 기록이 있어요"
   }
 
 
@@ -76,6 +81,11 @@ final class HomeViewController: BaseViewController<HomeReactor> {
   }
 
 
+  // MARK: Custom Action
+
+  let rxScrollToItem = BehaviorRelay<Int>(value: 1)
+
+
   // MARK: Initializing
 
   init(reactor: HomeReactor) {
@@ -108,15 +118,35 @@ final class HomeViewController: BaseViewController<HomeReactor> {
       .bind(to: reactor.action)
       .disposed(by: self.disposeBag)
 
+    self.rxScrollToItem
+      .asObservable()
+      .map { HomeReactor.Action.paging(index: $0) }
+      .bind(to: reactor.action)
+      .disposed(by: self.disposeBag)
+
     // State
     self.reactor?.state
-      .map { $0.notebooks }
+      .map { $0.notebookViewModels }
       .bind(to: self.notebookCollectionView.rx.items(
         cellIdentifier: Const.notebookCellIdentifier,
         cellType: NotebookCell.self
       )) { _, notebook, cell in
         cell.configure(viewModel: notebook)
       }.disposed(by: self.disposeBag)
+
+    reactor.state
+      .map { $0.selectedNotobook }
+      .subscribe(onNext: { [weak self] notebook in
+        self?.monthTitleButton.setAttributedTitle(
+          Date(year: notebook.year, month: notebook.month, day: 1)
+            .string(.dotMonth)
+            .styled(with: Font.monthTitle),
+          for: .normal
+        )
+        self?.noteCountLabel.attributedText = Text.noteCount
+          .styled(with: Font.noteCountSuffix)
+          .replace(key: "count", value: "\(notebook.noteCount)", style: Font.noteCount)
+      }).disposed(by: self.disposeBag)
   }
   
   override func configureUI() {
@@ -178,6 +208,7 @@ extension HomeViewController: UICollectionViewDelegateFlowLayout {
       }
     }()
 
+    self.rxScrollToItem.accept(index)
     self.notebookCollectionView.scrollToItem(
       at: .init(item: index, section: 0),
       at: .centeredHorizontally,

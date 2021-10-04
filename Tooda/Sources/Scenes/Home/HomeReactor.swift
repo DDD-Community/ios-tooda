@@ -25,15 +25,21 @@ final class HomeReactor: Reactor {
   
   enum Action {
     case load
+    case paging(index: Int)
   }
 
   enum Mutation {
     case setNotebooks([NotebookMeta])
+    case selectNotebook(notebookIndex: Int)
   }
   
   struct State {
-    var date: Date
-    var notebooks: [NotebookCell.ViewModel]
+    // Entities
+    var notebooks: [NotebookMeta]
+    var selectedNotobook: NotebookMeta
+
+    // ViewModels
+    var notebookViewModels: [NotebookCell.ViewModel]
   }
 
 
@@ -51,12 +57,21 @@ final class HomeReactor: Reactor {
   private var notebookImages: [UIImage?] = []
   private var placeholderNotebookImage: UIImage?
   
-  let initialState: State = State(
-    date: Date(),
-    notebooks: []
-  )
-  
-  
+  let initialState: State = {
+    let currentDate = Date()
+
+    return State(
+      notebooks: [],
+      selectedNotobook: NotebookMeta(
+        year: currentDate.year,
+        month: currentDate.month,
+        createdAt: currentDate,
+        updatedAt: currentDate
+      ),
+      notebookViewModels: []
+    )
+  }()
+
   init(dependency: Dependency) {
     self.dependency = dependency
     self.configureNotebookImages()
@@ -86,6 +101,9 @@ extension HomeReactor {
     switch action {
     case .load:
       return self.loadMutation()
+
+    case let .paging(index):
+      return Observable<Mutation>.just(.selectNotebook(notebookIndex: index))
     }
   }
 
@@ -106,8 +124,8 @@ extension HomeReactor {
         ),
         NotebookMeta(
           year: 2021,
-          month: 1,
-          noteCount: 10,
+          month: 2,
+          noteCount: 5,
           createdAt: Date(),
           updatedAt: Date(),
           stickers: [
@@ -118,8 +136,8 @@ extension HomeReactor {
         ),
         NotebookMeta(
           year: 2021,
-          month: 1,
-          noteCount: 10,
+          month: 3,
+          noteCount: 7,
           createdAt: Date(),
           updatedAt: Date(),
           stickers: [
@@ -136,6 +154,8 @@ extension HomeReactor {
 //      .asObservable()
 //      .map { Mutation.setNotebooks($0) }
   }
+
+
 }
 
 
@@ -148,7 +168,12 @@ extension HomeReactor {
 
     switch mutation {
     case let .setNotebooks(metas):
-      newState.notebooks = self.mappingToNoteBooks(metas: metas)
+      newState.notebooks = metas
+      newState.notebookViewModels = self.mappingToNoteBooks(metas: metas)
+
+    case let .selectNotebook(notebookIndex):
+      guard let notebook = state.notebooks[safe: notebookIndex] else { break }
+      newState.selectedNotobook = notebook
     }
 
     return newState
