@@ -10,17 +10,22 @@ import Foundation
 import Moya
 
 final class AccessTokenPlugin: PluginType {
+  
+  let localPersistance: LocalPersistanceManagerType
+  
+  init(localPersistance: LocalPersistanceManagerType) {
+    self.localPersistance = localPersistance
+  }
 
   func prepare(_ request: URLRequest, target: TargetType) -> URLRequest {
 
-//		let token = AppManager.shared.accessToken
-//		let keychain = Keychain()
-//
-//		var request = request
-//
-//		if token.isNotEmpty {
-//			request.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-//		}
+    let token: AppToken? = localPersistance.objectValue(forKey: .appToken)
+
+		var request = request
+    
+    if let token = token, !token.accessToken.isEmpty {
+      request.addValue("Bearer \(token.accessToken)", forHTTPHeaderField: "Authorization")
+		}
 
     return request
   }

@@ -26,10 +26,6 @@ final class AppInject: AppInjectRegister, AppInjectResolve {
   }
   
   func registerCore() {
-    container.register(NetworkingProtocol.self) { _ in
-      Networking(logger: [AccessTokenPlugin()])
-    }
-    
     container.register(AppCoordinatorType.self) { _ in
       AppCoordinator(
         dependency: .init(
@@ -75,6 +71,14 @@ final class AppInject: AppInjectRegister, AppInjectResolve {
     
     container.register(AppAuthorizationType.self) { _ in
       RxAuthorization()
+    }
+    
+    container.register(NetworkingProtocol.self) { _ in
+      Networking(
+        plugins: [
+          AccessTokenPlugin(localPersistance: self.resolve(LocalPersistanceManagerType.self))
+        ]
+      )
     }
   }
   
