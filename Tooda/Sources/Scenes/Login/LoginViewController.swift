@@ -11,7 +11,7 @@ import RxCocoa
 import SnapKit
 import Then
 
-class LoginViewController: BaseViewController<LoginReactor> {
+final class LoginViewController: BaseViewController<LoginReactor> {
   
   // MARK: Constants
 

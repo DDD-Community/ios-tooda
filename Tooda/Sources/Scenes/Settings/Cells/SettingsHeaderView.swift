@@ -8,7 +8,7 @@
 
 import UIKit
 
-class SettingsHeaderView: BaseTableViewCell {
+final class SettingsHeaderView: BaseTableViewCell {
   
   // MARK: - Constants
   
@@ -20,22 +20,6 @@ class SettingsHeaderView: BaseTableViewCell {
   
   private let titleLabel = UILabel()
   
-  // MARK: - Con(De)structor
-  
-  override init(
-    style: UITableViewCell.CellStyle,
-    reuseIdentifier: String?
-  ) {
-    super.init(
-      style: style,
-      reuseIdentifier: reuseIdentifier
-    )
-  }
-  
-  required init?(coder: NSCoder) {
-    fatalError("init(coder:) has not been implemented")
-  }
-  
   // MARK: - Internal methods
   
   func configure(with title: String) {
@@ -45,10 +29,16 @@ class SettingsHeaderView: BaseTableViewCell {
   // MARK: - configureUI
   
   override func configureUI() {
-    contentView.addSubview(titleLabel)
+    super.configureUI()
+    selectionStyle = .none
+    contentView.do {
+      $0.backgroundColor = .white
+      $0.addSubview(titleLabel)
+    }
   }
 
   override func setupConstraints() {
+    super.setupConstraints()
     titleLabel.snp.makeConstraints {
       $0.top.equalToSuperview().inset(24)
       $0.leading.trailing.equalToSuperview().inset(20)

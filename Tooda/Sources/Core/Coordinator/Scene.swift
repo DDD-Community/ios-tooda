@@ -14,4 +14,5 @@ enum Scene {
   case login
   case home
   case createNote
+  case settings
 }

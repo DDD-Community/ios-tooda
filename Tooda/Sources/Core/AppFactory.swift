@@ -53,6 +53,9 @@ final class AppFactory: AppFactoryType {
         )
       )
       return LoginViewController(reactor: reactor)
+    case .settings:
+      let reactor = SettingsReactor(dependency: .init())
+      return SettingsViewController(reactor: reactor)
     }
   }
 }

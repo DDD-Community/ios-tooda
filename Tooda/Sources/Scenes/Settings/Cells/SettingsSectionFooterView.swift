@@ -8,7 +8,7 @@
 
 import UIKit
 
-class SettingsSectionFooterView: BaseTableViewCell {
+final class SettingsSectionFooterView: BaseTableViewCell {
   
   // MARK: - Constants
   
@@ -24,25 +24,10 @@ class SettingsSectionFooterView: BaseTableViewCell {
     $0.backgroundColor = .gray5
   }
   
-  // MARK: - Con(De)structor
-  
-  override init(
-    style: UITableViewCell.CellStyle,
-    reuseIdentifier: String?
-  ) {
-    super.init(
-      style: style,
-      reuseIdentifier: reuseIdentifier
-    )
-  }
-  
-  required init?(coder: NSCoder) {
-    fatalError("init(coder:) has not been implemented")
-  }
-  
   // MARK: - Internal methods
   
   func configure(title: String?) {
+    super.configure()
     if let title = title {
       titleLabel.isHidden = false
       titleLabel.attributedText = title.styled(with: Font.title)
@@ -51,16 +36,32 @@ class SettingsSectionFooterView: BaseTableViewCell {
     }
   }
   
+  func configure(with title: String?) {
+    if let title = title {
+      titleLabel.isHidden = false
+      titleLabel.attributedText = title.styled(with: Font.title)
+    } else {
+      titleLabel.isHidden = true
+    }
+  }
+    
+  
   // MARK: - configureUI
   
   override func configureUI() {
-    contentView.addSubviews(
-      titleLabel,
-      grayBottomView
-    )
+    super.configureUI()
+    selectionStyle = .none
+    contentView.do {
+      $0.backgroundColor = .white
+      $0.addSubviews(
+        titleLabel,
+        grayBottomView
+      )
+    }
   }
   
   override func setupConstraints() {
+    super.setupConstraints()
     titleLabel.snp.makeConstraints {
       $0.leading.trailing.equalToSuperview().inset(20)
       $0.bottom.equalTo(grayBottomView.snp.top).offset(-20)

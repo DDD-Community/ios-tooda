@@ -8,7 +8,7 @@
 
 import UIKit
 
-class SettingsInfoCell: BaseTableViewCell {
+final class SettingsInfoCell: BaseTableViewCell {
   
   // MARK: - Constants
   
@@ -25,31 +25,18 @@ class SettingsInfoCell: BaseTableViewCell {
     $0.image = UIImage(type: .iconArrowRightGray)
   }
   
-  // MARK: - Con(De)structor
-
-  override init(
-    style: UITableViewCell.CellStyle,
-    reuseIdentifier: String?
-  ) {
-    super.init(
-      style: style,
-      reuseIdentifier: reuseIdentifier
-    )
-  }
-  
-  required init?(coder: NSCoder) {
-    fatalError("init(coder:) has not been implemented")
-  }
-  
   // MARK: - Internal methods
   
   func configure(with title: String) {
+    super.configure()
     titleLabel.attributedText = title.styled(with: Font.title)
   }
   
   // MARK: - configureUI
   
   override func configureUI() {
+    super.configureUI()
+    selectionStyle = .none
     contentView.addSubviews(
       titleLabel,
       trailingImageView
@@ -57,6 +44,7 @@ class SettingsInfoCell: BaseTableViewCell {
   }
   
   override func setupConstraints() {
+    super.setupConstraints()
     titleLabel.snp.makeConstraints {
       $0.leading.equalToSuperview().inset(20)
       $0.centerY.equalToSuperview()
