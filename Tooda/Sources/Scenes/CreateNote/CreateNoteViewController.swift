@@ -22,6 +22,7 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
   // MARK: Custom Action
   
   let imageItemCellDidTapRelay: PublishRelay<IndexPath> = PublishRelay()
+  let imagePickerDataSelectedRelay: PublishRelay<Data> = PublishRelay()
   
   // MARK: Properties
   lazy var dataSource: Section = Section(configureCell: { _, tableView, indexPath, item -> UITableViewCell in
@@ -123,35 +124,22 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
       .bind(to: reactor.action)
       .disposed(by: self.disposeBag)
     
+    imagePickerDataSelectedRelay
+      .map { Reactor.Action.uploadImage($0) }
+      .bind(to: reactor.action)
+      .disposed(by: self.disposeBag)
+    
     // State
     reactor.state
       .map { $0.sections }
-      .debug()
       .bind(to: self.tableView.rx.items(dataSource: dataSource))
       .disposed(by: self.disposeBag)
     
     reactor.state
-      .compactMap { $0.requestPermissionMessage }
-      .observeOn(MainScheduler.asyncInstance)
-      .subscribe(onNext: { [weak self] in
-        self?.showAlertAndOpenAppSetting(message: $0)
-      })
-      .disposed(by: self.disposeBag)
-    
-    reactor.state
-      .compactMap { $0.showAlertMessage }
-      .observeOn(MainScheduler.asyncInstance)
-      .subscribe(onNext: { [weak self] in
-        self?.showAlert(message: $0)
-      })
-      .disposed(by: self.disposeBag)
-    
-    reactor.state
-      .map { $0.showPhotoPicker }
-      .compactMap { $0 }
-      .asDriver(onErrorJustReturn: ())
-      .drive(onNext: { [weak self] _ in
-        self?.showPhotoPicker()
+      .compactMap { $0.presentType }
+      .asDriver(onErrorJustReturn: .showPhotoPicker)
+      .drive(onNext: { [weak self] in
+        self?.present(by: $0)
       }).disposed(by: self.disposeBag)
   }
 }
@@ -167,6 +155,17 @@ extension CreateNoteViewController {
 // MARK: ETC
 
 extension CreateNoteViewController {
+  func present(by: Reactor.ViewPresentType) {
+    switch by {
+      case .showAlert(let message):
+        self.showAlert(message: message)
+      case .showPermission(let message):
+        self.showAlertAndOpenAppSetting(message: message)
+      case .showPhotoPicker:
+        self.showPhotoPicker()
+    }
+  }
+  
   func showAlert(message: String?) {
     let alertController = UIAlertController(title: nil, message: message, preferredStyle: .alert)
     
@@ -226,7 +225,7 @@ extension CreateNoteViewController: UIImagePickerControllerDelegate, UINavigatio
   func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
     
     if let image = info[.editedImage] as? UIImage, let imageData = image.jpegData(compressionQuality: 1.0) {
-      self.reactor?.action.onNext(.uploadImage(imageData))
+      self.imagePickerDataSelectedRelay.accept(imageData)
     }
     
     picker.dismiss(animated: true, completion: nil)

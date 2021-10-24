@@ -89,7 +89,7 @@ class NoteImageCell: BaseTableViewCell, View {
   func bind(reactor: Reactor) {
     
     Observable.just(())
-      .map { _ in Reactor.Action.initiailizeSection }
+      .map { _ in Reactor.Action.fetchSections }
       .bind(to: reactor.action)
       .disposed(by: self.disposeBag)
     

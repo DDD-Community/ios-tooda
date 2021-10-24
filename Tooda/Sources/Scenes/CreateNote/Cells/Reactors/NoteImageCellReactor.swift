@@ -21,7 +21,8 @@ final class NoteImageCellReactor: Reactor {
   }
   
   enum Action {
-    case initiailizeSection
+    case fetchSections
+    case addImage(String)
   }
 
   enum Mutation {
@@ -39,13 +40,15 @@ final class NoteImageCellReactor: Reactor {
 
   init(dependency: Dependency) {
     self.dependency = dependency
-    initialState = State(sections: [])
+    initialState = State(sections: dependency.factory([]))
   }
 
   func mutate(action: Action) -> Observable<Mutation> {
     switch action {
-      case .initiailizeSection:
-        return .just(Mutation.fetchSection(self.generateSection(images: testNotes)))
+      case .fetchSections:
+        return self.fetchAlreadyExistSections()
+      case .addImage(let url):
+        return self.addImageSectionItem(imageURL: url)
     }
   }
   
@@ -54,8 +57,6 @@ final class NoteImageCellReactor: Reactor {
     switch mutation {
       case .fetchSection(let sections):
         newState.sections = sections
-      default:
-        break
     }
     
     return newState
@@ -64,14 +65,44 @@ final class NoteImageCellReactor: Reactor {
   private func generateSection(images: [NoteImage]) -> [NoteImageSection] {
     return self.dependency.factory(images)
   }
+  
+  private func fetchAlreadyExistSections() -> Observable<Mutation> {
+    guard let section = self.currentState.sections[safe: NoteImageSection.Identity.item.rawValue] else {
+      return .empty()
+    }
+    
+    let imageItemCellReactors = section.items.compactMap { sectionItems -> NoteImageItemCellReactor? in
+      if case let NoteImageSectionItem.item(value) = sectionItems {
+        return value
+      } else {
+        return nil
+      }
+    }
+    
+    let images = imageItemCellReactors.map { $0.currentState.item }
+    
+    let sections = self.dependency.factory(images)
+    
+    return Observable.just(.fetchSection(sections))
+  }
+  
+  private func addImageSectionItem(imageURL: String) -> Observable<Mutation> {
+    // Todo: NoteImage 모델은 상세에서만 쓰일것 같아 ItemReactor 모델 추후변경 예정
+    let item = NoteImage.init(id: 0, url: imageURL)
+    let reactor = NoteImageItemCellReactor(item: item)
+    let sectionItem = NoteImageSectionItem.item(reactor)
+    
+    var sections = self.currentState.sections
+    
+    var sectionItems = sections[NoteImageSection.Identity.item.rawValue].items
+    
+    sectionItems.append(sectionItem)
+    
+    sections[NoteImageSection.Identity.item.rawValue].items = sectionItems
+    
+    return .just(.fetchSection(sections))
+  }
 }
-
-// TODO: 이미지 셀 영역을 위한 코드, 제거 예정
-let testNotes: [NoteImage] = [
-  .init(id: 0, url: "aaaaaaaaa"),
-  .init(id: 1, url: "bbbbbbbbb"),
-  .init(id: 2, url: "ccccccccc")
-]
 
 typealias NoteImageSectionType = ([NoteImage]) -> [NoteImageSection]
 

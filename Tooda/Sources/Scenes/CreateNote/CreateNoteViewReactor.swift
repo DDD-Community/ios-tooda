@@ -8,8 +8,15 @@
 
 import Foundation
 import ReactorKit
+import Then
 
 final class CreateNoteViewReactor: Reactor {
+  
+  enum ViewPresentType {
+    case showAlert(String)
+    case showPermission(String)
+    case showPhotoPicker
+  }
   
   let scheduler: Scheduler = MainScheduler.asyncInstance
 
@@ -30,17 +37,13 @@ final class CreateNoteViewReactor: Reactor {
 
   enum Mutation {
     case initializeForm([NoteSection])
-    case requestPermissionMessage(String)
-    case showAlertMessage(String?)
-    case showPhotoPicker
+    case present(ViewPresentType)
+    case fetchImageSection(NoteSectionItem)
   }
 
-  // TODO: sections외 다른 변수들을 하나의 enum으로 관리할 수 있는 방법으로 리팩토링 예정
-  struct State {
-    var sections: [NoteSection]
-    var requestPermissionMessage: String?
-    var showAlertMessage: String?
-    var showPhotoPicker: Void?
+  struct State: Then {
+    var sections: [NoteSection] = []
+    var presentType: ViewPresentType?
   }
 
   let initialState: State
@@ -49,7 +52,7 @@ final class CreateNoteViewReactor: Reactor {
 
   init(dependency: Dependency) {
     self.dependency = dependency
-    self.initialState = State(sections: [])
+    self.initialState = State()
   }
 
   func mutate(action: Action) -> Observable<Mutation> {
@@ -59,23 +62,29 @@ final class CreateNoteViewReactor: Reactor {
     case .didSelectedImageItem(let index):
       return checkAuthorizationAndSelectedItem(indexPath: index)
     case .uploadImage(let data):
-      return .empty()
+      return self.uploadImage(data)
+        .flatMap { [weak self] response -> Observable<Mutation> in
+        return self?.fetchImageSection(with: response) ?? .empty()
+      }
     default:
       return .empty()
     }
   }
 
   func reduce(state: State, mutation: Mutation) -> State {
-    var newState = state
+    
+    var newState = State().with {
+      $0.sections = state.sections
+      $0.presentType = nil
+    }
+    
     switch mutation {
     case .initializeForm(let sections):
       newState.sections = sections
-    case .requestPermissionMessage(let message):
-      newState.requestPermissionMessage = message
-    case .showAlertMessage(let message):
-      newState.showAlertMessage = message
-    case .showPhotoPicker:
-      newState.showPhotoPicker = ()
+    case .present(let type):
+      newState.presentType = type
+    case .fetchImageSection(let sectionItem):
+      newState.sections[NoteSection.Identity.image.rawValue].items = [sectionItem]
     }
 
     return newState
@@ -105,10 +114,10 @@ final class CreateNoteViewReactor: Reactor {
     switch imageSectionItem {
       case .empty:
         guard imageCellReactor.currentState.sections[NoteImageSection.Identity.item.rawValue].items.count < 3 else {
-          return .just(.showAlertMessage("이미지는 최대 3개까지 등록 가능합니다."))
+          return .just(.present(.showAlert("이미지는 최대 3개까지 등록 가능합니다.")))
         }
         
-        return .just(.showPhotoPicker)
+        return .just(.present(.showPhotoPicker))
       case .item(let reactor):
         print("이미지 삭제: \(reactor.currentState.item.imageURL)")
     }
@@ -125,7 +134,7 @@ final class CreateNoteViewReactor: Reactor {
           guard let mutation = self?.didSelectedImageItem(indexPath) else { return .empty() }
           return mutation
         default:
-          return .just(Mutation.requestPermissionMessage("테스트"))
+          return .just(.present(.showPermission("테스트")))
       }
     }
   }
@@ -135,9 +144,28 @@ final class CreateNoteViewReactor: Reactor {
 
 extension CreateNoteViewReactor {
   private func uploadImage(_ data: Data) -> Observable<String> {
-    return self.dependency.service.request(NoteAPI.addImage(data: data))
-      .map(String.self)
-      .asObservable()
+    return Observable.just("aaaaa")
+  }
+}
+
+// MARK: - Fetch ImageSections
+
+extension CreateNoteViewReactor {
+  private func fetchImageSection(with imageURL: String) -> Observable<Mutation> {
+    let section = self.currentState.sections[NoteSection.Identity.image.rawValue]
+
+    guard let imageCellReactor = section.items.compactMap({ items -> NoteImageCellReactor? in
+      if case let NoteSectionItem.image(value) = items {
+        return value
+      } else {
+        return nil
+      }
+    }).first else { return .empty() }
+
+
+    imageCellReactor.action.onNext(.addImage(imageURL))
+
+    return .empty()
   }
 }
 
