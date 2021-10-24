@@ -19,10 +19,10 @@ class NoteImageItemCell: BaseCollectionViewCell, View {
   
   // TODO: ImageView로 변경 예정
   
-  let containerView = UIView().then {
-    $0.backgroundColor = UIColor(type: .gray1)
+  let containerView = UIImageView().then {
     $0.layer.cornerRadius = 8.0
     $0.layer.masksToBounds = true
+    $0.contentMode = .scaleAspectFit
   }
   
   func configure(reactor: Reactor) {
@@ -31,7 +31,12 @@ class NoteImageItemCell: BaseCollectionViewCell, View {
   }
     
   func bind(reactor: Reactor) {
-    
+    reactor.state
+      .map { $0.item }
+      .asDriver(onErrorJustReturn: .init())
+      .drive(onNext: { [weak self] in
+        self?.fetchImage(urlString: $0.imageURL)
+      }).disposed(by: self.disposeBag)
   }
   
   // MARK: Cell Life Cycle
@@ -55,5 +60,24 @@ class NoteImageItemCell: BaseCollectionViewCell, View {
     containerView.snp.makeConstraints {
       $0.edges.equalToSuperview()
     }
+  }
+}
+
+// MARK: - Extension
+
+extension NoteImageItemCell {
+  private func fetchImage(urlString: String) {
+    guard let image = urlString.urlImage else { return }
+    self.containerView.image = image
+  }
+}
+
+private extension String {
+  var urlImage: UIImage? {
+    guard let url = URL(string: self),
+          let data = try? Data(contentsOf: url),
+          let image = UIImage(data: data) else { return nil }
+    
+    return image
   }
 }
