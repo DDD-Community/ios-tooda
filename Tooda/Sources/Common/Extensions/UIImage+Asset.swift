@@ -31,6 +31,7 @@ enum AppImage: String {
   case login = "login"
   case iconDownGray = "icon_down_gray"
   case iconArrowRightGray = "icon_arrow_right_gray"
+  case closeBlack = "close_black"
 }
 
 extension UIImage {
