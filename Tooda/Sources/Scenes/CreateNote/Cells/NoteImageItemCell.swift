@@ -22,7 +22,7 @@ class NoteImageItemCell: BaseCollectionViewCell, View {
   let containerView = UIImageView().then {
     $0.layer.cornerRadius = 8.0
     $0.layer.masksToBounds = true
-    $0.contentMode = .scaleAspectFit
+    $0.contentMode = .scaleAspectFill
   }
   
   func configure(reactor: Reactor) {
