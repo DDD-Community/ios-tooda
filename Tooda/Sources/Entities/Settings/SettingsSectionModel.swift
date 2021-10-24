@@ -34,6 +34,15 @@ struct SettingsSectionModel {
         }
       }
     }
+    
+    var cellHeight: CGFloat {
+      switch self {
+      case .notification:
+        return 54
+      case .etc:
+        return 54
+      }
+    }
   }
   let identity: SectionType
   var items: [SettingsItem]

@@ -119,24 +119,23 @@ final class SettingsViewController: BaseViewController<SettingsReactor> {
 }
 
 extension SettingsViewController: UITableViewDelegate {
-  func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+  
+  func tableView(
+    _ tableView: UITableView,
+    heightForRowAt indexPath: IndexPath
+  ) -> CGFloat {
     guard let sectionType = dataSource.sectionModels[safe: indexPath.section]?.identity else {
       return CGFloat.zero
     }
     
-    switch sectionType {
-    case .notification:
-      return 54
-    case .etc:
-      return 54
-    }
+    return sectionType.cellHeight
   }
   
   func tableView(
     _ tableView: UITableView,
     heightForHeaderInSection section: Int
   ) -> CGFloat {
-    50
+    return 50
   }
   
   func tableView(
