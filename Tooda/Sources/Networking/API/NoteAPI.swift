@@ -52,7 +52,7 @@ extension NoteAPI: BaseAPI {
         // TODO: diary 파라미터 작성
         return .requestCompositeParameters(bodyParameters: body, bodyEncoding: JSONEncoding.default, urlParameters: parameters)
       case .addImage(let imageData):
-        let imageData = MultipartFormData(provider: .data(imageData), name: "file", fileName: "image.jpeg", mimeType: "image/jpeg")
+        let imageData = MultipartFormData(provider: .data(imageData), name: "files", fileName: "image.jpeg", mimeType: "image/jpeg")
         let multipartData = [imageData]
         
         return .uploadMultipart(multipartData)
