@@ -11,6 +11,7 @@ import UIKit
 import ReactorKit
 
 import SnapKit
+import RxCocoa
 
 class EmptyNoteImageItemCell: BaseCollectionViewCell, View {
   typealias Reactor = EmptyNoteImageItemCellReactor
@@ -22,6 +23,8 @@ class EmptyNoteImageItemCell: BaseCollectionViewCell, View {
     $0.layer.cornerRadius = 8.0
     $0.layer.masksToBounds = true
   }
+  
+  let addImageButton = UIButton()
   
   func configure(reactor: Reactor) {
     super.configure()
@@ -45,6 +48,8 @@ class EmptyNoteImageItemCell: BaseCollectionViewCell, View {
     [containerView].forEach {
       self.contentView.addSubview($0)
     }
+    
+    containerView.addSubviews(addImageButton)
   }
   
   override func setupConstraints() {
@@ -53,5 +58,21 @@ class EmptyNoteImageItemCell: BaseCollectionViewCell, View {
     containerView.snp.makeConstraints {
       $0.edges.equalToSuperview()
     }
+    
+    addImageButton.snp.makeConstraints {
+      $0.edges.equalToSuperview()
+    }
+  }
+}
+
+// MARK: - Extensions
+
+extension Reactive where Base: EmptyNoteImageItemCell {
+  var addImageButtonDidTap: Observable<IndexPath> {
+    return self.base.addImageButton.rx.tap
+      .flatMap { _ -> Observable<IndexPath> in
+        guard let indexPath = self.base.indexPath else { return .empty() }
+        return Observable.just(indexPath)
+      }
   }
 }

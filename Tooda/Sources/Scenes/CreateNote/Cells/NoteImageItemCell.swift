@@ -11,6 +11,7 @@ import UIKit
 import ReactorKit
 
 import SnapKit
+import RxCocoa
 
 class NoteImageItemCell: BaseCollectionViewCell, View {
   typealias Reactor = NoteImageItemCellReactor
@@ -58,11 +59,9 @@ class NoteImageItemCell: BaseCollectionViewCell, View {
   override func configureUI() {
     super.configureUI()
     
-    [containerView].forEach {
+    [containerView, deleteButton].forEach {
       self.contentView.addSubview($0)
     }
-    
-    containerView.addSubviews(deleteButton)
   }
   
   override func setupConstraints() {
@@ -96,5 +95,15 @@ private extension String {
           let image = UIImage(data: data) else { return nil }
     
     return image
+  }
+}
+
+extension Reactive where Base: NoteImageItemCell {
+  var deleteButtonDidTap: Observable<IndexPath> {
+    return self.base.deleteButton.rx.tap
+      .flatMap { _ -> Observable<IndexPath> in
+        guard let indexPath = self.base.indexPath else { return .empty() }
+        return Observable.just(indexPath)
+      }
   }
 }
