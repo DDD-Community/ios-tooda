@@ -22,15 +22,31 @@ class NoteImageCell: BaseTableViewCell, View {
 
   var disposeBag: DisposeBag = DisposeBag()
   
-  private lazy var dataSource: Section = Section(configureCell: { _, collectionView, indexPath, item -> UICollectionViewCell in
+  let cellItemDidTapRelay: PublishRelay<IndexPath> = PublishRelay()
+  
+  private lazy var dataSource: Section = Section(configureCell: { [weak self] _, collectionView, indexPath, item -> UICollectionViewCell in
     switch item {
       case .empty(let reactor):
         let cell = collectionView.dequeue(EmptyNoteImageItemCell.self, indexPath: indexPath)
         cell.configure(reactor: reactor)
+        
+        if let relay = self?.cellItemDidTapRelay {
+          cell.rx.addImageButtonDidTap
+            .bind(to: relay)
+            .disposed(by: cell.disposeBag)
+        }
+        
         return cell
       case .item(let reactor):
         let cell = collectionView.dequeue(NoteImageItemCell.self, indexPath: indexPath)
         cell.configure(reactor: reactor)
+        
+        if let relay = self?.cellItemDidTapRelay {
+          cell.rx.deleteButtonDidTap
+            .bind(to: relay)
+            .disposed(by: cell.disposeBag)
+        }
+        
         return cell
     }
   })
@@ -114,7 +130,7 @@ extension NoteImageCell: UICollectionViewDelegateFlowLayout {
 // MARK: Reactive Extensions
 
 extension Reactive where Base: NoteImageCell {
-  var didSelectedItemCell: ControlEvent<IndexPath> {
-    return self.base.collectionView.rx.itemSelected
+  var didSelectedItemCell: Observable<IndexPath> {
+    return self.base.cellItemDidTapRelay.asObservable()
   }
 }
