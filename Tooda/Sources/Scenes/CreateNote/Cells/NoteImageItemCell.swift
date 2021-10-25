@@ -15,6 +15,11 @@ import SnapKit
 class NoteImageItemCell: BaseCollectionViewCell, View {
   typealias Reactor = NoteImageItemCellReactor
   
+  private enum Metric {
+    static let deleteButtonMargin: CGFloat = 3.0
+    static let imageSize: CGFloat = 24.0
+  }
+  
   var disposeBag: DisposeBag = DisposeBag()
   
   // TODO: ImageView로 변경 예정
@@ -23,6 +28,10 @@ class NoteImageItemCell: BaseCollectionViewCell, View {
     $0.layer.cornerRadius = 8.0
     $0.layer.masksToBounds = true
     $0.contentMode = .scaleAspectFill
+  }
+  
+  let deleteButton = UIButton().then {
+    $0.setImage(UIImage(type: .closeBlack), for: .normal)
   }
   
   func configure(reactor: Reactor) {
@@ -52,6 +61,8 @@ class NoteImageItemCell: BaseCollectionViewCell, View {
     [containerView].forEach {
       self.contentView.addSubview($0)
     }
+    
+    containerView.addSubviews(deleteButton)
   }
   
   override func setupConstraints() {
@@ -59,6 +70,12 @@ class NoteImageItemCell: BaseCollectionViewCell, View {
     
     containerView.snp.makeConstraints {
       $0.edges.equalToSuperview()
+    }
+    
+    deleteButton.snp.makeConstraints {
+      $0.top.equalToSuperview().offset(Metric.deleteButtonMargin)
+      $0.right.equalToSuperview().offset(-Metric.deleteButtonMargin)
+      $0.size.equalTo(Metric.imageSize)
     }
   }
 }
