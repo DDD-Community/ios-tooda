@@ -43,7 +43,6 @@ protocol ProjectFactory {
 	var organizationName: String { get }
 	var targets: [Target] { get }
 	var deployment: DeploymentTarget { get }
-	var dependency: TargetDependency { get }
 	var schemes: [Scheme] { get }
 	var setting: Settings { get }
 	
@@ -59,10 +58,6 @@ class BaseProjectFactory: ProjectFactory {
 		.iOS(targetVersion: "13.0", devices: .iphone)
 	}
 	
-	var dependency: TargetDependency {
-		TargetDependency.cocoapods(path: .relativeToRoot("."))
-	}
-	
 	var targets: [Target] {
 		[Target.init(name: projectName,
 					 platform: .iOS,
@@ -70,37 +65,44 @@ class BaseProjectFactory: ProjectFactory {
 					 bundleId: "",
 					 deploymentTarget: deployment,
 					 infoPlist: "\(projectName)/Sources/SupportFiles/Info.plist",
-					 sources: ["\(projectName)/Sources/**"],
-					 resources: ["\(projectName)/Resources/**"],
-					 actions: targetActions,
-					 dependencies: [dependency])]
-	}
-	
-	var schemes: [Scheme] { [
-		Scheme.init(name: testAppinfo.name,
-			shared: true,
-			buildAction: BuildAction.init(targets: ["\(projectName)"]),
-			testAction: TestAction.init(targets: ["\(projectName)"]),
-			runAction: RunAction.init(configurationName: "\(testAppinfo.configValue)",
-				arguments: nil)
-		),
-		Scheme.init(name: releaseAppInfo.name,
-			shared: true,
-			buildAction: BuildAction.init(targets: ["\(projectName)"]),
-			testAction: TestAction.init(targets: ["\(projectName)"]),
-			runAction: RunAction.init(configurationName: "\(releaseAppInfo.configValue)",
-				arguments: nil))
-		]}
-	
-	var setting: Settings {
-		Settings.init(configurations: [
-			.debug(name: "Debug",
-				   settings: ["Debug": "\(testAppinfo.configValue)"],
-				   xcconfig: .relativeToRoot("\(projectName)/Sources/SupportFiles/Configuration/\(testAppinfo.configValue).xcconfig")),
-			.release(name: "Release",
-					 settings: ["Release": "\(releaseAppInfo.configValue)"],
-					 xcconfig: .relativeToRoot("\(projectName)/Sources/SupportFiles/Configuration/\(releaseAppInfo.configValue).xcconfig"))
-		])
+           sources: ["\(projectName)/Sources/**"],
+           resources: ["\(projectName)/Resources/**"],
+           scripts: targetScripts,
+           dependencies: [])]
+  }
+
+  var schemes: [Scheme] { [
+    Scheme.init(
+      name: testAppinfo.name,
+      shared: true,
+      buildAction: .buildAction(targets: ["\(projectName)"]),
+      testAction: .targets(["\(projectName)"]),
+      runAction: .runAction(
+        configuration: .configuration("\(testAppinfo.configValue)"),
+        arguments: nil
+      )
+    ),
+    Scheme.init(
+      name: releaseAppInfo.name,
+      shared: true,
+      buildAction: .buildAction(targets: ["\(projectName)"]),
+      testAction: .targets(["\(projectName)"]),
+      runAction: .runAction(
+        configuration: .configuration("\(releaseAppInfo.configValue)"),
+        arguments: nil
+      )
+    )
+  ]}
+
+  var setting: Settings {
+    .settings(configurations: [
+      .debug(name: .configuration("Debug"),
+             settings: ["Debug": "\(testAppinfo.configValue)"],
+             xcconfig: .relativeToRoot("\(projectName)/Sources/SupportFiles/Configuration/\(testAppinfo.configValue).xcconfig")),
+      .release(name: .configuration("Release"),
+               settings: ["Release": "\(releaseAppInfo.configValue)"],
+               xcconfig: .relativeToRoot("\(projectName)/Sources/SupportFiles/Configuration/\(releaseAppInfo.configValue).xcconfig"))
+    ])
 	}
 	
 	func make() -> Project {
@@ -127,16 +129,16 @@ extension BaseProjectFactory {
 }
 
 extension BaseProjectFactory {
-	var targetActions: [TargetAction] {
+	var targetScripts: [TargetScript] {
 		[
-			TargetAction.pre(script: "${PODS_ROOT}/Swiftlint/swiftlint", name: "Swiftlint")
+      TargetScript.pre(script: "${PODS_ROOT}/Swiftlint/swiftlint", name: "Swiftlint")
 		]
 	}
 }
 
 // MARK: Test Code
 extension BaseProjectFactory {
-	func aa() -> CustomConfiguration {
+	func aa() -> Configuration {
 		let configuration: [String: SettingValue] = [
 			"APP_NAME": "TodaTest",
 			"APP_IDENTIFIER": "com.dts.toda.test",
@@ -146,7 +148,7 @@ extension BaseProjectFactory {
 		]
 
 		// path can nil
-		return CustomConfiguration.debug(name: "Debug", settings: configuration, xcconfig: .relativeToRoot("\(projectName)/Sources/SupportFiles/Configuration/Debug.xcconfig"))
+		return Configuration.debug(name: "Debug", settings: configuration, xcconfig: .relativeToRoot("\(projectName)/Sources/SupportFiles/Configuration/Debug.xcconfig"))
 	}
 }
 
