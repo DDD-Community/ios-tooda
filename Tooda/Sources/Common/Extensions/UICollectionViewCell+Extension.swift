@@ -65,3 +65,17 @@ extension UICollectionView {
     self.register(T.self, forSupplementaryViewOfKind: kind.rawValue, withReuseIdentifier: T.reuseIdentifier)
   }
 }
+
+// MARK: Get Current indexPath
+
+extension UICollectionViewCell {
+  
+  var collectionView: UICollectionView? {
+    return superview as? UICollectionView
+  }
+  
+  var indexPath: IndexPath? {
+    return collectionView?.indexPath(for: self)
+  }
+  
+}
