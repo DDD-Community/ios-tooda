@@ -118,8 +118,8 @@ final class CreateNoteViewReactor: Reactor {
         }
         
         return .just(.present(.showPhotoPicker))
-      case .item(let reactor):
-        print("이미지 삭제: \(reactor.currentState.item.imageURL)")
+      case .item:
+        imageCellReactor.action.onNext(.removeImage(indexPath))
     }
     
     return .empty()

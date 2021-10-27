@@ -23,6 +23,7 @@ final class NoteImageCellReactor: Reactor {
   enum Action {
     case fetchSections
     case addImage(String)
+    case removeImage(IndexPath)
   }
 
   enum Mutation {
@@ -49,6 +50,8 @@ final class NoteImageCellReactor: Reactor {
         return self.fetchAlreadyExistSections()
       case .addImage(let url):
         return self.addImageSectionItem(imageURL: url)
+      case .removeImage(let index):
+        return self.removeImageSectionItems(index)
     }
   }
   
@@ -97,6 +100,19 @@ final class NoteImageCellReactor: Reactor {
     var sectionItems = sections[NoteImageSection.Identity.item.rawValue].items
     
     sectionItems.append(sectionItem)
+    
+    sections[NoteImageSection.Identity.item.rawValue].items = sectionItems
+    
+    return .just(.fetchSection(sections))
+  }
+  
+  private func removeImageSectionItems(_ index: IndexPath) -> Observable<Mutation> {
+    
+    var sections = self.currentState.sections
+    
+    var sectionItems = sections[NoteImageSection.Identity.item.rawValue].items
+    
+    sectionItems.remove(at: index.row)
     
     sections[NoteImageSection.Identity.item.rawValue].items = sectionItems
     
