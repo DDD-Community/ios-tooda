@@ -12,7 +12,19 @@ import SnapKit
 
 class NoteListCell: BaseTableViewCell {
   
-  private let cardView = UIView()
+  // MARK: - Constants
+  
+  enum Font {
+    static let title = TextStyle.subTitleBold(color: .gray1)
+    static let recordDate = TextStyle.captionBold(color: .gray3)
+    static let description = TextStyle.bodyBold(color: .gray1)
+  }
+  
+  // MARK: - UI Components
+  
+  private let cardView = UIView().then {
+    $0.backgroundColor = .white
+  }
   
   private let emojiImageView = UIImageView()
   
@@ -23,11 +35,15 @@ class NoteListCell: BaseTableViewCell {
   private let descriptionLabel = UILabel()
   
   private let mainImageView = UIImageView()
-  
+
 
   override func configureUI() {
     super.configureUI()
-    contentView.addSubview(cardView)
+    contentView.do {
+      $0.backgroundColor = .gray5
+      $0.addSubview(cardView)
+    }
+    
     cardView.addSubviews(
       emojiImageView,
       titleLabel,
