@@ -7,3 +7,37 @@
 //
 
 import Foundation
+
+import ReactorKit
+import RxSwift
+
+final class NoteListReactor: Reactor {
+  
+  // MARK: Reactor
+  
+  enum Action {
+    case initialLoad
+  }
+
+  enum Mutation {
+    
+  }
+  
+  struct Dependency {
+    
+  }
+  
+  struct State {
+    
+  }
+  
+  init(dependency: Dependency) {
+    self.dependency = dependency
+  }
+  
+  // MARK: Properties
+  
+  let dependency: Dependency
+  
+  let initialState: State = State()
+}
