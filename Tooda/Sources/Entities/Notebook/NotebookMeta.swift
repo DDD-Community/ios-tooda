@@ -30,7 +30,7 @@ struct NotebookMeta: Codable {
     self.noteCount = noteCount
     self.createdAt = createdAt
     self.updatedAt = updatedAt
-    self.stickers = []
+    self.stickers = stickers
   }
 
   private enum CodingKeys: String, CodingKey {
