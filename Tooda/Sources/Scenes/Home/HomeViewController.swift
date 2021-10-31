@@ -160,6 +160,12 @@ final class HomeViewController: BaseViewController<HomeReactor> {
       $0.addSubview(self.noteCountLabel)
       $0.addSubview(self.notebookCollectionView)
     }
+
+    self.monthTitleButton.addTarget(
+      self,
+      action: #selector(didTapMonthTitle),
+      for: .touchUpInside
+    )
   }
 
   override func configureConstraints() {
@@ -180,6 +186,43 @@ final class HomeViewController: BaseViewController<HomeReactor> {
       $0.top.equalTo(self.noteCountLabel.snp.bottom).offset(35.0)
       $0.height.equalTo(Metric.notebookCellSize.height)
     }
+  }
+}
+
+
+// MARK: Internal
+
+extension HomeViewController {
+
+  private func presentDatePickerAlert(onConfirm: @escaping (Date) -> Void) {
+    let datePicker = JSDatePicker()
+
+    let alertController = UIAlertController(
+      title: nil,
+      message: nil,
+      preferredStyle: .actionSheet
+    ).then {
+      $0.view.addSubview(datePicker)
+      $0.addAction(.init(title: "확인", style: .default, handler: { _ in
+        onConfirm(datePicker.selectedDate)
+      }))
+      $0.addAction(.init(title: "취소", style: .cancel, handler: nil))
+    }
+
+    datePicker.snp.makeConstraints {
+      $0.top.equalToSuperview()
+      $0.leading.equalToSuperview()
+      $0.trailing.equalToSuperview()
+      $0.bottom.equalToSuperview().inset(110.0)
+    }
+
+    self.present(alertController, animated: true)
+  }
+
+  @objc private func didTapMonthTitle() {
+    self.presentDatePickerAlert(onConfirm: { date in
+      print("\(date)!!!")
+    })
   }
 }
 
