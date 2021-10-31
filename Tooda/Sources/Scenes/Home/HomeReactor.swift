@@ -38,6 +38,7 @@ final class HomeReactor: Reactor {
     // Entities
     var notebooks: [NotebookMeta]
     var selectedNotobook: NotebookMeta?
+    var selectedIndex: Int?
 
     // ViewModels
     var notebookViewModels: [NotebookCell.ViewModel]
@@ -102,7 +103,13 @@ extension HomeReactor {
       return Observable<Mutation>.just(.selectNotebook(notebookIndex: index))
 
     case let .pickDate(date):
-      return Observable<Mutation>.empty()
+      return Observable<Mutation>.just(
+        .selectNotebook(
+          notebookIndex: self.currentState.notebooks.firstIndex(where: {
+            $0.year == date.year && $0.month == date.month
+          })
+        )
+      )
     }
   }
 
@@ -185,6 +192,7 @@ extension HomeReactor {
     case let .selectNotebook(notebookIndex):
       guard let notebookIndex = notebookIndex,
             let notebook = state.notebooks[safe: notebookIndex] else { break }
+      newState.selectedIndex = notebookIndex
       newState.selectedNotobook = notebook
     }
 
