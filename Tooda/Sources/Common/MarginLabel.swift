@@ -44,12 +44,20 @@ final class MarginLabel: UILabel {
   
   override var intrinsicContentSize: CGSize {
     let size = super.intrinsicContentSize
-    return CGSize(width: size.width + edgeInsets.left + edgeInsets.right,
-                  height: size.height + edgeInsets.top + edgeInsets.bottom)
+    return CGSize(
+      width: size.width + edgeInsets.left + edgeInsets.right,
+      height: size.height + edgeInsets.top + edgeInsets.bottom
+    )
   }
   
-  override func textRect(forBounds bounds: CGRect, limitedToNumberOfLines numberOfLines: Int) -> CGRect {
-    var textRect:CGRect = super.textRect(forBounds: bounds, limitedToNumberOfLines: numberOfLines)
+  override func textRect(
+    forBounds bounds: CGRect,
+    limitedToNumberOfLines numberOfLines: Int
+  ) -> CGRect {
+    var textRect:CGRect = super.textRect(
+      forBounds: bounds,
+      limitedToNumberOfLines: numberOfLines
+    )
     
     switch self.verticalAlignment {
     case .top:
