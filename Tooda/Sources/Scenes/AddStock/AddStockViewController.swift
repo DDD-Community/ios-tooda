@@ -11,6 +11,7 @@ import RxSwift
 import RxCocoa
 import SnapKit
 import Then
+import UIKit
 
 final class AddStockViewController: BaseViewController<AddStockReactor> {
   
@@ -41,6 +42,13 @@ final class AddStockViewController: BaseViewController<AddStockReactor> {
     $0.backgroundColor = .white
     $0.register(StockItemCell.self)
   }
+  
+  lazy var closeBarButton = {
+    UIBarButtonItem(image: UIImage.init(type: .closeButton)?.withRenderingMode(.alwaysOriginal),
+                    style: .plain,
+                    target: self,
+                    action: nil)
+  }()
   
   // MARK: Initialzier
   
@@ -90,5 +98,14 @@ final class AddStockViewController: BaseViewController<AddStockReactor> {
       $0.right.equalToSuperview().offset(-Metric.horizontalMargin)
       $0.bottom.equalTo(self.view.safeAreaLayoutGuide.snp.bottom)
     }
+  }
+}
+
+// MARK: - Extensions
+
+extension AddStockViewController {
+  private func initializeNavigation() {
+    self.navigationItem.title = "종목 기록하기"
+    self.navigationItem.rightBarButtonItem = closeBarButton
   }
 }
