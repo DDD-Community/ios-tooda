@@ -43,12 +43,12 @@ final class AddStockViewController: BaseViewController<AddStockReactor> {
     $0.register(StockItemCell.self)
   }
   
-  lazy var closeBarButton = {
-    UIBarButtonItem(image: UIImage.init(type: .closeButton)?.withRenderingMode(.alwaysOriginal),
-                    style: .plain,
-                    target: self,
-                    action: nil)
-  }()
+  private let closeBarButton = UIBarButtonItem(
+    image: UIImage(type: .closeButton)?.withRenderingMode(.alwaysOriginal),
+    style: .plain,
+    target: nil,
+    action: nil
+  )
   
   // MARK: Initialzier
   
@@ -69,6 +69,8 @@ final class AddStockViewController: BaseViewController<AddStockReactor> {
   
   override func viewDidLoad() {
     super.viewDidLoad()
+    
+    self.initializeNavigation()
   }
   
   // MARK: Bind
@@ -78,6 +80,14 @@ final class AddStockViewController: BaseViewController<AddStockReactor> {
     
     // Action
     
+    // TODO: Reactor Action으로 변경
+    self.closeBarButton.rx.tap
+      .throttle(.milliseconds(500), scheduler: MainScheduler.instance)
+      .asDriver(onErrorJustReturn: ())
+      .drive(onNext: { [weak self] in
+        self?.dismiss(animated: true, completion: nil)
+      }).disposed(by: self.disposeBag)
+    
     // State
   }
   
@@ -86,7 +96,9 @@ final class AddStockViewController: BaseViewController<AddStockReactor> {
   override func configureUI() {
     super.configureUI()
     
-    self.view.addSubviews(tableView)
+    self.view.backgroundColor = .white
+    
+    self.view.addSubview(tableView)
   }
   
   override func configureConstraints() {
