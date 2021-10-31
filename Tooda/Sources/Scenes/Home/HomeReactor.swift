@@ -147,7 +147,8 @@ extension HomeReactor {
       )
     ]
 
-    if mockNotebooks.last?.month == Date().month {
+    if let lastMonth = mockNotebooks.last?.month,
+       lastMonth != Date().month {
       mockNotebooks.append(self.createCurrentNotebook())
     }
 
@@ -195,38 +196,36 @@ extension HomeReactor {
     viewModels.append(
       contentsOf:
         metas.enumerated().map { (index, item) in
-          let day = Calendar.current.dateComponents([.day], from: item.updatedAt, to: Date()).day
+          let day = Calendar.current.dateComponents(
+            [.day],
+            from: item.updatedAt ?? Date(),
+            to: Date()
+          ).day
+
           let historyDate: String? = {
             guard let day = day, day > 0 else { return nil }
             return "\(day)"
           }()
 
-          let backgroundImage: UIImage? = self.notebookImages[index % Const.notebookImagesCount]
+          let isPlaceholder = item.createdAt == nil
+
+          let backgroundImage: UIImage? = {
+            if isPlaceholder {
+              return self.placeholderNotebookImage
+            }
+            return self.notebookImages[index % Const.notebookImagesCount]
+          }()
 
           return NotebookCell.ViewModel(
             month: "\(item.month)",
             backgroundImage: backgroundImage,
             historyDate: historyDate,
             stickers: item.stickers.map { $0.image },
-            isPlaceholder: false
+            isPlaceholder: isPlaceholder
           )
         }
     )
 
-    let currentMonth = Date().month
-
-    if let lastMonth = metas.last?.month,
-       currentMonth != lastMonth {
-      viewModels.append(
-        NotebookCell.ViewModel(
-          month: "\(currentMonth)",
-          backgroundImage: self.placeholderNotebookImage,
-          historyDate: nil,
-          stickers: [],
-          isPlaceholder: true
-        )
-      )
-    }
     return viewModels
   }
 }
