@@ -31,13 +31,13 @@ final class HomeReactor: Reactor {
 
   enum Mutation {
     case setNotebooks([NotebookMeta])
-    case selectNotebook(notebookIndex: Int)
+    case selectNotebook(notebookIndex: Int?)
   }
   
   struct State {
     // Entities
     var notebooks: [NotebookMeta]
-    var selectedNotobook: NotebookMeta
+    var selectedNotobook: NotebookMeta?
 
     // ViewModels
     var notebookViewModels: [NotebookCell.ViewModel]
@@ -63,12 +63,7 @@ final class HomeReactor: Reactor {
 
     return State(
       notebooks: [],
-      selectedNotobook: NotebookMeta(
-        year: currentDate.year,
-        month: currentDate.month,
-        createdAt: currentDate,
-        updatedAt: currentDate
-      ),
+      selectedNotobook: nil,
       notebookViewModels: []
     )
   }()
@@ -188,7 +183,8 @@ extension HomeReactor {
       newState.notebookViewModels = self.mappingToNoteBooks(metas: metas)
 
     case let .selectNotebook(notebookIndex):
-      guard let notebook = state.notebooks[safe: notebookIndex] else { break }
+      guard let notebookIndex = notebookIndex,
+            let notebook = state.notebooks[safe: notebookIndex] else { break }
       newState.selectedNotobook = notebook
     }
 

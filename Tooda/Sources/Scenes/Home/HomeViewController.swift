@@ -135,7 +135,8 @@ final class HomeViewController: BaseViewController<HomeReactor> {
       }.disposed(by: self.disposeBag)
 
     reactor.state
-      .map { $0.selectedNotobook }
+      .filter { $0.selectedNotobook != nil }
+      .map { $0.selectedNotobook! }
       .subscribe(onNext: { [weak self] notebook in
         self?.monthTitleButton.setAttributedTitle(
           Date(year: notebook.year, month: notebook.month, day: 1)
