@@ -108,54 +108,66 @@ extension HomeReactor {
   }
 
   private func loadMutation() -> Observable<Mutation> {
-    return Observable.just(
-      Mutation.setNotebooks([
-        NotebookMeta(
-          year: 2021,
-          month: 1,
-          noteCount: 10,
-          createdAt: Date(year: 2021, month: 9, day: 10),
-          updatedAt: Date(year: 2021, month: 9, day: 12),
-          stickers: [
-            .angry,
-            .chicken,
-            .pencil
-          ]
-        ),
-        NotebookMeta(
-          year: 2021,
-          month: 2,
-          noteCount: 5,
-          createdAt: Date(),
-          updatedAt: Date(),
-          stickers: [
-            .wow,
-            .thinking,
-            .sad
-          ]
-        ),
-        NotebookMeta(
-          year: 2021,
-          month: 3,
-          noteCount: 7,
-          createdAt: Date(),
-          updatedAt: Date(),
-          stickers: [
-            .angry,
-            .chicken,
-            .chicken
-          ]
-        )
-      ])
-    )
+    var mockNotebooks = [
+      NotebookMeta(
+        year: 2021,
+        month: 1,
+        noteCount: 10,
+        createdAt: Date(year: 2021, month: 9, day: 10),
+        updatedAt: Date(year: 2021, month: 9, day: 12),
+        stickers: [
+          .angry,
+          .chicken,
+          .pencil
+        ]
+      ),
+      NotebookMeta(
+        year: 2021,
+        month: 2,
+        noteCount: 5,
+        createdAt: Date(),
+        updatedAt: Date(),
+        stickers: [
+          .wow,
+          .thinking,
+          .sad
+        ]
+      ),
+      NotebookMeta(
+        year: 2021,
+        month: 3,
+        noteCount: 7,
+        createdAt: Date(),
+        updatedAt: Date(),
+        stickers: [
+          .angry,
+          .chicken,
+          .chicken
+        ]
+      )
+    ]
+
+    if let lastMonth = mockNotebooks.last?.month,
+       lastMonth != Date().month {
+      mockNotebooks.append(self.createCurrentNotebook())
+    }
+
+    return Observable.just(Mutation.setNotebooks(mockNotebooks))
     // TODO: create 되면 추가할 예정
-//    return self.dependency.service.request(NotebookAPI.meta(year: self.currentState.date.year))
-//      .map([NotebookMeta].self)
-//      .asObservable()
-//      .map { Mutation.setNotebooks($0) }
+    //    return self.dependency.service.request(NotebookAPI.meta(year: self.currentState.date.year))
+    //      .map([NotebookMeta].self)
+    //      .asObservable()
+    //      .map { Mutation.setNotebooks($0) }
   }
 
+  private func createCurrentNotebook() -> NotebookMeta {
+    let currentDate = Date()
 
+    return NotebookMeta(
+      year: currentDate.year,
+      month: currentDate.month
+    )
+  }
 }
 
 
@@ -184,32 +196,34 @@ extension HomeReactor {
     viewModels.append(
       contentsOf:
         metas.enumerated().map { (index, item) in
-          let day = Calendar.current.dateComponents([.day], from: item.updatedAt, to: Date()).day
+          let day = Calendar.current.dateComponents(
+            [.day],
+            from: item.updatedAt ?? Date(),
+            to: Date()
+          ).day
+
           let historyDate: String? = {
             guard let day = day, day > 0 else { return nil }
             return "\(day)"
           }()
 
-          let backgroundImage: UIImage? = self.notebookImages[index % Const.notebookImagesCount]
+          let isPlaceholder = item.createdAt == nil
+
+          let backgroundImage: UIImage? = {
+            if isPlaceholder {
+              return self.placeholderNotebookImage
+            }
+            return self.notebookImages[index % Const.notebookImagesCount]
+          }()
 
           return NotebookCell.ViewModel(
             month: "\(item.month)",
             backgroundImage: backgroundImage,
             historyDate: historyDate,
             stickers: item.stickers.map { $0.image },
-            isPlaceholder: false
+            isPlaceholder: isPlaceholder
           )
         }
-    )
-
-    viewModels.append(
-      NotebookCell.ViewModel(
-        month: "\(metas.last?.month ?? Date().month)",
-        backgroundImage: self.placeholderNotebookImage,
-        historyDate: nil,
-        stickers: [],
-        isPlaceholder: true
-      )
     )
 
     return viewModels

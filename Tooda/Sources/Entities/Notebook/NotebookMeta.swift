@@ -13,16 +13,16 @@ struct NotebookMeta: Codable {
   var year: Int
   var month: Int
   var noteCount: Int
-  var createdAt: Date
-  var updatedAt: Date
+  var createdAt: Date?
+  var updatedAt: Date?
   var stickers: [Sticker] = []
 
   init(
     year: Int,
     month: Int,
     noteCount: Int = 0,
-    createdAt: Date = Date(),
-    updatedAt: Date = Date(),
+    createdAt: Date? = nil,
+    updatedAt: Date? = nil,
     stickers: [Sticker] = []
   ) {
     self.year = year
@@ -30,7 +30,7 @@ struct NotebookMeta: Codable {
     self.noteCount = noteCount
     self.createdAt = createdAt
     self.updatedAt = updatedAt
-    self.stickers = []
+    self.stickers = stickers
   }
 
   private enum CodingKeys: String, CodingKey {
