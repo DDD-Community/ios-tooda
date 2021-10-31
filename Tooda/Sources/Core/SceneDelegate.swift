@@ -22,18 +22,16 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     AppApppearance.configureAppearance()
     
     let appCoordinator = appInject.resolve(AppCoordinatorType.self)
-    let appFactory = appInject.resolve(AppFactoryType.self)
-    
-    let viewController = appFactory.makeViewController(from: .login)
-    let rootViewController = UINavigationController(rootViewController: viewController)
     
     let window = UIWindow(windowScene: scene)
-    window.rootViewController = rootViewController
     window.makeKeyAndVisible()
     
     self.window = window
     
-    appCoordinator.start(from: viewController)
+    appCoordinator.start(
+      from: .login,
+      shouldNavigationWrapped: true
+    )
   }
   
   func sceneDidDisconnect(_ scene: UIScene) {

@@ -24,7 +24,10 @@ enum CloseStyle {
 }
 
 protocol AppCoordinatorType {
-  func start(from root: UIViewController)
+  func start(
+    from root: Scene,
+    shouldNavigationWrapped: Bool
+  )
   func transition(to scene: Scene, using style: TransitionStyle, animated: Bool, completion: (() -> Void)?)
   func close(style: CloseStyle, animated: Bool, completion: (() -> Void)?)
 }
@@ -52,9 +55,20 @@ final class AppCoordinator: AppCoordinatorType {
     self.dependency = dependency
   }
   
-  func start(from root: UIViewController) {
-    self.currentViewController = root
-//    self.transition(to: .home, using: .push, animated: true)
+  func start(
+    from root: Scene,
+    shouldNavigationWrapped: Bool
+  ) {
+    let rootViewController: UIViewController = self.dependency.appFactory.makeViewController(from: root)
+    
+    if shouldNavigationWrapped {
+      let navigationController = UINavigationController(rootViewController: rootViewController)
+      UIApplication.shared.windows.first?.rootViewController = navigationController
+    } else {
+      UIApplication.shared.windows.first?.rootViewController = rootViewController
+    }
+    
+    self.currentViewController = rootViewController
   }
   
   func transition(to scene: Scene, using style: TransitionStyle, animated: Bool, completion: (() -> Void)?) {

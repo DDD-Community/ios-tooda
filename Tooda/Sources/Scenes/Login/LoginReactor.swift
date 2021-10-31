@@ -74,11 +74,9 @@ extension LoginReactor {
   }
   
   private func routeToHomeMutation() -> Observable<Mutation> {
-    dependency.coordinator.transition(
-      to: .home,
-      using: .push,
-      animated: false,
-      completion: nil
+    dependency.coordinator.start(
+      from: .home,
+      shouldNavigationWrapped: true
     )
     return Observable<Mutation>.empty()
   }
