@@ -57,12 +57,10 @@ final class HomeViewController: BaseViewController<HomeReactor> {
       UIImage(type: .iconDownGray),
       for: .normal
     )
-    $0.setAttributedTitle("wrewr".styled(with: Font.monthTitle), for: .normal)
   }
 
   private let noteCountLabel = UILabel().then {
     $0.numberOfLines = 1
-    $0.attributedText = "3".styled(with: Font.noteCount) + "werwerwe".styled(with: Font.noteCountSuffix)
   }
 
   private let notebookCollectionView = UICollectionView(
@@ -83,7 +81,7 @@ final class HomeViewController: BaseViewController<HomeReactor> {
 
   // MARK: Custom Action
 
-  let rxScrollToItem = BehaviorRelay<Int>(value: 1)
+  private let rxScrollToItem = BehaviorRelay<Int>(value: 0)
   private let rxPickDate = PublishRelay<Date>()
 
 
