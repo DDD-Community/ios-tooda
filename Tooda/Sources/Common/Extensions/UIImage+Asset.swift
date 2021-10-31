@@ -32,6 +32,8 @@ enum AppImage: String {
   case iconDownGray = "icon_down_gray"
   case iconArrowRightGray = "icon_arrow_right_gray"
   case closeBlack = "close_black"
+  
+  case closeButton = "cancel"
 }
 
 extension UIImage {
