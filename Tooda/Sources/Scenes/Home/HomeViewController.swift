@@ -84,6 +84,7 @@ final class HomeViewController: BaseViewController<HomeReactor> {
   // MARK: Custom Action
 
   let rxScrollToItem = BehaviorRelay<Int>(value: 1)
+  private let rxPickDate = PublishRelay<Date>()
 
 
   // MARK: Initializing
@@ -124,6 +125,12 @@ final class HomeViewController: BaseViewController<HomeReactor> {
       .bind(to: reactor.action)
       .disposed(by: self.disposeBag)
 
+    self.rxPickDate
+      .asObservable()
+      .map { HomeReactor.Action.pickDate($0) }
+      .bind(to: reactor.action)
+      .disposed(by: self.disposeBag)
+
     // State
     self.reactor?.state
       .map { $0.notebookViewModels }
@@ -147,6 +154,18 @@ final class HomeViewController: BaseViewController<HomeReactor> {
         self?.noteCountLabel.attributedText = Text.noteCount
           .styled(with: Font.noteCountSuffix)
           .replace(key: "count", value: "\(notebook.noteCount)", style: Font.noteCount)
+      }).disposed(by: self.disposeBag)
+
+    reactor.state
+      .filter { $0.selectedIndex != nil }
+      .map { $0.selectedIndex! }
+      .distinctUntilChanged()
+      .subscribe(onNext: { [weak self] index in
+        self?.notebookCollectionView.scrollToItem(
+          at: .init(item: index, section: 0),
+          at: .centeredHorizontally,
+          animated: true
+        )
       }).disposed(by: self.disposeBag)
   }
   
@@ -221,8 +240,8 @@ extension HomeViewController {
   }
 
   @objc private func didTapMonthTitle() {
-    self.presentDatePickerAlert(onConfirm: { date in
-      print("\(date)!!!")
+    self.presentDatePickerAlert(onConfirm: { [weak self] date in
+      self?.rxPickDate.accept(date)
     })
   }
 }
