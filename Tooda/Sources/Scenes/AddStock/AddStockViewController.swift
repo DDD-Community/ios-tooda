@@ -20,6 +20,15 @@ final class AddStockViewController: BaseViewController<AddStockReactor> {
   
   // MARK: Constants
   
+  private enum Font {
+    static let searchField = TextStyle.body(color: .gray1)
+    
+  }
+  
+  private enum Color {
+    static let borderLineGray: UIColor? = UIColor(type: .gray3)
+  }
+  
   private enum Metric {
     static let verticalMargin: CGFloat = 16
     static let horizontalMargin: CGFloat = 14
@@ -36,6 +45,15 @@ final class AddStockViewController: BaseViewController<AddStockReactor> {
   })
   
   // MARK: UI Components
+  
+  private let searchFieldBackgroundView = UIView().then {
+    $0.clipsToBounds = true
+    $0.layer.cornerRadius = 8.0
+    $0.layer.borderColor = Color.borderLineGray?.cgColor
+    $0.layer.borderWidth = 1.0
+  }
+  
+  private let searchField = UITextField()
   
   private let tableView = UITableView().then {
     $0.separatorStyle = .none
@@ -98,14 +116,27 @@ final class AddStockViewController: BaseViewController<AddStockReactor> {
     
     self.view.backgroundColor = .white
     
-    self.view.addSubview(tableView)
+    self.view.addSubviews(searchFieldBackgroundView, tableView)
+    
+    self.searchFieldBackgroundView.addSubviews(searchField)
   }
   
   override func configureConstraints() {
     super.configureConstraints()
     
-    tableView.snp.makeConstraints {
+    searchFieldBackgroundView.snp.makeConstraints {
       $0.top.equalTo(self.view.safeAreaLayoutGuide.snp.top).offset(Metric.verticalMargin)
+      $0.left.right.equalToSuperview().inset(20)
+    }
+    
+    searchField.snp.makeConstraints {
+      $0.top.equalToSuperview().offset(13)
+      $0.left.right.equalToSuperview().inset(14)
+      $0.bottom.equalToSuperview().offset(-9)
+    }
+    
+    tableView.snp.makeConstraints {
+      $0.top.equalTo(searchFieldBackgroundView.snp.bottom).offset(9)
       $0.left.equalToSuperview().offset(Metric.horizontalMargin)
       $0.right.equalToSuperview().offset(-Metric.horizontalMargin)
       $0.bottom.equalTo(self.view.safeAreaLayoutGuide.snp.bottom)
