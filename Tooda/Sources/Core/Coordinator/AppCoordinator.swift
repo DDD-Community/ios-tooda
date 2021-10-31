@@ -59,15 +59,16 @@ final class AppCoordinator: AppCoordinatorType {
     from root: Scene,
     shouldNavigationWrapped: Bool
   ) {
-    var rootViewController: UIViewController = self.dependency.appFactory.makeViewController(from: root)
+    let rootViewController: UIViewController = self.dependency.appFactory.makeViewController(from: root)
     
     if shouldNavigationWrapped {
       let navigationController = UINavigationController(rootViewController: rootViewController)
-      rootViewController = navigationController
+      UIApplication.shared.windows.first?.rootViewController = navigationController
+    } else {
+      UIApplication.shared.windows.first?.rootViewController = rootViewController
     }
     
     self.currentViewController = rootViewController
-    UIApplication.shared.windows.first?.rootViewController = rootViewController
   }
   
   func transition(to scene: Scene, using style: TransitionStyle, animated: Bool, completion: (() -> Void)?) {
