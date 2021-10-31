@@ -106,6 +106,12 @@ final class AddStockViewController: BaseViewController<AddStockReactor> {
         self?.dismiss(animated: true, completion: nil)
       }).disposed(by: self.disposeBag)
     
+    self.searchField.rx.text.orEmpty
+      .throttle(.milliseconds(300), scheduler: MainScheduler.instance)
+      .map { Reactor.Action.searchTextDidChanged($0) }
+      .bind(to: reactor.action)
+      .disposed(by: self.disposeBag)
+    
     // State
   }
   

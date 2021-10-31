@@ -17,11 +17,11 @@ final class AddStockReactor: Reactor {
   // MARK: Reactor
   
   enum Action {
-    
+    case searchTextDidChanged(String)
   }
   
   enum Mutation {
-    
+    case fetchSearchResultSection([AddStockSection])
   }
   
   struct Dependency {
@@ -29,7 +29,9 @@ final class AddStockReactor: Reactor {
   }
   
   struct State {
-    
+    var sections: [AddStockSection] = [
+      .init(identity: .list, items: [])
+    ]
   }
   
   init(dependency: Dependency) {
@@ -42,4 +44,29 @@ final class AddStockReactor: Reactor {
   let dependency: Dependency
   
   let initialState: State
+}
+
+// MARK: - Extensions
+
+extension AddStockReactor {
+  func mutate(action: Action) -> Observable<Mutation> {
+    switch action {
+      case .searchTextDidChanged(let keyword):
+        print(keyword)
+        
+        // TODO: Search API dependency 추가
+        return .empty()
+    }
+  }
+  
+  func reduce(state: State, mutation: Mutation) -> State {
+    var state = state
+    
+    switch mutation {
+      case .fetchSearchResultSection(let sections):
+        state.sections = sections
+    }
+    
+    return state
+  }
 }
