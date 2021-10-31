@@ -26,6 +26,7 @@ final class HomeReactor: Reactor {
   enum Action {
     case load
     case paging(index: Int)
+    case pickDate(_ date: Date)
   }
 
   enum Mutation {
@@ -104,6 +105,9 @@ extension HomeReactor {
 
     case let .paging(index):
       return Observable<Mutation>.just(.selectNotebook(notebookIndex: index))
+
+    case let .pickDate(date):
+      return Observable<Mutation>.empty()
     }
   }
 
