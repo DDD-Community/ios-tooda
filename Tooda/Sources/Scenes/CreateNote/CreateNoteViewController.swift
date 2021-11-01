@@ -34,6 +34,13 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
     case .addStock(let reactor):
       let cell = tableView.dequeue(EmptyNoteStockCell.self, indexPath: indexPath)
       cell.configure(reactor: reactor)
+        
+      cell.rx.didTapAddStock
+        .asDriver(onErrorJustReturn: ())
+        .drive(onNext: { [weak self] in
+          self?.showAddStockView()
+        }).disposed(by: cell.disposeBag)
+        
       return cell
     case .image(let cellReactor):
       let cell = tableView.dequeue(NoteImageCell.self, indexPath: indexPath)
@@ -60,6 +67,8 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
     $0.backgroundColor = .white
     $0.estimatedRowHeight = UITableView.automaticDimension
     $0.alwaysBounceHorizontal = false
+    
+    $0.allowsSelection = false
 
     $0.register(NoteContentCell.self)
     $0.register(EmptyNoteStockCell.self)
@@ -229,5 +238,20 @@ extension CreateNoteViewController: UIImagePickerControllerDelegate, UINavigatio
     }
     
     picker.dismiss(animated: true, completion: nil)
+  }
+}
+
+// MARK: ShowViewControllers
+
+extension CreateNoteViewController {
+  private func showAddStockView() {
+    let reator = AddStockReactor(dependency: .init())
+    let viewController = AddStockViewController(reactor: reator)
+    
+    let navigationController = UINavigationController(rootViewController: viewController)
+    
+    navigationController.modalPresentationStyle = .fullScreen
+    
+    self.present(navigationController, animated: true, completion: nil)
   }
 }
