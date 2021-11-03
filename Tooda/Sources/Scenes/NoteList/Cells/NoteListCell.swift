@@ -24,18 +24,31 @@ class NoteListCell: BaseTableViewCell {
   
   private let cardView = UIView().then {
     $0.backgroundColor = .white
+    $0.layer.cornerRadius = 8
   }
   
-  private let emojiImageView = UIImageView()
+  private let emojiImageView = UIImageView().then {
+    $0.contentMode = .scaleAspectFit
+  }
   
   private let titleLabel = UILabel()
   
   private let recordDateLabel = UILabel()
   
+  private let linkImageView = UIImageView().then {
+    $0.contentMode = .scaleAspectFit
+  }
+  
   private let descriptionLabel = UILabel()
   
-  private let mainImageView = UIImageView()
+  private let mainImageView = UIImageView().then {
+    $0.contentMode = .scaleAspectFit
+    $0.layer.cornerRadius = 8
+  }
+  
+  private let imageCountLabel = UILabel()
 
+  // MARK: - Overridden: ParentClass
 
   override func configureUI() {
     super.configureUI()
@@ -48,9 +61,12 @@ class NoteListCell: BaseTableViewCell {
       emojiImageView,
       titleLabel,
       recordDateLabel,
+      linkImageView,
       descriptionLabel,
       mainImageView
     )
+    
+    
   }
   
   override func setupConstraints() {
@@ -86,5 +102,11 @@ class NoteListCell: BaseTableViewCell {
       $0.leading.trailing.equalToSuperview().inset(20)
       $0.top.equalTo(descriptionLabel.snp.bottom).offset(16)
     }
+  }
+  
+  // MARK: - Internal methods
+  func configure(with note: Note) {
+    
+    note.noteImages.first
   }
 }
