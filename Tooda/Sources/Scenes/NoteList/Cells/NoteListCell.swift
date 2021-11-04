@@ -10,7 +10,7 @@ import UIKit
 
 import SnapKit
 
-class NoteListCell: BaseTableViewCell {
+final class NoteListCell: BaseTableViewCell {
   
   // MARK: - Constants
   
@@ -65,8 +65,6 @@ class NoteListCell: BaseTableViewCell {
       descriptionLabel,
       mainImageView
     )
-    
-    
   }
   
   override func setupConstraints() {
@@ -106,7 +104,6 @@ class NoteListCell: BaseTableViewCell {
   
   // MARK: - Internal methods
   func configure(with note: Note) {
-    
-    note.noteImages.first
+    // TODO: Data setup
   }
 }
