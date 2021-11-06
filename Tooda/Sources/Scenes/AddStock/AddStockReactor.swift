@@ -18,6 +18,7 @@ final class AddStockReactor: Reactor {
   
   enum Action {
     case searchTextDidChanged(String)
+    case dismiss
   }
   
   enum Mutation {
@@ -26,6 +27,7 @@ final class AddStockReactor: Reactor {
   
   struct Dependency {
     let completionRelay: PublishRelay<String>
+    let coordinator: AppCoordinatorType
   }
   
   struct State {
@@ -56,6 +58,8 @@ extension AddStockReactor {
         
         // TODO: Search API dependency 추가
         return .empty()
+      case .dismiss:
+        return self.dissmissView()
     }
   }
   
@@ -68,5 +72,19 @@ extension AddStockReactor {
     }
     
     return state
+  }
+}
+
+// MARK: Coordinator
+
+extension AddStockReactor {
+  private func dissmissView() -> Observable<Mutation> {
+    self.dependency.coordinator.close(
+      style: .dismiss,
+      animated: true,
+      completion: nil
+    )
+    
+    return .empty()
   }
 }

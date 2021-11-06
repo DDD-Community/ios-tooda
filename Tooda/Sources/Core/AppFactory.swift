@@ -63,7 +63,12 @@ final class AppFactory: AppFactoryType {
       return SettingsViewController(reactor: reactor)
       
     case .addStock(let completionRelay):
-      let reator = AddStockReactor(dependency: .init(completionRelay: completionRelay))
+      let reator = AddStockReactor(
+        dependency: .init(
+          completionRelay: completionRelay,
+          coordinator: self.dependency.appInject.resolve(AppCoordinatorType.self)
+        )
+      )
       let viewController = AddStockViewController(reactor: reator)
       let navigationController = UINavigationController(rootViewController: viewController)
       navigationController.modalPresentationStyle = .overFullScreen
