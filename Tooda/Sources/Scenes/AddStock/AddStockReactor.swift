@@ -29,6 +29,7 @@ final class AddStockReactor: Reactor {
     let completionRelay: PublishRelay<String>
     let coordinator: AppCoordinatorType
     let service: NetworkingProtocol
+    let sectionFactory: AddStockSectionFactoryType
   }
   
   struct State {
