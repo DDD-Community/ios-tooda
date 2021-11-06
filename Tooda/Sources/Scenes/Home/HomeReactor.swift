@@ -30,6 +30,7 @@ final class HomeReactor: Reactor {
 
     // routing
     case pushSearch
+    case pushSettings
   }
 
   enum Mutation {
@@ -115,6 +116,9 @@ extension HomeReactor {
 
     case .pushSearch:
       self.pushSearch()
+      return Observable<Mutation>.empty()
+    case .pushSettings:
+      pushSettings()
       return Observable<Mutation>.empty()
     }
   }
@@ -252,6 +256,15 @@ extension HomeReactor {
   private func pushSearch() {
     self.dependency.coordinator.transition(
       to: .search,
+      using: .push,
+      animated: true,
+      completion: nil
+    )
+  }
+  
+  private func pushSettings() {
+    self.dependency.coordinator.transition(
+      to: .settings,
       using: .push,
       animated: true,
       completion: nil
