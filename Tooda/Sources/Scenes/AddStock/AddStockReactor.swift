@@ -90,12 +90,11 @@ extension AddStockReactor {
 // MARK: Seacrh Stock
 
 extension AddStockReactor {
+  // TODO: API Response -> Codable Entity -> Section Mutaion 전달 예정
   private func searchTextDidChanged(_ keyword: String) -> Observable<Mutation> {
     self.dependency.service.request(StockAPI.search(keyword: keyword))
       .asObservable()
       .mapString()
-      .debug()
-      // TestCode
       .flatMap { _ -> Observable<Mutation> in
         return .empty()
       }
