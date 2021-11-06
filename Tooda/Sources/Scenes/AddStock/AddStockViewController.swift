@@ -100,7 +100,6 @@ final class AddStockViewController: BaseViewController<AddStockReactor> {
     
     // Action
     
-    // TODO: Reactor Action으로 변경
     self.closeBarButton.rx.tap
       .debounce(.milliseconds(500), scheduler: MainScheduler.instance)
       .map { Reactor.Action.dismiss }
