@@ -126,6 +126,8 @@ final class HomeViewController: BaseViewController<HomeReactor> {
     self.rxPickDate
       .asObservable()
       .map { HomeReactor.Action.pickDate($0) }
+      .bind(to: reactor.action)
+      .disposed(by: self.disposeBag)
 
     self.searchBarButton.rx.tap
       .map { HomeReactor.Action.pushSearch }

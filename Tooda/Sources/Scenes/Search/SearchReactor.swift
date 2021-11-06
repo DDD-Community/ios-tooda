@@ -24,7 +24,7 @@ final class SearchReactor: Reactor {
   // MARK: Reactor
 
   enum Action {
-
+    case back
   }
 
   enum Mutation {
@@ -53,7 +53,15 @@ final class SearchReactor: Reactor {
 extension SearchReactor {
 
   func mutate(action: Action) -> Observable<Mutation> {
-    return Observable<Mutation>.empty()
+    switch action {
+    case .back:
+      self.dependency.coordinator.close(
+        style: .pop,
+        animated: true,
+        completion: nil
+      )
+      return Observable<Mutation>.empty()
+    }
   }
 
 }

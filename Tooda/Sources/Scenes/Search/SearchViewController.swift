@@ -41,6 +41,17 @@ final class SearchViewController: BaseViewController<SearchReactor> {
 
   override func bind(reactor: SearchReactor) {
 
+    // Action
+    self.rx.viewDidLoad
+      .asObservable()
+      .flatMap { [weak self] _ -> Observable<Void> in
+        guard let self = self else {
+          return Observable<Void>.empty()
+        }
+        return self.configureBackBarButtonItemIfNeeded() }
+      .map { SearchReactor.Action.back }
+      .bind(to: reactor.action)
+      .disposed(by: self.disposeBag)
   }
 
   override func configureUI() {

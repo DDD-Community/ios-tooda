@@ -9,6 +9,7 @@
 import Foundation
 
 import ReactorKit
+import RxSwift
 
 class BaseViewController<T: Reactor>: UIViewController, View {
   typealias Reactor = T
@@ -33,4 +34,20 @@ class BaseViewController<T: Reactor>: UIViewController, View {
   
   func configureUI() {}
   func configureConstraints() {}
+
+  @discardableResult
+  func configureBackBarButtonItemIfNeeded() -> Observable<Void> {
+    Observable<Void>.create({ observer in
+      if self.navigationController?.viewControllers.count ?? 0 >= 2 {
+        self.navigationItem.leftBarButtonItem = UIBarButtonItem(
+          image: .init(type: .backBarButton),
+          style: .plain,
+          action: {
+            observer.onNext(())
+          }
+        )
+      }
+      return Disposables.create()
+    })
+  }
 }
