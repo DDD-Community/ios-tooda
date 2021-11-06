@@ -56,6 +56,15 @@ final class AppFactory: AppFactoryType {
     case .settings:
       let reactor = SettingsReactor(dependency: .init())
       return SettingsViewController(reactor: reactor)
+
+    case .search:
+      let reactor = SearchReactor(
+        dependency: .init(
+          service: self.dependency.appInject.resolve(NetworkingProtocol.self),
+          coordinator: self.dependency.appInject.resolve(AppCoordinatorType.self)
+        )
+      )
+      return SearchViewController(reactor: reactor)
     }
   }
 }
