@@ -10,12 +10,9 @@ import Foundation
 
 import ReactorKit
 import RxSwift
+import RxRelay
 
 final class AddStockReactor: Reactor {
-  
-  struct Depdendency {
-    
-  }
   
   // MARK: Reactor
   
@@ -28,7 +25,7 @@ final class AddStockReactor: Reactor {
   }
   
   struct Dependency {
-    
+    let completionRelay: PublishRelay<String>
   }
   
   struct State {

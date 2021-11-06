@@ -9,10 +9,13 @@
 import UIKit
 
 import ReactorKit
+import RxRelay
+
 
 enum Scene {
   case login
   case home
   case createNote
   case settings
+  case addStock(completion: PublishRelay<String>)
 }

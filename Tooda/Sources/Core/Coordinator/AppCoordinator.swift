@@ -114,6 +114,8 @@ final class AppCoordinator: AppCoordinatorType {
           return $0 is CreateNoteViewController
         case .settings:
           return $0 is SettingsViewController
+        case .addStock:
+          return $0 is AddStockViewController
         }
       }) else { return }
 

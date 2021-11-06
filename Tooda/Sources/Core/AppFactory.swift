@@ -56,6 +56,9 @@ final class AppFactory: AppFactoryType {
     case .settings:
       let reactor = SettingsReactor(dependency: .init())
       return SettingsViewController(reactor: reactor)
+    case .addStock(let completionRelay):
+      let reator = AddStockReactor(dependency: .init(completionRelay: completionRelay))
+      return AddStockViewController(reactor: reator)
     }
   }
 }
