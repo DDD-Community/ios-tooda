@@ -27,12 +27,12 @@ final class StockItemCellReactor: Reactor {
   }
   
   struct State {
-    
+    var name: String
   }
   
   init(dependency: Dependency) {
     self.dependency = dependency
-    self.initialState = State()
+    self.initialState = State(name: dependency.name)
   }
   
     // MARK: Properties
