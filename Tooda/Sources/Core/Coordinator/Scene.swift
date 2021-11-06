@@ -16,4 +16,5 @@ enum Scene {
   case createNote
   case settings
   case search
+  case noteList
 }
