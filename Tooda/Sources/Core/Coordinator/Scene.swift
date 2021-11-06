@@ -19,4 +19,5 @@ enum Scene {
   case settings
   case addStock(completion: PublishRelay<String>)
   case search
+  case noteList
 }

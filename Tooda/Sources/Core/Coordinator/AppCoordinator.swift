@@ -118,6 +118,8 @@ final class AppCoordinator: AppCoordinatorType {
           return $0 is AddStockViewController
         case .search:
           return $0 is SearchViewController
+        case .noteList:
+          return $0 is NoteListViewController
         }
       }) else { return }
 
