@@ -29,22 +29,25 @@ final class AppFactory: AppFactoryType {
   
   func makeViewController(from scene: Scene) -> UIViewController {
     switch scene {
-      case .home:
-        let reactor = HomeReactor(
-          dependency: .init(
-            service: self.dependency.appInject.resolve(NetworkingProtocol.self),
-            coordinator: self.dependency.appInject.resolve(AppCoordinatorType.self)
-          )
+    case .home:
+      let reactor = HomeReactor(
+        dependency: .init(
+          service: self.dependency.appInject.resolve(NetworkingProtocol.self),
+          coordinator: self.dependency.appInject.resolve(AppCoordinatorType.self)
         )
-        return HomeViewController(reactor: reactor)
-      case .createNote:
-        let reactor = CreateNoteViewReactor(dependency: .init(
+      )
+      return HomeViewController(reactor: reactor)
+
+    case .createNote:
+      let reactor = CreateNoteViewReactor(
+        dependency: .init(
           service: self.dependency.appInject.resolve(NetworkingProtocol.self),
           coordinator: self.dependency.appInject.resolve(AppCoordinatorType.self),
           authorization: self.dependency.appInject.resolve(AppAuthorizationType.self),
           createDiarySectionFactory: createDiarySectionFactory)
-        )
-        return CreateNoteViewController(reactor: reactor)
+      )
+      return CreateNoteViewController(reactor: reactor)
+
     case .login:
       let reactor = LoginReactor(
         dependency: .init(
@@ -54,15 +57,26 @@ final class AppFactory: AppFactoryType {
         )
       )
       return LoginViewController(reactor: reactor)
+
     case .settings:
       let reactor = SettingsReactor(dependency: .init())
       return SettingsViewController(reactor: reactor)
+      
     case .addStock(let completionRelay):
       let reator = AddStockReactor(dependency: .init(completionRelay: completionRelay))
       let viewController = AddStockViewController(reactor: reator)
       let navigationController = UINavigationController(rootViewController: viewController)
       navigationController.modalPresentationStyle = .overFullScreen
       return navigationController
+
+    case .search:
+      let reactor = SearchReactor(
+        dependency: .init(
+          service: self.dependency.appInject.resolve(NetworkingProtocol.self),
+          coordinator: self.dependency.appInject.resolve(AppCoordinatorType.self)
+        )
+      )
+      return SearchViewController(reactor: reactor)
     }
   }
 }

@@ -26,17 +26,22 @@ final class HomeReactor: Reactor {
   enum Action {
     case load
     case paging(index: Int)
+    case pickDate(_ date: Date)
+
+    // routing
+    case pushSearch
   }
 
   enum Mutation {
     case setNotebooks([NotebookMeta])
-    case selectNotebook(notebookIndex: Int)
+    case selectNotebook(notebookIndex: Int?)
   }
   
   struct State {
     // Entities
     var notebooks: [NotebookMeta]
-    var selectedNotobook: NotebookMeta
+    var selectedNotobook: NotebookMeta?
+    var selectedIndex: Int?
 
     // ViewModels
     var notebookViewModels: [NotebookCell.ViewModel]
@@ -62,12 +67,7 @@ final class HomeReactor: Reactor {
 
     return State(
       notebooks: [],
-      selectedNotobook: NotebookMeta(
-        year: currentDate.year,
-        month: currentDate.month,
-        createdAt: currentDate,
-        updatedAt: currentDate
-      ),
+      selectedNotobook: nil,
       notebookViewModels: []
     )
   }()
@@ -104,6 +104,19 @@ extension HomeReactor {
 
     case let .paging(index):
       return Observable<Mutation>.just(.selectNotebook(notebookIndex: index))
+
+    case let .pickDate(date):
+      return Observable<Mutation>.just(
+        .selectNotebook(
+          notebookIndex: self.currentState.notebooks.firstIndex(where: {
+            $0.year == date.year && $0.month == date.month
+          })
+        )
+      )
+
+    case .pushSearch:
+      self.pushSearch()
+      return Observable<Mutation>.empty()
     }
   }
 
@@ -184,7 +197,9 @@ extension HomeReactor {
       newState.notebookViewModels = self.mappingToNoteBooks(metas: metas)
 
     case let .selectNotebook(notebookIndex):
-      guard let notebook = state.notebooks[safe: notebookIndex] else { break }
+      guard let notebookIndex = notebookIndex,
+            let notebook = state.notebooks[safe: notebookIndex] else { break }
+      newState.selectedIndex = notebookIndex
       newState.selectedNotobook = notebook
     }
 
@@ -227,5 +242,20 @@ extension HomeReactor {
     )
 
     return viewModels
+  }
+}
+
+
+// MARK: - Routing
+
+extension HomeReactor {
+
+  private func pushSearch() {
+    self.dependency.coordinator.transition(
+      to: .search,
+      using: .push,
+      animated: true,
+      completion: nil
+    )
   }
 }
