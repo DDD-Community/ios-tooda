@@ -24,6 +24,8 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
   let imageItemCellDidTapRelay: PublishRelay<IndexPath> = PublishRelay()
   let imagePickerDataSelectedRelay: PublishRelay<Data> = PublishRelay()
   
+  let rxAddStockDidTapRelay: PublishRelay<Void> = PublishRelay()
+  
   // MARK: Properties
   lazy var dataSource: Section = Section(configureCell: { _, tableView, indexPath, item -> UITableViewCell in
     switch item {
@@ -36,10 +38,9 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
       cell.configure(reactor: reactor)
         
       cell.rx.didTapAddStock
-        .asDriver(onErrorJustReturn: ())
-        .drive(onNext: { [weak self] in
-          self?.showAddStockView()
-        }).disposed(by: cell.disposeBag)
+        .throttle(.milliseconds(500), scheduler: MainScheduler.instance)
+        .bind(to: self.rxAddStockDidTapRelay)
+        .disposed(by: cell.disposeBag)
         
       return cell
     case .image(let cellReactor):
@@ -135,6 +136,11 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
     
     imagePickerDataSelectedRelay
       .map { Reactor.Action.uploadImage($0) }
+      .bind(to: reactor.action)
+      .disposed(by: self.disposeBag)
+    
+    rxAddStockDidTapRelay
+      .map { Reactor.Action.showAddStockView }
       .bind(to: reactor.action)
       .disposed(by: self.disposeBag)
     
@@ -238,20 +244,5 @@ extension CreateNoteViewController: UIImagePickerControllerDelegate, UINavigatio
     }
     
     picker.dismiss(animated: true, completion: nil)
-  }
-}
-
-// MARK: ShowViewControllers
-
-extension CreateNoteViewController {
-  private func showAddStockView() {
-    let reator = AddStockReactor(dependency: .init())
-    let viewController = AddStockViewController(reactor: reator)
-    
-    let navigationController = UINavigationController(rootViewController: viewController)
-    
-    navigationController.modalPresentationStyle = .fullScreen
-    
-    self.present(navigationController, animated: true, completion: nil)
   }
 }
