@@ -46,7 +46,11 @@ final class NoteListCell: BaseTableViewCell {
     $0.layer.cornerRadius = 8
   }
   
-  private let imageCountLabel = UILabel()
+  private let imageCountLabel = MarginLabel(
+    edgeInsets: UIEdgeInsets(horizontal: 8, vertical: 2)
+  ).then {
+    $0.layer.cornerRadius = 8
+  }
 
   // MARK: - Overridden: ParentClass
 
@@ -65,6 +69,8 @@ final class NoteListCell: BaseTableViewCell {
       descriptionLabel,
       mainImageView
     )
+    
+    mainImageView.addSubview(imageCountLabel)
   }
   
   override func setupConstraints() {
@@ -100,10 +106,19 @@ final class NoteListCell: BaseTableViewCell {
       $0.leading.trailing.equalToSuperview().inset(20)
       $0.top.equalTo(descriptionLabel.snp.bottom).offset(16)
     }
+    
+    imageCountLabel.snp.makeConstraints {
+      $0.bottom.equalToSuperview().inset(8)
+      $0.trailing.equalToSuperview().inset(10)
+    }
   }
   
   // MARK: - Internal methods
   func configure(with note: Note) {
-    // TODO: Data setup
+    
+    titleLabel.attributedText = note.title.styled(with: Font.title)
+    recordDateLabel.attributedText = "\(note.createdAt) 기록".styled(with: Font.recordDate)
+    descriptionLabel.attributedText = note.content.styled(with: Font.description)
+    mainImageView.image = note.noteImages.first?.imageURL.urlImage
   }
 }
