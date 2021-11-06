@@ -44,6 +44,13 @@ class NoteListViewController: BaseViewController<NoteListReactor> {
     $0.delegate = self
   }
   
+  private let backBarButton = UIBarButtonItem(
+     image: UIImage(type: .backBarButton)?.withRenderingMode(.alwaysOriginal),
+     style: .plain,
+     target: nil,
+     action: nil
+   )
+  
   // MARK: - Con(De)structor
   
   init(reactor: NoteListReactor) {
@@ -68,7 +75,7 @@ class NoteListViewController: BaseViewController<NoteListReactor> {
   
   override func configureUI() {
     navigationItem.titleView = titleLabel
-    navigationController?.navigationBar.backItem?.title = ""
+    navigationItem.leftBarButtonItem = backBarButton
     view.addSubview(tableView)
   }
 
