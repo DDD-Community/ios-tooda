@@ -15,4 +15,5 @@ enum Scene {
   case home
   case createNote
   case settings
+  case search
 }
