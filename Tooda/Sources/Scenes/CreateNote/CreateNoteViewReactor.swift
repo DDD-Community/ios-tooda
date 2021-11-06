@@ -71,7 +71,7 @@ final class CreateNoteViewReactor: Reactor {
         return self?.fetchImageSection(with: response) ?? .empty()
       }
     case .showAddStockView:
-      self.dependency.coordinator.start(from: .addStock(completion: self.addStockCompletionRelay), shouldNavigationWrapped: true)
+      self.dependency.coordinator.transition(to: .addStock(completion: self.addStockCompletionRelay), using: .modal, animated: true, completion: nil)
       return .empty()
     default:
       return .empty()
