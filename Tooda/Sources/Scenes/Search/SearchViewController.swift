@@ -16,6 +16,21 @@ import SnapKit
 
 final class SearchViewController: BaseViewController<SearchReactor> {
 
+  // MARK: Constants
+
+  private enum Font {
+    static let placeholder = TextStyle.body2(color: .gray3)
+    static let searchText = TextStyle.body2(color: .gray1)
+  }
+
+
+  // MARK: UI
+
+  private let searchBar = UISearchBar().then {
+    $0.searchTextPositionAdjustment = .init(horizontal: 5.0, vertical: 0.0)
+    $0.searchTextField.attributedPlaceholder = "전체 노트 중 검색".styled(with: Font.placeholder)
+  }
+
 
   // MARK: Initializing
 
@@ -51,10 +66,42 @@ final class SearchViewController: BaseViewController<SearchReactor> {
   }
 
   override func configureUI() {
+    super.configureUI()
 
+    self.configureSearchBar()
   }
 
   override func configureConstraints() {
 
+  }
+
+  private func configureSearchBar() {
+    self.navigationItem.titleView = self.searchBar
+    self.searchBar.delegate = self
+
+    let leftView = UIView(frame: .init(origin: .zero, size: .init(width: 30.0, height: 30.0)))
+    let imageView = UIImageView(
+      frame: .init(
+        x: 10.0,
+        y: 5.0,
+        width: 20.0,
+        height: 20.0
+      )
+    )
+    imageView.image = .init(type: .searchBarButton)?.withRenderingMode(.alwaysTemplate)
+    leftView.addSubview(imageView)
+    imageView.tintColor = .gray3
+
+    self.searchBar.searchTextField.leftView = imageView
+  }
+}
+
+
+// MARK: - UISearchBarDelegate
+
+extension SearchViewController: UISearchBarDelegate {
+
+  func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+    self.searchBar.searchTextField.attributedText = searchText.styled(with: Font.searchText)
   }
 }
