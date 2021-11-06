@@ -39,7 +39,7 @@ class NoteImageItemCell: BaseCollectionViewCell, View {
     super.configure()
     self.reactor = reactor
   }
-    
+  
   func bind(reactor: Reactor) {
     reactor.state
       .map { $0.item }
@@ -88,7 +88,7 @@ extension NoteImageItemCell {
   }
 }
 
-private extension String {
+extension String {
   var urlImage: UIImage? {
     guard let url = URL(string: self),
           let data = try? Data(contentsOf: url),

@@ -47,7 +47,6 @@ final class HomeReactor: Reactor {
     var notebookViewModels: [NotebookCell.ViewModel]
   }
 
-
   // MARK: Constants
 
   private enum Const {
