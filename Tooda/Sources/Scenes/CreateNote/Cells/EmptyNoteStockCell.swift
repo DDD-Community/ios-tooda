@@ -11,6 +11,7 @@ import UIKit
 import ReactorKit
 import SnapKit
 import Then
+import RxCocoa
 
 class EmptyNoteStockCell: BaseTableViewCell, View {
   typealias Reactor = EmptyNoteStockCellReactor
@@ -35,6 +36,8 @@ class EmptyNoteStockCell: BaseTableViewCell, View {
     $0.sizeToFit()
   }
   
+  let addStockButton = UIButton()
+  
   func configure(reactor: Reactor) {
     super.configure()
     self.reactor = reactor
@@ -54,7 +57,7 @@ class EmptyNoteStockCell: BaseTableViewCell, View {
   override func configureUI() {
     super.configureUI()
     
-    [containerView].forEach {
+    [containerView, addStockButton].forEach {
       self.contentView.addSubview($0)
     }
     
@@ -71,10 +74,22 @@ class EmptyNoteStockCell: BaseTableViewCell, View {
       $0.left.right.bottom.equalToSuperview()
     }
     
+    addStockButton.snp.makeConstraints {
+      $0.edges.equalToSuperview()
+    }
+    
     titleLabel.snp.makeConstraints {
       $0.top.equalToSuperview().offset(12)
       $0.left.equalToSuperview().offset(14)
       $0.bottom.equalToSuperview().offset(-11)
     }
+  }
+}
+
+// MARK: - Extensions
+
+extension Reactive where Base: EmptyNoteStockCell {
+  var didTapAddStock: ControlEvent<Void> {
+    return self.base.addStockButton.rx.tap
   }
 }

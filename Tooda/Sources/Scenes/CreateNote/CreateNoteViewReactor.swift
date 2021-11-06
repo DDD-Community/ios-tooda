@@ -9,6 +9,7 @@
 import Foundation
 import ReactorKit
 import Then
+import RxRelay
 
 final class CreateNoteViewReactor: Reactor {
   
@@ -33,6 +34,7 @@ final class CreateNoteViewReactor: Reactor {
     case regist
     case didSelectedImageItem(IndexPath)
     case uploadImage(Data)
+    case showAddStockView
   }
 
   enum Mutation {
@@ -49,6 +51,8 @@ final class CreateNoteViewReactor: Reactor {
   let initialState: State
 
   let dependency: Dependency
+  
+  private let addStockCompletionRelay: PublishRelay<String> = PublishRelay()
 
   init(dependency: Dependency) {
     self.dependency = dependency
@@ -66,6 +70,9 @@ final class CreateNoteViewReactor: Reactor {
         .flatMap { [weak self] response -> Observable<Mutation> in
         return self?.fetchImageSection(with: response) ?? .empty()
       }
+    case .showAddStockView:
+      self.dependency.coordinator.transition(to: .addStock(completion: self.addStockCompletionRelay), using: .modal, animated: true, completion: nil)
+      return .empty()
     default:
       return .empty()
     }

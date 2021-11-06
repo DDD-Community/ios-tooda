@@ -24,6 +24,8 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
   let imageItemCellDidTapRelay: PublishRelay<IndexPath> = PublishRelay()
   let imagePickerDataSelectedRelay: PublishRelay<Data> = PublishRelay()
   
+  let rxAddStockDidTapRelay: PublishRelay<Void> = PublishRelay()
+  
   // MARK: Properties
   lazy var dataSource: Section = Section(configureCell: { _, tableView, indexPath, item -> UITableViewCell in
     switch item {
@@ -34,6 +36,12 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
     case .addStock(let reactor):
       let cell = tableView.dequeue(EmptyNoteStockCell.self, indexPath: indexPath)
       cell.configure(reactor: reactor)
+        
+      cell.rx.didTapAddStock
+        .debounce(.milliseconds(500), scheduler: MainScheduler.instance)
+        .bind(to: self.rxAddStockDidTapRelay)
+        .disposed(by: cell.disposeBag)
+        
       return cell
     case .image(let cellReactor):
       let cell = tableView.dequeue(NoteImageCell.self, indexPath: indexPath)
@@ -60,6 +68,8 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
     $0.backgroundColor = .white
     $0.estimatedRowHeight = UITableView.automaticDimension
     $0.alwaysBounceHorizontal = false
+    
+    $0.allowsSelection = false
 
     $0.register(NoteContentCell.self)
     $0.register(EmptyNoteStockCell.self)
@@ -126,6 +136,11 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
     
     imagePickerDataSelectedRelay
       .map { Reactor.Action.uploadImage($0) }
+      .bind(to: reactor.action)
+      .disposed(by: self.disposeBag)
+    
+    rxAddStockDidTapRelay
+      .map { Reactor.Action.showAddStockView }
       .bind(to: reactor.action)
       .disposed(by: self.disposeBag)
     
