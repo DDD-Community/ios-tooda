@@ -28,6 +28,7 @@ final class AddStockReactor: Reactor {
   struct Dependency {
     let completionRelay: PublishRelay<String>
     let coordinator: AppCoordinatorType
+    let service: NetworkingProtocol
   }
   
   struct State {
@@ -54,10 +55,7 @@ extension AddStockReactor {
   func mutate(action: Action) -> Observable<Mutation> {
     switch action {
       case .searchTextDidChanged(let keyword):
-        print(keyword)
-        
-        // TODO: Search API dependency 추가
-        return .empty()
+        return self.searchTextDidChanged(keyword)
       case .dismiss:
         return self.dissmissView()
     }
@@ -86,5 +84,20 @@ extension AddStockReactor {
     )
     
     return .empty()
+  }
+}
+
+// MARK: Seacrh Stock
+
+extension AddStockReactor {
+  private func searchTextDidChanged(_ keyword: String) -> Observable<Mutation> {
+    self.dependency.service.request(StockAPI.search(keyword: keyword))
+      .asObservable()
+      .mapString()
+      .debug()
+      // TestCode
+      .flatMap { _ -> Observable<Mutation> in
+        return .empty()
+      }
   }
 }

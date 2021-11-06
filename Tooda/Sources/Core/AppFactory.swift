@@ -66,7 +66,8 @@ final class AppFactory: AppFactoryType {
       let reator = AddStockReactor(
         dependency: .init(
           completionRelay: completionRelay,
-          coordinator: self.dependency.appInject.resolve(AppCoordinatorType.self)
+          coordinator: self.dependency.appInject.resolve(AppCoordinatorType.self),
+          service: self.dependency.appInject.resolve(NetworkingProtocol.self)
         )
       )
       let viewController = AddStockViewController(reactor: reator)
