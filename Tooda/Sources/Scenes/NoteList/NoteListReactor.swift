@@ -24,7 +24,8 @@ final class NoteListReactor: Reactor {
   }
   
   struct Dependency {
-    
+    let service: NetworkingProtocol
+    let coordinator: AppCoordinatorType
   }
   
   struct State {
