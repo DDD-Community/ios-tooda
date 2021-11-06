@@ -9,6 +9,7 @@
 import Foundation
 
 import Swinject
+import UIKit
 
 protocol AppFactoryType {
   func makeViewController(from scene: Scene) -> UIViewController
@@ -58,7 +59,10 @@ final class AppFactory: AppFactoryType {
       return SettingsViewController(reactor: reactor)
     case .addStock(let completionRelay):
       let reator = AddStockReactor(dependency: .init(completionRelay: completionRelay))
-      return AddStockViewController(reactor: reator)
+      let viewController = AddStockViewController(reactor: reator)
+      let navigationController = UINavigationController(rootViewController: viewController)
+      navigationController.modalPresentationStyle = .overFullScreen
+      return navigationController
     }
   }
 }
