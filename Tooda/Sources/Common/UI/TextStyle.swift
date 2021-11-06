@@ -48,7 +48,7 @@ enum TextStyle {
 
     let attributes: [NSAttributedString.Key: Any] = [
       .paragraphStyle: style,
-      .baselineOffset: (lineHeight - font.lineHeight) / 2,
+      .baselineOffset: (lineHeight - font.lineHeight) / 4.0,
       .font: font,
       .foregroundColor: color
     ]
@@ -66,7 +66,7 @@ enum TextStyle {
 
     let attributes: [NSAttributedString.Key: Any] = [
       .paragraphStyle: style,
-      .baselineOffset: (lineHeight - font.lineHeight) / 2,
+      .baselineOffset: (lineHeight - font.lineHeight) / 4.0,
       .font: font,
       .foregroundColor: color
     ]
@@ -84,7 +84,7 @@ enum TextStyle {
 
     let attributes: [NSAttributedString.Key: Any] = [
       .paragraphStyle: style,
-      .baselineOffset: (lineHeight - font.lineHeight) / 2,
+      .baselineOffset: (lineHeight - font.lineHeight) / 4.0,
       .font: font,
       .foregroundColor: color
     ]
@@ -102,7 +102,7 @@ enum TextStyle {
 
     let attributes: [NSAttributedString.Key: Any] = [
       .paragraphStyle: style,
-      .baselineOffset: (lineHeight - font.lineHeight) / 2,
+      .baselineOffset: (lineHeight - font.lineHeight) / 4.0,
       .font: font,
       .foregroundColor: color
     ]
@@ -120,7 +120,7 @@ enum TextStyle {
 
     let attributes: [NSAttributedString.Key: Any] = [
       .paragraphStyle: style,
-      .baselineOffset: (lineHeight - font.lineHeight) / 2,
+      .baselineOffset: (lineHeight - font.lineHeight) / 4.0,
       .font: font,
       .foregroundColor: color
     ]
@@ -138,7 +138,7 @@ enum TextStyle {
 
     let attributes: [NSAttributedString.Key: Any] = [
       .paragraphStyle: style,
-      .baselineOffset: (lineHeight - font.lineHeight) / 2,
+      .baselineOffset: (lineHeight - font.lineHeight) / 4.0,
       .font: font,
       .foregroundColor: color
     ]
@@ -156,7 +156,7 @@ enum TextStyle {
 
     let attributes: [NSAttributedString.Key: Any] = [
       .paragraphStyle: style,
-      .baselineOffset: (lineHeight - font.lineHeight) / 2,
+      .baselineOffset: (lineHeight - font.lineHeight) / 4,
       .font: font,
       .foregroundColor: color
     ]
@@ -174,7 +174,7 @@ enum TextStyle {
 
     let attributes: [NSAttributedString.Key: Any] = [
       .paragraphStyle: style,
-      .baselineOffset: (lineHeight - font.lineHeight) / 2,
+      .baselineOffset: (lineHeight - font.lineHeight) / 4.0,
       .font: font,
       .foregroundColor: color
     ]
@@ -192,7 +192,7 @@ enum TextStyle {
 
     let attributes: [NSAttributedString.Key: Any] = [
       .paragraphStyle: style,
-      .baselineOffset: (lineHeight - font.lineHeight) / 2,
+      .baselineOffset: (lineHeight - font.lineHeight) / 4.0,
       .font: font,
       .foregroundColor: color
     ]
@@ -210,7 +210,7 @@ enum TextStyle {
 
     let attributes: [NSAttributedString.Key: Any] = [
       .paragraphStyle: style,
-      .baselineOffset: (lineHeight - font.lineHeight) / 2,
+      .baselineOffset: (lineHeight - font.lineHeight) / 4.0,
       .font: font,
       .foregroundColor: color
     ]
@@ -228,7 +228,7 @@ enum TextStyle {
 
     let attributes: [NSAttributedString.Key: Any] = [
       .paragraphStyle: style,
-      .baselineOffset: (lineHeight - font.lineHeight) / 2,
+      .baselineOffset: (lineHeight - font.lineHeight) / 4.0,
       .font: font,
       .foregroundColor: color
     ]
@@ -246,7 +246,7 @@ enum TextStyle {
 
     let attributes: [NSAttributedString.Key: Any] = [
       .paragraphStyle: style,
-      .baselineOffset: (lineHeight - font.lineHeight) / 2,
+      .baselineOffset: (lineHeight - font.lineHeight) / 4.0,
       .font: font,
       .foregroundColor: color
     ]
