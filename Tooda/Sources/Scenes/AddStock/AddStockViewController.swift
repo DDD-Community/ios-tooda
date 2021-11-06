@@ -53,7 +53,9 @@ final class AddStockViewController: BaseViewController<AddStockReactor> {
     $0.layer.borderWidth = 1.0
   }
   
-  private let searchField = UITextField()
+  private lazy var searchField = UITextField().then {
+    $0.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
+  }
   
   private let tableView = UITableView().then {
     $0.separatorStyle = .none
@@ -147,6 +149,11 @@ final class AddStockViewController: BaseViewController<AddStockReactor> {
       $0.right.equalToSuperview().offset(-Metric.horizontalMargin)
       $0.bottom.equalTo(self.view.safeAreaLayoutGuide.snp.bottom)
     }
+  }
+  
+  @objc
+  func textFieldDidChange(textField: UITextField) {
+    textField.attributedText = textField.text?.styled(with: Font.searchField)
   }
 }
 
