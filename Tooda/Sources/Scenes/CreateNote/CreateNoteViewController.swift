@@ -38,7 +38,7 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
       cell.configure(reactor: reactor)
         
       cell.rx.didTapAddStock
-        .throttle(.milliseconds(500), scheduler: MainScheduler.instance)
+        .debounce(.milliseconds(500), scheduler: MainScheduler.instance)
         .bind(to: self.rxAddStockDidTapRelay)
         .disposed(by: cell.disposeBag)
         
