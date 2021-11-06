@@ -27,6 +27,9 @@ final class HomeReactor: Reactor {
     case load
     case paging(index: Int)
     case pickDate(_ date: Date)
+
+    // routing
+    case pushSearch
   }
 
   enum Mutation {
@@ -110,6 +113,10 @@ extension HomeReactor {
           })
         )
       )
+
+    case .pushSearch:
+      self.pushSearch()
+      return Observable<Mutation>.empty()
     }
   }
 
@@ -235,5 +242,20 @@ extension HomeReactor {
     )
 
     return viewModels
+  }
+}
+
+
+// MARK: - Routing
+
+extension HomeReactor {
+
+  private func pushSearch() {
+    self.dependency.coordinator.transition(
+      to: .search,
+      using: .push,
+      animated: true,
+      completion: nil
+    )
   }
 }
