@@ -54,7 +54,7 @@ final class MarginLabel: UILabel {
     forBounds bounds: CGRect,
     limitedToNumberOfLines numberOfLines: Int
   ) -> CGRect {
-    var textRect:CGRect = super.textRect(
+    var textRect: CGRect = super.textRect(
       forBounds: bounds,
       limitedToNumberOfLines: numberOfLines
     )
