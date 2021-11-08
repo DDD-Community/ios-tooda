@@ -11,11 +11,7 @@ import RxSwift
 
 final class StockItemCellReactor: Reactor {
   
-  struct Depdendency {
-    
-  }
-  
-    // MARK: Reactor
+  // MARK: Reactor
   
   enum Action {
     
@@ -26,7 +22,8 @@ final class StockItemCellReactor: Reactor {
   }
   
   struct Dependency {
-    
+    var id: Int
+    var name: String
   }
   
   struct State {

@@ -63,11 +63,15 @@ final class AppFactory: AppFactoryType {
       return SettingsViewController(reactor: reactor)
       
     case .addStock(let completionRelay):
+      
+      let factory: AddStockSectionFactoryType = AddStockSectionFactory()
+      
       let reator = AddStockReactor(
         dependency: .init(
           completionRelay: completionRelay,
           coordinator: self.dependency.appInject.resolve(AppCoordinatorType.self),
-          service: self.dependency.appInject.resolve(NetworkingProtocol.self)
+          service: self.dependency.appInject.resolve(NetworkingProtocol.self),
+          sectionFactory: factory
         )
       )
       let viewController = AddStockViewController(reactor: reator)

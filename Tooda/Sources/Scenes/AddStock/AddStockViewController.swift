@@ -113,6 +113,10 @@ final class AddStockViewController: BaseViewController<AddStockReactor> {
       .disposed(by: self.disposeBag)
     
     // State
+    reactor.state
+      .map { $0.sections }
+      .bind(to: self.tableView.rx.items(dataSource: dataSource))
+      .disposed(by: self.disposeBag)
   }
   
   // MARK: SetupUI

@@ -29,6 +29,7 @@ final class AddStockReactor: Reactor {
     let completionRelay: PublishRelay<String>
     let coordinator: AppCoordinatorType
     let service: NetworkingProtocol
+    let sectionFactory: AddStockSectionFactoryType
   }
   
   struct State {
@@ -94,9 +95,10 @@ extension AddStockReactor {
   private func searchTextDidChanged(_ keyword: String) -> Observable<Mutation> {
     self.dependency.service.request(StockAPI.search(keyword: keyword))
       .asObservable()
-      .mapString()
-      .flatMap { _ -> Observable<Mutation> in
-        return .empty()
+      .map([Stock].self)
+      .flatMap { [weak self] stocks -> Observable<Mutation> in
+        let sections = self?.dependency.sectionFactory.searchResult(stocks) ?? []
+        return .just(.fetchSearchResultSection(sections))
       }
   }
 }
