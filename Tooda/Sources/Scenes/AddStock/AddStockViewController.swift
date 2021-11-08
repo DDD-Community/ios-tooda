@@ -94,6 +94,11 @@ final class AddStockViewController: BaseViewController<AddStockReactor> {
     self.initializeNavigation()
   }
   
+  override func viewDidAppear(_ animated: Bool) {
+    super.viewDidAppear(animated)
+    self.focusTextField()
+  }
+  
   // MARK: Bind
   
   override func bind(reactor: Reactor) {
@@ -166,5 +171,9 @@ extension AddStockViewController {
   private func initializeNavigation() {
     self.navigationItem.title = "종목 기록하기"
     self.navigationItem.rightBarButtonItem = closeBarButton
+  }
+  
+  private func focusTextField() {
+    self.searchField.becomeFirstResponder()
   }
 }
