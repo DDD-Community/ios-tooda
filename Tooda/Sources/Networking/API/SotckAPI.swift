@@ -16,7 +16,7 @@ extension StockAPI: BaseAPI {
   var path: String {
     switch self {
       case .search:
-        return "/stock/search"
+        return "stock/search"
     }
   }
   

@@ -100,13 +100,11 @@ final class AddStockViewController: BaseViewController<AddStockReactor> {
     
     // Action
     
-    // TODO: Reactor Action으로 변경
     self.closeBarButton.rx.tap
-      .throttle(.milliseconds(500), scheduler: MainScheduler.instance)
-      .asDriver(onErrorJustReturn: ())
-      .drive(onNext: { [weak self] in
-        self?.dismiss(animated: true, completion: nil)
-      }).disposed(by: self.disposeBag)
+      .debounce(.milliseconds(500), scheduler: MainScheduler.instance)
+      .map { Reactor.Action.dismiss }
+      .bind(to: reactor.action)
+      .disposed(by: self.disposeBag)
     
     self.searchField.rx.text.orEmpty
       .debounce(.milliseconds(300), scheduler: MainScheduler.instance)

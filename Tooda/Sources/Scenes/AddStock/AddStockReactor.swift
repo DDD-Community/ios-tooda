@@ -18,6 +18,7 @@ final class AddStockReactor: Reactor {
   
   enum Action {
     case searchTextDidChanged(String)
+    case dismiss
   }
   
   enum Mutation {
@@ -26,6 +27,8 @@ final class AddStockReactor: Reactor {
   
   struct Dependency {
     let completionRelay: PublishRelay<String>
+    let coordinator: AppCoordinatorType
+    let service: NetworkingProtocol
   }
   
   struct State {
@@ -52,10 +55,9 @@ extension AddStockReactor {
   func mutate(action: Action) -> Observable<Mutation> {
     switch action {
       case .searchTextDidChanged(let keyword):
-        print(keyword)
-        
-        // TODO: Search API dependency 추가
-        return .empty()
+        return self.searchTextDidChanged(keyword)
+      case .dismiss:
+        return self.dissmissView()
     }
   }
   
@@ -68,5 +70,33 @@ extension AddStockReactor {
     }
     
     return state
+  }
+}
+
+// MARK: Coordinator
+
+extension AddStockReactor {
+  private func dissmissView() -> Observable<Mutation> {
+    self.dependency.coordinator.close(
+      style: .dismiss,
+      animated: true,
+      completion: nil
+    )
+    
+    return .empty()
+  }
+}
+
+// MARK: Seacrh Stock
+
+extension AddStockReactor {
+  // TODO: API Response -> Codable Entity -> Section Mutaion 전달 예정
+  private func searchTextDidChanged(_ keyword: String) -> Observable<Mutation> {
+    self.dependency.service.request(StockAPI.search(keyword: keyword))
+      .asObservable()
+      .mapString()
+      .flatMap { _ -> Observable<Mutation> in
+        return .empty()
+      }
   }
 }
