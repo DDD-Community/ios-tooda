@@ -133,6 +133,11 @@ final class HomeViewController: BaseViewController<HomeReactor> {
       .map { HomeReactor.Action.pushSearch }
       .bind(to: reactor.action)
       .disposed(by: self.disposeBag)
+    
+    settingBarButton.rx.tap
+      .map { HomeReactor.Action.pushSettings }
+      .bind(to: reactor.action)
+      .disposed(by: self.disposeBag)
 
     // State
     self.reactor?.state
