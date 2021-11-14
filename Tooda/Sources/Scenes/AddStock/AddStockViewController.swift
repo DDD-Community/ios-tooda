@@ -59,6 +59,7 @@ final class AddStockViewController: BaseViewController<AddStockReactor> {
   
   private let tableView = UITableView().then {
     $0.separatorStyle = .none
+    $0.allowsSelection = false
     $0.backgroundColor = .white
     $0.register(StockItemCell.self)
   }
