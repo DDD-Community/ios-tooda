@@ -26,6 +26,10 @@ class ReactorViewController: BaseViewController<StockRateInputReactor> {
     static let borderLineGray: UIColor? = UIColor(type: .gray3)
   }
   
+  private enum Metric {
+    static let horizontalMargin: CGFloat = 24.0
+  }
+  
   init(reactor: Reactor) {
     defer {
       self.reactor = reactor
@@ -64,6 +68,7 @@ class ReactorViewController: BaseViewController<StockRateInputReactor> {
   
   private lazy var textField = UITextField().then {
     $0.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
+    $0.placeholder = "상승률/하락률"
   }
   
   private let percentLabel = UILabel().then {
@@ -84,10 +89,38 @@ class ReactorViewController: BaseViewController<StockRateInputReactor> {
   
   override func configureUI() {
     super.configureUI()
+    
+    self.view.addSubviews(titleLabel, descriptionLabel, textFieldBackgroundView)
+    
+    self.textFieldBackgroundView.addSubviews(textField)
   }
   
   override func configureConstraints() {
     super.configureConstraints()
+    
+    titleLabel.snp.makeConstraints {
+      $0.top.equalTo(self.view.safeAreaLayoutGuide.snp.top).offset(32)
+      $0.left.right.equalToSuperview().inset(Metric.horizontalMargin)
+    }
+    
+    descriptionLabel.snp.makeConstraints {
+      $0.top.equalTo(self.titleLabel.snp.bottom).offset(8)
+      $0.left.right.equalToSuperview().inset(32)
+    }
+    
+    textFieldBackgroundView.snp.makeConstraints {
+      $0.top.equalTo(self.descriptionLabel.snp.bottom).offset(23)
+      $0.left.equalToSuperview().offset(Metric.horizontalMargin)
+    }
+    
+    textField.snp.makeConstraints {
+      $0.edges.equalToSuperview().inset(UIEdgeInsets(top: 11, left: 14, bottom: 11, right: 14))
+    }
+    
+    percentLabel.snp.makeConstraints {
+      $0.centerY.equalTo(self.textField)
+      $0.left.equalTo(textField.snp.right).offset(8)
+    }
   }
   
   override func bind(reactor: Reactor) {
