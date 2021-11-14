@@ -24,7 +24,7 @@ class NoteListViewController: BaseViewController<NoteListReactor> {
   
   // MARK: Properties
   
-  lazy var dataSource: Section = Section(configureCell: { section, tableView, indexPath, item -> UITableViewCell in
+  lazy var dataSource: Section = Section(configureCell: { _, tableView, indexPath, item -> UITableViewCell in
     let cell = tableView.dequeue(NoteListCell.self, indexPath: indexPath)
     cell.configure(with: item)
     return cell
@@ -69,6 +69,11 @@ class NoteListViewController: BaseViewController<NoteListReactor> {
       .map { _ in NoteListReactor.Action.initialLoad }
       .bind(to: reactor.action)
       .disposed(by: self.disposeBag)
+    
+    reactor.state
+      .map { $0.noteListModel }
+      .bind(to: tableView.rx.items(dataSource: self.dataSource))
+      .disposed(by: disposeBag)
   }
   
   // MARK: - configureUI
