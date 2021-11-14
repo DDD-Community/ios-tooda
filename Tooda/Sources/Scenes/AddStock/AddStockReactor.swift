@@ -24,7 +24,7 @@ final class AddStockReactor: Reactor {
   
   enum Mutation {
     case fetchSearchResultSection([AddStockSection])
-    case nextButtonDidChanged(StockItemCellReactor.Dependency)
+    case nextButtonDidChanged(Bool)
   }
   
   struct Dependency {
@@ -39,7 +39,7 @@ final class AddStockReactor: Reactor {
       .init(identity: .list, items: [])
     ]
     
-    var nextButtonDidChanged: StockItemCellReactor.Dependency?
+    var nextButtonDidChanged: Bool?
   }
   
   init(dependency: Dependency) {
@@ -125,7 +125,10 @@ extension AddStockReactor {
     
     switch sectionItem {
       case .item(let reactor):
-        return .just(.nextButtonDidChanged(reactor.dependency))
+        
+        let isEnabeld = !reactor.dependency.name.isEmpty
+        
+        return .just(.nextButtonDidChanged(isEnabeld))
     }
 
   }

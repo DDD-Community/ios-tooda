@@ -226,9 +226,9 @@ extension AddStockViewController {
     self.searchField.becomeFirstResponder()
   }
   
-  private func nextButtonDidChanged(_ data: StockItemCellReactor.Dependency?) {
-    let isEnabeld = data != nil
-    self.nextButtonBackgroundColorDidChanged(isEnabeld)
+  private func nextButtonDidChanged(_ isEnabled: Bool?) {
+    let isEnabled = isEnabled != nil
+    self.nextButtonBackgroundColorDidChanged(isEnabled)
   }
   
   private func nextButtonBackgroundColorDidChanged(_ by: Bool) {
