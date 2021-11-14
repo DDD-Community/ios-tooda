@@ -7,7 +7,7 @@
   //
 
 import Foundation
-
+import Then
 import ReactorKit
 import RxSwift
 import RxRelay
@@ -24,6 +24,7 @@ final class AddStockReactor: Reactor {
   
   enum Mutation {
     case fetchSearchResultSection([AddStockSection])
+    case nextButtonDidChanged(StockItemCellReactor.Dependency)
   }
   
   struct Dependency {
@@ -33,10 +34,12 @@ final class AddStockReactor: Reactor {
     let sectionFactory: AddStockSectionFactoryType
   }
   
-  struct State {
+  struct State: Then {
     var sections: [AddStockSection] = [
       .init(identity: .list, items: [])
     ]
+    
+    var nextButtonDidChanged: StockItemCellReactor.Dependency?
   }
   
   init(dependency: Dependency) {
@@ -66,11 +69,17 @@ extension AddStockReactor {
   }
   
   func reduce(state: State, mutation: Mutation) -> State {
-    var state = state
+    
+    var state = State().with {
+      $0.sections = state.sections
+      $0.nextButtonDidChanged = nil
+    }
     
     switch mutation {
       case .fetchSearchResultSection(let sections):
         state.sections = sections
+      case .nextButtonDidChanged(let didChanged):
+        state.nextButtonDidChanged = didChanged
     }
     
     return state
@@ -110,6 +119,14 @@ extension AddStockReactor {
 
 extension AddStockReactor {
   private func cellItemDidSelected(_ indexPath: IndexPath) -> Observable<Mutation> {
-    return .empty()
+    
+    guard let section = self.currentState.sections[safe: indexPath.section],
+          let sectionItem = section.items[safe: indexPath.row] else { return .empty() }
+    
+    switch sectionItem {
+      case .item(let reactor):
+        return .just(.nextButtonDidChanged(reactor.dependency))
+    }
+
   }
 }

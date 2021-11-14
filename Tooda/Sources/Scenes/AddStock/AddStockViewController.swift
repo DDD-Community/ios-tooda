@@ -62,7 +62,7 @@ final class AddStockViewController: BaseViewController<AddStockReactor> {
   
   private let tableView = UITableView().then {
     $0.separatorStyle = .none
-    $0.allowsSelection = false
+    $0.allowsSelection = true
     $0.backgroundColor = .white
     $0.register(StockItemCell.self)
   }
@@ -149,6 +149,13 @@ final class AddStockViewController: BaseViewController<AddStockReactor> {
       .map { $0.sections }
       .bind(to: self.tableView.rx.items(dataSource: dataSource))
       .disposed(by: self.disposeBag)
+    
+    reactor.state
+      .map { $0.nextButtonDidChanged }
+      .subscribe(onNext: { [weak self] in
+        self?.nextButtonDidChanged($0)
+      })
+      .disposed(by: self.disposeBag)
   }
   
   // MARK: SetupUI
@@ -217,5 +224,15 @@ extension AddStockViewController {
   
   private func focusTextField() {
     self.searchField.becomeFirstResponder()
+  }
+  
+  private func nextButtonDidChanged(_ data: StockItemCellReactor.Dependency?) {
+    let isEnabeld = data != nil
+    self.nextButtonBackgroundColorDidChanged(isEnabeld)
+  }
+  
+  private func nextButtonBackgroundColorDidChanged(_ by: Bool) {
+    let backgroundColor = by ? UIColor.mainGreen : UIColor.gray3
+    self.nextButton.backgroundColor = backgroundColor
   }
 }
