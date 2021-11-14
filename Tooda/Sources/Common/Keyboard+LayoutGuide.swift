@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SnapKit
 
 internal class Keyboard {
   static let shared = Keyboard()
@@ -51,7 +52,7 @@ open class KeyboardLayoutGuide: UILayoutGuide {
     }
   }
   
-  private var bottomConstraint: NSLayoutConstraint?
+  private var bottomConstraint: ConstraintItem?
   
   @available(*, unavailable)
   public required init?(coder aDecoder: NSCoder) {
@@ -71,32 +72,29 @@ open class KeyboardLayoutGuide: UILayoutGuide {
   
   internal func setUp() {
     guard let view = owningView else { return }
-    NSLayoutConstraint.activate(
-      [
-        heightAnchor.constraint(equalToConstant: Keyboard.shared.currentHeight),
-        leftAnchor.constraint(equalTo: view.leftAnchor),
-        rightAnchor.constraint(equalTo: view.rightAnchor),
-      ]
-    )
-    updateButtomAnchor()
+    
+    self.snp.makeConstraints {
+      $0.left.right.equalTo(view)
+      $0.height.equalTo(Keyboard.shared.currentHeight)
+    }
+    
+    self.updateButtomAnchor()
   }
   
   func updateButtomAnchor() {
-    if let bottomConstraint = bottomConstraint {
-      bottomConstraint.isActive = false
-    }
-    
     guard let view = owningView else { return }
-    
-    let viewBottomAnchor: NSLayoutYAxisAnchor
+        
     if #available(iOS 11.0, *), usesSafeArea {
-      viewBottomAnchor = view.safeAreaLayoutGuide.bottomAnchor
+      self.bottomConstraint = view.safeAreaLayoutGuide.snp.bottom
     } else {
-      viewBottomAnchor = view.bottomAnchor
+      self.bottomConstraint = view.snp.bottom
     }
     
-    bottomConstraint = bottomAnchor.constraint(equalTo: viewBottomAnchor)
-    bottomConstraint?.isActive = true
+    guard let bottomConstraint = self.bottomConstraint else { return }
+    
+    self.snp.makeConstraints {
+      $0.bottom.equalTo(bottomConstraint)
+    }
   }
   
   @objc
