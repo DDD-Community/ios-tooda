@@ -11,7 +11,7 @@ import ReactorKit
 import SnapKit
 import Then
 
-class ReactorViewController: BaseViewController<StockRateInputReactor> {
+class StockRateInputViewController: BaseViewController<StockRateInputReactor> {
   typealias Reactor = StockRateInputReactor
   
   // MARK: Enum
@@ -49,6 +49,8 @@ class ReactorViewController: BaseViewController<StockRateInputReactor> {
   )
   
   private let titleLabel = UILabel().then {
+    // TODO: Mock 데이터 제거할 예정이에요.
+    $0.attributedText = "삼성전자".styled(with: Font.title)
     $0.numberOfLines = 0
     $0.sizeToFit()
   }
@@ -90,9 +92,11 @@ class ReactorViewController: BaseViewController<StockRateInputReactor> {
   override func configureUI() {
     super.configureUI()
     
-    self.view.addSubviews(titleLabel, descriptionLabel, textFieldBackgroundView)
+    [titleLabel, descriptionLabel, textFieldBackgroundView, percentLabel].forEach {
+      self.view.addSubview($0)
+    }
     
-    self.textFieldBackgroundView.addSubviews(textField)
+    self.textFieldBackgroundView.addSubview(textField)
   }
   
   override func configureConstraints() {
@@ -105,7 +109,7 @@ class ReactorViewController: BaseViewController<StockRateInputReactor> {
     
     descriptionLabel.snp.makeConstraints {
       $0.top.equalTo(self.titleLabel.snp.bottom).offset(8)
-      $0.left.right.equalToSuperview().inset(32)
+      $0.left.right.equalToSuperview().inset(Metric.horizontalMargin)
     }
     
     textFieldBackgroundView.snp.makeConstraints {
@@ -115,11 +119,13 @@ class ReactorViewController: BaseViewController<StockRateInputReactor> {
     
     textField.snp.makeConstraints {
       $0.edges.equalToSuperview().inset(UIEdgeInsets(top: 11, left: 14, bottom: 11, right: 14))
+      $0.height.equalTo(23)
     }
     
     percentLabel.snp.makeConstraints {
-      $0.centerY.equalTo(self.textField)
-      $0.left.equalTo(textField.snp.right).offset(8)
+      $0.centerY.equalTo(self.textFieldBackgroundView.snp.centerY)
+      $0.left.equalTo(self.textFieldBackgroundView.snp.right).offset(8)
+      $0.right.equalToSuperview().offset(-34)
     }
   }
   
@@ -135,7 +141,7 @@ class ReactorViewController: BaseViewController<StockRateInputReactor> {
 
 // MARK: - Extensions
 
-extension ReactorViewController {
+extension StockRateInputViewController {
   private func initializeNavigation() {
     self.navigationItem.title = "종목 기록하기"
     self.navigationItem.rightBarButtonItem = closeBarButton
