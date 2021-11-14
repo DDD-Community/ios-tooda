@@ -74,6 +74,9 @@ class NoteListViewController: BaseViewController<NoteListReactor> {
       .map { $0.noteListModel }
       .bind(to: tableView.rx.items(dataSource: self.dataSource))
       .disposed(by: disposeBag)
+    
+    tableView.rx.setDelegate(self)
+      .disposed(by: disposeBag)
   }
   
   // MARK: - configureUI
