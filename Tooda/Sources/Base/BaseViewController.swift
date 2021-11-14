@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 
 import ReactorKit
 import RxSwift
@@ -40,7 +41,7 @@ class BaseViewController<T: Reactor>: UIViewController, View {
     Observable<Void>.create({ observer in
       if self.navigationController?.viewControllers.count ?? 0 >= 2 {
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(
-          image: .init(type: .backBarButton),
+          image: UIImage(type: .backBarButton),
           style: .plain,
           action: {
             observer.onNext(())
