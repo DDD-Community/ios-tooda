@@ -39,7 +39,9 @@ final class NoteListCell: BaseTableViewCell {
     $0.contentMode = .scaleAspectFit
   }
   
-  private let descriptionLabel = UILabel()
+  private let descriptionLabel = UILabel().then {
+    $0.numberOfLines = 0
+  }
   
   private let mainImageView = UIImageView().then {
     $0.contentMode = .scaleAspectFit
@@ -105,6 +107,7 @@ final class NoteListCell: BaseTableViewCell {
     mainImageView.snp.makeConstraints {
       $0.leading.trailing.equalToSuperview().inset(20)
       $0.top.equalTo(descriptionLabel.snp.bottom).offset(16)
+      $0.bottom.equalToSuperview().inset(24)
     }
     
     imageCountLabel.snp.makeConstraints {
@@ -115,6 +118,8 @@ final class NoteListCell: BaseTableViewCell {
   
   // MARK: - Internal methods
   func configure(with note: Note) {
+    super.configure()
+    emojiImageView.image = note.sticker?.image
     titleLabel.attributedText = note.title.styled(with: Font.title)
     recordDateLabel.attributedText = "\(note.createdAt) 기록".styled(with: Font.recordDate)
     descriptionLabel.attributedText = note.content.styled(with: Font.description)
