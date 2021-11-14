@@ -139,6 +139,11 @@ final class AddStockViewController: BaseViewController<AddStockReactor> {
       .bind(to: reactor.action)
       .disposed(by: self.disposeBag)
     
+    self.tableView.rx.itemSelected
+      .map { Reactor.Action.cellItemDidSelected($0) }
+      .bind(to: reactor.action)
+      .disposed(by: self.disposeBag)
+    
     // State
     reactor.state
       .map { $0.sections }

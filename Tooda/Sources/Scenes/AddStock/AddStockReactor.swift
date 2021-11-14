@@ -19,6 +19,7 @@ final class AddStockReactor: Reactor {
   enum Action {
     case searchTextDidChanged(String)
     case dismiss
+    case cellItemDidSelected(IndexPath)
   }
   
   enum Mutation {
@@ -59,6 +60,8 @@ extension AddStockReactor {
         return self.searchTextDidChanged(keyword)
       case .dismiss:
         return self.dissmissView()
+      case .cellItemDidSelected(let indexPath):
+        return self.cellItemDidSelected(indexPath)
     }
   }
   
@@ -100,5 +103,13 @@ extension AddStockReactor {
         let sections = self?.dependency.sectionFactory.searchResult(stocks) ?? []
         return .just(.fetchSearchResultSection(sections))
       }
+  }
+}
+
+// MARK: Mutation
+
+extension AddStockReactor {
+  private func cellItemDidSelected(_ indexPath: IndexPath) -> Observable<Mutation> {
+    return .empty()
   }
 }
