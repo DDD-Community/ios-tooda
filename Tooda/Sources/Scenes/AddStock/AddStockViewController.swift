@@ -22,6 +22,7 @@ final class AddStockViewController: BaseViewController<AddStockReactor> {
   
   private enum Font {
     static let searchField = TextStyle.body(color: .gray1)
+    static let nextButton = TextStyle.subTitleBold(color: .white)
     
   }
   
@@ -32,9 +33,11 @@ final class AddStockViewController: BaseViewController<AddStockReactor> {
   private enum Metric {
     static let verticalMargin: CGFloat = 16
     static let horizontalMargin: CGFloat = 14
+    static let nextButtonHeight: CGFloat = 48
   }
   
-    // MARK: Properties
+  // MARK: Properties
+  
   let dataSource: Section = Section(configureCell: { _, tableView, indexPath, item -> UITableViewCell in
     switch item {
       case .item(let reactor):
@@ -62,6 +65,24 @@ final class AddStockViewController: BaseViewController<AddStockReactor> {
     $0.allowsSelection = false
     $0.backgroundColor = .white
     $0.register(StockItemCell.self)
+  }
+  
+  private let buttonBackGroundView = UIView().then {
+    $0.backgroundColor = UIColor(type: .white)
+  }
+  
+  private let nextButton = UIButton(type: .system).then {
+    $0.setAttributedTitle(
+      "다음".styled(with: Font.nextButton),
+      for: .normal
+    )
+    
+    $0.backgroundColor = UIColor.gray3
+    $0.layer.cornerRadius = CGFloat(Metric.nextButtonHeight / 2)
+    $0.layer.shadowColor = UIColor(hex: "#43475314").withAlphaComponent(0.08).cgColor
+    $0.layer.shadowOffset = CGSize(width: 0, height: 12)
+    $0.layer.shadowOpacity = 1
+    $0.layer.shadowRadius = 12.0
   }
   
   private let closeBarButton = UIBarButtonItem(
@@ -132,9 +153,13 @@ final class AddStockViewController: BaseViewController<AddStockReactor> {
     
     self.view.backgroundColor = .white
     
-    self.view.addSubviews(searchFieldBackgroundView, tableView)
+    [searchFieldBackgroundView, tableView, buttonBackGroundView].forEach {
+      self.view.addSubview($0)
+    }
     
     self.searchFieldBackgroundView.addSubviews(searchField)
+    
+    self.buttonBackGroundView.addSubview(nextButton)
   }
   
   override func configureConstraints() {
@@ -155,7 +180,19 @@ final class AddStockViewController: BaseViewController<AddStockReactor> {
       $0.top.equalTo(searchFieldBackgroundView.snp.bottom).offset(9)
       $0.left.equalToSuperview().offset(Metric.horizontalMargin)
       $0.right.equalToSuperview().offset(-Metric.horizontalMargin)
-      $0.bottom.equalTo(self.view.safeAreaLayoutGuide.snp.bottom)
+      $0.bottom.equalTo(self.buttonBackGroundView.snp.top)
+    }
+    
+    buttonBackGroundView.snp.makeConstraints {
+      $0.left.right.equalToSuperview()
+      $0.bottom.equalTo(self.view.keyboardLayoutGuide.snp.top)
+    }
+    
+    nextButton.snp.makeConstraints {
+      $0.top.equalToSuperview().offset(16)
+      $0.left.right.equalToSuperview().inset(20)
+      $0.bottom.equalToSuperview().offset(-24)
+      $0.height.equalTo(Metric.nextButtonHeight)
     }
   }
   
