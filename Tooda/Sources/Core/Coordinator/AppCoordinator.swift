@@ -120,6 +120,8 @@ final class AppCoordinator: AppCoordinatorType {
           return $0 is SearchViewController
         case .noteList:
           return $0 is NoteListViewController
+        case .searchRecent:
+          return false
         }
       }) else { return }
 
