@@ -99,7 +99,7 @@ final class SearchViewController: BaseViewController<SearchReactor> {
         height: 20.0
       )
     )
-    imageView.image = .init(type: .searchBarButton)?.withRenderingMode(.alwaysTemplate)
+    imageView.image = UIImage(type: .searchBarButton)?.withRenderingMode(.alwaysTemplate)
     leftView.addSubview(imageView)
     imageView.tintColor = .gray3
 
