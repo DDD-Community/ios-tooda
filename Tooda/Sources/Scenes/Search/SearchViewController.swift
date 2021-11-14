@@ -80,6 +80,11 @@ final class SearchViewController: BaseViewController<SearchReactor> {
     super.configureUI()
 
     self.configureSearchBar()
+
+    self.addChild(self.recentViewController)
+    self.recentViewController.view.frame = self.view.frame
+    self.view.addSubview(self.recentViewController.view)
+    self.recentViewController.didMove(toParent: self)
   }
 
   override func configureConstraints() {
