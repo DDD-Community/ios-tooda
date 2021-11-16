@@ -62,7 +62,7 @@ final class AddStockViewController: BaseViewController<AddStockReactor> {
   
   private let tableView = UITableView().then {
     $0.separatorStyle = .none
-    $0.allowsSelection = true
+    $0.allowsSelection = false
     $0.backgroundColor = .white
     $0.register(StockItemCell.self)
   }
@@ -139,7 +139,6 @@ final class AddStockViewController: BaseViewController<AddStockReactor> {
     
     self.searchField.rx.text.orEmpty
       .debounce(.milliseconds(300), scheduler: MainScheduler.instance)
-      .debug()
       .map { Reactor.Action.searchTextDidChanged($0) }
       .bind(to: reactor.action)
       .disposed(by: self.disposeBag)

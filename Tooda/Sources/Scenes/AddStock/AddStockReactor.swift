@@ -7,7 +7,6 @@
   //
 
 import Foundation
-import Then
 import ReactorKit
 import RxSwift
 import RxRelay
@@ -33,7 +32,7 @@ final class AddStockReactor: Reactor {
     let sectionFactory: AddStockSectionFactoryType
   }
   
-  struct State: Then {
+  struct State {
     var sections: [AddStockSection] = [
       .init(identity: .list, items: [])
     ]
