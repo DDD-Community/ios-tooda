@@ -13,14 +13,20 @@ import RxSwift
 
 final class NoteListReactor: Reactor {
   
+  // MARK: Constants
+  
+  enum Constants {
+    static let sectionIdentifier = "NoteListSection"
+  }
+  
   // MARK: Reactor
   
   enum Action {
     case initialLoad
   }
-
+  
   enum Mutation {
-    
+    case setNoteListModel([NoteListModel])
   }
   
   struct Dependency {
@@ -29,7 +35,7 @@ final class NoteListReactor: Reactor {
   }
   
   struct State {
-    
+    var noteListModel: [NoteListModel]
   }
   
   init(dependency: Dependency) {
@@ -40,5 +46,47 @@ final class NoteListReactor: Reactor {
   
   let dependency: Dependency
   
-  let initialState: State = State()
+  let initialState: State = State(noteListModel: [])
+}
+
+// MARK: - Mutate
+
+extension NoteListReactor {
+  
+  func mutate(action: Action) -> Observable<Mutation> {
+    switch action {
+    case .initialLoad:
+      return loadMutation()
+    }
+  }
+  
+  private func loadMutation() -> Observable<Mutation> {
+    return dependency.service.request(NoteAPI.list(limit: 15, cursor: 0))
+      .map([Note].self)
+      .asObservable()
+      .map { Mutation.setNoteListModel(
+        [
+          NoteListModel(
+            identity: Constants.sectionIdentifier,
+            items: $0
+          )
+        ]
+      )
+    }
+  }
+}
+
+// MARK: - Reduce
+
+extension NoteListReactor {
+  
+  func reduce(state: State, mutation: Mutation) -> State {
+    var newState = state
+    
+    switch mutation {
+    case let .setNoteListModel(model):
+      newState.noteListModel = model
+      return newState
+    }
+  }
 }

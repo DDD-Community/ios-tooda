@@ -23,8 +23,8 @@ extension NoteAPI: BaseAPI {
     switch self {
       case .create:
         return "/diary"
-      case .list(let limit, let cursor):
-        return "/diary?limit=\(limit)&cursor\(cursor)"
+      case .list:
+        return "diary"
       case .addImage:
         return "diary/image"
       case .delete(let id):
@@ -65,11 +65,15 @@ extension NoteAPI: BaseAPI {
     
     let defaultParameters: [String: Any] = [:]
     
-    let parameters: [String: Any] = defaultParameters
+    var parameters: [String: Any] = defaultParameters
     
     switch self {
-      case .create, .list, .delete, .addImage:
-        return parameters
+    case .create, .delete, .addImage:
+      return parameters
+    case let .list(limit, cursor):
+      parameters["limit"] = limit
+      parameters["cursor"] = cursor
+      return parameters
     }
   }
   
