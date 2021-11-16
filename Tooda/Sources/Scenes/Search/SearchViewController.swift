@@ -26,6 +26,8 @@ final class SearchViewController: BaseViewController<SearchReactor> {
 
   // MARK: UI
 
+  private let recentViewController: SearchRecentViewController
+
   private let searchBar = UISearchBar().then {
     $0.searchTextPositionAdjustment = .init(horizontal: 5.0, vertical: 0.0)
     $0.searchTextField.attributedPlaceholder = "전체 노트 중 검색".styled(with: Font.placeholder)
@@ -34,7 +36,11 @@ final class SearchViewController: BaseViewController<SearchReactor> {
 
   // MARK: Initializing
 
-  init(reactor: SearchReactor) {
+  init(
+    reactor: SearchReactor,
+    recentViewController: SearchRecentViewController
+  ) {
+    self.recentViewController = recentViewController
     super.init()
     self.reactor = reactor
   }
@@ -63,7 +69,8 @@ final class SearchViewController: BaseViewController<SearchReactor> {
         guard let self = self else {
           return Observable<Void>.empty()
         }
-        return self.configureBackBarButtonItemIfNeeded() }
+        return self.configureBackBarButtonItemIfNeeded()
+      }
       .map { SearchReactor.Action.back }
       .bind(to: reactor.action)
       .disposed(by: self.disposeBag)
@@ -73,6 +80,11 @@ final class SearchViewController: BaseViewController<SearchReactor> {
     super.configureUI()
 
     self.configureSearchBar()
+
+    self.addChild(self.recentViewController)
+    self.recentViewController.view.frame = self.view.frame
+    self.view.addSubview(self.recentViewController.view)
+    self.recentViewController.didMove(toParent: self)
   }
 
   override func configureConstraints() {
@@ -92,7 +104,7 @@ final class SearchViewController: BaseViewController<SearchReactor> {
         height: 20.0
       )
     )
-    imageView.image = .init(type: .searchBarButton)?.withRenderingMode(.alwaysTemplate)
+    imageView.image = UIImage(type: .searchBarButton)?.withRenderingMode(.alwaysTemplate)
     leftView.addSubview(imageView)
     imageView.tintColor = .gray3
 
@@ -107,5 +119,15 @@ extension SearchViewController: UISearchBarDelegate {
 
   func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
     self.searchBar.searchTextField.attributedText = searchText.styled(with: Font.searchText)
+  }
+}
+
+
+// MARK: - Internal
+
+extension SearchViewController {
+
+  private func addChildViewController() {
+
   }
 }

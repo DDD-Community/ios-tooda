@@ -86,7 +86,12 @@ final class AppFactory: AppFactoryType {
           coordinator: self.dependency.appInject.resolve(AppCoordinatorType.self)
         )
       )
-      return SearchViewController(reactor: reactor)
+
+      return SearchViewController(
+        reactor: reactor,
+        recentViewController: self.makeViewController(from: .searchRecent) as! SearchRecentViewController
+      )
+
     case .noteList:
       let reactor = NoteListReactor(
         dependency: .init(
@@ -95,6 +100,16 @@ final class AppFactory: AppFactoryType {
         )
       )
       return NoteListViewController(reactor: reactor)
+
+    case .searchRecent:
+      let reactor = SearchRecentReactor(
+        dependency: .init(
+          service: self.dependency.appInject.resolve(NetworkingProtocol.self),
+          coordinator: self.dependency.appInject.resolve(AppCoordinatorType.self)
+        )
+      )
+
+      return SearchRecentViewController(reactor: reactor)
     }
   }
 }
