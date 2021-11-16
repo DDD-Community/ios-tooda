@@ -18,7 +18,7 @@ final class AddStockReactor: Reactor {
   enum Action {
     case searchTextDidChanged(String)
     case dismiss
-    case nextButtonDidTapped
+    case nextButtonDidTapped(name: String)
   }
   
   enum Mutation {
@@ -65,8 +65,8 @@ extension AddStockReactor {
         ])
       case .dismiss:
         return self.dissmissView()
-      case .nextButtonDidTapped:
-        return self.nextButtonDidTapped()
+      case .nextButtonDidTapped(let name):
+        return self.nextButtonDidTapped(name)
     }
   }
   
@@ -133,7 +133,11 @@ extension AddStockReactor {
   }
   
   // TODO: Coordinator 로직을 호출해요.
-  private func nextButtonDidTapped() -> Observable<Mutation> {
+  private func nextButtonDidTapped(_ name: String) -> Observable<Mutation> {
+    let dependency = StockRateInputReactor.Dependency(name: name, completion: self.dependency.completionRelay, coordinator: self.dependency.coordinator)
+    
+    self.dependency.coordinator.transition(to: .stockRateInput(dependency: dependency), using: .push, animated: true, completion: nil)
+    
     return .empty()
   }
 }
