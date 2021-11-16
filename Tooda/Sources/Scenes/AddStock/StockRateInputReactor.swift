@@ -10,7 +10,7 @@ import RxCocoa
 import ReactorKit
 
 protocol StockRateInputDependencyType {
-  var stock: Stock { get }
+  var name: String { get }
   var completion: PublishRelay<NoteStock> { get }
 }
 
@@ -28,7 +28,7 @@ final class StockRateInputReactor: Reactor {
   }
   
   struct Dependency: StockRateInputDependencyType {
-    var stock: Stock
+    var name: String
     var completion: PublishRelay<NoteStock>
   }
   

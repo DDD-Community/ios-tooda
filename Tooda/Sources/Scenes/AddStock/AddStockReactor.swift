@@ -27,7 +27,7 @@ final class AddStockReactor: Reactor {
   }
   
   struct Dependency {
-    let completionRelay: PublishRelay<String>
+    let completionRelay: PublishRelay<NoteStock>
     let coordinator: AppCoordinatorType
     let service: NetworkingProtocol
     let sectionFactory: AddStockSectionFactoryType

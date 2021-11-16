@@ -17,7 +17,7 @@ enum Scene {
   case home
   case createNote
   case settings
-  case addStock(completion: PublishRelay<String>)
+  case addStock(completion: PublishRelay<NoteStock>)
   case search
   case noteList
   case searchRecent
