@@ -18,6 +18,7 @@ final class AddStockReactor: Reactor {
   enum Action {
     case searchTextDidChanged(String)
     case dismiss
+    case nextButtonDidTapped
   }
   
   enum Mutation {
@@ -64,6 +65,8 @@ extension AddStockReactor {
         ])
       case .dismiss:
         return self.dissmissView()
+      case .nextButtonDidTapped:
+        return self.nextButtonDidTapped()
     }
   }
   
@@ -127,5 +130,10 @@ extension AddStockReactor {
         return .just(.nextButtonDidChanged(isEnabeld))
     }
 
+  }
+  
+  // TODO: Coordinator 로직을 호출해요.
+  private func nextButtonDidTapped() -> Observable<Mutation> {
+    return .empty()
   }
 }
