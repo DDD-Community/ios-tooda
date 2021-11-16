@@ -112,7 +112,8 @@ final class AppFactory: AppFactoryType {
       return SearchRecentViewController(reactor: reactor)
     case .stockRateInput(let dependency):
       let reactor = StockRateInputReactor(dependency: StockRateInputReactor.Dependency(name: dependency.name,
-                                                                               completion: dependency.completion))
+                                                                                       completion: dependency.completion,
+                                                                                       coordinator: self.dependency.appInject.resolve(AppCoordinatorType.self)))
       return StockRateInputViewController(reactor: reactor)
     }
   }

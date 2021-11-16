@@ -11,12 +11,13 @@ import ReactorKit
 
 protocol StockRateInputDependencyType {
   var name: String { get }
+  var coordinator: AppCoordinatorType { get }
   var completion: PublishRelay<NoteStock> { get }
 }
 
 final class StockRateInputReactor: Reactor {
   enum Action {
-    
+    case closeButtonDidTapped
   }
   
   enum Mutation {
@@ -30,6 +31,7 @@ final class StockRateInputReactor: Reactor {
   struct Dependency: StockRateInputDependencyType {
     var name: String
     var completion: PublishRelay<NoteStock>
+    var coordinator: AppCoordinatorType
   }
   
   let initialState: State
@@ -41,11 +43,24 @@ final class StockRateInputReactor: Reactor {
   }
   
   func mutate(action: Action) -> Observable<Mutation> {
-    return .empty()
+    switch action {
+      case .closeButtonDidTapped:
+        return self.closeButtonDidTapped()
+    }
   }
   
   func reduce(state: State, mutation: Action) -> State {
     var newState = state
     return newState
+  }
+}
+
+// MARK: - Extensions
+
+extension StockRateInputReactor {
+  private func closeButtonDidTapped() -> Observable<Mutation> {
+    self.dependency.coordinator.close(style: .pop, animated: true, completion: nil)
+    
+    return .empty()
   }
 }

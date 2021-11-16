@@ -87,6 +87,7 @@ class StockRateInputViewController: BaseViewController<StockRateInputReactor> {
   override func viewDidLoad() {
     super.viewDidLoad()
     self.view.backgroundColor = .white
+    self.initializeNavigation()
   }
   
   override func configureUI() {
@@ -131,6 +132,15 @@ class StockRateInputViewController: BaseViewController<StockRateInputReactor> {
   
   override func bind(reactor: Reactor) {
     super.bind(reactor: reactor)
+    
+    // Action
+    self.rx.viewDidLoad
+      .asObservable()
+      .flatMap { [weak self] _ -> Observable<Void> in
+        return self?.configureBackBarButtonItemIfNeeded() ?? .empty() }
+      .map { Reactor.Action.closeButtonDidTapped }
+      .bind(to: reactor.action)
+      .disposed(by: self.disposeBag)
   }
   
   @objc
