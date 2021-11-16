@@ -6,9 +6,13 @@
 //  Copyright © 2021 DTS. All rights reserved.
 //
 
+import RxCocoa
 import ReactorKit
 
-  // Reactor
+protocol StockRateInputDependencyType {
+  var stock: Stock { get }
+  var completion: PublishRelay<NoteStock> { get }
+}
 
 final class StockRateInputReactor: Reactor {
   enum Action {
@@ -23,9 +27,16 @@ final class StockRateInputReactor: Reactor {
     
   }
   
-  let initialState: State
+  struct Dependency: StockRateInputDependencyType {
+    var stock: Stock
+    var completion: PublishRelay<NoteStock>
+  }
   
-  init() {
+  let initialState: State
+  let dependency: StockRateInputDependencyType
+  
+  init(dependency: StockRateInputDependencyType) {
+    self.dependency = dependency
     initialState = State()
   }
   
