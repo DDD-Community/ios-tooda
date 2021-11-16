@@ -19,7 +19,6 @@ final class AddStockReactor: Reactor {
   enum Action {
     case searchTextDidChanged(String)
     case dismiss
-    case cellItemDidSelected(IndexPath)
   }
   
   enum Mutation {
@@ -39,7 +38,7 @@ final class AddStockReactor: Reactor {
       .init(identity: .list, items: [])
     ]
     
-    var nextButtonDidChanged: Bool?
+    var nextButtonDidChanged: Bool = false
   }
   
   init(dependency: Dependency) {
@@ -60,26 +59,24 @@ extension AddStockReactor {
   func mutate(action: Action) -> Observable<Mutation> {
     switch action {
       case .searchTextDidChanged(let keyword):
-        return self.searchTextDidChanged(keyword)
+        return .concat([
+          self.searchTextDidChanged(keyword),
+          .just(.nextButtonDidChanged(!keyword.isEmpty && keyword.count >= 1))
+        ])
       case .dismiss:
         return self.dissmissView()
-      case .cellItemDidSelected(let indexPath):
-        return self.cellItemDidSelected(indexPath)
     }
   }
   
   func reduce(state: State, mutation: Mutation) -> State {
     
-    var state = State().with {
-      $0.sections = state.sections
-      $0.nextButtonDidChanged = nil
-    }
+    var state = state
     
     switch mutation {
       case .fetchSearchResultSection(let sections):
         state.sections = sections
-      case .nextButtonDidChanged(let didChanged):
-        state.nextButtonDidChanged = didChanged
+      case .nextButtonDidChanged(let isEnabled):
+        state.nextButtonDidChanged = isEnabled
     }
     
     return state

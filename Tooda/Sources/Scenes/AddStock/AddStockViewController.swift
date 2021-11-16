@@ -77,12 +77,16 @@ final class AddStockViewController: BaseViewController<AddStockReactor> {
       for: .normal
     )
     
-    $0.backgroundColor = UIColor.gray3
+    $0.setBackgroundImage(UIColor.gray3.image(), for: .disabled)
+    $0.setBackgroundImage(UIColor.mainGreen.image(), for: .normal)
+    
     $0.layer.cornerRadius = CGFloat(Metric.nextButtonHeight / 2)
     $0.layer.shadowColor = UIColor(hex: "#43475314").withAlphaComponent(0.08).cgColor
     $0.layer.shadowOffset = CGSize(width: 0, height: 12)
     $0.layer.shadowOpacity = 1
     $0.layer.shadowRadius = 12.0
+    
+    $0.layer.masksToBounds = true
   }
   
   private let closeBarButton = UIBarButtonItem(
@@ -135,12 +139,8 @@ final class AddStockViewController: BaseViewController<AddStockReactor> {
     
     self.searchField.rx.text.orEmpty
       .debounce(.milliseconds(300), scheduler: MainScheduler.instance)
+      .debug()
       .map { Reactor.Action.searchTextDidChanged($0) }
-      .bind(to: reactor.action)
-      .disposed(by: self.disposeBag)
-    
-    self.tableView.rx.itemSelected
-      .map { Reactor.Action.cellItemDidSelected($0) }
       .bind(to: reactor.action)
       .disposed(by: self.disposeBag)
     
@@ -226,13 +226,7 @@ extension AddStockViewController {
     self.searchField.becomeFirstResponder()
   }
   
-  private func nextButtonDidChanged(_ isEnabled: Bool?) {
-    let isEnabled = isEnabled != nil
-    self.nextButtonBackgroundColorDidChanged(isEnabled)
-  }
-  
-  private func nextButtonBackgroundColorDidChanged(_ by: Bool) {
-    let backgroundColor = by ? UIColor.mainGreen : UIColor.gray3
-    self.nextButton.backgroundColor = backgroundColor
+  private func nextButtonDidChanged(_ isEnabled: Bool) {
+    self.nextButton.isEnabled = isEnabled
   }
 }
