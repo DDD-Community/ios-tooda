@@ -65,12 +65,14 @@ extension NoteListReactor {
       .map([Note].self)
       .asObservable()
       .map { Mutation.setNoteListModel(
-        [NoteListModel(
-          identity: Constants.sectionIdentifier,
-          items: $0
-        )]
+        [
+          NoteListModel(
+            identity: Constants.sectionIdentifier,
+            items: $0
+          )
+        ]
       )
-      }
+    }
   }
 }
 
