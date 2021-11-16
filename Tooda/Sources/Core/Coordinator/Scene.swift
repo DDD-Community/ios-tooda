@@ -21,4 +21,5 @@ enum Scene {
   case search
   case noteList
   case searchRecent
+  case stockRateInput(dependency: StockRateInputDependencyType)
 }

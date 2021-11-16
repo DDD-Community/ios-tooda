@@ -122,6 +122,8 @@ final class AppCoordinator: AppCoordinatorType {
           return $0 is NoteListViewController
         case .searchRecent:
           return false
+        case .stockRateInput:
+          return $0 is StockRateInputViewController
         }
       }) else { return }
 
