@@ -16,6 +16,50 @@ import SnapKit
 
 final class SearchRecentViewController: BaseViewController<SearchRecentReactor> {
 
+  // MARK: UI
+
+  private let collectionView = UICollectionView(
+    frame: .zero,
+    collectionViewLayout: UICollectionViewFlowLayout().then {
+      $0.minimumLineSpacing = 16.0
+    }
+  ).then {
+    $0.backgroundColor = . clear
+    $0.contentInset = .init(bottom: 24.0)
+    $0.showsHorizontalScrollIndicator = false
+    $0.alwaysBounceVertical = true
+    $0.register(SearchRecentTitleCell.self)
+    $0.register(SearchRecentKeywordCell.self)
+  }
+
+
+  // MARK: Properties
+
+  private lazy var dataSource = RxCollectionViewSectionedReloadDataSource<SearchRecentSectionModel>(
+    configureCell: { section, collectionView, indexPath, item -> UICollectionViewCell in
+      guard let section = section.sectionModels[safe: indexPath.section]?.identity else {
+        return .init()
+      }
+
+      switch section {
+      case .header:
+        let header = collectionView.dequeue(
+          SearchRecentTitleCell.self,
+          indexPath: indexPath
+        )
+        return header
+
+      case .keyword:
+        guard case let .keyword(viewModel) = item else { return .init() }
+        let cell = collectionView.dequeue(
+          SearchRecentKeywordCell.self,
+          indexPath: indexPath
+        )
+
+        cell.configure(viewModel: viewModel)
+        return cell
+      }
+    })
   // MARK: Initialzing
 
   init(reactor: SearchRecentReactor) {
@@ -43,10 +87,38 @@ final class SearchRecentViewController: BaseViewController<SearchRecentReactor> 
   }
 
   override func configureUI() {
-
+    self.view.do {
+      $0.addSubview(self.collectionView)
+    }
   }
 
   override func configureConstraints() {
+    self.collectionView.snp.makeConstraints {
+      $0.top.equalTo(self.view.safeAreaLayoutGuide.snp.top)
+      $0.bottom.equalTo(self.view.keyboardLayoutGuide.snp.top)
+      $0.left.equalTo(self.view.safeAreaLayoutGuide.snp.left).inset(20.0)
+      $0.right.equalTo(self.view.safeAreaLayoutGuide.snp.right).inset(20.0)
+    }
+  }
+}
 
+
+// MARK: UICollectionViewDelegateFlowLayout
+
+extension SearchRecentViewController: UICollectionViewDelegateFlowLayout {
+
+  func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+    guard let section = self.dataSource.sectionModels[safe: indexPath.section]?.identity else { return .zero }
+
+    return CGSize(
+      width: collectionView.frame.width,
+      height: section.cellHeight
+    )
+  }
+
+  func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+    guard let section = self.dataSource.sectionModels[safe: section]?.identity else { return .zero }
+
+    return section.edgeInsets
   }
 }
