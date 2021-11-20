@@ -11,6 +11,7 @@ import UIKit
 import ReactorKit
 import RxSwift
 import RxCocoa
+import RxDataSources
 import Then
 import SnapKit
 
@@ -60,6 +61,13 @@ final class SearchRecentViewController: BaseViewController<SearchRecentReactor> 
         return cell
       }
     })
+
+
+  // MARK: Custom Action
+
+  let rxBeginSearch = PublishRelay<Void>()
+
+
   // MARK: Initialzing
 
   init(reactor: SearchRecentReactor) {
@@ -83,7 +91,26 @@ final class SearchRecentViewController: BaseViewController<SearchRecentReactor> 
   // MARK: Bind
 
   override func bind(reactor: SearchRecentReactor) {
+    self.collectionView.rx
+      .setDelegate(self)
+      .disposed(by: self.disposeBag)
 
+    // Action
+    self.rxBeginSearch
+      .do(onNext: {
+        print("do!!")
+      })
+      .asObservable()
+      .map { SearchRecentReactor.Action.beginSearch }
+      .bind(to: reactor.action)
+      .disposed(by: self.disposeBag)
+
+    // State
+
+    reactor.state
+      .map { $0.keywords }
+      .bind(to: self.collectionView.rx.items(dataSource: self.dataSource))
+      .disposed(by: self.disposeBag)
   }
 
   override func configureUI() {
