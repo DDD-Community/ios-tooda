@@ -77,12 +77,16 @@ final class AddStockViewController: BaseViewController<AddStockReactor> {
       for: .normal
     )
     
-    $0.backgroundColor = UIColor.gray3
+    $0.setBackgroundImage(UIColor.gray3.image(), for: .disabled)
+    $0.setBackgroundImage(UIColor.mainGreen.image(), for: .normal)
+    
     $0.layer.cornerRadius = CGFloat(Metric.nextButtonHeight / 2)
     $0.layer.shadowColor = UIColor(hex: "#43475314").withAlphaComponent(0.08).cgColor
     $0.layer.shadowOffset = CGSize(width: 0, height: 12)
     $0.layer.shadowOpacity = 1
     $0.layer.shadowRadius = 12.0
+    
+    $0.layer.masksToBounds = true
   }
   
   private let closeBarButton = UIBarButtonItem(
@@ -143,6 +147,13 @@ final class AddStockViewController: BaseViewController<AddStockReactor> {
     reactor.state
       .map { $0.sections }
       .bind(to: self.tableView.rx.items(dataSource: dataSource))
+      .disposed(by: self.disposeBag)
+    
+    reactor.state
+      .map { $0.nextButtonDidChanged }
+      .subscribe(onNext: { [weak self] in
+        self?.nextButtonDidChanged($0)
+      })
       .disposed(by: self.disposeBag)
   }
   
@@ -212,5 +223,9 @@ extension AddStockViewController {
   
   private func focusTextField() {
     self.searchField.becomeFirstResponder()
+  }
+  
+  private func nextButtonDidChanged(_ isEnabled: Bool) {
+    self.nextButton.isEnabled = isEnabled
   }
 }

@@ -7,7 +7,6 @@
   //
 
 import Foundation
-
 import ReactorKit
 import RxSwift
 import RxRelay
@@ -23,6 +22,7 @@ final class AddStockReactor: Reactor {
   
   enum Mutation {
     case fetchSearchResultSection([AddStockSection])
+    case nextButtonDidChanged(Bool)
   }
   
   struct Dependency {
@@ -36,6 +36,8 @@ final class AddStockReactor: Reactor {
     var sections: [AddStockSection] = [
       .init(identity: .list, items: [])
     ]
+    
+    var nextButtonDidChanged: Bool = false
   }
   
   init(dependency: Dependency) {
@@ -56,18 +58,24 @@ extension AddStockReactor {
   func mutate(action: Action) -> Observable<Mutation> {
     switch action {
       case .searchTextDidChanged(let keyword):
-        return self.searchTextDidChanged(keyword)
+        return .concat([
+          self.searchTextDidChanged(keyword),
+          .just(.nextButtonDidChanged(!keyword.isEmpty && keyword.count >= 1))
+        ])
       case .dismiss:
         return self.dissmissView()
     }
   }
   
   func reduce(state: State, mutation: Mutation) -> State {
+    
     var state = state
     
     switch mutation {
       case .fetchSearchResultSection(let sections):
         state.sections = sections
+      case .nextButtonDidChanged(let isEnabled):
+        state.nextButtonDidChanged = isEnabled
     }
     
     return state
@@ -100,5 +108,24 @@ extension AddStockReactor {
         let sections = self?.dependency.sectionFactory.searchResult(stocks) ?? []
         return .just(.fetchSearchResultSection(sections))
       }
+  }
+}
+
+// MARK: Mutation
+
+extension AddStockReactor {
+  private func cellItemDidSelected(_ indexPath: IndexPath) -> Observable<Mutation> {
+    
+    guard let section = self.currentState.sections[safe: indexPath.section],
+          let sectionItem = section.items[safe: indexPath.row] else { return .empty() }
+    
+    switch sectionItem {
+      case .item(let reactor):
+        
+        let isEnabeld = !reactor.dependency.name.isEmpty
+        
+        return .just(.nextButtonDidChanged(isEnabeld))
+    }
+
   }
 }
