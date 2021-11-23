@@ -28,6 +28,7 @@ class StockRateInputViewController: BaseViewController<StockRateInputReactor> {
   
   private enum Metric {
     static let horizontalMargin: CGFloat = 24.0
+    static let buttonWidth: CGFloat = 72.0
   }
   
   init(reactor: Reactor) {
@@ -59,6 +60,29 @@ class StockRateInputViewController: BaseViewController<StockRateInputReactor> {
     $0.attributedText = "이 종목이 얼마나 변동했나요?".styled(with: Font.descprtion)
     $0.numberOfLines = 1
     $0.sizeToFit()
+  }
+  
+  private let rateButtonStackView = UIStackView().then {
+    $0.axis = .horizontal
+    $0.distribution = .fillEqually
+    $0.alignment = .fill
+    $0.spacing = 8.0
+    $0.translatesAutoresizingMaskIntoConstraints = false
+  }
+  
+  // TODO: 커스텀 버튼으로 변경할 예정이에요.
+  let riseButton = UIButton().then {
+    $0.setBackgroundImage(UIColor.subRed.image(), for: .normal)
+  }
+  
+  // TODO: 커스텀 버튼으로 변경할 예정이에요.
+  let evenButton = UIButton().then {
+    $0.setBackgroundImage(UIColor.gray2.image(), for: .normal)
+  }
+  
+  // TODO: 커스텀 버튼으로 변경할 예정이에요.
+  let fallButton = UIButton().then {
+    $0.setBackgroundImage(UIColor.subBlue.image(), for: .normal)
   }
   
   private let textFieldBackgroundView = UIView().then {
@@ -93,8 +117,12 @@ class StockRateInputViewController: BaseViewController<StockRateInputReactor> {
   override func configureUI() {
     super.configureUI()
     
-    [titleLabel, descriptionLabel, textFieldBackgroundView, percentLabel].forEach {
+    [titleLabel, descriptionLabel, rateButtonStackView, textFieldBackgroundView, percentLabel].forEach {
       self.view.addSubview($0)
+    }
+    
+    [riseButton, evenButton, fallButton].forEach {
+      self.rateButtonStackView.addArrangedSubview($0)
     }
     
     self.textFieldBackgroundView.addSubview(textField)
@@ -113,8 +141,26 @@ class StockRateInputViewController: BaseViewController<StockRateInputReactor> {
       $0.left.right.equalToSuperview().inset(Metric.horizontalMargin)
     }
     
+    rateButtonStackView.snp.makeConstraints {
+      $0.top.equalTo(self.descriptionLabel.snp.bottom).offset(20)
+      $0.left.equalToSuperview().offset(Metric.horizontalMargin)
+      $0.height.equalTo(40)
+    }
+    
+    riseButton.snp.makeConstraints {
+      $0.width.equalTo(Metric.buttonWidth)
+    }
+    
+    evenButton.snp.makeConstraints {
+      $0.width.equalTo(Metric.buttonWidth)
+    }
+    
+    fallButton.snp.makeConstraints {
+      $0.width.equalTo(Metric.buttonWidth)
+    }
+    
     textFieldBackgroundView.snp.makeConstraints {
-      $0.top.equalTo(self.descriptionLabel.snp.bottom).offset(23)
+      $0.top.equalTo(self.rateButtonStackView.snp.bottom).offset(20)
       $0.left.equalToSuperview().offset(Metric.horizontalMargin)
     }
     
