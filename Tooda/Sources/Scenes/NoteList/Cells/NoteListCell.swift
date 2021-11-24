@@ -25,6 +25,10 @@ final class NoteListCell: BaseTableViewCell {
   private let cardView = UIView().then {
     $0.backgroundColor = .white
     $0.layer.cornerRadius = 8
+    $0.layer.shadowOffset = CGSize(width: 0, height: 8)
+    $0.layer.shadowOpacity = 1
+    $0.layer.shadowRadius = 20
+    $0.layer.shadowColor = UIColor.gray6.withAlphaComponent(0.12).cgColor
   }
   
   private let emojiImageView = UIImageView().then {
@@ -40,7 +44,7 @@ final class NoteListCell: BaseTableViewCell {
   }
   
   private let descriptionLabel = UILabel().then {
-    $0.numberOfLines = 0
+    $0.numberOfLines = 4
   }
   
   private let mainImageView = UIImageView().then {
