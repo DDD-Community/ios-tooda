@@ -12,7 +12,7 @@ import RxCocoa
 import RxSwift
 import RxDataSources
 
-class NoteListViewController: BaseViewController<NoteListReactor> {
+final class NoteListViewController: BaseViewController<NoteListReactor> {
   
   // MARK: - Constants
   
@@ -36,6 +36,14 @@ class NoteListViewController: BaseViewController<NoteListReactor> {
     $0.attributedText = "2021년 1월".styled(with: Font.title)
   }
   
+  private let searchBarButton = UIBarButtonItem().then {
+    $0.image = UIImage(type: .searchBarButton)
+  }
+  
+  private let moreDetailButton = UIBarButtonItem().then {
+    $0.image = UIImage(type: .moreButton)
+  }
+  
   private lazy var tableView = UITableView().then {
     $0.backgroundColor = .gray5
     $0.register(UITableViewCell.self)
@@ -45,11 +53,11 @@ class NoteListViewController: BaseViewController<NoteListReactor> {
   }
   
   private let backBarButton = UIBarButtonItem(
-     image: UIImage(type: .backBarButton)?.withRenderingMode(.alwaysOriginal),
-     style: .plain,
-     target: nil,
-     action: nil
-   )
+    image: UIImage(type: .backBarButton)?.withRenderingMode(.alwaysOriginal),
+    style: .plain,
+    target: nil,
+    action: nil
+  )
   
   // MARK: - Con(De)structor
   
@@ -84,9 +92,15 @@ class NoteListViewController: BaseViewController<NoteListReactor> {
   override func configureUI() {
     navigationItem.titleView = titleLabel
     navigationItem.leftBarButtonItem = backBarButton
+    navigationItem.rightBarButtonItems = [
+      moreDetailButton,
+      searchBarButton
+    ]
+    navigationController?.navigationBar.backgroundColor = .white
+    UIApplication.shared.statusBarUIView?.backgroundColor = .white
     view.addSubview(tableView)
   }
-
+  
   override func configureConstraints() {
     super.configureConstraints()
     tableView.snp.makeConstraints {
