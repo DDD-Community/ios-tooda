@@ -62,27 +62,8 @@ class StockRateInputViewController: BaseViewController<StockRateInputReactor> {
     $0.sizeToFit()
   }
   
-  private let rateButtonStackView = UIStackView().then {
-    $0.axis = .horizontal
-    $0.distribution = .fillEqually
-    $0.alignment = .fill
-    $0.spacing = 8.0
+  private let rateButtonStackView = RateSelectView(frame: .zero).then {
     $0.translatesAutoresizingMaskIntoConstraints = false
-  }
-  
-  // TODO: 커스텀 버튼으로 변경할 예정이에요.
-  let riseButton = UIButton().then {
-    $0.setBackgroundImage(UIColor.subRed.image(), for: .normal)
-  }
-  
-  // TODO: 커스텀 버튼으로 변경할 예정이에요.
-  let evenButton = UIButton().then {
-    $0.setBackgroundImage(UIColor.gray2.image(), for: .normal)
-  }
-  
-  // TODO: 커스텀 버튼으로 변경할 예정이에요.
-  let fallButton = UIButton().then {
-    $0.setBackgroundImage(UIColor.subBlue.image(), for: .normal)
   }
   
   private let textFieldBackgroundView = UIView().then {
@@ -121,10 +102,6 @@ class StockRateInputViewController: BaseViewController<StockRateInputReactor> {
       self.view.addSubview($0)
     }
     
-    [riseButton, evenButton, fallButton].forEach {
-      self.rateButtonStackView.addArrangedSubview($0)
-    }
-    
     self.textFieldBackgroundView.addSubview(textField)
   }
   
@@ -145,18 +122,6 @@ class StockRateInputViewController: BaseViewController<StockRateInputReactor> {
       $0.top.equalTo(self.descriptionLabel.snp.bottom).offset(20)
       $0.left.equalToSuperview().offset(Metric.horizontalMargin)
       $0.height.equalTo(40)
-    }
-    
-    riseButton.snp.makeConstraints {
-      $0.width.equalTo(Metric.buttonWidth)
-    }
-    
-    evenButton.snp.makeConstraints {
-      $0.width.equalTo(Metric.buttonWidth)
-    }
-    
-    fallButton.snp.makeConstraints {
-      $0.width.equalTo(Metric.buttonWidth)
     }
     
     textFieldBackgroundView.snp.makeConstraints {
@@ -186,6 +151,13 @@ class StockRateInputViewController: BaseViewController<StockRateInputReactor> {
         return self?.configureBackBarButtonItemIfNeeded() ?? .empty() }
       .map { Reactor.Action.closeButtonDidTapped }
       .bind(to: reactor.action)
+      .disposed(by: self.disposeBag)
+    
+    // TODO: Reactor 바인딩 로직 추가 예정이에요.
+    self.rateButtonStackView.rx.didSelectedChanged
+      .asObservable()
+      .distinctUntilChanged()
+      .subscribe()
       .disposed(by: self.disposeBag)
   }
   
