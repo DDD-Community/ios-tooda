@@ -44,7 +44,7 @@ class StockRateInputViewController: BaseViewController<StockRateInputReactor> {
   // MARK: UI Properties
   
   private let closeBarButton = UIBarButtonItem(
-    image: UIImage(type: .closeButton)?.withRenderingMode(.alwaysOriginal),
+    image: UIImage(type: .closeButton),
     style: .plain,
     target: nil,
     action: nil
