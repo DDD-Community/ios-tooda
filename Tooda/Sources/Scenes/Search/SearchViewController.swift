@@ -55,6 +55,7 @@ final class SearchViewController: BaseViewController<SearchReactor> {
   override func viewDidLoad() {
     super.viewDidLoad()
     self.view.backgroundColor = .white
+    self.searchBar.becomeFirstResponder()
   }
 
 
@@ -119,6 +120,10 @@ extension SearchViewController: UISearchBarDelegate {
 
   func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
     self.searchBar.searchTextField.attributedText = searchText.styled(with: Font.searchText)
+  }
+
+  func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+    self.recentViewController.rxBeginSearch.accept(())
   }
 }
 
