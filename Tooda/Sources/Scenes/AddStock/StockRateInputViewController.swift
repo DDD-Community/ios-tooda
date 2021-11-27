@@ -54,7 +54,6 @@ class StockRateInputViewController: BaseViewController<StockRateInputReactor> {
     // TODO: Mock 데이터 제거할 예정이에요.
     $0.attributedText = "삼성전자".styled(with: Font.title)
     $0.numberOfLines = 0
-    $0.sizeToFit()
   }
   
   private let descriptionLabel = UILabel().then {
