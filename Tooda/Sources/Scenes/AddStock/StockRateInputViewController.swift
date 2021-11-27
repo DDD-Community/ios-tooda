@@ -20,6 +20,7 @@ class StockRateInputViewController: BaseViewController<StockRateInputReactor> {
     static let title = TextStyle.titleBold(color: .gray1)
     static let descprtion = TextStyle.body(color: .gray3)
     static let searchField = TextStyle.body(color: .gray1)
+    static let symbol = TextStyle.subTitleBold(color: .gray1)
   }
   
   private enum Color {
@@ -79,7 +80,7 @@ class StockRateInputViewController: BaseViewController<StockRateInputReactor> {
   }
   
   private let percentLabel = UILabel().then {
-    $0.attributedText = "%".styled(with: TextStyle.subTitleBold(color: .gray1))
+    $0.attributedText = "%".styled(with: Font.symbol)
     $0.textAlignment = .right
     $0.numberOfLines = 1
     $0.sizeToFit()
