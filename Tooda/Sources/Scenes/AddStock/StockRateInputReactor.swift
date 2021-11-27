@@ -9,12 +9,6 @@
 import RxCocoa
 import ReactorKit
 
-protocol StockRateInputDependencyType {
-  var name: String { get }
-  var coordinator: AppCoordinatorType { get }
-  var completion: PublishRelay<NoteStock> { get }
-}
-
 final class StockRateInputReactor: Reactor {
   enum Action {
     case closeButtonDidTapped
@@ -28,17 +22,25 @@ final class StockRateInputReactor: Reactor {
     
   }
   
-  struct Dependency: StockRateInputDependencyType {
+  struct Payload {
     var name: String
     var completion: PublishRelay<NoteStock>
+  }
+  
+  struct Dependency {
     var coordinator: AppCoordinatorType
   }
   
   let initialState: State
-  let dependency: StockRateInputDependencyType
+  let dependency: Dependency
+  private var payload: Payload
   
-  init(dependency: StockRateInputDependencyType) {
+  init(
+    dependency: Dependency,
+    payload: Payload
+  ) {
     self.dependency = dependency
+    self.payload = payload
     initialState = State()
   }
   

@@ -134,9 +134,11 @@ extension AddStockReactor {
   
   // TODO: Coordinator의 transition에 NavigationController을 씌운 ViewController에 대한 처리 메소드를 추가할 예정이에요.
   private func nextButtonDidTapped(_ name: String) -> Observable<Mutation> {
-    let dependency = StockRateInputReactor.Dependency(name: name, completion: self.dependency.completionRelay, coordinator: self.dependency.coordinator)
     
-    self.dependency.coordinator.transition(to: .stockRateInput(dependency: dependency), using: .push, animated: true, completion: nil)
+    let payload = StockRateInputReactor.Payload(name: name,
+                                                completion: self.dependency.completionRelay)
+    
+    self.dependency.coordinator.transition(to: .stockRateInput(payload: payload), using: .push, animated: true, completion: nil)
     
     return .empty()
   }
