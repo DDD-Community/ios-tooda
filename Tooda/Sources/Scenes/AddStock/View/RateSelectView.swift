@@ -90,7 +90,7 @@ extension Reactive where Base: RateSelectView {
     let selectedButton = Observable.from(
       self.base.buttons.map { button in button.rx.tap.map { button.stockState } }
     )
-    .merge()
+      .merge()
     
     self.base.buttons.reduce(Disposables.create()) { disposable, button in
       let subscription = selectedButton
@@ -100,6 +100,6 @@ extension Reactive where Base: RateSelectView {
     }
     .disposed(by: self.base.disposeBag)
     
-    return selectedButton
+    return selectedButton.asObservable()
   }
 }
