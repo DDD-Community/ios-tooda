@@ -121,16 +121,36 @@ final class NoteListCell: BaseTableViewCell {
   }
   
   // MARK: - Internal methods
+  
   func configure(with note: Note) {
     super.configure()
     emojiImageView.image = note.sticker?.image
     titleLabel.attributedText = note.title.styled(with: Font.title)
     recordDateLabel.attributedText = "\(note.createdAt) 기록".styled(with: Font.recordDate)
     descriptionLabel.attributedText = note.content.styled(with: Font.description)
-    mainImageView.image = note.noteImages.first?.imageURL.urlImage
+    updateImages(images: note.noteImages)
     
     DispatchQueue.main.async {
       self.descriptionLabel.setExpandActionIfPossible("더보기")
     }
+  }
+  
+  // MARK: - Private methods
+  
+  private func updateImages(images: [NoteImage]) {
+    
+    if images.isEmpty {
+      mainImageView.snp.makeConstraints {
+        $0.top.equalTo(descriptionLabel.snp.bottom).offset(0)
+        $0.bottom.equalToSuperview().inset(0)
+      }
+    } else {
+      mainImageView.snp.makeConstraints {
+        $0.top.equalTo(descriptionLabel.snp.bottom).offset(16)
+        $0.bottom.equalToSuperview().inset(24)
+      }
+    }
+    
+    mainImageView.image = images.first?.imageURL.urlImage
   }
 }
