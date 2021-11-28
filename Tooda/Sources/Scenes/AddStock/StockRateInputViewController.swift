@@ -62,9 +62,7 @@ class StockRateInputViewController: BaseViewController<StockRateInputReactor> {
     $0.sizeToFit()
   }
   
-  private let rateButtonStackView = RateSelectView(frame: .zero).then {
-    $0.translatesAutoresizingMaskIntoConstraints = false
-  }
+  private let rateButtonStackView = RateSelectView(frame: .zero)
   
   private let textFieldBackgroundView = UIView().then {
     $0.clipsToBounds = true
