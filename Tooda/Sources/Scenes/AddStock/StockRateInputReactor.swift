@@ -12,14 +12,15 @@ import ReactorKit
 final class StockRateInputReactor: Reactor {
   enum Action {
     case closeButtonDidTapped
+    case selectedStockDidChanged(StockChangeState)
   }
   
   enum Mutation {
-    
+    case selectedRateDidChanged(StockChangeState)
   }
   
   struct State {
-    
+    var selectedRate: StockChangeState?
   }
   
   struct Payload {
@@ -48,11 +49,19 @@ final class StockRateInputReactor: Reactor {
     switch action {
       case .closeButtonDidTapped:
         return self.closeButtonDidTapped()
+      case .selectedStockDidChanged(let rate):
+        return self.selectedStockDidChanged(rate)
     }
   }
   
-  func reduce(state: State, mutation: Action) -> State {
+  func reduce(state: State, mutation: Mutation) -> State {
     var newState = state
+    
+    switch mutation {
+      case .selectedRateDidChanged(let rate):
+        newState.selectedRate = rate
+    }
+    
     return newState
   }
 }
@@ -64,5 +73,9 @@ extension StockRateInputReactor {
     self.dependency.coordinator.close(style: .pop, animated: true, completion: nil)
     
     return .empty()
+  }
+  
+  private func selectedStockDidChanged(_ state: StockChangeState) -> Observable<Mutation> {
+    return .just(.selectedRateDidChanged(state))
   }
 }

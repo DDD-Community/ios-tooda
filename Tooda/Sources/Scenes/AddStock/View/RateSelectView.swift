@@ -30,7 +30,9 @@ final class RateSelectView: UIView {
   }
   
   private let riseButton = RateButton(stockState: .RISE)
-  private let evenButton = RateButton(stockState: .EVEN)
+  private let evenButton = RateButton(stockState: .EVEN).then {
+    $0.isSelected = true
+  }
   private let fallButton = RateButton(stockState: .FALL)
   
   var buttons: [RateButton] {

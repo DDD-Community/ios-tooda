@@ -155,7 +155,8 @@ class StockRateInputViewController: BaseViewController<StockRateInputReactor> {
     self.rateButtonStackView.rx.didSelectedChanged
       .asObservable()
       .distinctUntilChanged()
-      .subscribe()
+      .map { Reactor.Action.selectedStockDidChanged($0) }
+      .bind(to: reactor.action)
       .disposed(by: self.disposeBag)
   }
   
