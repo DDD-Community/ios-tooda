@@ -133,7 +133,7 @@ class StockRateInputViewController: BaseViewController<StockRateInputReactor> {
     }
     
     percentLabel.snp.makeConstraints {
-      $0.centerY.equalTo(self.textFieldBackgroundView.snp.centerY)
+      $0.centerY.equalTo(self.textFieldBackgroundView)
       $0.left.equalTo(self.textFieldBackgroundView.snp.right).offset(8)
       $0.right.equalToSuperview().offset(-34)
     }
