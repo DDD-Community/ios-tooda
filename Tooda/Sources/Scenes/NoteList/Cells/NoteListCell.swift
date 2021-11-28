@@ -57,9 +57,9 @@ final class NoteListCell: BaseTableViewCell {
   ).then {
     $0.layer.cornerRadius = 8
   }
-
+  
   // MARK: - Overridden: ParentClass
-
+  
   override func configureUI() {
     super.configureUI()
     contentView.do {
@@ -128,5 +128,9 @@ final class NoteListCell: BaseTableViewCell {
     recordDateLabel.attributedText = "\(note.createdAt) 기록".styled(with: Font.recordDate)
     descriptionLabel.attributedText = note.content.styled(with: Font.description)
     mainImageView.image = note.noteImages.first?.imageURL.urlImage
+    
+    DispatchQueue.main.async {
+      self.descriptionLabel.setExpandActionIfPossible("더보기")
+    }
   }
 }
