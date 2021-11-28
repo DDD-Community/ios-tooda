@@ -70,6 +70,10 @@ final class NoteListViewController: BaseViewController<NoteListReactor> {
     fatalError("init(coder:) has not been implemented")
   }
   
+  deinit {
+    UIApplication.shared.statusBarUIView?.backgroundColor = .clear
+  }
+  
   // MARK: - Overridden: ParentClass
   
   override func bind(reactor: NoteListReactor) {
