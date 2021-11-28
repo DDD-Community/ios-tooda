@@ -36,6 +36,7 @@ enum AppImage: String {
   case iconHistory14 = "icon_history_14"
   
   case closeButton = "cancel"
+  case moreButton = "more"
 }
 
 extension UIImage {
