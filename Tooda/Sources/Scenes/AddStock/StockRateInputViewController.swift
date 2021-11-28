@@ -129,7 +129,7 @@ class StockRateInputViewController: BaseViewController<StockRateInputReactor> {
     }
     
     textField.snp.makeConstraints {
-      $0.edges.equalToSuperview().inset(UIEdgeInsets(top: 11, left: 14, bottom: 11, right: 14))
+      $0.edges.equalToSuperview().inset(UIEdgeInsets(horizontal: 14, vertical: 11))
       $0.height.equalTo(23)
     }
     
