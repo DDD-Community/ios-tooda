@@ -17,6 +17,7 @@ final class SearchRecentReactor: Reactor {
 
   struct Dependency {
     let service: NetworkingProtocol
+    let userDefaultService: LocalPersistanceManagerType
     let coordinator: AppCoordinatorType
   }
 

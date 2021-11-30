@@ -105,6 +105,7 @@ final class AppFactory: AppFactoryType {
       let reactor = SearchRecentReactor(
         dependency: .init(
           service: self.dependency.appInject.resolve(NetworkingProtocol.self),
+          userDefaultService: self.dependency.appInject.resolve(LocalPersistanceManagerType.self),
           coordinator: self.dependency.appInject.resolve(AppCoordinatorType.self)
         )
       )
