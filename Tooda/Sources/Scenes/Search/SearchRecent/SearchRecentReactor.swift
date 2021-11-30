@@ -26,10 +26,12 @@ final class SearchRecentReactor: Reactor {
 
   enum Action {
     case beginSearch
+    case search(text: String)
   }
 
   enum Mutation {
     case setKeywords([SearchRecentSectionModel])
+    case updateKeywords(keyword: SearchRecentKeywordCell.ViewModel)
   }
 
   struct State {
@@ -59,6 +61,9 @@ extension SearchRecentReactor {
     switch action {
     case .beginSearch:
       return self.loadRecentKeyword()
+
+    case let .search(text):
+      return .empty()
     }
   }
 
@@ -96,6 +101,9 @@ extension SearchRecentReactor {
     switch mutation {
     case let .setKeywords(keywords):
       newState.keywords = keywords
+
+    case let .updateKeywords(keyword):
+      break
     }
 
     return newState
