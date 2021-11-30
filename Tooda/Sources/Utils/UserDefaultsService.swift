@@ -12,6 +12,7 @@ enum LocalPersistenceKey: String {
 	case firstLaunch
 	case searchHistory
 	case appToken
+  case recentSearchKeyword
 }
 
 enum LocalPersistenceType: String {

@@ -63,7 +63,7 @@ extension SearchRecentReactor {
       return self.loadRecentKeyword()
 
     case let .search(text):
-      return .empty()
+      return self.createKeyword(text)
     }
   }
 
@@ -88,6 +88,27 @@ extension SearchRecentReactor {
 
     return Observable.just(Mutation.setKeywords(dummy))
   }
+
+  private func createKeyword(_ text: String) -> Observable<Mutation> {
+    var localKeywords: [String] = self.dependency
+      .userDefaultService
+      .value(forKey: .recentSearchKeyword) ?? []
+
+    localKeywords.insert(text, at: 0)
+
+    self.dependency.userDefaultService.set(
+      value: localKeywords,
+      forKey: .recentSearchKeyword
+    )
+
+    return Observable<Mutation>.just(
+      Mutation.updateKeywords(
+        keyword: SearchRecentKeywordCell.ViewModel(
+          title: text
+        )
+      )
+    )
+  }
 }
 
 
@@ -103,9 +124,15 @@ extension SearchRecentReactor {
       newState.keywords = keywords
 
     case let .updateKeywords(keyword):
-      break
-    }
+      guard let index = newState.keywords.firstIndex(where: {
+        $0.identity == .keyword
+      }) else { break }
 
+      newState.keywords[index].items.insert(
+        .keyword(keyword),
+        at: 0
+      )
+    }
     return newState
   }
 }
