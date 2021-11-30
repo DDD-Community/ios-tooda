@@ -98,9 +98,6 @@ final class SearchRecentViewController: BaseViewController<SearchRecentReactor> 
 
     // Action
     self.rxBeginSearch
-      .do(onNext: {
-        print("do!!")
-      })
       .asObservable()
       .map { SearchRecentReactor.Action.beginSearch }
       .bind(to: reactor.action)

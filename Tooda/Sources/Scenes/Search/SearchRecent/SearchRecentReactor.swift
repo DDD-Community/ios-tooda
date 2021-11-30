@@ -69,7 +69,21 @@ extension SearchRecentReactor {
 
   private func loadRecentKeyword() -> Observable<Mutation> {
     // 일단 더미로
-    let dummy = [
+    if let localKeywords: [String] = self.dependency
+        .userDefaultService
+        .value(forKey: .recentSearchKeyword) {
+      return Observable.just(
+        Mutation.setKeywords(
+          self.mappintToSectionModels(keywords: localKeywords)
+        )
+      )
+    } else {
+      return .empty()
+    }
+  }
+
+  private func mappintToSectionModels(keywords: [String]) -> [SearchRecentSectionModel] {
+    return [
       SearchRecentSectionModel(
         identity: .header,
         items: [
@@ -78,15 +92,13 @@ extension SearchRecentReactor {
       ),
       SearchRecentSectionModel(
         identity: .keyword,
-        items: [
-          .keyword(.init(title: "최근 검색어 1")),
-          .keyword(.init(title: "최근 검색어 2")),
-          .keyword(.init(title: "최근 검색어 3최근 검색어 3최근 검색어 3최근 검색어 3최근 검색어 3최근 검색어 3최근 검색어 3최근 검색어 3최근 검색어 3최근 검색어 3최근 검색어 3"))
-        ]
+        items: keywords.map {
+          SearchRecentSectionModel.SectionItem.keyword(
+            SearchRecentKeywordCell.ViewModel(title: $0)
+          )
+        }
       )
     ]
-
-    return Observable.just(Mutation.setKeywords(dummy))
   }
 
   private func createKeyword(_ text: String) -> Observable<Mutation> {
