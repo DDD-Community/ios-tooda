@@ -21,6 +21,7 @@ class StockRateInputViewController: BaseViewController<StockRateInputReactor> {
     static let descprtion = TextStyle.body(color: .gray3)
     static let searchField = TextStyle.body(color: .gray1)
     static let symbol = TextStyle.subTitleBold(color: .gray1)
+    static let addButton = TextStyle.subTitleBold(color: .white)
   }
   
   private enum Color {
@@ -30,6 +31,7 @@ class StockRateInputViewController: BaseViewController<StockRateInputReactor> {
   private enum Metric {
     static let horizontalMargin: CGFloat = 24.0
     static let buttonWidth: CGFloat = 72.0
+    static let addButtonHeight: CGFloat = 48
   }
   
   init(reactor: Reactor) {
@@ -84,6 +86,28 @@ class StockRateInputViewController: BaseViewController<StockRateInputReactor> {
     $0.sizeToFit()
   }
   
+  private let buttonBackGroundView = UIView().then {
+    $0.backgroundColor = UIColor(type: .white)
+  }
+  
+  private let addButton = UIButton(type: .system).then {
+    $0.setAttributedTitle(
+      "추가".styled(with: Font.addButton),
+      for: .normal
+    )
+    
+    $0.setBackgroundImage(UIColor.gray3.image(), for: .disabled)
+    $0.setBackgroundImage(UIColor.mainGreen.image(), for: .normal)
+    
+    $0.layer.cornerRadius = CGFloat(Metric.addButtonHeight / 2)
+    $0.layer.shadowColor = UIColor(hex: "#43475314").withAlphaComponent(0.08).cgColor
+    $0.layer.shadowOffset = CGSize(width: 0, height: 12)
+    $0.layer.shadowOpacity = 1
+    $0.layer.shadowRadius = 12.0
+    
+    $0.layer.masksToBounds = true
+  }
+  
   required init?(coder: NSCoder) {
     fatalError("init(coder:) has not been implemented")
   }
@@ -97,11 +121,13 @@ class StockRateInputViewController: BaseViewController<StockRateInputReactor> {
   override func configureUI() {
     super.configureUI()
     
-    [titleLabel, descriptionLabel, rateButtonStackView, textFieldBackgroundView, percentLabel].forEach {
+    [titleLabel, descriptionLabel, rateButtonStackView, textFieldBackgroundView, percentLabel, buttonBackGroundView].forEach {
       self.view.addSubview($0)
     }
     
     self.textFieldBackgroundView.addSubview(textField)
+    
+    self.buttonBackGroundView.addSubview(addButton)
   }
   
   override func configureConstraints() {
@@ -138,6 +164,18 @@ class StockRateInputViewController: BaseViewController<StockRateInputReactor> {
       $0.left.equalTo(self.textFieldBackgroundView.snp.right).offset(8)
       $0.right.equalToSuperview().offset(-34)
     }
+    
+    buttonBackGroundView.snp.makeConstraints {
+      $0.left.right.equalToSuperview()
+      $0.bottom.equalTo(self.view.keyboardLayoutGuide.snp.top)
+    }
+    
+    addButton.snp.makeConstraints {
+      $0.top.equalToSuperview().offset(16)
+      $0.left.right.equalToSuperview().inset(20)
+      $0.bottom.equalToSuperview().offset(-24)
+      $0.height.equalTo(Metric.addButtonHeight)
+    }
   }
   
   override func bind(reactor: Reactor) {
@@ -159,6 +197,20 @@ class StockRateInputViewController: BaseViewController<StockRateInputReactor> {
       .map { Reactor.Action.selectedStockDidChanged($0) }
       .bind(to: reactor.action)
       .disposed(by: self.disposeBag)
+    
+    self.textField.rx.text.orEmpty
+      .map { Float($0) }
+      .map { Reactor.Action.textFieldDidChanged($0) }
+      .bind(to: reactor.action)
+      .disposed(by: self.disposeBag)
+    
+    // State
+    reactor.state
+      .map { $0.buttonDidChanged }
+      .asDriver(onErrorJustReturn: false)
+      .drive(onNext: { [weak self] in
+        self?.addButtonDidChanged($0)
+      }).disposed(by: self.disposeBag)
   }
   
   @objc
@@ -173,5 +225,9 @@ extension StockRateInputViewController {
   private func initializeNavigation() {
     self.navigationItem.title = "종목 기록하기"
     self.navigationItem.rightBarButtonItem = closeBarButton
+  }
+  
+  private func addButtonDidChanged(_ isEnabled: Bool) {
+    self.addButton.isEnabled = isEnabled
   }
 }

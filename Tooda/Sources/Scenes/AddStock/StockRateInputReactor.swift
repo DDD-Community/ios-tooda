@@ -13,14 +13,19 @@ final class StockRateInputReactor: Reactor {
   enum Action {
     case closeButtonDidTapped
     case selectedStockDidChanged(StockChangeState)
+    case textFieldDidChanged(Float?)
   }
   
   enum Mutation {
     case selectedRateDidChanged(StockChangeState)
+    case addButtonDidChanged(Bool)
+    case rateDidChanged(Float)
   }
   
   struct State {
-    var selectedRate: StockChangeState?
+    var selectedRate: StockChangeState = .EVEN
+    var rateInput: Float = 0.0
+    var buttonDidChanged: Bool = false
   }
   
   struct Payload {
@@ -51,6 +56,8 @@ final class StockRateInputReactor: Reactor {
         return self.closeButtonDidTapped()
       case .selectedStockDidChanged(let rate):
         return self.selectedStockDidChanged(rate)
+      case .textFieldDidChanged(let rate):
+        return self.textFieldDidChanged(rate)
     }
   }
   
@@ -60,6 +67,10 @@ final class StockRateInputReactor: Reactor {
     switch mutation {
       case .selectedRateDidChanged(let rate):
         newState.selectedRate = rate
+      case .addButtonDidChanged(let enabled):
+        newState.buttonDidChanged = enabled
+      case .rateDidChanged(let rate):
+        newState.rateInput = rate
     }
     
     return newState
@@ -77,5 +88,16 @@ extension StockRateInputReactor {
   
   private func selectedStockDidChanged(_ state: StockChangeState) -> Observable<Mutation> {
     return .just(.selectedRateDidChanged(state))
+  }
+  
+  private func textFieldDidChanged(_ rate: Float?) -> Observable<Mutation> {
+    
+    let buttonDidEnabled = rate != nil
+    
+    guard let rateValue = rate else {
+      return .just(.addButtonDidChanged(buttonDidEnabled))
+    }
+    
+    return .concat([.just(.rateDidChanged(rateValue)), .just(.addButtonDidChanged(buttonDidEnabled))])
   }
 }
