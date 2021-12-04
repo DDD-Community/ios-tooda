@@ -211,6 +211,13 @@ class StockRateInputViewController: BaseViewController<StockRateInputReactor> {
       .drive(onNext: { [weak self] in
         self?.addButtonDidChanged($0)
       }).disposed(by: self.disposeBag)
+    
+    reactor.state
+      .map { $0.selectedRate == .EVEN }
+      .asDriver(onErrorJustReturn: false)
+      .drive(onNext: { [weak self] in
+        self?.textFieldVisiblityDidChanged(by: $0)
+      }).disposed(by: self.disposeBag)
   }
   
   @objc
@@ -229,5 +236,20 @@ extension StockRateInputViewController {
   
   private func addButtonDidChanged(_ isEnabled: Bool) {
     self.addButton.isEnabled = isEnabled
+  }
+  
+  private func textFieldVisiblityDidChanged(by isEven: Bool) {
+    isEven ? textFieldDidHidden() : textFieldDidShow()
+  }
+  
+  private func textFieldDidHidden() {
+    self.textFieldBackgroundView.isHidden = true
+    self.percentLabel.isHidden = true
+    self.textField.resignFirstResponder()
+  }
+  
+  private func textFieldDidShow() {
+    self.textFieldBackgroundView.isHidden = false
+    self.percentLabel.isHidden = false
   }
 }
