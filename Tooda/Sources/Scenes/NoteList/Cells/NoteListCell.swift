@@ -25,6 +25,10 @@ final class NoteListCell: BaseTableViewCell {
   private let cardView = UIView().then {
     $0.backgroundColor = .white
     $0.layer.cornerRadius = 8
+    $0.layer.shadowOffset = CGSize(width: 0, height: 8)
+    $0.layer.shadowOpacity = 1
+    $0.layer.shadowRadius = 20
+    $0.layer.shadowColor = UIColor.gray6.withAlphaComponent(0.12).cgColor
   }
   
   private let emojiImageView = UIImageView().then {
@@ -40,7 +44,7 @@ final class NoteListCell: BaseTableViewCell {
   }
   
   private let descriptionLabel = UILabel().then {
-    $0.numberOfLines = 0
+    $0.numberOfLines = 4
   }
   
   private let mainImageView = UIImageView().then {
@@ -53,9 +57,9 @@ final class NoteListCell: BaseTableViewCell {
   ).then {
     $0.layer.cornerRadius = 8
   }
-
+  
   // MARK: - Overridden: ParentClass
-
+  
   override func configureUI() {
     super.configureUI()
     contentView.do {
@@ -117,12 +121,36 @@ final class NoteListCell: BaseTableViewCell {
   }
   
   // MARK: - Internal methods
+  
   func configure(with note: Note) {
     super.configure()
     emojiImageView.image = note.sticker?.image
     titleLabel.attributedText = note.title.styled(with: Font.title)
     recordDateLabel.attributedText = "\(note.createdAt) 기록".styled(with: Font.recordDate)
     descriptionLabel.attributedText = note.content.styled(with: Font.description)
-    mainImageView.image = note.noteImages.first?.imageURL.urlImage
+    updateImages(images: note.noteImages)
+    
+    DispatchQueue.main.async {
+      self.descriptionLabel.setExpandActionIfPossible("더보기")
+    }
+  }
+  
+  // MARK: - Private methods
+  
+  private func updateImages(images: [NoteImage]) {
+    
+    if images.isEmpty {
+      mainImageView.snp.makeConstraints {
+        $0.top.equalTo(descriptionLabel.snp.bottom).offset(0)
+        $0.bottom.equalToSuperview().inset(0)
+      }
+    } else {
+      mainImageView.snp.makeConstraints {
+        $0.top.equalTo(descriptionLabel.snp.bottom).offset(16)
+        $0.bottom.equalToSuperview().inset(24)
+      }
+    }
+    
+    mainImageView.image = images.first?.imageURL.urlImage
   }
 }

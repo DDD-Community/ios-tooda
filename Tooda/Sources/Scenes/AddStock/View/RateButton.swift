@@ -10,11 +10,11 @@ import UIKit
 
 final class RateButton: UIButton {
   
-  private enum FontStyle {
+  private enum Font {
     static let disabledStyle = TextStyle.body(color: .gray2)
   }
   
-  private enum BorderStyle {
+  private enum Const {
     static let disabledColor = UIColor.gray2
   }
   
@@ -42,8 +42,7 @@ final class RateButton: UIButton {
     self.backgroundColor = .white
     self.layer.cornerRadius = 10.0
     self.layer.borderWidth = 1.0
-    self.layer.borderColor = BorderStyle.disabledColor.cgColor
-    
+    self.layer.borderColor = Const.disabledColor.cgColor
     self.configureStyle()
   }
   
@@ -51,12 +50,12 @@ final class RateButton: UIButton {
     
     let title = self.stockState.titleText
     
-    self.setAttributedTitle(title.styled(with: FontStyle.disabledStyle), for: .normal)
+    self.setAttributedTitle(title.styled(with: Font.disabledStyle), for: .normal)
     
     self.setAttributedTitle(title.styled(with: TextStyle.bodyBold(color: self.stockState.titleColor)), for: .selected)
   }
   
   private func buttonLayerDidChanged(by isSelected: Bool) {
-    self.layer.borderColor = isSelected ? self.stockState.titleColor.cgColor : BorderStyle.disabledColor.cgColor
+    self.layer.borderColor = isSelected ? self.stockState.titleColor.cgColor : Const.disabledColor.cgColor
   }
 }

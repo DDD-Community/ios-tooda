@@ -42,6 +42,7 @@ enum TextStyle {
     let lineHeight: CGFloat = 39.2
     let font = UIFont.systemFont(ofSize: 28.0, weight: .regular)
     let style = NSMutableParagraphStyle()
+    style.lineBreakMode = .byTruncatingTail
 
     style.maximumLineHeight = lineHeight
     style.minimumLineHeight = lineHeight
@@ -60,6 +61,7 @@ enum TextStyle {
     let lineHeight: CGFloat = 39.2
     let font = UIFont.systemFont(ofSize: 28.0, weight: .bold)
     let style = NSMutableParagraphStyle()
+    style.lineBreakMode = .byTruncatingTail
 
     style.maximumLineHeight = lineHeight
     style.minimumLineHeight = lineHeight
@@ -78,6 +80,7 @@ enum TextStyle {
     let lineHeight: CGFloat = 33.6
     let font = UIFont.systemFont(ofSize: 24.0, weight: .regular)
     let style = NSMutableParagraphStyle()
+    style.lineBreakMode = .byTruncatingTail
 
     style.maximumLineHeight = lineHeight
     style.minimumLineHeight = lineHeight
@@ -96,6 +99,7 @@ enum TextStyle {
     let lineHeight: CGFloat = 33.6
     let font = UIFont.systemFont(ofSize: 24.0, weight: .bold)
     let style = NSMutableParagraphStyle()
+    style.lineBreakMode = .byTruncatingTail
 
     style.maximumLineHeight = lineHeight
     style.minimumLineHeight = lineHeight
@@ -114,6 +118,7 @@ enum TextStyle {
     let lineHeight: CGFloat = 25.2
     let font = UIFont.systemFont(ofSize: 18.0, weight: .regular)
     let style = NSMutableParagraphStyle()
+    style.lineBreakMode = .byTruncatingTail
 
     style.maximumLineHeight = lineHeight
     style.minimumLineHeight = lineHeight
@@ -132,6 +137,7 @@ enum TextStyle {
     let lineHeight: CGFloat = 25.2
     let font = UIFont.systemFont(ofSize: 18.0, weight: .bold)
     let style = NSMutableParagraphStyle()
+    style.lineBreakMode = .byTruncatingTail
 
     style.maximumLineHeight = lineHeight
     style.minimumLineHeight = lineHeight
@@ -150,6 +156,7 @@ enum TextStyle {
     let lineHeight: CGFloat = 24.0
     let font = UIFont.systemFont(ofSize: 15.0, weight: .regular)
     let style = NSMutableParagraphStyle()
+    style.lineBreakMode = .byTruncatingTail
 
     style.maximumLineHeight = lineHeight
     style.minimumLineHeight = lineHeight
@@ -168,6 +175,7 @@ enum TextStyle {
     let lineHeight: CGFloat = 24.0
     let font = UIFont.systemFont(ofSize: 15.0, weight: .bold)
     let style = NSMutableParagraphStyle()
+    style.lineBreakMode = .byTruncatingTail
 
     style.maximumLineHeight = lineHeight
     style.minimumLineHeight = lineHeight
@@ -186,6 +194,7 @@ enum TextStyle {
     let lineHeight: CGFloat = 20.8
     let font = UIFont.systemFont(ofSize: 13.0, weight: .regular)
     let style = NSMutableParagraphStyle()
+    style.lineBreakMode = .byTruncatingTail
 
     style.maximumLineHeight = lineHeight
     style.minimumLineHeight = lineHeight
@@ -204,6 +213,7 @@ enum TextStyle {
     let lineHeight: CGFloat = 20.8
     let font = UIFont.systemFont(ofSize: 13.0, weight: .bold)
     let style = NSMutableParagraphStyle()
+    style.lineBreakMode = .byTruncatingTail
 
     style.maximumLineHeight = lineHeight
     style.minimumLineHeight = lineHeight
@@ -222,6 +232,7 @@ enum TextStyle {
     let lineHeight: CGFloat = 17.6
     let font = UIFont.systemFont(ofSize: 11.0, weight: .regular)
     let style = NSMutableParagraphStyle()
+    style.lineBreakMode = .byTruncatingTail
 
     style.maximumLineHeight = lineHeight
     style.minimumLineHeight = lineHeight
@@ -240,6 +251,7 @@ enum TextStyle {
     let lineHeight: CGFloat = 17.6
     let font = UIFont.systemFont(ofSize: 11.0, weight: .bold)
     let style = NSMutableParagraphStyle()
+    style.lineBreakMode = .byTruncatingTail
 
     style.maximumLineHeight = lineHeight
     style.minimumLineHeight = lineHeight
