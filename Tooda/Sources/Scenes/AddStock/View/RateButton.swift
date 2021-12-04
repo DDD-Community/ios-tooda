@@ -43,7 +43,6 @@ final class RateButton: UIButton {
     self.layer.cornerRadius = 10.0
     self.layer.borderWidth = 1.0
     self.layer.borderColor = Const.disabledColor.cgColor
-    
     self.configureStyle()
   }
   

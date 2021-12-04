@@ -52,7 +52,7 @@ final class CreateNoteViewReactor: Reactor {
 
   let dependency: Dependency
   
-  private let addStockCompletionRelay: PublishRelay<String> = PublishRelay()
+  private let addStockCompletionRelay: PublishRelay<NoteStock> = PublishRelay()
 
   init(dependency: Dependency) {
     self.dependency = dependency

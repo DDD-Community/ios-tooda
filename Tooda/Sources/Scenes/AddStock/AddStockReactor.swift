@@ -18,6 +18,7 @@ final class AddStockReactor: Reactor {
   enum Action {
     case searchTextDidChanged(String)
     case dismiss
+    case nextButtonDidTapped(name: String)
   }
   
   enum Mutation {
@@ -26,7 +27,7 @@ final class AddStockReactor: Reactor {
   }
   
   struct Dependency {
-    let completionRelay: PublishRelay<String>
+    let completionRelay: PublishRelay<NoteStock>
     let coordinator: AppCoordinatorType
     let service: NetworkingProtocol
     let sectionFactory: AddStockSectionFactoryType
@@ -64,6 +65,8 @@ extension AddStockReactor {
         ])
       case .dismiss:
         return self.dissmissView()
+      case .nextButtonDidTapped(let name):
+        return self.nextButtonDidTapped(name)
     }
   }
   
@@ -127,5 +130,16 @@ extension AddStockReactor {
         return .just(.nextButtonDidChanged(isEnabeld))
     }
 
+  }
+  
+  // TODO: Coordinator의 transition에 NavigationController을 씌운 ViewController에 대한 처리 메소드를 추가할 예정이에요.
+  private func nextButtonDidTapped(_ name: String) -> Observable<Mutation> {
+    
+    let payload = StockRateInputReactor.Payload(name: name,
+                                                completion: self.dependency.completionRelay)
+    
+    self.dependency.coordinator.transition(to: .stockRateInput(payload: payload), using: .push, animated: true, completion: nil)
+    
+    return .empty()
   }
 }

@@ -143,6 +143,13 @@ final class AddStockViewController: BaseViewController<AddStockReactor> {
       .bind(to: reactor.action)
       .disposed(by: self.disposeBag)
     
+    self.nextButton.rx.tap
+      .debounce(.milliseconds(300), scheduler: MainScheduler.instance)
+      .map { [weak self] _ in self?.searchField.text ?? "" }
+      .map { Reactor.Action.nextButtonDidTapped(name: $0) }
+      .bind(to: reactor.action)
+      .disposed(by: self.disposeBag)
+    
     // State
     reactor.state
       .map { $0.sections }
