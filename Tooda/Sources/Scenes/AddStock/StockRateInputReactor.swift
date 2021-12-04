@@ -87,7 +87,7 @@ extension StockRateInputReactor {
   }
   
   private func selectedStockDidChanged(_ state: StockChangeState) -> Observable<Mutation> {
-    return .just(.selectedRateDidChanged(state))
+    return .concat([.just(.selectedRateDidChanged(state)), .just(.addButtonDidChanged(state == .EVEN))])
   }
   
   private func textFieldDidChanged(_ rate: Float?) -> Observable<Mutation> {
