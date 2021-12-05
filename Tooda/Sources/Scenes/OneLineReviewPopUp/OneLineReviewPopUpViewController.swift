@@ -8,20 +8,30 @@
 
 import UIKit
 
-class OneLineReviewPopUpViewController: UIViewController {
+class OneLineReviewPopUpViewController: BaseViewController<OneLineReviewPopUpReactor> {
   
   // MARK: - UI Components
   
-  private let dimmedView = UIView()
+  private let dimmedView = UIView().then {
+    $0.backgroundColor = .black.withAlphaComponent(0.4)
+  }
   
-  private let popUpView = UIView()
+  private let popUpView = OptionsPopUpView()
   
+  // MARK: - Con(De)structor
   
+  init(reactor: OneLineReviewPopUpReactor) {
+    super.init()
+    self.reactor = reactor
+  }
+  
+  required init?(coder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
+  }
   
   override func viewDidLoad() {
     super.viewDidLoad()
-    
-    
+    setupUI()
   }
 }
 
@@ -38,6 +48,10 @@ extension OneLineReviewPopUpViewController {
     
     dimmedView.snp.makeConstraints {
       $0.edges.equalToSuperview()
+    }
+    
+    popUpView.snp.makeConstraints {
+      $0.center.equalToSuperview()
     }
   }
 }
