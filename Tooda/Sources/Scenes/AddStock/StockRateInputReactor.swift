@@ -11,6 +11,7 @@ import ReactorKit
 
 final class StockRateInputReactor: Reactor {
   enum Action {
+    case backbuttonDidTapped
     case closeButtonDidTapped
     case selectedStockDidChanged(StockChangeState)
     case textFieldDidChanged(Float?)
@@ -53,8 +54,8 @@ final class StockRateInputReactor: Reactor {
   
   func mutate(action: Action) -> Observable<Mutation> {
     switch action {
-      case .closeButtonDidTapped:
-        return self.closeButtonDidTapped()
+      case .backbuttonDidTapped:
+        return self.viewDidPop()
       case .selectedStockDidChanged(let rate):
         return self.selectedStockDidChanged(rate)
       case .textFieldDidChanged(let rate):
@@ -81,7 +82,7 @@ final class StockRateInputReactor: Reactor {
 // MARK: - Extensions
 
 extension StockRateInputReactor {
-  private func closeButtonDidTapped() -> Observable<Mutation> {
+  private func viewDidPop() -> Observable<Mutation> {
     self.dependency.coordinator.close(style: .pop, animated: true, completion: nil)
     
     return .empty()

@@ -184,6 +184,9 @@ class StockRateInputViewController: BaseViewController<StockRateInputReactor> {
       .asObservable()
       .flatMap { [weak self] _ -> Observable<Void> in
         return self?.configureBackBarButtonItemIfNeeded() ?? .empty() }
+      .map { Reactor.Action.backbuttonDidTapped }
+      .bind(to: reactor.action)
+      .disposed(by: self.disposeBag)
       .map { Reactor.Action.closeButtonDidTapped }
       .bind(to: reactor.action)
       .disposed(by: self.disposeBag)
