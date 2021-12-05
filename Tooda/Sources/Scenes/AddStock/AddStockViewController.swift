@@ -167,6 +167,15 @@ final class AddStockViewController: BaseViewController<AddStockReactor> {
         self?.nextButtonDidChanged($0)
       })
       .disposed(by: self.disposeBag)
+    
+    reactor.state
+      .compactMap { $0.selectedKeyword }
+      .distinctUntilChanged()
+      .asDriver(onErrorJustReturn: "")
+      .drive(onNext: { [weak self] in
+        self?.textFieldTextDidChanged(by: $0)
+      })
+      .disposed(by: self.disposeBag)
   }
   
   // MARK: SetupUI
@@ -239,5 +248,9 @@ extension AddStockViewController {
   
   private func nextButtonDidChanged(_ isEnabled: Bool) {
     self.nextButton.isEnabled = isEnabled
+  }
+  
+  private func textFieldTextDidChanged(by keyword: String) {
+    self.searchField.attributedText = keyword.styled(with: Font.searchField)
   }
 }
