@@ -15,19 +15,20 @@ final class StockRateInputReactor: Reactor {
     case closeButtonDidTapped
     case selectedStockDidChanged(StockChangeState)
     case textFieldDidChanged(Float?)
+    case addButtonDidTapped
   }
   
   enum Mutation {
     case selectedRateDidChanged(StockChangeState)
     case addButtonDidChanged(Bool)
-    case rateDidChanged(Float)
+    case rateDidChanged(Float?)
   }
   
   struct State {
     var name: String
     var selectedRate: StockChangeState = .EVEN
-    var rateInput: Float = 0.0
-    var buttonDidChanged: Bool = false
+    var rateInput: Float?
+    var buttonDidChanged: Bool = true
   }
   
   struct Payload {
@@ -60,6 +61,10 @@ final class StockRateInputReactor: Reactor {
         return self.selectedStockDidChanged(rate)
       case .textFieldDidChanged(let rate):
         return self.textFieldDidChanged(rate)
+      case .addButtonDidTapped:
+        return .concat([self.addButtonDidTapped(), self.viewDidDismiss()])
+      case .closeButtonDidTapped:
+        return self.viewDidDismiss()
     }
   }
   
@@ -88,18 +93,50 @@ extension StockRateInputReactor {
     return .empty()
   }
   
+  private func viewDidDismiss() -> Observable<Mutation> {
+    self.dependency.coordinator.close(style: .dismiss, animated: true, completion: nil)
+    
+    return .empty()
+  }
+  
   private func selectedStockDidChanged(_ state: StockChangeState) -> Observable<Mutation> {
-    return .concat([.just(.selectedRateDidChanged(state)), .just(.addButtonDidChanged(state == .EVEN))])
+    
+    switch state {
+      case .RISE, .FALL:
+        let addButtonEnabled = self.currentState.rateInput != nil
+        return .concat([.just(.selectedRateDidChanged(state)), .just(.addButtonDidChanged(addButtonEnabled))])
+      case .EVEN:
+        return .concat([.just(.selectedRateDidChanged(state)), .just(.addButtonDidChanged(true))])
+    }
   }
   
   private func textFieldDidChanged(_ rate: Float?) -> Observable<Mutation> {
     
     let buttonDidEnabled = rate != nil
     
-    guard let rateValue = rate else {
-      return .just(.addButtonDidChanged(buttonDidEnabled))
-    }
+    return .concat([.just(.rateDidChanged(rate)), .just(.addButtonDidChanged(buttonDidEnabled))])
+  }
+  
+  private func addButtonDidTapped() -> Observable<Mutation> {
     
-    return .concat([.just(.rateDidChanged(rateValue)), .just(.addButtonDidChanged(buttonDidEnabled))])
+    let changeRate = self.generateRateMutifiler() * (self.currentState.rateInput ?? 0.0)
+    
+    let noteStock = NoteStock(id: 0,
+                                   name: self.currentState.name,
+                                   change: self.currentState.selectedRate,
+                                   changeRate: changeRate)
+    
+    self.payload.completion.accept(noteStock)
+    
+    return .empty()
+  }
+  
+  private func generateRateMutifiler() -> Float {
+    switch self.currentState.selectedRate {
+      case .EVEN, .RISE:
+        return 1
+      case .FALL:
+        return -1
+    }
   }
 }

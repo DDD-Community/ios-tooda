@@ -187,6 +187,13 @@ class StockRateInputViewController: BaseViewController<StockRateInputReactor> {
       .map { Reactor.Action.backbuttonDidTapped }
       .bind(to: reactor.action)
       .disposed(by: self.disposeBag)
+    
+    self.addButton.rx.tap
+      .map { Reactor.Action.addButtonDidTapped }
+      .bind(to: reactor.action)
+      .disposed(by: self.disposeBag)
+    
+    self.closeBarButton.rx.tap
       .map { Reactor.Action.closeButtonDidTapped }
       .bind(to: reactor.action)
       .disposed(by: self.disposeBag)
@@ -201,6 +208,7 @@ class StockRateInputViewController: BaseViewController<StockRateInputReactor> {
     
     self.textField.rx.text.orEmpty
       .map { Float($0) }
+      .distinctUntilChanged()
       .map { Reactor.Action.textFieldDidChanged($0) }
       .bind(to: reactor.action)
       .disposed(by: self.disposeBag)
@@ -216,6 +224,7 @@ class StockRateInputViewController: BaseViewController<StockRateInputReactor> {
     
     reactor.state
       .map { $0.buttonDidChanged }
+      .distinctUntilChanged()
       .asDriver(onErrorJustReturn: false)
       .drive(onNext: { [weak self] in
         self?.addButtonDidChanged($0)
@@ -223,6 +232,7 @@ class StockRateInputViewController: BaseViewController<StockRateInputReactor> {
     
     reactor.state
       .map { $0.selectedRate == .EVEN }
+      .distinctUntilChanged()
       .asDriver(onErrorJustReturn: false)
       .drive(onNext: { [weak self] in
         self?.textFieldVisiblityDidChanged(by: $0)
@@ -254,7 +264,6 @@ extension StockRateInputViewController {
   private func textFieldDidHidden() {
     self.textFieldBackgroundView.isHidden = true
     self.percentLabel.isHidden = true
-    self.textField.resignFirstResponder()
   }
   
   private func textFieldDidShow() {
