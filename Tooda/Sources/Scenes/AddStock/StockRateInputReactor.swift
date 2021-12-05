@@ -23,6 +23,7 @@ final class StockRateInputReactor: Reactor {
   }
   
   struct State {
+    var name: String
     var selectedRate: StockChangeState = .EVEN
     var rateInput: Float = 0.0
     var buttonDidChanged: Bool = false
@@ -47,7 +48,7 @@ final class StockRateInputReactor: Reactor {
   ) {
     self.dependency = dependency
     self.payload = payload
-    initialState = State()
+    initialState = State(name: payload.name)
   }
   
   func mutate(action: Action) -> Observable<Mutation> {

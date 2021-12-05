@@ -53,8 +53,6 @@ class StockRateInputViewController: BaseViewController<StockRateInputReactor> {
   )
   
   private let titleLabel = UILabel().then {
-    // TODO: Mock 데이터 제거할 예정이에요.
-    $0.attributedText = "삼성전자".styled(with: Font.title)
     $0.numberOfLines = 0
   }
   
@@ -205,6 +203,14 @@ class StockRateInputViewController: BaseViewController<StockRateInputReactor> {
       .disposed(by: self.disposeBag)
     
     // State
+    
+    reactor.state
+      .map { $0.name }
+      .asDriver(onErrorJustReturn: "")
+      .drive(onNext: { [weak self] in
+        self?.titleLabel.attributedText = $0.styled(with: Font.title)
+      }).disposed(by: self.disposeBag)
+    
     reactor.state
       .map { $0.buttonDidChanged }
       .asDriver(onErrorJustReturn: false)
