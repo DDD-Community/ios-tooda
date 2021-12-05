@@ -14,10 +14,6 @@ import Then
 final class LoginViewController: BaseViewController<LoginReactor> {
   
   // MARK: Constants
-
-  private enum Font {
-    static let title = TextStyle.title(color: .white)
-  }
   
   private enum Metric {
     static let loginButtonHeight: CGFloat = 56
@@ -30,16 +26,8 @@ final class LoginViewController: BaseViewController<LoginReactor> {
     $0.image = UIImage(type: .login)
   }
   
-  private let loginButton = UIButton(type: .system).then {
-    $0.setAttributedTitle(
-      "시작하기".styled(with: Font.title),
-      for: .normal
-    )
-    $0.backgroundColor = ToodaAsset.Colors.mainGreen.color
-    $0.layer.cornerRadius = CGFloat(Metric.loginButtonHeight / 2)
-    $0.layer.shadowColor = UIColor.black.withAlphaComponent(0.25).cgColor
-    $0.layer.shadowOffset = CGSize(width: 4, height: 4)
-    $0.layer.shadowOpacity = 1
+  private let loginButton = BaseButton(width: nil, height: Metric.loginButtonHeight).then {
+    $0.setButtonTitle(with: "시작하기")
   }
   
   // MARK: - Con(De)structor
