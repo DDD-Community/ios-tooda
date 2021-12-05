@@ -18,13 +18,18 @@ final class NoteStockCellReactor: Reactor {
   }
 
   struct State {
-
+    var payload: Payload
+  }
+  
+  struct Payload {
+    var name: String
+    var rate: Float
   }
 
   let initialState: State
 
-  init() {
-    initialState = State()
+  init(payload: Payload) {
+    initialState = State(payload: payload)
   }
 
   func mutate(action: Action) -> Observable<Mutation> {

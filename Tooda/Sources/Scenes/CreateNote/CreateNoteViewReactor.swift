@@ -196,8 +196,11 @@ extension CreateNoteViewReactor {
 
 extension CreateNoteViewReactor {
   private func makeStockSectionItem(_ stock: NoteStock) -> Observable<Mutation> {
-    // TODO: stock 정보를 Cell에 업데이트 해줘요.
-    let reator = NoteStockCellReactor()
+    let reator = NoteStockCellReactor(
+      payload: .init(name: stock.name,
+                     rate: stock.changeRate ?? 0.0)
+    )
+    
     let sectionItem = NoteSectionItem.stock(reator)
     
     return .just(.fetchStockSection(sectionItem))
