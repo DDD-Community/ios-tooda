@@ -43,6 +43,7 @@ final class AddStockViewController: BaseViewController<AddStockReactor> {
       case .item(let reactor):
         let cell = tableView.dequeue(StockItemCell.self, indexPath: indexPath)
         cell.configure(reactor: reactor)
+        cell.selectionStyle = .none
         return cell
     }
   })
@@ -62,7 +63,6 @@ final class AddStockViewController: BaseViewController<AddStockReactor> {
   
   private let tableView = UITableView().then {
     $0.separatorStyle = .none
-    $0.allowsSelection = false
     $0.backgroundColor = .white
     $0.register(StockItemCell.self)
   }
@@ -147,6 +147,11 @@ final class AddStockViewController: BaseViewController<AddStockReactor> {
       .debounce(.milliseconds(300), scheduler: MainScheduler.instance)
       .map { [weak self] _ in self?.searchField.text ?? "" }
       .map { Reactor.Action.nextButtonDidTapped(name: $0) }
+      .bind(to: reactor.action)
+      .disposed(by: self.disposeBag)
+    
+    self.tableView.rx.itemSelected
+      .map { Reactor.Action.cellItemDidSelected($0) }
       .bind(to: reactor.action)
       .disposed(by: self.disposeBag)
     

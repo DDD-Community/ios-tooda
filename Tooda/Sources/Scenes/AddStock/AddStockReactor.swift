@@ -19,6 +19,7 @@ final class AddStockReactor: Reactor {
     case searchTextDidChanged(String)
     case dismiss
     case nextButtonDidTapped(name: String)
+    case cellItemDidSelected(IndexPath)
   }
   
   enum Mutation {
@@ -67,6 +68,8 @@ extension AddStockReactor {
         return self.dissmissView()
       case .nextButtonDidTapped(let name):
         return self.nextButtonDidTapped(name)
+      case .cellItemDidSelected(let indexPath):
+        return self.cellItemDidSelected(indexPath)
     }
   }
   
