@@ -8,7 +8,7 @@
 
 import UIKit
 
-class OptionsPopUpView: BasePopUpView {
+final class OptionsPopUpView: BasePopUpView {
   
   // MARK: - UI Components
   
@@ -16,5 +16,9 @@ class OptionsPopUpView: BasePopUpView {
 
   override func setupUI() {
     super.setupUI()
+    insertContentViewLayout(
+      view: tableView,
+      margin: UIEdgeInsets(top: 18, left: 0, bottom: 26, right: 0)
+    )
   }
 }

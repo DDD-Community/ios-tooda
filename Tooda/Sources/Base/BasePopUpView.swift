@@ -52,4 +52,14 @@ class BasePopUpView: UIView {
       $0.leading.trailing.equalToSuperview().inset(21)
     }
   }
+  
+  func insertContentViewLayout(view: UIView, margin: UIEdgeInsets) {
+    addSubview(view)
+    view.snp.makeConstraints {
+      $0.top.equalTo(titleLabel.snp.bottom).offset(margin.top)
+      $0.leading.equalToSuperview().inset(margin.left)
+      $0.trailing.equalToSuperview().inset(margin.right)
+      $0.bottom.equalToSuperview().inset(margin.bottom)
+    }
+  }
 }
