@@ -11,8 +11,9 @@ import Foundation
 import ReactorKit
 import Then
 import RxRelay
+import RxCocoa
 
-final class OneLineReviewPopUpReactor: Reactor {
+final class PopUpReactor: Reactor {
   
   // MARK: Reactor
   
@@ -42,5 +43,4 @@ final class OneLineReviewPopUpReactor: Reactor {
     self.dependency = dependency
     self.initialState = State()
   }
-  
 }
