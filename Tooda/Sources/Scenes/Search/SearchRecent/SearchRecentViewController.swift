@@ -66,6 +66,7 @@ final class SearchRecentViewController: BaseViewController<SearchRecentReactor> 
   // MARK: Custom Action
 
   let rxBeginSearch = PublishRelay<Void>()
+  let rxSearch = PublishRelay<String>()
 
 
   // MARK: Initialzing
@@ -97,11 +98,14 @@ final class SearchRecentViewController: BaseViewController<SearchRecentReactor> 
 
     // Action
     self.rxBeginSearch
-      .do(onNext: {
-        print("do!!")
-      })
       .asObservable()
       .map { SearchRecentReactor.Action.beginSearch }
+      .bind(to: reactor.action)
+      .disposed(by: self.disposeBag)
+
+    self.rxSearch
+      .asObservable()
+      .map { SearchRecentReactor.Action.search(text: $0) }
       .bind(to: reactor.action)
       .disposed(by: self.disposeBag)
 

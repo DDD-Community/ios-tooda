@@ -125,6 +125,14 @@ extension SearchViewController: UISearchBarDelegate {
   func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
     self.recentViewController.rxBeginSearch.accept(())
   }
+
+  func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+    self.searchBar.resignFirstResponder()
+    guard let text = searchBar.text,
+          text.isEmpty == false else { return }
+
+    self.recentViewController.rxSearch.accept(text)
+  }
 }
 
 

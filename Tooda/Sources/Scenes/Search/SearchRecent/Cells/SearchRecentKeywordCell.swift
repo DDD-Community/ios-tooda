@@ -92,6 +92,8 @@ final class SearchRecentKeywordCell: BaseCollectionViewCell {
 
   func configure(viewModel: ViewModel) {
     self.titleLabel.attributedText = viewModel.title.styled(with: Font.title)
+
+    self.setNeedsUpdateConstraints()
   }
 
 }
