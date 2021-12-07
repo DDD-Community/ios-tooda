@@ -19,11 +19,13 @@ final class AddStockReactor: Reactor {
     case searchTextDidChanged(String)
     case dismiss
     case nextButtonDidTapped(name: String)
+    case cellItemDidSelected(IndexPath)
   }
   
   enum Mutation {
     case fetchSearchResultSection([AddStockSection])
     case nextButtonDidChanged(Bool)
+    case selectedKeywordDidChanged(String)
   }
   
   struct Dependency {
@@ -39,6 +41,7 @@ final class AddStockReactor: Reactor {
     ]
     
     var nextButtonDidChanged: Bool = false
+    var selectedKeyword: String?
   }
   
   init(dependency: Dependency) {
@@ -67,6 +70,8 @@ extension AddStockReactor {
         return self.dissmissView()
       case .nextButtonDidTapped(let name):
         return self.nextButtonDidTapped(name)
+      case .cellItemDidSelected(let indexPath):
+        return self.cellItemDidSelected(indexPath)
     }
   }
   
@@ -79,6 +84,8 @@ extension AddStockReactor {
         state.sections = sections
       case .nextButtonDidChanged(let isEnabled):
         state.nextButtonDidChanged = isEnabled
+      case .selectedKeywordDidChanged(let keyword):
+        state.selectedKeyword = keyword
     }
     
     return state
@@ -127,7 +134,7 @@ extension AddStockReactor {
         
         let isEnabeld = !reactor.dependency.name.isEmpty
         
-        return .just(.nextButtonDidChanged(isEnabeld))
+        return .concat([.just(.nextButtonDidChanged(isEnabeld)), .just(.selectedKeywordDidChanged(reactor.dependency.name))])
     }
 
   }

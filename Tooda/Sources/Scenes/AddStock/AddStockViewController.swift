@@ -43,6 +43,7 @@ final class AddStockViewController: BaseViewController<AddStockReactor> {
       case .item(let reactor):
         let cell = tableView.dequeue(StockItemCell.self, indexPath: indexPath)
         cell.configure(reactor: reactor)
+        cell.selectionStyle = .none
         return cell
     }
   })
@@ -62,7 +63,6 @@ final class AddStockViewController: BaseViewController<AddStockReactor> {
   
   private let tableView = UITableView().then {
     $0.separatorStyle = .none
-    $0.allowsSelection = false
     $0.backgroundColor = .white
     $0.register(StockItemCell.self)
   }
@@ -150,6 +150,11 @@ final class AddStockViewController: BaseViewController<AddStockReactor> {
       .bind(to: reactor.action)
       .disposed(by: self.disposeBag)
     
+    self.tableView.rx.itemSelected
+      .map { Reactor.Action.cellItemDidSelected($0) }
+      .bind(to: reactor.action)
+      .disposed(by: self.disposeBag)
+    
     // State
     reactor.state
       .map { $0.sections }
@@ -160,6 +165,15 @@ final class AddStockViewController: BaseViewController<AddStockReactor> {
       .map { $0.nextButtonDidChanged }
       .subscribe(onNext: { [weak self] in
         self?.nextButtonDidChanged($0)
+      })
+      .disposed(by: self.disposeBag)
+    
+    reactor.state
+      .compactMap { $0.selectedKeyword }
+      .distinctUntilChanged()
+      .asDriver(onErrorJustReturn: "")
+      .drive(onNext: { [weak self] in
+        self?.textFieldTextDidChanged(by: $0)
       })
       .disposed(by: self.disposeBag)
   }
@@ -234,5 +248,9 @@ extension AddStockViewController {
   
   private func nextButtonDidChanged(_ isEnabled: Bool) {
     self.nextButton.isEnabled = isEnabled
+  }
+  
+  private func textFieldTextDidChanged(by keyword: String) {
+    self.searchField.attributedText = keyword.styled(with: Font.searchField)
   }
 }
