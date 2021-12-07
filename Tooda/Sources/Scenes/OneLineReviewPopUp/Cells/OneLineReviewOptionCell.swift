@@ -8,7 +8,16 @@
 
 import UIKit
 
+import RxSwift
+import RxCocoa
+
 final class OneLineReviewOptionCell: BaseTableViewCell {
+  
+  // MARK: - Constants
+  
+  private enum Font {
+    static let title = TextStyle.body(color: .gray1)
+  }
   
   // MARK: - UI Components
   
@@ -20,6 +29,16 @@ final class OneLineReviewOptionCell: BaseTableViewCell {
   private let emojiImageView = UIImageView()
   
   private let titleLabel = UILabel()
+  
+  // MARK: - Overridden: ParentClass
+  
+  override var isSelected: Bool {
+    didSet {
+      setSelected(isSelected: isSelected)
+    }
+  }
+  
+  // MARK: - Con(De)structor
   
   override init(
     style: UITableViewCell.CellStyle,
@@ -36,8 +55,16 @@ final class OneLineReviewOptionCell: BaseTableViewCell {
     fatalError("init(coder:) has not been implemented")
   }
   
+  // MARK: - Private methods
+  
   private func setSelected(isSelected: Bool) {
-    cardView.backgroundColor = .black
+    if isSelected {
+      cardView.backgroundColor = .subGreen
+      cardView.layer.borderColor = UIColor.mainGreen.cgColor
+    } else {
+      cardView.backgroundColor = .white
+      cardView.layer.borderColor = UIColor.gray1.cgColor
+    }
   }
 }
 
