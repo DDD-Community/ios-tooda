@@ -76,10 +76,10 @@ final class AppCoordinator: AppCoordinatorType {
     let viewController = self.dependency.appFactory.makeViewController(from: scene)
     switch style {
     case .push:
-      currentViewController.navigationController?.pushViewController(
-        viewController,
-        animated: animated
-      )
+        
+      self.pushViewControllerWhenNavigationWrapped(currentViewController, viewController, animated)
+      self.pushViewControllerWhenNoneNavigationWrapped(currentViewController, viewController, animated)
+      
       self.currentViewController = viewController
       completion?()
 
@@ -152,5 +152,20 @@ final class AppCoordinator: AppCoordinatorType {
         })
       }
     }
+  }
+}
+
+extension AppCoordinator {
+  private func pushViewControllerWhenNavigationWrapped(_ currentViewController: UIViewController, _ viewController: UIViewController, _ animated: Bool) {
+    if let navigationController = currentViewController as? UINavigationController {
+      navigationController.pushViewController(viewController, animated: animated)
+    }
+  }
+  
+  private func pushViewControllerWhenNoneNavigationWrapped(_ currentViewController: UIViewController, _ viewController: UIViewController, _ animated: Bool) {
+    currentViewController.navigationController?.pushViewController(
+      viewController,
+      animated: animated
+    )
   }
 }
