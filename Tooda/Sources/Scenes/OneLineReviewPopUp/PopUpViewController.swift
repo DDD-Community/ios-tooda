@@ -45,11 +45,15 @@ class PopUpViewController: BaseViewController<PopUpReactor> {
     fatalError("init(coder:) has not been implemented")
   }
   
+  // MARK: - Overridden: ParentClass
+  
   override func viewDidLoad() {
     super.viewDidLoad()
     setupUI()
     showPopUpView()
   }
+  
+  // MARK: - Private methods
   
   private func showPopUpView() {
     guard let type = reactor?.dependency.type else { return }

@@ -13,6 +13,8 @@ final class OptionsPopUpView: BasePopUpView {
   // MARK: - UI Components
   
   private let tableView = SelfSizingTableView()
+  
+  // MARK: - Overridden: ParentClass
 
   override func setupUI() {
     super.setupUI()

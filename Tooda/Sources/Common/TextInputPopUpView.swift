@@ -13,6 +13,8 @@ final class TextInputPopUpView: BasePopUpView {
   // MARK: - UI Components
   
   private let textField = UITextField()
+  
+  // MARK: - Overridden: ParentClass
 
   override func setupUI() {
     super.setupUI()
