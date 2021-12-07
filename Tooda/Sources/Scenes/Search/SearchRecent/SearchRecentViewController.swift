@@ -37,8 +37,9 @@ final class SearchRecentViewController: BaseViewController<SearchRecentReactor> 
   // MARK: Properties
 
   private lazy var dataSource = RxCollectionViewSectionedReloadDataSource<SearchRecentSectionModel>(
-    configureCell: { section, collectionView, indexPath, item -> UICollectionViewCell in
-      guard let section = section.sectionModels[safe: indexPath.section]?.identity else {
+    configureCell: { [weak self] section, collectionView, indexPath, item -> UICollectionViewCell in
+      guard let self = self,
+            let section = section.sectionModels[safe: indexPath.section]?.identity else {
         return .init()
       }
 
@@ -57,6 +58,7 @@ final class SearchRecentViewController: BaseViewController<SearchRecentReactor> 
           indexPath: indexPath
         )
 
+        cell.delegate = self
         cell.configure(viewModel: viewModel)
         return cell
       }
@@ -151,5 +153,15 @@ extension SearchRecentViewController: UICollectionViewDelegateFlowLayout {
     guard let section = self.dataSource.sectionModels[safe: section]?.identity else { return .zero }
 
     return section.edgeInsets
+  }
+}
+
+
+// MARK: SearchRecentKeywordCellDelegate
+
+extension SearchRecentViewController: SearchRecentKeywordCellDelegate {
+
+  func didTapRemove(_ sender: SearchRecentKeywordCell) {
+
   }
 }

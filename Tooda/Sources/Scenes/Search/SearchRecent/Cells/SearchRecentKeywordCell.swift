@@ -10,6 +10,10 @@ import UIKit
 
 import SnapKit
 
+protocol SearchRecentKeywordCellDelegate: AnyObject {
+  func didTapRemove(_ sender: SearchRecentKeywordCell)
+}
+
 final class SearchRecentKeywordCell: BaseCollectionViewCell {
 
   // MARK: Constants
@@ -38,13 +42,17 @@ final class SearchRecentKeywordCell: BaseCollectionViewCell {
     $0.textAlignment = .left
   }
 
-  private let closeButton = UIButton().then {
+  private let removeButton = UIButton().then {
     $0.setImage(
       UIImage(type: .iconCancelBlack),
       for: .normal
     )
   }
 
+
+  // MARK: Properties
+
+  weak var delegate: SearchRecentKeywordCellDelegate?
 
   // MARK: Initializing
 
@@ -65,8 +73,14 @@ final class SearchRecentKeywordCell: BaseCollectionViewCell {
     self.contentView.do {
       $0.addSubview(self.clockImageView)
       $0.addSubview(self.titleLabel)
-      $0.addSubview(self.closeButton)
+      $0.addSubview(self.removeButton)
     }
+
+    self.removeButton.addTarget(
+      self,
+      action: #selector(self.didTapRemove),
+      for: .touchUpInside
+    )
   }
 
   override func setupConstraints() {
@@ -83,7 +97,7 @@ final class SearchRecentKeywordCell: BaseCollectionViewCell {
       $0.centerY.equalToSuperview()
     }
 
-    self.closeButton.snp.makeConstraints {
+    self.removeButton.snp.makeConstraints {
       $0.size.equalTo(CGSize(width: 24.0, height: 24.0))
       $0.right.equalToSuperview()
       $0.left.equalTo(self.titleLabel.snp.right).offset(10.0)
@@ -95,5 +109,14 @@ final class SearchRecentKeywordCell: BaseCollectionViewCell {
 
     self.setNeedsUpdateConstraints()
   }
+}
 
+
+// MARK: - Action
+
+extension SearchRecentKeywordCell {
+
+  @objc private func didTapRemove() {
+    self.delegate?.didTapRemove(self)
+  }
 }
