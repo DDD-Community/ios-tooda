@@ -18,7 +18,7 @@ final class PopUpReactor: Reactor {
   // MARK: - Constants
   
   enum PopUpType {
-    case list
+    case list // 아직 모델링 미정
     case textInput(PublishRelay<String>)
   }
   
