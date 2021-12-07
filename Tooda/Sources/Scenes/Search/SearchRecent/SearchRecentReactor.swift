@@ -31,7 +31,6 @@ final class SearchRecentReactor: Reactor {
 
   enum Mutation {
     case setKeywords([SearchRecentSectionModel])
-    case updateKeywords(keyword: SearchRecentKeywordCell.ViewModel)
   }
 
   struct State {
@@ -92,9 +91,12 @@ extension SearchRecentReactor {
       ),
       SearchRecentSectionModel(
         identity: .keyword,
-        items: keywords.map {
+        items: keywords.enumerated().map {
           SearchRecentSectionModel.SectionItem.keyword(
-            SearchRecentKeywordCell.ViewModel(title: $0)
+            SearchRecentKeywordCell.ViewModel(
+              title: $0.element,
+              index: $0.offset
+            )
           )
         }
       )
@@ -114,10 +116,8 @@ extension SearchRecentReactor {
     )
 
     return Observable<Mutation>.just(
-      Mutation.updateKeywords(
-        keyword: SearchRecentKeywordCell.ViewModel(
-          title: text
-        )
+      Mutation.setKeywords(
+        self.mappintToSectionModels(keywords: localKeywords)
       )
     )
   }
@@ -134,16 +134,6 @@ extension SearchRecentReactor {
     switch mutation {
     case let .setKeywords(keywords):
       newState.keywords = keywords
-
-    case let .updateKeywords(keyword):
-      guard let index = newState.keywords.firstIndex(where: {
-        $0.identity == .keyword
-      }) else { break }
-
-      newState.keywords[index].items.insert(
-        .keyword(keyword),
-        at: 0
-      )
     }
     return newState
   }

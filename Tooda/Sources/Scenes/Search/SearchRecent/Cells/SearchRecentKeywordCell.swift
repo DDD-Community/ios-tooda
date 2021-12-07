@@ -27,6 +27,7 @@ final class SearchRecentKeywordCell: BaseCollectionViewCell {
 
   struct ViewModel {
     let title: String
+    let index: Int
   }
 
 
