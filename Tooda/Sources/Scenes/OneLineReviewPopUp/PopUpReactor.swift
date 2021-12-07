@@ -1,5 +1,5 @@
 //
-//  OneLineReviewPopUpReactor.swift
+//  PopUpReactor.swift
 //  Tooda
 //
 //  Created by 황재욱 on 2021/12/05.
@@ -15,6 +15,13 @@ import RxCocoa
 
 final class PopUpReactor: Reactor {
   
+  // MARK: - Constants
+  
+  enum PopUpType {
+    case list
+    case textInput(PublishRelay<String>)
+  }
+  
   // MARK: Reactor
   
   enum Action {
@@ -26,7 +33,7 @@ final class PopUpReactor: Reactor {
   }
   
   struct Dependency {
-    
+    let type: PopUpType
   }
   
   struct State {

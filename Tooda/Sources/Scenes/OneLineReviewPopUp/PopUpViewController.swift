@@ -13,13 +13,6 @@ import RxSwift
 
 class PopUpViewController: BaseViewController<PopUpReactor> {
   
-  // MARK: - Constants
-  
-  enum PopUpType {
-    case list
-    case textInput(PublishRelay<String>)
-  }
-  
   // MARK: - UI Components
   
   private let dimmedView = UIView().then {
@@ -36,8 +29,6 @@ class PopUpViewController: BaseViewController<PopUpReactor> {
     $0.alpha = 0
   }
   
-  private let type: PopUpType
-  
   private let displayPopUpAnimator = UIViewPropertyAnimator(
     duration: 0.5,
     curve: .easeOut
@@ -45,8 +36,7 @@ class PopUpViewController: BaseViewController<PopUpReactor> {
   
   // MARK: - Con(De)structor
   
-  init(reactor: PopUpReactor, type: PopUpType) {
-    self.type = type
+  init(reactor: PopUpReactor) {
     super.init()
     self.reactor = reactor
   }
@@ -58,9 +48,11 @@ class PopUpViewController: BaseViewController<PopUpReactor> {
   override func viewDidLoad() {
     super.viewDidLoad()
     setupUI()
+    showPopUpView()
   }
   
   private func showPopUpView() {
+    guard let type = reactor?.dependency.type else { return }
     switch type {
     case .list:
       optionsPopUpView.transform = CGAffineTransform(scaleX: 0.8, y: 0.8)
