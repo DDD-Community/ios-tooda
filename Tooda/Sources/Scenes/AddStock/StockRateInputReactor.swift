@@ -123,9 +123,9 @@ extension StockRateInputReactor {
     
     // TODO: 전달 Payload 데이터를 변경할 예정이에요.
     let noteStock = NoteStock(id: 0,
-                                   name: self.currentState.name,
-                                   change: self.currentState.selectedRate,
-                                   changeRate: changeRate)
+                              name: self.currentState.name,
+                              change: self.currentState.selectedRate,
+                              changeRate: changeRate)
     
     self.payload.completion.accept(noteStock)
     
