@@ -10,6 +10,7 @@ import Foundation
 
 import ReactorKit
 import RxSwift
+import Firebase
 
 final class LoginReactor: Reactor {
   
@@ -78,6 +79,14 @@ extension LoginReactor {
       from: .home,
       shouldNavigationWrapped: true
     )
+    
+    FirebaseAnalytics.Analytics.logEvent(
+        AnalyticsEventLogin,
+      parameters: [
+        AnalyticsParameterSuccess: 1
+      ]
+    )
+    
     return Observable<Mutation>.empty()
   }
 
