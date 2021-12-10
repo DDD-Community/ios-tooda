@@ -137,7 +137,7 @@ extension BaseProjectFactory {
   func aa() -> Configuration {
     let configuration: [String: SettingValue] = [
       "APP_NAME": "TodaTest",
-      "APP_IDENTIFIER": "com.toda.test",
+      "APP_IDENTIFIER": "com.tooda.test",
       "APP_VERSION": "2.0.1",
       "APP_BUILD": "1",
       "MY_VALUE": "Hello"
