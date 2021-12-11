@@ -231,7 +231,7 @@ class StockRateInputViewController: BaseViewController<StockRateInputReactor> {
       }).disposed(by: self.disposeBag)
     
     reactor.state
-      .map { $0.selectedRate == .EVEN }
+      .map { $0.selectedRate == .even }
       .distinctUntilChanged()
       .asDriver(onErrorJustReturn: false)
       .drive(onNext: { [weak self] in

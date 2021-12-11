@@ -26,7 +26,7 @@ final class StockRateInputReactor: Reactor {
   
   struct State {
     var name: String
-    var selectedRate: StockChangeState = .EVEN
+    var selectedRate: StockChangeState = .even
     var rateInput: Float?
     var buttonDidChanged: Bool = true
   }
@@ -102,10 +102,10 @@ extension StockRateInputReactor {
   private func selectedStockDidChanged(_ state: StockChangeState) -> Observable<Mutation> {
     
     switch state {
-      case .RISE, .FALL:
+      case .rise, .fall:
         let addButtonEnabled = self.currentState.rateInput != nil
         return .concat([.just(.selectedRateDidChanged(state)), .just(.addButtonDidChanged(addButtonEnabled))])
-      case .EVEN:
+      case .even:
         return .concat([.just(.selectedRateDidChanged(state)), .just(.addButtonDidChanged(true))])
     }
   }
@@ -134,9 +134,9 @@ extension StockRateInputReactor {
   
   private func generateRateMutifiler() -> Float {
     switch self.currentState.selectedRate {
-      case .EVEN, .RISE:
+      case .even, .rise:
         return 1
-      case .FALL:
+      case .fall:
         return -1
     }
   }
