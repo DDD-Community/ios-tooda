@@ -13,12 +13,59 @@
 # Uncomment the line if you want fastlane to automatically update itself
 # update_fastlane
 
+require './AppInfo.rb'
+
 default_platform(:ios)
 
 platform :ios do
+  
   desc "Push a new release build to the App Store"
   lane :release do
     build_app(workspace: "Tooda.xcworkspace", scheme: "Tooda")
-    upload_to_app_store
+    upload_to_app_store:wq
   end
+ 
+  desc "TestFlight에 새로운 테스트 빌드를 업로드합니다."
+  lane :upload_testflight do
+
+   match(type: "appstore", readonly: true)
+   export_options = {
+    uploadBitcode: false,
+    uploadSymbols: true,
+    compileBitcode: false
+   }
+	
+   build_app(
+    workspace: "Tooda.xcworkspace",
+    configuration: "Release",
+    scheme: "Tooda",
+    silent: false,
+    clean: true,
+    output_name: "Tooda",
+    output_directory: "./build",
+    include_symbols: true,
+    export_method: "app-store",
+    export_xcargs: "-allowProvisioningUpdates",
+    export_options: export_options
+   )
+   upload_to_testflight(skip_submission: true)
+  end
+
+  desc "빌드넘버를 1 증가시킵니다"
+  lane :increase_build_number do
+   build_number = get_info_plist_value(path: AppInfo::ReleaseApp.plist_path, key: "CFBundleVersion")
+   set_info_plist_value(
+    path: AppInfo::ReleaseApp.plist_path,
+    key: "CFBundleVersion",
+    value: "#{build_number.to_i + 1}"
+   )
+  end
+
+  desc "Signing 세팅"
+  lane :setup_code_signing do
+   match(type: "development", readonly: true)
+   match(type: "appstore", readonly: true)
+  end
+
+
 end
