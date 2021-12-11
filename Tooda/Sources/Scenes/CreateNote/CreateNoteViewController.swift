@@ -62,18 +62,20 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
     default:
       return UITableViewCell()
     }
-  })
+  }, canEditRowAtIndexPath: { _, _ in true })
 
 
   // MARK: UI-Properties
 
-  let tableView = UITableView().then {
+  private lazy var tableView = UITableView().then {
     $0.separatorStyle = .none
     $0.backgroundColor = .white
     $0.estimatedRowHeight = UITableView.automaticDimension
     $0.alwaysBounceHorizontal = false
     
     $0.allowsSelection = false
+    
+    $0.delegate = self
 
     $0.register(NoteContentCell.self)
     $0.register(EmptyNoteStockCell.self)
@@ -249,5 +251,29 @@ extension CreateNoteViewController: UIImagePickerControllerDelegate, UINavigatio
     }
     
     picker.dismiss(animated: true, completion: nil)
+  }
+}
+
+// MARK: - UITableView Delegate
+
+extension CreateNoteViewController: UITableViewDelegate {
+  func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+    switch dataSource[indexPath] {
+      case .stock:
+        let delete = UIContextualAction(style: .destructive, title: "삭제") { _, _, completionHandler in
+          print("아이템을 제거해요: \(indexPath)")
+          completionHandler(true)
+        }
+        
+        let rename = UIContextualAction(style: .normal, title: "수정") { _, _, completionHandler in
+          print("아이템을 수정해요: \(indexPath)")
+          completionHandler(true)
+        }
+        let swipeActionConfig = UISwipeActionsConfiguration(actions: [delete, rename])
+        swipeActionConfig.performsFirstActionWithFullSwipe = false
+        return swipeActionConfig
+      default:
+        return nil
+    }
   }
 }
