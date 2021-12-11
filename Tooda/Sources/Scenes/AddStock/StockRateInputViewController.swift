@@ -21,6 +21,7 @@ class StockRateInputViewController: BaseViewController<StockRateInputReactor> {
     static let descprtion = TextStyle.body(color: .gray3)
     static let searchField = TextStyle.body(color: .gray1)
     static let symbol = TextStyle.subTitleBold(color: .gray1)
+    static let addButton = TextStyle.subTitleBold(color: .white)
   }
   
   private enum Color {
@@ -30,6 +31,7 @@ class StockRateInputViewController: BaseViewController<StockRateInputReactor> {
   private enum Metric {
     static let horizontalMargin: CGFloat = 24.0
     static let buttonWidth: CGFloat = 72.0
+    static let addButtonHeight: CGFloat = 48
   }
   
   init(reactor: Reactor) {
@@ -51,8 +53,6 @@ class StockRateInputViewController: BaseViewController<StockRateInputReactor> {
   )
   
   private let titleLabel = UILabel().then {
-    // TODO: Mock 데이터 제거할 예정이에요.
-    $0.attributedText = "삼성전자".styled(with: Font.title)
     $0.numberOfLines = 0
   }
   
@@ -73,6 +73,7 @@ class StockRateInputViewController: BaseViewController<StockRateInputReactor> {
   
   private lazy var textField = UITextField().then {
     $0.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
+    $0.keyboardType = .numberPad
     $0.placeholder = "상승률/하락률"
   }
   
@@ -81,6 +82,28 @@ class StockRateInputViewController: BaseViewController<StockRateInputReactor> {
     $0.textAlignment = .right
     $0.numberOfLines = 1
     $0.sizeToFit()
+  }
+  
+  private let buttonBackGroundView = UIView().then {
+    $0.backgroundColor = UIColor(type: .white)
+  }
+  
+  private let addButton = UIButton(type: .system).then {
+    $0.setAttributedTitle(
+      "추가".styled(with: Font.addButton),
+      for: .normal
+    )
+    
+    $0.setBackgroundImage(UIColor.gray3.image(), for: .disabled)
+    $0.setBackgroundImage(UIColor.mainGreen.image(), for: .normal)
+    
+    $0.layer.cornerRadius = CGFloat(Metric.addButtonHeight / 2)
+    $0.layer.shadowColor = UIColor(hex: "#43475314").withAlphaComponent(0.08).cgColor
+    $0.layer.shadowOffset = CGSize(width: 0, height: 12)
+    $0.layer.shadowOpacity = 1
+    $0.layer.shadowRadius = 12.0
+    
+    $0.layer.masksToBounds = true
   }
   
   required init?(coder: NSCoder) {
@@ -96,11 +119,13 @@ class StockRateInputViewController: BaseViewController<StockRateInputReactor> {
   override func configureUI() {
     super.configureUI()
     
-    [titleLabel, descriptionLabel, rateButtonStackView, textFieldBackgroundView, percentLabel].forEach {
+    [titleLabel, descriptionLabel, rateButtonStackView, textFieldBackgroundView, percentLabel, buttonBackGroundView].forEach {
       self.view.addSubview($0)
     }
     
     self.textFieldBackgroundView.addSubview(textField)
+    
+    self.buttonBackGroundView.addSubview(addButton)
   }
   
   override func configureConstraints() {
@@ -128,7 +153,7 @@ class StockRateInputViewController: BaseViewController<StockRateInputReactor> {
     }
     
     textField.snp.makeConstraints {
-      $0.edges.equalToSuperview().inset(UIEdgeInsets(top: 11, left: 14, bottom: 11, right: 14))
+      $0.edges.equalToSuperview().inset(UIEdgeInsets(horizontal: 14, vertical: 11))
       $0.height.equalTo(23)
     }
     
@@ -136,6 +161,18 @@ class StockRateInputViewController: BaseViewController<StockRateInputReactor> {
       $0.centerY.equalTo(self.textFieldBackgroundView)
       $0.left.equalTo(self.textFieldBackgroundView.snp.right).offset(8)
       $0.right.equalToSuperview().offset(-34)
+    }
+    
+    buttonBackGroundView.snp.makeConstraints {
+      $0.left.right.equalToSuperview()
+      $0.bottom.equalTo(self.view.keyboardLayoutGuide.snp.top)
+    }
+    
+    addButton.snp.makeConstraints {
+      $0.top.equalToSuperview().offset(16)
+      $0.left.right.equalToSuperview().inset(20)
+      $0.bottom.equalToSuperview().offset(-24)
+      $0.height.equalTo(Metric.addButtonHeight)
     }
   }
   
@@ -147,6 +184,16 @@ class StockRateInputViewController: BaseViewController<StockRateInputReactor> {
       .asObservable()
       .flatMap { [weak self] _ -> Observable<Void> in
         return self?.configureBackBarButtonItemIfNeeded() ?? .empty() }
+      .map { Reactor.Action.backbuttonDidTapped }
+      .bind(to: reactor.action)
+      .disposed(by: self.disposeBag)
+    
+    self.addButton.rx.tap
+      .map { Reactor.Action.addButtonDidTapped }
+      .bind(to: reactor.action)
+      .disposed(by: self.disposeBag)
+    
+    self.closeBarButton.rx.tap
       .map { Reactor.Action.closeButtonDidTapped }
       .bind(to: reactor.action)
       .disposed(by: self.disposeBag)
@@ -155,8 +202,41 @@ class StockRateInputViewController: BaseViewController<StockRateInputReactor> {
     self.rateButtonStackView.rx.didSelectedChanged
       .asObservable()
       .distinctUntilChanged()
-      .subscribe()
+      .map { Reactor.Action.selectedStockDidChanged($0) }
+      .bind(to: reactor.action)
       .disposed(by: self.disposeBag)
+    
+    self.textField.rx.text.orEmpty
+      .map { Float($0) }
+      .distinctUntilChanged()
+      .map { Reactor.Action.textFieldDidChanged($0) }
+      .bind(to: reactor.action)
+      .disposed(by: self.disposeBag)
+    
+    // State
+    
+    reactor.state
+      .map { $0.name }
+      .asDriver(onErrorJustReturn: "")
+      .drive(onNext: { [weak self] in
+        self?.titleLabel.attributedText = $0.styled(with: Font.title)
+      }).disposed(by: self.disposeBag)
+    
+    reactor.state
+      .map { $0.buttonDidChanged }
+      .distinctUntilChanged()
+      .asDriver(onErrorJustReturn: false)
+      .drive(onNext: { [weak self] in
+        self?.addButtonDidChanged($0)
+      }).disposed(by: self.disposeBag)
+    
+    reactor.state
+      .map { $0.selectedRate == .EVEN }
+      .distinctUntilChanged()
+      .asDriver(onErrorJustReturn: false)
+      .drive(onNext: { [weak self] in
+        self?.textFieldVisiblityDidChanged(by: $0)
+      }).disposed(by: self.disposeBag)
   }
   
   @objc
@@ -171,5 +251,23 @@ extension StockRateInputViewController {
   private func initializeNavigation() {
     self.navigationItem.title = "종목 기록하기"
     self.navigationItem.rightBarButtonItem = closeBarButton
+  }
+  
+  private func addButtonDidChanged(_ isEnabled: Bool) {
+    self.addButton.isEnabled = isEnabled
+  }
+  
+  private func textFieldVisiblityDidChanged(by isEven: Bool) {
+    isEven ? textFieldDidHidden() : textFieldDidShow()
+  }
+  
+  private func textFieldDidHidden() {
+    self.textFieldBackgroundView.isHidden = true
+    self.percentLabel.isHidden = true
+  }
+  
+  private func textFieldDidShow() {
+    self.textFieldBackgroundView.isHidden = false
+    self.percentLabel.isHidden = false
   }
 }
