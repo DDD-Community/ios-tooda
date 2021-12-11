@@ -41,3 +41,20 @@ final class NoteStockCellReactor: Reactor {
     return newState
   }
 }
+
+  // MARK: Extensions
+
+extension NoteStockCellReactor.Payload {
+  var state: StockChangeState {
+    let value = self.rate
+    
+    switch value {
+      case let _ where value > 0:
+        return .rise
+      case let _ where value == 0:
+        return .even
+      default:
+        return .fall
+    }
+  }
+}
