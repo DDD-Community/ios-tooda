@@ -10,30 +10,30 @@ import Foundation
 import UIKit
 
 enum StockChangeState: String, Codable {
-	case RISE
-	case EVEN
-	case FALL
+	case rise
+	case even
+	case fall
 }
 
 extension StockChangeState {
   var titleText: String {
     switch self {
-      case .RISE:
+      case .rise:
         return "+ 상승"
-      case .EVEN:
+      case .even:
         return "유지"
-      case .FALL:
+      case .fall:
         return "- 하락"
     }
   }
     
   var titleColor: UIColor {
     switch self {
-      case .RISE:
+      case .rise:
         return UIColor.subRed
-      case .EVEN:
+      case .even:
         return UIColor.gray2
-      case .FALL:
+      case .fall:
         return UIColor.subBlue
     }
   }

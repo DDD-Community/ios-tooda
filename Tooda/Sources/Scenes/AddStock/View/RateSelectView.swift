@@ -29,11 +29,11 @@ final class RateSelectView: UIView {
     $0.translatesAutoresizingMaskIntoConstraints = false
   }
   
-  private let riseButton = RateButton(stockState: .RISE)
-  private let evenButton = RateButton(stockState: .EVEN).then {
+  private let riseButton = RateButton(stockState: .rise)
+  private let evenButton = RateButton(stockState: .even).then {
     $0.isSelected = true
   }
-  private let fallButton = RateButton(stockState: .FALL)
+  private let fallButton = RateButton(stockState: .fall)
   
   var buttons: [RateButton] {
     return [self.riseButton, self.evenButton, self.fallButton]
