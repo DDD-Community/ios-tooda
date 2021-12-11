@@ -95,14 +95,14 @@ class NoteStockCell: BaseTableViewCell, View {
     
     self.titleLabel.snp.makeConstraints {
       $0.top.equalToSuperview().offset(11)
-      $0.left.equalToSuperview().offset(14)
+      $0.leading.equalToSuperview().offset(14)
       $0.bottom.equalToSuperview().offset(-14)
     }
     
     self.rateStackView.snp.makeConstraints {
       $0.centerY.equalTo(self.titleLabel)
-      $0.right.equalToSuperview().offset(-14)
-      $0.left.greaterThanOrEqualTo(self.titleLabel.snp.right).offset(14)
+      $0.trailing.equalToSuperview().offset(-14)
+      $0.leading.greaterThanOrEqualTo(self.titleLabel.snp.trailing).offset(14)
     }
     
     self.rateIndicatorLabel.snp.makeConstraints {
