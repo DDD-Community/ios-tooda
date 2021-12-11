@@ -258,22 +258,43 @@ extension CreateNoteViewController: UIImagePickerControllerDelegate, UINavigatio
 
 extension CreateNoteViewController: UITableViewDelegate {
   func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+    return self.generateEditableSwipeConfigure(at: indexPath)
+  }
+}
+
+// MARK: - Generate UISwipeActionsConfiguration
+
+extension CreateNoteViewController {
+  private func generateEditableSwipeConfigure(at indexPath: IndexPath) -> UISwipeActionsConfiguration? {
     switch dataSource[indexPath] {
       case .stock:
-        let delete = UIContextualAction(style: .destructive, title: "삭제") { _, _, completionHandler in
-          print("아이템을 제거해요: \(indexPath)")
-          completionHandler(true)
-        }
+        let delete = self.deleteCellAction(at: indexPath)
         
-        let rename = UIContextualAction(style: .normal, title: "수정") { _, _, completionHandler in
-          print("아이템을 수정해요: \(indexPath)")
-          completionHandler(true)
-        }
-        let swipeActionConfig = UISwipeActionsConfiguration(actions: [delete, rename])
+        let edit = self.deleteCellAction(at: indexPath)
+        
+        let swipeActionConfig = UISwipeActionsConfiguration(actions: [delete, edit])
         swipeActionConfig.performsFirstActionWithFullSwipe = false
         return swipeActionConfig
       default:
         return nil
     }
+  }
+  
+  private func deleteCellAction(at indexPath: IndexPath) -> UIContextualAction {
+    let action = UIContextualAction(style: .destructive, title: "삭제") { _, _, completionHandler in
+      print("아이템을 제거해요: \(indexPath)")
+      completionHandler(true)
+    }
+    
+    return action
+  }
+  
+  private func editCellAction(at indexPath: IndexPath) -> UIContextualAction {
+    let action = UIContextualAction(style: .normal, title: "수정") { _, _, completionHandler in
+      print("아이템을 수정해요: \(indexPath)")
+      completionHandler(true)
+    }
+    
+    return action
   }
 }
