@@ -52,8 +52,9 @@ class PopUpViewController: BaseViewController<PopUpReactor> {
     showPopUpView()
   }
   
-  override func configureConstraints() {
-    super.configureConstraints()
+  override func configureUI() {
+    super.configureUI()
+    
     view.do {
       $0.backgroundColor = .clear
       $0.addSubview(dimmedView)
@@ -63,6 +64,10 @@ class PopUpViewController: BaseViewController<PopUpReactor> {
       optionsPopUpView,
       textInputPopUpView
     )
+  }
+  
+  override func configureConstraints() {
+    super.configureConstraints()
     
     dimmedView.snp.makeConstraints {
       $0.edges.equalToSuperview()
