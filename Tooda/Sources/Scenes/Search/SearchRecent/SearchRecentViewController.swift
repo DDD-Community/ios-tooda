@@ -49,6 +49,7 @@ final class SearchRecentViewController: BaseViewController<SearchRecentReactor> 
           SearchRecentTitleCell.self,
           indexPath: indexPath
         )
+        header.delegate = self
         return header
 
       case .keyword:
@@ -174,5 +175,15 @@ extension SearchRecentViewController: SearchRecentKeywordCellDelegate {
     guard let index = sender.viewModel?.index else { return }
 
     self.rxRemoveKeyword.accept(index)
+  }
+}
+
+
+// MARK: SearchRecentKeywordCellDelegate
+
+extension SearchRecentViewController: SearchRecentTitleCellDelegate {
+
+  func didTapRemoveAll(_ sender: SearchRecentTitleCell) {
+
   }
 }

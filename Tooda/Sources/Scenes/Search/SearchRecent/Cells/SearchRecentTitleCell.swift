@@ -10,6 +10,10 @@ import UIKit
 
 import SnapKit
 
+protocol SearchRecentTitleCellDelegate: AnyObject {
+  func didTapRemoveAll(_ sender: SearchRecentTitleCell)
+}
+
 final class SearchRecentTitleCell: BaseCollectionViewCell {
 
   // MARK: Constants
@@ -33,11 +37,28 @@ final class SearchRecentTitleCell: BaseCollectionViewCell {
     )
   }
 
+
+  // MARK: Properties
+
+  weak var delegate: SearchRecentTitleCellDelegate?
+
   override func configureUI() {
+    super.configureUI()
+
     self.contentView.do {
       $0.addSubview(self.titleLabel)
       $0.addSubview(self.removeAllButton)
     }
+
+    self.removeAllButton.addTarget(
+      self,
+      action: #selector(self.didTapRemoveAll),
+      for: .touchUpInside
+    )
+  }
+
+  override func setupConstraints() {
+    super.setupConstraints()
 
     self.titleLabel.snp.makeConstraints {
       $0.left.equalToSuperview()
@@ -51,5 +72,15 @@ final class SearchRecentTitleCell: BaseCollectionViewCell {
       $0.top.equalToSuperview()
       $0.bottom.equalToSuperview()
     }
+  }
+}
+
+
+// MARK: - Action
+
+extension SearchRecentTitleCell {
+
+  @objc private func didTapRemoveAll() {
+    self.delegate?.didTapRemoveAll(self)
   }
 }
