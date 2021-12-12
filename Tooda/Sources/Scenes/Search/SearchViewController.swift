@@ -134,6 +134,9 @@ extension SearchViewController: UISearchBarDelegate {
     guard let text = searchBar.text,
           text.isEmpty == false else { return }
 
+    self.addResultViewControllerIfNeeded()
+
+    self.recentViewController.view.isHidden = true
     self.recentViewController.rxSearch.accept(text)
   }
 }
@@ -143,7 +146,12 @@ extension SearchViewController: UISearchBarDelegate {
 
 extension SearchViewController {
 
-  private func addChildViewController() {
+  private func addResultViewControllerIfNeeded() {
+    guard self.resultViewController.view.superview == nil else { return }
 
+    self.addChild(self.resultViewController)
+    self.resultViewController.view.frame = self.view.frame
+    self.view.addSubview(self.resultViewController.view)
+    self.resultViewController.didMove(toParent: self)
   }
 }
