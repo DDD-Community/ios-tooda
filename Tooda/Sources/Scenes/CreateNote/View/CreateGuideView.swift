@@ -10,6 +10,10 @@ import UIKit
 import Then
 import SnapKit
 
+protocol CreateNoteGuideViewDelegate: AnyObject {
+  func contentDidTapped()
+}
+
 final class CreateGuideView: UIView {
   
   private(set) var didSetupConstraints = false
@@ -24,7 +28,9 @@ final class CreateGuideView: UIView {
     static let shadowColor = UIColor(hex: "#394B44")
   }
   
-  private let contentView = UIView().then {
+  weak var delegate: CreateNoteGuideViewDelegate?
+  
+  let contentView = UIView().then {
     $0.layer.masksToBounds = false
   }
   
@@ -48,6 +54,7 @@ final class CreateGuideView: UIView {
   override init(frame: CGRect) {
     defer {
       self.configureUI()
+      self.configureGesture()
     }
     super.init(frame: frame)
   }
@@ -103,6 +110,16 @@ final class CreateGuideView: UIView {
     super.layoutSubviews()
     
     self.applyGradientAndShadow(self.contentView)
+  }
+  
+  private func configureGesture() {
+    let tapGesture = UITapGestureRecognizer(target: self, action: #selector(contentViewDidTapped))
+    self.contentView.addGestureRecognizer(tapGesture)
+  }
+  
+  @objc
+  private func contentViewDidTapped(_ sender: Any?) {
+    self.delegate?.contentDidTapped()
   }
   
   private func applyGradientAndShadow(_ view: UIView) {
