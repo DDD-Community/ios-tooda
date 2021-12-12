@@ -282,7 +282,6 @@ extension CreateNoteViewController {
   
   private func deleteCellAction(at indexPath: IndexPath) -> UIContextualAction {
     let action = UIContextualAction(style: .destructive, title: "삭제") { _, _, completionHandler in
-      print("아이템을 제거해요: \(indexPath)")
       completionHandler(true)
     }
     
@@ -291,7 +290,6 @@ extension CreateNoteViewController {
   
   private func editCellAction(at indexPath: IndexPath) -> UIContextualAction {
     let action = UIContextualAction(style: .normal, title: "수정") { _, _, completionHandler in
-      print("아이템을 수정해요: \(indexPath)")
       completionHandler(true)
     }
     
