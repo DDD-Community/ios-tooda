@@ -75,7 +75,6 @@ extension SearchRecentReactor {
   }
 
   private func loadRecentKeyword() -> Observable<Mutation> {
-    // 일단 더미로
     if let localKeywords: [String] = self.dependency
         .userDefaultService
         .value(forKey: .recentSearchKeyword) {
@@ -119,7 +118,6 @@ extension SearchRecentReactor {
       .value(forKey: .recentSearchKeyword) ?? []
 
     localKeywords.insert(text, at: 0)
-
     self.dependency.userDefaultService.set(
       value: localKeywords,
       forKey: .recentSearchKeyword
@@ -138,7 +136,6 @@ extension SearchRecentReactor {
       .value(forKey: .recentSearchKeyword) ?? []
 
     localKeywords.remove(at: index)
-
     self.dependency.userDefaultService.set(
       value: localKeywords,
       forKey: .recentSearchKeyword
