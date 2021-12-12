@@ -49,8 +49,32 @@ class PopUpViewController: BaseViewController<PopUpReactor> {
   
   override func viewDidLoad() {
     super.viewDidLoad()
-    setupUI()
     showPopUpView()
+  }
+  
+  override func configureConstraints() {
+    super.configureConstraints()
+    view.do {
+      $0.backgroundColor = .clear
+      $0.addSubview(dimmedView)
+    }
+    
+    dimmedView.addSubviews(
+      optionsPopUpView,
+      textInputPopUpView
+    )
+    
+    dimmedView.snp.makeConstraints {
+      $0.edges.equalToSuperview()
+    }
+    
+    optionsPopUpView.snp.makeConstraints {
+      $0.center.equalToSuperview()
+    }
+    
+    textInputPopUpView.snp.makeConstraints {
+      $0.center.equalToSuperview()
+    }
   }
   
   // MARK: - Private methods
@@ -78,32 +102,5 @@ class PopUpViewController: BaseViewController<PopUpReactor> {
       }
     }
     displayPopUpAnimator.startAnimation()
-  }
-}
-
-// MARK: - SetupUI
-extension PopUpViewController {
-  private func setupUI() {
-    view.do {
-      $0.backgroundColor = .clear
-      $0.addSubview(dimmedView)
-    }
-    
-    dimmedView.addSubviews(
-      optionsPopUpView,
-      textInputPopUpView
-    )
-    
-    dimmedView.snp.makeConstraints {
-      $0.edges.equalToSuperview()
-    }
-    
-    optionsPopUpView.snp.makeConstraints {
-      $0.center.equalToSuperview()
-    }
-    
-    textInputPopUpView.snp.makeConstraints {
-      $0.center.equalToSuperview()
-    }
   }
 }

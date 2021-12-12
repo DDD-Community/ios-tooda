@@ -27,7 +27,10 @@ final class LoginViewController: BaseViewController<LoginReactor> {
   }
   
   private let loginButton = BaseButton(width: nil, height: Metric.loginButtonHeight).then {
-    $0.setButtonTitle(with: "시작하기")
+    $0.setButtonTitle(
+      with: "시작하기",
+      style: TextStyle.subTitleBold(color: .white)
+    )
   }
   
   // MARK: - Con(De)structor

@@ -10,10 +10,6 @@ import UIKit
 
 class BaseButton: UIButton {
   
-  enum Font {
-    static let title = TextStyle.subTitleBold(color: .white)
-  }
-  
   var width: CGFloat?
   var height: CGFloat
 
@@ -53,9 +49,9 @@ class BaseButton: UIButton {
     }
   }
   
-  func setButtonTitle(with title: String) {
+  func setButtonTitle(with title: String, style: String.Style) {
     setAttributedTitle(
-      title.styled(with: Font.title),
+      title.styled(with: style),
       for: .normal
     )
   }
