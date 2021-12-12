@@ -27,6 +27,7 @@ final class SearchViewController: BaseViewController<SearchReactor> {
   // MARK: UI
 
   private let recentViewController: SearchRecentViewController
+  private let resultViewController: SearchResultViewController
 
   private let searchBar = UISearchBar().then {
     $0.searchTextPositionAdjustment = .init(horizontal: 5.0, vertical: 0.0)
@@ -38,9 +39,11 @@ final class SearchViewController: BaseViewController<SearchReactor> {
 
   init(
     reactor: SearchReactor,
-    recentViewController: SearchRecentViewController
+    recentViewController: SearchRecentViewController,
+    resultViewController: SearchResultViewController
   ) {
     self.recentViewController = recentViewController
+    self.resultViewController = resultViewController
     super.init()
     self.reactor = reactor
   }
@@ -131,6 +134,9 @@ extension SearchViewController: UISearchBarDelegate {
     guard let text = searchBar.text,
           text.isEmpty == false else { return }
 
+    self.addResultViewControllerIfNeeded()
+
+    self.recentViewController.view.isHidden = true
     self.recentViewController.rxSearch.accept(text)
   }
 }
@@ -140,7 +146,12 @@ extension SearchViewController: UISearchBarDelegate {
 
 extension SearchViewController {
 
-  private func addChildViewController() {
+  private func addResultViewControllerIfNeeded() {
+    guard self.resultViewController.view.superview == nil else { return }
 
+    self.addChild(self.resultViewController)
+    self.resultViewController.view.frame = self.view.frame
+    self.view.addSubview(self.resultViewController.view)
+    self.resultViewController.didMove(toParent: self)
   }
 }
