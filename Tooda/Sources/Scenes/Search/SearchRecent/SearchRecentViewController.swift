@@ -128,6 +128,20 @@ final class SearchRecentViewController: BaseViewController<SearchRecentReactor> 
       .bind(to: reactor.action)
       .disposed(by: self.disposeBag)
 
+    self.collectionView.rx
+      .itemSelected
+      .flatMap { [weak self] indexPath -> Observable<String> in
+        guard let self = self,
+              let cell = self.collectionView.cellForItem(at: indexPath) as? SearchRecentKeywordCell,
+              let text = cell.viewModel?.title
+        else {
+          return .empty()
+        }
+        return .just(text)
+      }
+      .bind(to: self.rxSearch)
+      .disposed(by: self.disposeBag)
+
     // State
 
     reactor.state

@@ -78,6 +78,17 @@ final class SearchViewController: BaseViewController<SearchReactor> {
       .map { SearchReactor.Action.back }
       .bind(to: reactor.action)
       .disposed(by: self.disposeBag)
+
+    self.recentViewController.rxSearch
+      .do(onNext: { [weak self] _ in
+        guard let self = self else { return }
+        self.searchBar.resignFirstResponder()
+        self.addResultViewControllerIfNeeded()
+
+        self.recentViewController.view.isHidden = true
+      })
+      .subscribe()
+      .disposed(by: self.disposeBag)
   }
 
   override func configureUI() {
