@@ -270,7 +270,7 @@ extension CreateNoteViewController {
       case .stock:
         let delete = self.deleteCellAction(at: indexPath)
         
-        let edit = self.deleteCellAction(at: indexPath)
+        let edit = self.editCellAction(at: indexPath)
         
         let swipeActionConfig = UISwipeActionsConfiguration(actions: [delete, edit])
         swipeActionConfig.performsFirstActionWithFullSwipe = false
