@@ -83,9 +83,7 @@ final class SearchViewController: BaseViewController<SearchReactor> {
       .do(onNext: { [weak self] _ in
         guard let self = self else { return }
         self.searchBar.resignFirstResponder()
-        self.addResultViewControllerIfNeeded()
-
-        self.recentViewController.view.isHidden = true
+        self.moveToResultViewController()
       })
       .subscribe()
       .disposed(by: self.disposeBag)
@@ -145,9 +143,8 @@ extension SearchViewController: UISearchBarDelegate {
     guard let text = searchBar.text,
           text.isEmpty == false else { return }
 
-    self.addResultViewControllerIfNeeded()
+    self.moveToResultViewController()
 
-    self.recentViewController.view.isHidden = true
     self.recentViewController.rxSearch.accept(text)
   }
 }
@@ -157,7 +154,9 @@ extension SearchViewController: UISearchBarDelegate {
 
 extension SearchViewController {
 
-  private func addResultViewControllerIfNeeded() {
+  private func moveToResultViewController() {
+    self.recentViewController.view.isHidden = true
+
     guard self.resultViewController.view.superview == nil else { return }
 
     self.addChild(self.resultViewController)
