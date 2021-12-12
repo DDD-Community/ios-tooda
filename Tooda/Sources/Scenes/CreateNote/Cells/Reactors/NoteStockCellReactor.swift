@@ -18,13 +18,18 @@ final class NoteStockCellReactor: Reactor {
   }
 
   struct State {
-
+    var payload: Payload
+  }
+  
+  struct Payload {
+    var name: String
+    var rate: Float
   }
 
   let initialState: State
 
-  init() {
-    initialState = State()
+  init(payload: Payload) {
+    initialState = State(payload: payload)
   }
 
   func mutate(action: Action) -> Observable<Mutation> {
@@ -34,5 +39,22 @@ final class NoteStockCellReactor: Reactor {
   func reduce(state: State, mutation: Action) -> State {
     var newState = state
     return newState
+  }
+}
+
+  // MARK: Extensions
+
+extension NoteStockCellReactor.Payload {
+  var state: StockChangeState {
+    let value = self.rate
+    
+    switch value {
+      case let _ where value > 0:
+        return .rise
+      case let _ where value == 0:
+        return .even
+      default:
+        return .fall
+    }
   }
 }

@@ -35,12 +35,14 @@ final class CreateNoteViewReactor: Reactor {
     case didSelectedImageItem(IndexPath)
     case uploadImage(Data)
     case showAddStockView
+    case stockItemDidAdded(NoteStock)
   }
 
   enum Mutation {
     case initializeForm([NoteSection])
     case present(ViewPresentType)
     case fetchImageSection(NoteSectionItem)
+    case fetchStockSection(NoteSectionItem)
   }
 
   struct State: Then {
@@ -73,6 +75,8 @@ final class CreateNoteViewReactor: Reactor {
     case .showAddStockView:
       self.dependency.coordinator.transition(to: .addStock(completion: self.addStockCompletionRelay), using: .modal, animated: true, completion: nil)
       return .empty()
+    case .stockItemDidAdded(let stock):
+      return self.makeStockSectionItem(stock)
     default:
       return .empty()
     }
@@ -92,9 +96,15 @@ final class CreateNoteViewReactor: Reactor {
       newState.presentType = type
     case .fetchImageSection(let sectionItem):
       newState.sections[NoteSection.Identity.image.rawValue].items = [sectionItem]
+    case .fetchStockSection(let sectionItem):
+      newState.sections[NoteSection.Identity.stock.rawValue].items.append(sectionItem)
     }
 
     return newState
+  }
+  
+  func transform(action: Observable<Action>) -> Observable<Action> {
+    return Observable.merge(action, self.addStockCompletionRelay.map { Action.stockItemDidAdded($0) })
   }
 
   private func makeSections() -> [NoteSection] {
@@ -179,6 +189,21 @@ extension CreateNoteViewReactor {
     imageCellReactor.action.onNext(.addImage(imageURL))
 
     return .empty()
+  }
+}
+
+// MARK: Add Stock Items
+
+extension CreateNoteViewReactor {
+  private func makeStockSectionItem(_ stock: NoteStock) -> Observable<Mutation> {
+    let reator = NoteStockCellReactor(
+      payload: .init(name: stock.name,
+                     rate: stock.changeRate ?? 0.0)
+    )
+    
+    let sectionItem = NoteSectionItem.stock(reator)
+    
+    return .just(.fetchStockSection(sectionItem))
   }
 }
 

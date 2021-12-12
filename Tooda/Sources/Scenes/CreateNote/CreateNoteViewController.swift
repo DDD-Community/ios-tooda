@@ -55,6 +55,10 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
       cell.selectionStyle = .none
       
       return cell
+    case .stock(let reactor):
+        let cell = tableView.dequeue(NoteStockCell.self, indexPath: indexPath)
+        cell.configure(with: reactor)
+        return cell
     default:
       return UITableViewCell()
     }
@@ -74,6 +78,7 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
     $0.register(NoteContentCell.self)
     $0.register(EmptyNoteStockCell.self)
     $0.register(NoteImageCell.self)
+    $0.register(NoteStockCell.self)
   }
 
   // MARK: Initialize
