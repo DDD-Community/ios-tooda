@@ -55,6 +55,9 @@ final class SearchRecentKeywordCell: BaseCollectionViewCell {
 
   weak var delegate: SearchRecentKeywordCellDelegate?
 
+  private(set) var viewModel: ViewModel?
+
+
   // MARK: Initializing
 
   override init(frame: CGRect) {
@@ -106,6 +109,8 @@ final class SearchRecentKeywordCell: BaseCollectionViewCell {
   }
 
   func configure(viewModel: ViewModel) {
+    self.viewModel = viewModel
+
     self.titleLabel.attributedText = viewModel.title.styled(with: Font.title)
 
     self.setNeedsUpdateConstraints()
