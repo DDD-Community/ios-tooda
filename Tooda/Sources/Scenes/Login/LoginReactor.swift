@@ -75,16 +75,16 @@ extension LoginReactor {
   }
   
   private func routeToHomeMutation() -> Observable<Mutation> {
-    dependency.coordinator.start(
-      from: .home,
-      shouldNavigationWrapped: true
-    )
-    
     FirebaseAnalytics.Analytics.logEvent(
         AnalyticsEventLogin,
       parameters: [
         AnalyticsParameterSuccess: 1
       ]
+    )
+    
+    dependency.coordinator.start(
+      from: .home,
+      shouldNavigationWrapped: true
     )
     
     return Observable<Mutation>.empty()
