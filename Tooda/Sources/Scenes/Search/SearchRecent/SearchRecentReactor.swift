@@ -28,6 +28,7 @@ final class SearchRecentReactor: Reactor {
     case beginSearch
     case search(text: String)
     case remove(index: Int)
+    case removeAll
   }
 
   enum Mutation {
@@ -67,6 +68,9 @@ extension SearchRecentReactor {
 
     case let .remove(index):
       return self.removedKeyword(index)
+
+    case .removeAll:
+      return self.removeAllKeyword()
     }
   }
 
@@ -86,6 +90,8 @@ extension SearchRecentReactor {
   }
 
   private func mappintToSectionModels(keywords: [String]) -> [SearchRecentSectionModel] {
+    guard keywords.isEmpty == false else { return [] }
+
     return [
       SearchRecentSectionModel(
         identity: .header,
@@ -142,6 +148,17 @@ extension SearchRecentReactor {
       Mutation.setKeywords(
         self.mappintToSectionModels(keywords: localKeywords)
       )
+    )
+  }
+
+  private func removeAllKeyword() -> Observable<Mutation> {
+    self.dependency.userDefaultService.set(
+      value: [],
+      forKey: .recentSearchKeyword
+    )
+
+    return Observable<Mutation>.just(
+      Mutation.setKeywords([])
     )
   }
 }

@@ -72,6 +72,7 @@ final class SearchRecentViewController: BaseViewController<SearchRecentReactor> 
   let rxSearch = PublishRelay<String>()
 
   private let rxRemoveKeyword = PublishRelay<Int>()
+  private let rxRemoveAllKeyword = PublishRelay<Void>()
 
 
   // MARK: Initialzing
@@ -118,6 +119,12 @@ final class SearchRecentViewController: BaseViewController<SearchRecentReactor> 
     self.rxRemoveKeyword
       .asObservable()
       .map { SearchRecentReactor.Action.remove(index: $0) }
+      .bind(to: reactor.action)
+      .disposed(by: self.disposeBag)
+
+    self.rxRemoveAllKeyword
+      .asObservable()
+      .map { SearchRecentReactor.Action.removeAll }
       .bind(to: reactor.action)
       .disposed(by: self.disposeBag)
 
@@ -184,6 +191,6 @@ extension SearchRecentViewController: SearchRecentKeywordCellDelegate {
 extension SearchRecentViewController: SearchRecentTitleCellDelegate {
 
   func didTapRemoveAll(_ sender: SearchRecentTitleCell) {
-
+    self.rxRemoveAllKeyword.accept(())
   }
 }
