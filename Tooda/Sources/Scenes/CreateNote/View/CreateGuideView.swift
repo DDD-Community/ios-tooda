@@ -18,6 +18,15 @@ final class CreateGuideView: UIView {
     static let description = TextStyle.body(color: .gray3)
   }
   
+  private enum Constants {
+    static let gradientGrayColor = UIColor(hex: "#EDF0F0")
+    static let shadowColor = UIColor(hex: "#394B44")
+  }
+  
+  private let contentView = UIView().then {
+    $0.layer.masksToBounds = false
+  }
+  
   private let titleLabel = UILabel().then {
     $0.textAlignment = .center
     $0.numberOfLines = 1
@@ -56,26 +65,23 @@ final class CreateGuideView: UIView {
   
   private func configureUI() {
     
-    self.do {
-      $0.backgroundColor = .white
-      $0.layer.cornerRadius = 16
-      $0.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
-      $0.layer.shadowColor = UIColor(hex: "#394B44").withAlphaComponent(0.12).cgColor
-      $0.layer.shadowOffset = CGSize(width: 0, height: 8)
-      $0.layer.shadowOpacity = 1
-      $0.layer.shadowRadius = 40.0
-    }
-    
     self.titleLabel.do {
       $0.attributedText = Date().string(.dot).styled(with: Font.date)
     }
     
-    self.addSubviews(titleLabel, descriptionContainerView)
+    self.addSubview(contentView)
+    
+    self.contentView.addSubviews(titleLabel, descriptionContainerView)
     
     self.descriptionContainerView.addSubview(descriptionLabel)
   }
   
   private func setupConstraints() {
+    
+    contentView.snp.makeConstraints {
+      $0.edges.equalToSuperview()
+    }
+    
     titleLabel.snp.makeConstraints {
       $0.top.equalToSuperview().offset(20)
       $0.centerX.equalToSuperview()
@@ -90,5 +96,39 @@ final class CreateGuideView: UIView {
     descriptionLabel.snp.makeConstraints {
       $0.edges.equalToSuperview().inset(UIEdgeInsets(top: 12, left: 14, bottom: 10, right: 14))
     }
+  }
+  
+  override func layoutSubviews() {
+    super.layoutSubviews()
+    
+    self.applyGradientAndShadow(self.contentView)
+  }
+  
+  private func applyGradientAndShadow(_ view: UIView) {
+    view.do {
+      let gradient = $0.generateGradient(colors: [UIColor.white, Constants.gradientGrayColor])
+      
+      gradient.cornerRadius = 16
+      gradient.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+      
+      gradient.makeShadow(color: Constants.shadowColor.withAlphaComponent(0.12),
+                          radius: 40,
+                          opacity: 1,
+                          offset: CGSize(width: 0, height: 8))
+      
+      $0.layer.insertSublayer(gradient, at: 0)
+    }
+  }
+}
+
+// MARK: - Extensions
+
+private extension CALayer {
+  func makeShadow(color: UIColor, radius: CGFloat, opacity: Float, offset: CGSize) {
+    self.masksToBounds = false
+    self.shadowColor = color.cgColor
+    self.shadowOpacity = opacity
+    self.shadowOffset = offset
+    self.shadowRadius = radius
   }
 }
