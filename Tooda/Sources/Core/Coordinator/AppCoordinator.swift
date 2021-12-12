@@ -126,6 +126,8 @@ final class AppCoordinator: AppCoordinatorType {
           return $0 is StockRateInputViewController
         case .popUp:
           return $0 is PopUpViewController
+        case .searchResult:
+          return $0 is SearchResultViewController
         }
       }) else { return }
 

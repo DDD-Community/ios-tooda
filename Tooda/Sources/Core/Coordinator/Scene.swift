@@ -23,4 +23,5 @@ enum Scene {
   case searchRecent
   case stockRateInput(payload: StockRateInputReactor.Payload)
   case popUp(type: PopUpReactor.PopUpType)
+  case searchResult
 }
