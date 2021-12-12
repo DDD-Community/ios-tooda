@@ -1,5 +1,5 @@
 //
-//  CreateGuideView.swift
+//  CreateNoteGuideView.swift
 //  Tooda
 //
 //  Created by Lyine on 2021/12/12.
@@ -14,7 +14,7 @@ protocol CreateNoteGuideViewDelegate: AnyObject {
   func contentDidTapped()
 }
 
-final class CreateGuideView: UIView {
+final class CreateNoteGuideView: UIView {
   
   private(set) var didSetupConstraints = false
   
