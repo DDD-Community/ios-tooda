@@ -64,7 +64,7 @@ extension SearchRecentReactor {
       return self.loadRecentKeyword()
 
     case let .search(text):
-      return self.createKeyword(text)
+      return self.createKeywordIfNeeded(text)
 
     case let .remove(index):
       return self.removedKeyword(index)
@@ -112,10 +112,15 @@ extension SearchRecentReactor {
     ]
   }
 
-  private func createKeyword(_ text: String) -> Observable<Mutation> {
+  private func createKeywordIfNeeded(_ text: String) -> Observable<Mutation> {
     var localKeywords: [String] = self.dependency
       .userDefaultService
       .value(forKey: .recentSearchKeyword) ?? []
+
+    if let alreadyExistKeywordIndex = localKeywords.firstIndex(where: { $0 == text }) {
+      guard alreadyExistKeywordIndex != 0 else { return .empty() }
+      localKeywords.remove(at: alreadyExistKeywordIndex)
+    }
 
     localKeywords.insert(text, at: 0)
     self.dependency.userDefaultService.set(

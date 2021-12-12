@@ -78,6 +78,15 @@ final class SearchViewController: BaseViewController<SearchReactor> {
       .map { SearchReactor.Action.back }
       .bind(to: reactor.action)
       .disposed(by: self.disposeBag)
+
+    self.recentViewController.rxSearch
+      .do(onNext: { [weak self] _ in
+        guard let self = self else { return }
+        self.searchBar.resignFirstResponder()
+        self.moveToResultViewController()
+      })
+      .subscribe()
+      .disposed(by: self.disposeBag)
   }
 
   override func configureUI() {
@@ -134,9 +143,8 @@ extension SearchViewController: UISearchBarDelegate {
     guard let text = searchBar.text,
           text.isEmpty == false else { return }
 
-    self.addResultViewControllerIfNeeded()
+    self.moveToResultViewController()
 
-    self.recentViewController.view.isHidden = true
     self.recentViewController.rxSearch.accept(text)
   }
 }
@@ -146,7 +154,9 @@ extension SearchViewController: UISearchBarDelegate {
 
 extension SearchViewController {
 
-  private func addResultViewControllerIfNeeded() {
+  private func moveToResultViewController() {
+    self.recentViewController.view.isHidden = true
+
     guard self.resultViewController.view.superview == nil else { return }
 
     self.addChild(self.resultViewController)
