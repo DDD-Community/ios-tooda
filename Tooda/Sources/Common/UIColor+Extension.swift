@@ -64,6 +64,7 @@ enum AppColor: String {
   case gray4
   case subBlue
   case subRed
+  case subGreen
   case white
   case backgroundWithAlpha40
 }
@@ -111,6 +112,10 @@ extension UIColor {
   
   class var subRed: UIColor {
     return .init(hex: "#FC4A4A")
+  }
+  
+  class var subGreen: UIColor {
+    return .init(hex: "#F2FDF6")
   }
 }
 
