@@ -27,6 +27,7 @@ final class SearchViewController: BaseViewController<SearchReactor> {
   // MARK: UI
 
   private let recentViewController: SearchRecentViewController
+  private let resultViewController: SearchResultViewController
 
   private let searchBar = UISearchBar().then {
     $0.searchTextPositionAdjustment = .init(horizontal: 5.0, vertical: 0.0)
@@ -38,9 +39,11 @@ final class SearchViewController: BaseViewController<SearchReactor> {
 
   init(
     reactor: SearchReactor,
-    recentViewController: SearchRecentViewController
+    recentViewController: SearchRecentViewController,
+    resultViewController: SearchResultViewController
   ) {
     self.recentViewController = recentViewController
+    self.resultViewController = resultViewController
     super.init()
     self.reactor = reactor
   }

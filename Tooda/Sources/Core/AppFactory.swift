@@ -89,7 +89,8 @@ final class AppFactory: AppFactoryType {
 
       return SearchViewController(
         reactor: reactor,
-        recentViewController: self.makeViewController(from: .searchRecent) as! SearchRecentViewController
+        recentViewController: self.makeViewController(from: .searchRecent) as! SearchRecentViewController,
+        resultViewController: self.makeViewController(from: .searchResult) as! SearchResultViewController
       )
 
     case .noteList:
