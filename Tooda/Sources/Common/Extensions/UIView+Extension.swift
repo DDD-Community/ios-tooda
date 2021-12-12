@@ -26,3 +26,13 @@ extension UIView {
     return gradient
   }
 }
+
+extension UIView {
+  func configureShadow(color: UIColor, radius: CGFloat, opacity: Float, offset: CGSize) {
+    self.layer.masksToBounds = false
+    self.layer.shadowColor = color.cgColor
+    self.layer.shadowOpacity = opacity
+    self.layer.shadowOffset = offset
+    self.layer.shadowRadius = radius
+  }
+}
