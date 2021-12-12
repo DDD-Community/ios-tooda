@@ -27,11 +27,12 @@ final class SearchRecentReactor: Reactor {
   enum Action {
     case beginSearch
     case search(text: String)
+    case remove(index: Int)
+    case removeAll
   }
 
   enum Mutation {
     case setKeywords([SearchRecentSectionModel])
-    case updateKeywords(keyword: SearchRecentKeywordCell.ViewModel)
   }
 
   struct State {
@@ -64,11 +65,16 @@ extension SearchRecentReactor {
 
     case let .search(text):
       return self.createKeyword(text)
+
+    case let .remove(index):
+      return self.removedKeyword(index)
+
+    case .removeAll:
+      return self.removeAllKeyword()
     }
   }
 
   private func loadRecentKeyword() -> Observable<Mutation> {
-    // 일단 더미로
     if let localKeywords: [String] = self.dependency
         .userDefaultService
         .value(forKey: .recentSearchKeyword) {
@@ -83,6 +89,8 @@ extension SearchRecentReactor {
   }
 
   private func mappintToSectionModels(keywords: [String]) -> [SearchRecentSectionModel] {
+    guard keywords.isEmpty == false else { return [] }
+
     return [
       SearchRecentSectionModel(
         identity: .header,
@@ -92,9 +100,12 @@ extension SearchRecentReactor {
       ),
       SearchRecentSectionModel(
         identity: .keyword,
-        items: keywords.map {
+        items: keywords.enumerated().map {
           SearchRecentSectionModel.SectionItem.keyword(
-            SearchRecentKeywordCell.ViewModel(title: $0)
+            SearchRecentKeywordCell.ViewModel(
+              title: $0.element,
+              index: $0.offset
+            )
           )
         }
       )
@@ -107,18 +118,44 @@ extension SearchRecentReactor {
       .value(forKey: .recentSearchKeyword) ?? []
 
     localKeywords.insert(text, at: 0)
-
     self.dependency.userDefaultService.set(
       value: localKeywords,
       forKey: .recentSearchKeyword
     )
 
     return Observable<Mutation>.just(
-      Mutation.updateKeywords(
-        keyword: SearchRecentKeywordCell.ViewModel(
-          title: text
-        )
+      Mutation.setKeywords(
+        self.mappintToSectionModels(keywords: localKeywords)
       )
+    )
+  }
+
+  private func removedKeyword(_ index: Int) -> Observable<Mutation> {
+    var localKeywords: [String] = self.dependency
+      .userDefaultService
+      .value(forKey: .recentSearchKeyword) ?? []
+
+    localKeywords.remove(at: index)
+    self.dependency.userDefaultService.set(
+      value: localKeywords,
+      forKey: .recentSearchKeyword
+    )
+
+    return Observable<Mutation>.just(
+      Mutation.setKeywords(
+        self.mappintToSectionModels(keywords: localKeywords)
+      )
+    )
+  }
+
+  private func removeAllKeyword() -> Observable<Mutation> {
+    self.dependency.userDefaultService.set(
+      value: [],
+      forKey: .recentSearchKeyword
+    )
+
+    return Observable<Mutation>.just(
+      Mutation.setKeywords([])
     )
   }
 }
@@ -134,16 +171,6 @@ extension SearchRecentReactor {
     switch mutation {
     case let .setKeywords(keywords):
       newState.keywords = keywords
-
-    case let .updateKeywords(keyword):
-      guard let index = newState.keywords.firstIndex(where: {
-        $0.identity == .keyword
-      }) else { break }
-
-      newState.keywords[index].items.insert(
-        .keyword(keyword),
-        at: 0
-      )
     }
     return newState
   }

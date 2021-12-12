@@ -37,8 +37,9 @@ final class SearchRecentViewController: BaseViewController<SearchRecentReactor> 
   // MARK: Properties
 
   private lazy var dataSource = RxCollectionViewSectionedReloadDataSource<SearchRecentSectionModel>(
-    configureCell: { section, collectionView, indexPath, item -> UICollectionViewCell in
-      guard let section = section.sectionModels[safe: indexPath.section]?.identity else {
+    configureCell: { [weak self] section, collectionView, indexPath, item -> UICollectionViewCell in
+      guard let self = self,
+            let section = section.sectionModels[safe: indexPath.section]?.identity else {
         return .init()
       }
 
@@ -48,6 +49,7 @@ final class SearchRecentViewController: BaseViewController<SearchRecentReactor> 
           SearchRecentTitleCell.self,
           indexPath: indexPath
         )
+        header.delegate = self
         return header
 
       case .keyword:
@@ -57,6 +59,7 @@ final class SearchRecentViewController: BaseViewController<SearchRecentReactor> 
           indexPath: indexPath
         )
 
+        cell.delegate = self
         cell.configure(viewModel: viewModel)
         return cell
       }
@@ -67,6 +70,9 @@ final class SearchRecentViewController: BaseViewController<SearchRecentReactor> 
 
   let rxBeginSearch = PublishRelay<Void>()
   let rxSearch = PublishRelay<String>()
+
+  private let rxRemoveKeyword = PublishRelay<Int>()
+  private let rxRemoveAllKeyword = PublishRelay<Void>()
 
 
   // MARK: Initialzing
@@ -97,6 +103,7 @@ final class SearchRecentViewController: BaseViewController<SearchRecentReactor> 
       .disposed(by: self.disposeBag)
 
     // Action
+
     self.rxBeginSearch
       .asObservable()
       .map { SearchRecentReactor.Action.beginSearch }
@@ -106,6 +113,18 @@ final class SearchRecentViewController: BaseViewController<SearchRecentReactor> 
     self.rxSearch
       .asObservable()
       .map { SearchRecentReactor.Action.search(text: $0) }
+      .bind(to: reactor.action)
+      .disposed(by: self.disposeBag)
+
+    self.rxRemoveKeyword
+      .asObservable()
+      .map { SearchRecentReactor.Action.remove(index: $0) }
+      .bind(to: reactor.action)
+      .disposed(by: self.disposeBag)
+
+    self.rxRemoveAllKeyword
+      .asObservable()
+      .map { SearchRecentReactor.Action.removeAll }
       .bind(to: reactor.action)
       .disposed(by: self.disposeBag)
 
@@ -151,5 +170,27 @@ extension SearchRecentViewController: UICollectionViewDelegateFlowLayout {
     guard let section = self.dataSource.sectionModels[safe: section]?.identity else { return .zero }
 
     return section.edgeInsets
+  }
+}
+
+
+// MARK: SearchRecentKeywordCellDelegate
+
+extension SearchRecentViewController: SearchRecentKeywordCellDelegate {
+
+  func didTapRemove(_ sender: SearchRecentKeywordCell) {
+    guard let index = sender.viewModel?.index else { return }
+
+    self.rxRemoveKeyword.accept(index)
+  }
+}
+
+
+// MARK: SearchRecentKeywordCellDelegate
+
+extension SearchRecentViewController: SearchRecentTitleCellDelegate {
+
+  func didTapRemoveAll(_ sender: SearchRecentTitleCell) {
+    self.rxRemoveAllKeyword.accept(())
   }
 }
