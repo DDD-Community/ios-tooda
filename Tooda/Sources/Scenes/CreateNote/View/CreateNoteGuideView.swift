@@ -23,7 +23,7 @@ final class CreateNoteGuideView: UIView {
     static let description = TextStyle.body(color: .gray3)
   }
   
-  private enum Constants {
+  private enum Const {
     static let gradientGrayColor = UIColor(hex: "#EDF0F0")
     static let shadowColor = UIColor(hex: "#394B44")
   }
@@ -124,12 +124,12 @@ final class CreateNoteGuideView: UIView {
   
   private func applyGradientAndShadow(_ view: UIView) {
     view.do {
-      let gradient = $0.generateGradient(colors: [UIColor.white, Constants.gradientGrayColor])
+      let gradient = $0.generateGradient(colors: [UIColor.white, Const.gradientGrayColor])
       
       gradient.cornerRadius = 16
       gradient.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
       
-      gradient.makeShadow(color: Constants.shadowColor.withAlphaComponent(0.12),
+      gradient.makeShadow(color: Const.shadowColor.withAlphaComponent(0.12),
                           radius: 40,
                           opacity: 1,
                           offset: CGSize(width: 0, height: 8))
