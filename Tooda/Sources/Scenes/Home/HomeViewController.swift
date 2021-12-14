@@ -77,14 +77,15 @@ final class HomeViewController: BaseViewController<HomeReactor> {
     $0.contentInset = Metric.notebookContentInset
     $0.register(NotebookCell.self, forCellWithReuseIdentifier: Const.notebookCellIdentifier)
   }
-
+  
   private let noteGuideView = CreateNoteGuideView(frame: .zero)
+
 
   // MARK: Custom Action
 
   private let rxScrollToItem = BehaviorRelay<Int>(value: 0)
   private let rxPickDate = PublishRelay<Date>()
-
+  private let rxNoteGuideViewTap = PublishRelay<Void>()
 
   // MARK: Initializing
 
@@ -127,6 +128,12 @@ final class HomeViewController: BaseViewController<HomeReactor> {
     self.rxPickDate
       .asObservable()
       .map { HomeReactor.Action.pickDate($0) }
+      .bind(to: reactor.action)
+      .disposed(by: self.disposeBag)
+    
+    self.rxNoteGuideViewTap
+      .asObservable()
+      .map { HomeReactor.Action.presentCreateNote }
       .bind(to: reactor.action)
       .disposed(by: self.disposeBag)
 
@@ -196,6 +203,8 @@ final class HomeViewController: BaseViewController<HomeReactor> {
       action: #selector(didTapMonthTitle),
       for: .touchUpInside
     )
+    
+    self.noteGuideView.delegate = self
   }
 
   override func configureConstraints() {
@@ -292,5 +301,13 @@ extension HomeViewController: UICollectionViewDelegateFlowLayout {
       at: .centeredHorizontally,
       animated: true
     )
+  }
+}
+
+// MARK: - CreateNoteGuideViewDelegate
+
+extension HomeViewController: CreateNoteGuideViewDelegate {
+  func contentDidTapped() {
+    self.rxNoteGuideViewTap.accept(())
   }
 }
