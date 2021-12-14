@@ -129,10 +129,12 @@ final class CreateNoteGuideView: UIView {
       gradient.cornerRadius = 16
       gradient.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
       
-      gradient.makeShadow(color: Const.shadowColor.withAlphaComponent(0.12),
-                          radius: 40,
-                          opacity: 1,
-                          offset: CGSize(width: 0, height: 8))
+      gradient.configureShadow(color: Const.shadowColor,
+                               alpha: 0.12,
+                               x: 0,
+                               y: 8,
+                               blur: 40,
+                               spread: 0)
       
       $0.layer.insertSublayer(gradient, at: 0)
     }
@@ -142,11 +144,21 @@ final class CreateNoteGuideView: UIView {
 // MARK: - Extensions
 
 private extension CALayer {
-  func makeShadow(color: UIColor, radius: CGFloat, opacity: Float, offset: CGSize) {
+  func configureShadow(color: UIColor, alpha: Float = 1.0, x: CGFloat, y: CGFloat, blur: CGFloat, spread: CGFloat) {
+    
     self.masksToBounds = false
+    
     self.shadowColor = color.cgColor
-    self.shadowOpacity = opacity
-    self.shadowOffset = offset
-    self.shadowRadius = radius
+    self.shadowOpacity = alpha
+    self.shadowOffset = CGSize(width: x, height: y)
+    self.shadowRadius = blur / 2.0
+    
+    if spread == 0 {
+      self.shadowPath = nil
+    } else {
+      let dx = -spread
+      let rect = bounds.insetBy(dx: dx, dy: dx)
+      self.shadowPath = UIBezierPath(rect: rect).cgPath
+    }
   }
 }
