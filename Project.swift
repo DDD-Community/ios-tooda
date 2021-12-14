@@ -24,7 +24,6 @@ import ProjectDescriptionHelpers
 enum AppConfiguration: String {
   case Debug
   case Release
-  case Beta
 }
 
 struct AppInfomation {
@@ -41,7 +40,6 @@ extension AppInfomation {
 
 protocol ProjectFactory {
   var projectName: String { get }
-  var organizationName: String { get }
   var targets: [Target] { get }
   var deployment: DeploymentTarget { get }
   var schemes: [Scheme] { get }
@@ -52,8 +50,6 @@ protocol ProjectFactory {
 
 class BaseProjectFactory: ProjectFactory {
   let projectName: String = "Tooda"
-  
-  let organizationName: String = "DTS"
   
   var deployment: DeploymentTarget {
     .iOS(targetVersion: "13.0", devices: .iphone)
@@ -103,11 +99,6 @@ class BaseProjectFactory: ProjectFactory {
       .release(name: .configuration("Release"),
                settings: ["Release": "\(releaseAppInfo.configValue)"],
                xcconfig: .relativeToRoot("\(projectName)/Sources/SupportFiles/Configuration/\(releaseAppInfo.configValue).xcconfig"))
-        
-        
-      .beta(name: .configuration("Beta"),
-               settings: ["Beta": "\(betaAppinfo.configValue)"],
-               xcconfig: .relativeToRoot("\(projectName)/Sources/SupportFiles/Configuration/\(betaAppinfo.configValue).xcconfig"))
     ])
   }
   
@@ -130,10 +121,6 @@ extension BaseProjectFactory {
   
   var testAppinfo: AppInfomation {
     AppInfomation(name: "ToodaTest", bundleId: "com.tooda.test", configuration: .Debug)
-  }
-  
-  var betaAppinfo: AppInfomation {
-    AppInfomation(name: "ToodaBeta", bundleId: "com.tooda.beta", configuration: .Debug)
   }
 }
 
