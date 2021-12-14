@@ -73,8 +73,7 @@ final class CreateNoteViewReactor: Reactor {
         return self?.fetchImageSection(with: response) ?? .empty()
       }
     case .showAddStockView:
-      self.dependency.coordinator.transition(to: .addStock(completion: self.addStockCompletionRelay), using: .modal, animated: true, completion: nil)
-      return .empty()
+      return presentAddStockView()
     case .stockItemDidAdded(let stock):
       return self.makeStockSectionItem(stock)
     case .dismissView:
@@ -243,6 +242,17 @@ extension CreateNoteViewReactor {
     self.dependency.coordinator.close(style: .dismiss,
                                       animated: true,
                                       completion: nil)
+    
+    return .empty()
+  }
+  
+  private func presentAddStockView() -> Observable<Mutation> {
+    self.dependency.coordinator.transition(
+      to: .addStock(completion: self.addStockCompletionRelay),
+      using: .modal,
+      animated: true,
+      completion: nil
+    )
     
     return .empty()
   }
