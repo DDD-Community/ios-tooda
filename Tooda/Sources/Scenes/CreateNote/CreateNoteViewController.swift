@@ -136,7 +136,12 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
     super.bind(reactor: reactor)
 
     // Action
-    Observable.just(())
+    self.closeBarbutton.rx.tap
+      .map { Reactor.Action.dismissView }
+      .bind(to: reactor.action)
+      .disposed(by: self.disposeBag)
+    
+    self.rx.viewDidLoad
       .map { _ in Reactor.Action.initializeForm }
       .bind(to: reactor.action)
       .disposed(by: self.disposeBag)

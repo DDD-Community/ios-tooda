@@ -77,6 +77,8 @@ final class CreateNoteViewReactor: Reactor {
       return .empty()
     case .stockItemDidAdded(let stock):
       return self.makeStockSectionItem(stock)
+    case .dismissView:
+        return dismissView()
     default:
       return .empty()
     }
@@ -232,4 +234,16 @@ let createDiarySectionFactory: CreateNoteSectionType = { authorization, coordina
   sections[NoteSection.Identity.image.rawValue].items = [imageSectionItem]
 
   return sections
+}
+
+// MARK: - Dependency Logic
+
+extension CreateNoteViewReactor {
+  private func dismissView() -> Observable<Mutation> {
+    self.dependency.coordinator.close(style: .dismiss,
+                                      animated: true,
+                                      completion: nil)
+    
+    return .empty()
+  }
 }
