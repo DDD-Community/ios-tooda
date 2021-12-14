@@ -78,6 +78,7 @@ final class HomeViewController: BaseViewController<HomeReactor> {
     $0.register(NotebookCell.self, forCellWithReuseIdentifier: Const.notebookCellIdentifier)
   }
 
+  private let noteGuideView = CreateNoteGuideView(frame: .zero)
 
   // MARK: Custom Action
 
@@ -187,6 +188,7 @@ final class HomeViewController: BaseViewController<HomeReactor> {
       $0.addSubview(self.monthTitleButton)
       $0.addSubview(self.noteCountLabel)
       $0.addSubview(self.notebookCollectionView)
+      $0.addSubview(self.noteGuideView)
     }
 
     self.monthTitleButton.addTarget(
@@ -213,6 +215,11 @@ final class HomeViewController: BaseViewController<HomeReactor> {
       $0.right.equalToSuperview()
       $0.top.equalTo(self.noteCountLabel.snp.bottom).offset(35.0)
       $0.height.equalTo(Metric.notebookCellSize.height)
+    }
+    
+    self.noteGuideView.snp.makeConstraints {
+      $0.leading.trailing.equalToSuperview()
+      $0.bottom.equalToSuperview()
     }
   }
 }
