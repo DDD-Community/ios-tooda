@@ -46,7 +46,11 @@ final class AppFactory: AppFactoryType {
           authorization: self.dependency.appInject.resolve(AppAuthorizationType.self),
           createDiarySectionFactory: createDiarySectionFactory)
       )
-      return CreateNoteViewController(reactor: reactor)
+        
+      let viewController = CreateNoteViewController(reactor: reactor)
+      let navigationController = UINavigationController(rootViewController: viewController)
+      navigationController.modalPresentationStyle = .overFullScreen
+      return navigationController
 
     case .login:
       let reactor = LoginReactor(
