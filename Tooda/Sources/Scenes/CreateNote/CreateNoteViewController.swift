@@ -92,6 +92,17 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
     $0.register(NoteStockCell.self)
   }
   
+  private let linkStackView = UIStackView().then {
+    $0.axis = .vertical
+    $0.alignment = .fill
+    $0.spacing = 8.0
+    $0.translatesAutoresizingMaskIntoConstraints = false
+  }
+  
+  private let lineView = UIView().then {
+    $0.backgroundColor = .gray5
+  }
+  
   private let linkContainerView = UIView().then {
     $0.backgroundColor = .white
   }
@@ -129,11 +140,13 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
 
     self.view.backgroundColor = .white
 
-    [tableView].forEach {
+    [tableView, linkStackView].forEach {
       self.view.addSubview($0)
     }
     
-    self.tableView.addSubview(self.linkContainerView)
+    [lineView, linkContainerView].forEach {
+      self.linkStackView.addArrangedSubview($0)
+    }
     
     self.linkContainerView.addSubview(self.linkButton)
   }
@@ -148,15 +161,19 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
       $0.bottom.equalTo(self.view.safeAreaLayoutGuide.snp.bottom)
     }
     
-    linkContainerView.snp.makeConstraints {
+    linkStackView.snp.makeConstraints {
       $0.leading.trailing.equalToSuperview()
       $0.bottom.equalTo(self.view.keyboardLayoutGuide.snp.top)
+    }
+    
+    lineView.snp.makeConstraints {
+      $0.height.equalTo(1)
     }
     
     linkButton.snp.makeConstraints {
       $0.top.equalToSuperview().offset(8)
       $0.centerY.equalToSuperview()
-      $0.leading.equalToSuperview()
+      $0.leading.equalToSuperview().offset(14)
       $0.size.equalTo(Metric.linkButtonSize)
     }
   }
