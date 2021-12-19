@@ -37,6 +37,7 @@ enum AppImage: String {
   
   case closeButton = "cancel"
   case moreButton = "more"
+  case link = "link"
 }
 
 extension UIImage {
