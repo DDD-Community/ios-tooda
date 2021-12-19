@@ -227,8 +227,7 @@ final class HomeViewController: BaseViewController<HomeReactor> {
     }
     
     self.noteGuideView.snp.makeConstraints {
-      $0.leading.trailing.equalToSuperview()
-      $0.bottom.equalToSuperview()
+      $0.leading.trailing.bottom.equalToSuperview()
     }
   }
 }
