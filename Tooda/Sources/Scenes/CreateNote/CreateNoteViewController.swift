@@ -59,8 +59,10 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
         let cell = tableView.dequeue(NoteStockCell.self, indexPath: indexPath)
         cell.configure(with: reactor)
         return cell
-    default:
-      return UITableViewCell()
+    case .link(let reactor):
+        let cell = tableView.dequeue(NoteLinkCell.self, indexPath: indexPath)
+        cell.configure(reactor: reactor)
+        return cell
     }
   }, canEditRowAtIndexPath: { _, _ in true })
 
