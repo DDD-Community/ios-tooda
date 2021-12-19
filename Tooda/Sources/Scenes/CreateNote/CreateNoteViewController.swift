@@ -88,6 +88,7 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
     $0.register(EmptyNoteStockCell.self)
     $0.register(NoteImageCell.self)
     $0.register(NoteStockCell.self)
+    $0.register(NoteLinkCell.self)
   }
 
   // MARK: Initialize
