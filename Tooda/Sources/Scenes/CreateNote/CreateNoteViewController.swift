@@ -117,6 +117,7 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
     super.viewDidLoad()
     
     configureNavigation()
+    configureTapGesture()
   }
   
   override func viewWillAppear(_ animated: Bool) {
@@ -210,6 +211,16 @@ extension CreateNoteViewController {
   func configureNavigation() {
     self.navigationItem.title = Date().description
     self.navigationItem.leftBarButtonItem = self.closeBarbutton
+  }
+  
+  private func configureTapGesture() {
+    let tapGesture = UITapGestureRecognizer(target: self, action: #selector(contentViewDidTap))
+    self.view.addGestureRecognizer(tapGesture)
+  }
+  
+  @objc
+  private func contentViewDidTap(_ sender: Any?) {
+    self.view.endEditing(true)
   }
 }
 
