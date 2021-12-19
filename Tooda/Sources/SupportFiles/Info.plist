@@ -12,6 +12,8 @@
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
+  <key>CFBundleIconName</key>
+  <string>AppIcon</string>
 	<key>CFBundleName</key>
 	<string>$(PRODUCT_NAME)</string>
 	<key>CFBundlePackageType</key>
@@ -19,13 +21,13 @@
 	<key>CFBundleShortVersionString</key>
 	<string>$(APP_VERSION)</string>
 	<key>CFBundleVersion</key>
-	<string>$(APP_BUILD)</string>
+	<string>2</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>'tooda'가 사진을 게시글에 첨부하기 위해 사진 라이브러리에 접근하도록 허용합니다.</string>
+	<string>&#39;tooda&#39;가 사진을 게시글에 첨부하기 위해 사진 라이브러리에 접근하도록 허용합니다.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>'tooda'가 사진을 게시글에 첨부하기 위해 사진 라이브러리에 접근하도록 허용합니다.</string>
+	<string>&#39;tooda&#39;가 사진을 게시글에 첨부하기 위해 사진 라이브러리에 접근하도록 허용합니다.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

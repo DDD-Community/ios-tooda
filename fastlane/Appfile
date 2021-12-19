@@ -1,0 +1,8 @@
+app_identifier("com.tooda") # The bundle identifier of your app
+apple_id("woookdev@gmail.com") # Your Apple email address
+
+itc_team_id("122520743") # App Store Connect Team ID
+team_id("67SBNF2QS6") # Developer Portal Team ID
+
+# For more information about the Appfile, see:
+#     https://docs.fastlane.tools/advanced/#appfile
