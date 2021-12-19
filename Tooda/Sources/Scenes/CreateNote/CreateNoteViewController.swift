@@ -66,6 +66,11 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
 
 
   // MARK: UI-Properties
+  
+  private let closeBarbutton = UIBarButtonItem(image: UIImage(type: .iconCancelBlack),
+                                               style: .plain,
+                                               target: nil,
+                                               action: nil)
 
   private lazy var tableView = UITableView().then {
     $0.separatorStyle = .none
@@ -131,7 +136,12 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
     super.bind(reactor: reactor)
 
     // Action
-    Observable.just(())
+    self.closeBarbutton.rx.tap
+      .map { Reactor.Action.dismissView }
+      .bind(to: reactor.action)
+      .disposed(by: self.disposeBag)
+    
+    self.rx.viewDidLoad
       .map { _ in Reactor.Action.initializeForm }
       .bind(to: reactor.action)
       .disposed(by: self.disposeBag)
@@ -171,6 +181,7 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
 extension CreateNoteViewController {
   func configureNavigation() {
     self.navigationItem.title = Date().description
+    self.navigationItem.leftBarButtonItem = self.closeBarbutton
   }
 }
 

@@ -73,10 +73,11 @@ final class CreateNoteViewReactor: Reactor {
         return self?.fetchImageSection(with: response) ?? .empty()
       }
     case .showAddStockView:
-      self.dependency.coordinator.transition(to: .addStock(completion: self.addStockCompletionRelay), using: .modal, animated: true, completion: nil)
-      return .empty()
+      return presentAddStockView()
     case .stockItemDidAdded(let stock):
       return self.makeStockSectionItem(stock)
+    case .dismissView:
+        return dismissView()
     default:
       return .empty()
     }
@@ -232,4 +233,27 @@ let createDiarySectionFactory: CreateNoteSectionType = { authorization, coordina
   sections[NoteSection.Identity.image.rawValue].items = [imageSectionItem]
 
   return sections
+}
+
+// MARK: - Dependency Logic
+
+extension CreateNoteViewReactor {
+  private func dismissView() -> Observable<Mutation> {
+    self.dependency.coordinator.close(style: .dismiss,
+                                      animated: true,
+                                      completion: nil)
+    
+    return .empty()
+  }
+  
+  private func presentAddStockView() -> Observable<Mutation> {
+    self.dependency.coordinator.transition(
+      to: .addStock(completion: self.addStockCompletionRelay),
+      using: .modal,
+      animated: true,
+      completion: nil
+    )
+    
+    return .empty()
+  }
 }
