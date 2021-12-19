@@ -28,11 +28,21 @@ extension UIView {
 }
 
 extension UIView {
-  func configureShadow(color: UIColor, radius: CGFloat, opacity: Float, offset: CGSize) {
+  func configureShadow(color: UIColor, alpha: Float = 1.0, x: CGFloat, y: CGFloat, blur: CGFloat, spread: CGFloat) {
+    
     self.layer.masksToBounds = false
+    
     self.layer.shadowColor = color.cgColor
-    self.layer.shadowOpacity = opacity
-    self.layer.shadowOffset = offset
-    self.layer.shadowRadius = radius
+    self.layer.shadowOpacity = alpha
+    self.layer.shadowOffset = CGSize(width: x, height: y)
+    self.layer.shadowRadius = blur / 2.0
+    
+    if spread == 0 {
+      self.layer.shadowPath = nil
+    } else {
+      let dx = -spread
+      let rect = bounds.insetBy(dx: dx, dy: dx)
+      self.layer.shadowPath = UIBezierPath(rect: rect).cgPath
+    }
   }
 }
