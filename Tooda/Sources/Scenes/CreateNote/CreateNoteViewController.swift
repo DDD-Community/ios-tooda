@@ -96,7 +96,6 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
     $0.axis = .vertical
     $0.alignment = .fill
     $0.spacing = 8.0
-    $0.translatesAutoresizingMaskIntoConstraints = false
   }
   
   private let lineView = UIView().then {
