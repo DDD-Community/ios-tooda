@@ -1,7 +1,7 @@
 # Uncomment the next line to define a global platform for your project
 # platform :ios, '9.0'
 
-target 'Tooda' do
+def shared_pods
   # Comment the next line if you don't want to use dynamic frameworks
   use_frameworks!
   pod 'ReactorKit'
@@ -12,14 +12,24 @@ target 'Tooda' do
   pod 'CocoaLumberjack/Swift'
   pod 'Then'
   pod 'Swinject'
-	pod 'RxViewController'
-	pod 'SwiftLint'
-  pod 'Firebase/Crashlytics'
-  pod 'Firebase/Analytics'
-	pod 'netfox', configuration: %w(Debug)
+  pod 'RxViewController'
+end
 
-  # Pods for TodaTest
+target 'Tooda' do
+  # Comment the next line if you don't want to use dynamic frameworks
+  shared_pods
+  pod 'SwiftLint'
+  pod 'netfox', configuration: %w(Debug)
+end
 
+target 'ToodaTests' do
+  # Comment the next line if you don't want to use dynamic frameworks
+  shared_pods
+  pod 'RxTest'
+  pod 'Nimble'
+  pod 'Quick'
+  pod 'RxExpect'
+  pod 'SnapshotTesting'
 end
 
 post_install do |pi|
