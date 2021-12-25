@@ -74,8 +74,9 @@ class BaseProjectFactory: ProjectFactory {
         platform: .iOS,
         product: .unitTests,
         bundleId: "com.tooda.\(projectName)Tests",
-        infoPlist: "\(projectName)Tests.plist",
-        sources: ["\(projectName)/\(projectName)Tests/**"],
+        deploymentTarget: deployment,
+        infoPlist: "\(projectName)Tests/Info.plist",
+        sources: ["\(projectName)Tests/**"],
         resources: [],
         dependencies: []
       )
