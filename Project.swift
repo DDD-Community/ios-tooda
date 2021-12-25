@@ -56,16 +56,30 @@ class BaseProjectFactory: ProjectFactory {
   }
   
   var targets: [Target] {
-    [Target.init(name: projectName,
-                 platform: .iOS,
-                 product: .app,
-                 bundleId: "",
-                 deploymentTarget: deployment,
-                 infoPlist: "\(projectName)/Sources/SupportFiles/Info.plist",
-                 sources: ["\(projectName)/Sources/**"],
-                 resources: ["\(projectName)/Resources/**"],
-                 scripts: targetScripts,
-                 dependencies: [])]
+    [
+      Target(
+        name: projectName,
+        platform: .iOS,
+        product: .app,
+        bundleId: "com.tooda",
+        deploymentTarget: deployment,
+        infoPlist: "\(projectName)/Sources/SupportFiles/Info.plist",
+        sources: ["\(projectName)/Sources/**"],
+        resources: ["\(projectName)/Resources/**"],
+        scripts: targetScripts,
+        dependencies: []
+      ),
+      Target(
+        name: "\(projectName)Tests",
+        platform: .iOS,
+        product: .unitTests,
+        bundleId: "com.tooda.\(projectName)Tests",
+        infoPlist: "\(projectName)Tests.plist",
+        sources: ["\(projectName)/\(projectName)Tests/**"],
+        resources: [],
+        dependencies: []
+      )
+    ]
   }
   
   var schemes: [Scheme] { [
