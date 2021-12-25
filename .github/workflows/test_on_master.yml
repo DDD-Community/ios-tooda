@@ -1,0 +1,19 @@
+name: Swift
+on:
+  push:
+    branches: [ feature/jaewook/test-code ]
+
+jobs:
+  build:
+
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Tuist geenerate
+      run: tuist generate --project-only
+    - name: Build
+      run: swift build -v
+    - name: Run tests
+      run: | 
+        xcodebuild test -project Tooda.xcodeproj -scheme Tooda -destination 'platform=iOS Simulator,name=iPhone 11 Pro,OS=14.4'
