@@ -16,7 +16,7 @@ final class SearchResultReactor: Reactor {
   // MARK: Dependency
 
   struct Dependency {
-
+    let networking: NetworkingProtocol
   }
 
 

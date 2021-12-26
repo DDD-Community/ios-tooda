@@ -128,7 +128,9 @@ final class AppFactory: AppFactoryType {
 
     case .searchResult:
       let reactor = SearchResultReactor(
-        dependency: .init()
+        dependency: .init(
+          networking: self.dependency.appInject.resolve(NetworkingProtocol.self)
+        )
       )
 
       return SearchResultViewController(reactor: reactor)
