@@ -8,6 +8,7 @@
 
 import UIKit
 
+import Firebase
 import ReactorKit
 import RxSwift
 import RxCocoa
@@ -106,8 +107,12 @@ final class HomeViewController: BaseViewController<HomeReactor> {
     self.title = nil
     self.view.backgroundColor = .white
   }
-
-
+  
+  override func viewWillAppear(_ animated: Bool) {
+    super.viewWillAppear(animated)
+    screenLog()
+  }
+  
   // MARK: Bind
 
   override func bind(reactor: HomeReactor) {
@@ -229,6 +234,17 @@ final class HomeViewController: BaseViewController<HomeReactor> {
     self.noteGuideView.snp.makeConstraints {
       $0.leading.trailing.bottom.equalToSuperview()
     }
+  }
+  
+  // MARK: Private
+  
+  private func screenLog() {
+    FirebaseAnalytics.Analytics.logEvent(
+        AnalyticsEventScreenView,
+      parameters: [
+        AnalyticsParameterScreenName: Scene.home.screenName
+      ]
+    )
   }
 }
 
