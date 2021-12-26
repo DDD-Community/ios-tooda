@@ -61,4 +61,122 @@ platform :ios do
    upload_to_testflight(skip_submission: true)
   end
 
+  ## private lane
+  desc "앱 이름 가져오기"
+  lane :get_app_name do |options|
+    # Read PRODUCT_BUNDLE_IDENTIFIER value from Configs/Release.xcconfig
+    target = options[:target]
+    configPath = get_config_path(target: target)
+
+    bundle_id = get_xcconfig_value(
+      path: configPath,
+      name: 'APP_NAME'
+    )
+    
+    bundle_id
+  end
+
+  desc "앱 Id 가져오기"
+  private_lane :get_app_identifier do |options|
+    # Read PRODUCT_BUNDLE_IDENTIFIER value from Configs/Release.xcconfig
+    target = options[:target]
+    configPath = get_config_path(target: target)
+
+    bundle_id = get_xcconfig_value(
+      path: configPath,
+      name: 'APP_IDENTIFIER'
+    )
+
+    bundle_id
+  end
+
+  desc "xconfig 빌드 가져오기"
+  private_lane :get_buildNumber_xcconfig do |options|
+    target = options[:target]
+    configPath = get_config_path(target: target)
+
+    buildVersion = get_xcconfig_value(
+      path: configPath,
+      name: 'APP_BUILD'
+    )
+
+    buildVersion
+  end
+
+  desc "xconfig 버전 가져오기"
+  private_lane :get_buildVersion_xcconfig do |options|
+    target = options[:target]
+    configPath = get_config_path(target: target)
+
+    appVersion = get_xcconfig_value(
+      path: configPath,
+      name: 'APP_VERSION'
+    )
+
+    appVersion
+  end
+
+  desc "xcconfig 빌드 업데이트"
+  lane :increase_buildNumber_xcconfig do |options|
+    target = options[:target]
+    configPath = get_config_path(target: target)
+
+    buildVersion = get_xcconfig_value(
+      path: configPath,
+      name: 'APP_BUILD'
+    )
+
+    new_buildVer = (buildVersion.to_i + 1).to_s
+
+    update_xcconfig_value(
+      path: configPath,
+      name: 'APP_BUILD',
+      value: new_buildVer
+    )
+    
+    puts("업데이트 된 빌드 넘버: #{new_buildVer}")
+  end
+
+  desc "xcconfig 특정 빌드 버전으로 업데이트"
+  lane :update_buildNumber_xcconfig do |options|
+    target = options[:target]
+    configPath = get_config_path(target: target)
+
+    new_buildVer = options[:buildNumber].to_s
+
+    update_xcconfig_value(
+      path: configPath,
+      name: 'APP_BUILD',
+      value: new_buildVer
+    )
+    
+    puts("업데이트 된 빌드 넘버: #{new_buildVer}")
+  end
+
+  desc "xcconfig 버전 업데이트"
+  lane :increase_versionNumber_xcconfig do |options|
+
+    target = options[:target]
+    configPath = get_config_path(target: target)
+
+    new_appver = options[:version]
+
+    update_xcconfig_value(
+      path: configPath,
+      name: 'APP_VERSION',
+      value: new_appver
+    )
+    
+    puts("업데이트 된 앱 버전: #{new_appver}")
+  end
+
+  private_lane :get_config_path do |options|
+    target = options[:target]
+    configPath = "Tooda/Sources/SupportFiles/configuration/#{target}.xcconfig"
+
+    puts("설정파일 경로: #{configPath}")
+
+    configPath
+  end
+
 end
