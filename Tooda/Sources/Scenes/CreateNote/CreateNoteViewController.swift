@@ -63,8 +63,10 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
         let cell = tableView.dequeue(NoteStockCell.self, indexPath: indexPath)
         cell.configure(with: reactor)
         return cell
-    default:
-      return UITableViewCell()
+    case .link(let reactor):
+        let cell = tableView.dequeue(NoteLinkCell.self, indexPath: indexPath)
+        cell.configure(reactor: reactor)
+        return cell
     }
   }, canEditRowAtIndexPath: { _, _ in true })
 
@@ -90,6 +92,7 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
     $0.register(EmptyNoteStockCell.self)
     $0.register(NoteImageCell.self)
     $0.register(NoteStockCell.self)
+    $0.register(NoteLinkCell.self)
   }
   
   private let linkStackView = UIStackView().then {
