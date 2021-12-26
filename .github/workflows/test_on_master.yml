@@ -10,6 +10,17 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - uses: tuist/tuist-action@0.13.0
+       with:
+         command: 'generate'
+         arguments: '--project-only'
+    - name: Set XCode Version
+      run: sudo xcode-select -s /Applications/Xcode_12.app
+    - name: Install Dependencies
+      run: |
+        cd Example
+        pod install --repo-update
+      shell: bash
     - name: Build
       run: swift build -v
     - name: Run tests
