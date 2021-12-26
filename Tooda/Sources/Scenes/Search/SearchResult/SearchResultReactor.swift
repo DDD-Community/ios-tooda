@@ -23,15 +23,15 @@ final class SearchResultReactor: Reactor {
   // MARK: Reactor
 
   enum Action {
-
+    case search(text: String)
   }
 
   enum Mutation {
-
+    case setNotes([Note])
   }
 
   struct State {
-
+    var notes: [Note]
   }
 
 
@@ -39,7 +39,7 @@ final class SearchResultReactor: Reactor {
 
   private let dependency: Dependency
 
-  let initialState: State = State()
+  let initialState: State = State(notes: [])
 
   init(dependency: Dependency) {
     self.dependency = dependency
@@ -52,7 +52,10 @@ final class SearchResultReactor: Reactor {
 extension SearchResultReactor {
 
   func mutate(action: Action) -> Observable<Mutation> {
-    return .empty()
+    switch action {
+    case let .search(text):
+      return .empty()
+    }
   }
 }
 
@@ -63,6 +66,11 @@ extension SearchResultReactor {
 
   func reduce(state: State, mutation: Mutation) -> State {
     var newState = state
+
+    switch mutation {
+    case let .setNotes(notes):
+      newState.notes = notes
+    }
 
     return newState
   }
