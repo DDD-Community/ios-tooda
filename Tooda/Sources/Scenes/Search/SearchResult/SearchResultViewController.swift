@@ -66,6 +66,23 @@ final class SearchResultViewController: BaseViewController<SearchResultReactor> 
   // MARK: Bind
 
   override func bind(reactor: SearchResultReactor) {
+    // Action
 
+    self.rxSearch
+      .asObservable()
+      .map { SearchResultReactor.Action.search(text: $0) }
+      .bind(to: reactor.action)
+      .disposed(by: self.disposeBag)
+
+    // State
+
+    reactor.state
+      .map { $0.notes }
+      .bind(to: self.tableView.rx.items(
+        cellIdentifier: NoteListCell.reuseIdentifier,
+        cellType: NoteListCell.self
+      )) { _, note, cell in
+        cell.configure(with: note)
+      }.disposed(by: self.disposeBag)
   }
 }
