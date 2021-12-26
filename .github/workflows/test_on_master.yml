@@ -21,7 +21,8 @@ jobs:
         pod install --repo-update
       shell: bash
     - name: Build
-      run: swift build -v
+      run: |
+           xcodebuild clean build -workspace "Tooda.xcworkspace" -scheme "Tooda" -destination "platform=iOS Simulator,name=iPhone 12 Pro,OS=latest" CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO ONLY_ACTIVE_ARCH=NO
     - name: Run tests
       run: | 
-        xcodebuild test -project Tooda.xcodeproj -scheme Tooda -destination 'platform=iOS Simulator,name=iPhone 11 Pro,OS=14.4'
+        xcodebuild test -project Tooda.xcworkspace -scheme ToodaTests -destination 'platform=iOS Simulator,name=iPhone 11 Pro,OS=14.4'
