@@ -81,8 +81,11 @@ final class SearchViewController: BaseViewController<SearchReactor> {
 
     self.recentViewController.rxSearch
       .asObservable()
-      .do(onNext: { [weak self] _ in
+      .do(onNext: { [weak self] text in
         guard let self = self else { return }
+        self.searchBar.searchTextField.attributedText = text.styled(
+          with: Font.searchText
+        )
         self.searchBar.resignFirstResponder()
         self.moveToResultViewController()
       })
@@ -137,7 +140,7 @@ extension SearchViewController: UISearchBarDelegate {
 
   func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
     self.moveToRecentViewController()
-    
+
     self.recentViewController.rxBeginSearch.accept(())
   }
 
