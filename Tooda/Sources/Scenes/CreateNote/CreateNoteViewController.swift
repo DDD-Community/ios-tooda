@@ -18,6 +18,10 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
   typealias Reactor = CreateNoteViewReactor
 
   typealias Section = RxTableViewSectionedReloadDataSource<NoteSection>
+  
+  private enum Metric {
+    static let linkButtonSize: CGFloat = 20.0
+  }
 
   // MARK: Custom Action
   
@@ -87,6 +91,24 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
     $0.register(NoteImageCell.self)
     $0.register(NoteStockCell.self)
   }
+  
+  private let linkStackView = UIStackView().then {
+    $0.axis = .vertical
+    $0.alignment = .fill
+    $0.spacing = 8.0
+  }
+  
+  private let lineView = UIView().then {
+    $0.backgroundColor = .gray5
+  }
+  
+  private let linkContainerView = UIView().then {
+    $0.backgroundColor = .white
+  }
+  
+  private let linkButton = UIButton().then {
+    $0.setImage(UIImage(type: .link), for: .normal)
+  }
 
   // MARK: Initialize
 
@@ -105,6 +127,7 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
     super.viewDidLoad()
     
     configureNavigation()
+    configureTapGesture()
   }
   
   override func viewWillAppear(_ animated: Bool) {
@@ -116,9 +139,15 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
 
     self.view.backgroundColor = .white
 
-    [tableView].forEach {
+    [tableView, linkStackView].forEach {
       self.view.addSubview($0)
     }
+    
+    [lineView, linkContainerView].forEach {
+      self.linkStackView.addArrangedSubview($0)
+    }
+    
+    self.linkContainerView.addSubview(self.linkButton)
   }
 
   override func configureConstraints() {
@@ -129,6 +158,22 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
       $0.left.equalToSuperview().offset(14)
       $0.right.equalToSuperview().offset(-14)
       $0.bottom.equalTo(self.view.safeAreaLayoutGuide.snp.bottom)
+    }
+    
+    linkStackView.snp.makeConstraints {
+      $0.leading.trailing.equalToSuperview()
+      $0.bottom.equalTo(self.view.keyboardLayoutGuide.snp.top)
+    }
+    
+    lineView.snp.makeConstraints {
+      $0.height.equalTo(1)
+    }
+    
+    linkButton.snp.makeConstraints {
+      $0.top.equalToSuperview().offset(8)
+      $0.centerY.equalToSuperview()
+      $0.leading.equalToSuperview().offset(14)
+      $0.size.equalTo(Metric.linkButtonSize)
     }
   }
 
@@ -182,6 +227,16 @@ extension CreateNoteViewController {
   func configureNavigation() {
     self.navigationItem.title = Date().description
     self.navigationItem.leftBarButtonItem = self.closeBarbutton
+  }
+  
+  private func configureTapGesture() {
+    let tapGesture = UITapGestureRecognizer(target: self, action: #selector(contentViewDidTap))
+    self.view.addGestureRecognizer(tapGesture)
+  }
+  
+  @objc
+  private func contentViewDidTap(_ sender: Any?) {
+    self.view.endEditing(true)
   }
 }
 
