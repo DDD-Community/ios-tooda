@@ -40,7 +40,6 @@ class NoteLinkCell: BaseTableViewCell, View {
     $0.clipsToBounds = true
     $0.layer.borderColor = UIColor.gray4.cgColor
     $0.layer.borderWidth = 1.0
-    $0.translatesAutoresizingMaskIntoConstraints = false
   }
   
   private let imageContentView = UIImageView().then {
@@ -52,14 +51,12 @@ class NoteLinkCell: BaseTableViewCell, View {
     $0.distribution = .fill
     $0.layoutMargins = UIEdgeInsets(top: 8.5, left: 16, bottom: 7.5, right: 15)
     $0.isLayoutMarginsRelativeArrangement = true
-    $0.translatesAutoresizingMaskIntoConstraints = false
   }
   
   private let linkContainerView = UIStackView().then {
     $0.axis = .horizontal
     $0.alignment = .center
     $0.spacing = 3.94
-    $0.translatesAutoresizingMaskIntoConstraints = false
   }
 
   private let linkIconView = UIImageView().then {
@@ -124,9 +121,6 @@ class NoteLinkCell: BaseTableViewCell, View {
     linkIconView.snp.makeConstraints {
       $0.size.equalTo(Metric.linkIconSize)
     }
-    
-    imageContentView.setContentHuggingPriority(.required, for: .horizontal)
-    imageContentView.setContentHuggingPriority(.required, for: .vertical)
   }
 
   func bind(reactor: Reactor) {
