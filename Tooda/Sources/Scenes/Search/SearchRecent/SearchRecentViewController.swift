@@ -160,8 +160,8 @@ final class SearchRecentViewController: BaseViewController<SearchRecentReactor> 
     self.collectionView.snp.makeConstraints {
       $0.top.equalTo(self.view.safeAreaLayoutGuide.snp.top)
       $0.bottom.equalTo(self.view.keyboardLayoutGuide.snp.top)
-      $0.left.equalTo(self.view.safeAreaLayoutGuide.snp.left).inset(20.0)
-      $0.right.equalTo(self.view.safeAreaLayoutGuide.snp.right).inset(20.0)
+      $0.left.equalTo(self.view.safeAreaLayoutGuide.snp.left)
+      $0.right.equalTo(self.view.safeAreaLayoutGuide.snp.right)
     }
   }
 }
@@ -175,7 +175,7 @@ extension SearchRecentViewController: UICollectionViewDelegateFlowLayout {
     guard let section = self.dataSource.sectionModels[safe: indexPath.section]?.identity else { return .zero }
 
     return CGSize(
-      width: collectionView.frame.width,
+      width: collectionView.frame.width - section.edgeInsets.left - section.edgeInsets.right,
       height: section.cellHeight
     )
   }
