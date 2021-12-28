@@ -38,6 +38,40 @@ final class OneLineReviewOptionCell: BaseTableViewCell {
     }
   }
   
+  override func configureUI() {
+    super.configureUI()
+    contentView.do {
+      $0.backgroundColor = .white
+      $0.addSubview(cardView)
+    }
+    
+    cardView.addSubviews(
+      emojiImageView,
+      titleLabel
+    )
+  }
+
+  override func setupConstraints() {
+    super.setupConstraints()
+    cardView.snp.makeConstraints {
+      $0.edges.equalToSuperview().inset(
+        UIEdgeInsets(horizontal: 20, vertical: 4)
+      )
+    }
+    
+    emojiImageView.snp.makeConstraints {
+      $0.width.height.equalTo(30)
+      $0.leading.equalToSuperview().inset(14)
+      $0.top.bottom.equalToSuperview().inset(10)
+    }
+    
+    titleLabel.snp.makeConstraints {
+      $0.leading.equalTo(emojiImageView.snp.trailing).offset(21)
+      $0.centerY.equalTo(emojiImageView)
+      $0.trailing.equalToSuperview().inset(20)
+    }
+  }
+  
   // MARK: - Con(De)structor
   
   override init(
@@ -55,6 +89,14 @@ final class OneLineReviewOptionCell: BaseTableViewCell {
     fatalError("init(coder:) has not been implemented")
   }
   
+  // MARK: - Internal methods
+  
+  func configure(sticker: Sticker) {
+    super.configure()
+    emojiImageView.image = sticker.image
+    titleLabel.text = sticker.rawValue
+  }
+  
   // MARK: - Private methods
   
   private func setSelected(isSelected: Bool) {
@@ -64,39 +106,6 @@ final class OneLineReviewOptionCell: BaseTableViewCell {
     } else {
       cardView.backgroundColor = .white
       cardView.layer.borderColor = UIColor.gray1.cgColor
-    }
-  }
-}
-
-// MARK: - SetupUI
-extension OneLineReviewOptionCell {
-  private func setupUI() {
-    contentView.do {
-      $0.backgroundColor = .white
-      $0.addSubview(cardView)
-    }
-    
-    cardView.addSubviews(
-      emojiImageView,
-      titleLabel
-    )
-    
-    cardView.snp.makeConstraints {
-      $0.edges.equalToSuperview().inset(
-        UIEdgeInsets(horizontal: 20, vertical: 4)
-      )
-    }
-    
-    emojiImageView.snp.makeConstraints {
-      $0.width.height.equalTo(30)
-      $0.leading.equalToSuperview().inset(14)
-      $0.top.bottom.equalToSuperview().inset(10)
-    }
-    
-    titleLabel.snp.makeConstraints {
-      $0.leading.equalTo(emojiImageView.snp.trailing).offset(21)
-      $0.centerY.equalTo(emojiImageView)
-      $0.trailing.equalToSuperview().inset(20)
     }
   }
 }
