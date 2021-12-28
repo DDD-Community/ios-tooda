@@ -18,7 +18,7 @@ final class PopUpReactor: Reactor {
   // MARK: - Constants
   
   enum PopUpType {
-    case list // 아직 모델링 미정
+    case list(PublishRelay<Sticker>)
     case textInput(PublishRelay<String>)
   }
   
@@ -37,7 +37,24 @@ final class PopUpReactor: Reactor {
   }
   
   struct State {
+    let emojiOptionsSectionModels: [EmojiOptionsSectionModel]
     
+    static func generateInitialState() -> State {
+      return State(
+        emojiOptionsSectionModels: [
+          EmojiOptionsSectionModel(
+            items: [
+              .wow,
+              .angry,
+              .chicken,
+              .pencil,
+              .thinking,
+              .sad
+            ]
+          )
+        ]
+      )
+    }
   }
 
   // MARK: Properties
@@ -48,6 +65,6 @@ final class PopUpReactor: Reactor {
   
   init(dependency: Dependency) {
     self.dependency = dependency
-    self.initialState = State()
+    self.initialState = State.generateInitialState()
   }
 }
