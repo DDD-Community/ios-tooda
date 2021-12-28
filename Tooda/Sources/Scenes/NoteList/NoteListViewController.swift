@@ -59,6 +59,17 @@ final class NoteListViewController: BaseViewController<NoteListReactor> {
     action: nil
   )
   
+  private let addNoteButton = UIButton(type: .system).then {
+    $0.layer.shadowColor = UIColor.black.withAlphaComponent(0.2).cgColor
+    $0.layer.shadowOpacity = 1
+    $0.layer.shadowRadius = 20
+    $0.layer.shadowOffset = CGSize(width: 0, height: 8)
+    $0.layer.cornerRadius = 28
+    $0.backgroundColor = .mainGreen
+    $0.setTitle("+", for: .normal)
+    $0.setTitleColor(.white, for: .normal)
+  }
+  
   // MARK: - Con(De)structor
   
   init(reactor: NoteListReactor) {
@@ -102,13 +113,22 @@ final class NoteListViewController: BaseViewController<NoteListReactor> {
     ]
     navigationController?.navigationBar.backgroundColor = .white
     UIApplication.shared.statusBarUIView?.backgroundColor = .white
-    view.addSubview(tableView)
+    view.addSubviews(
+      tableView,
+      addNoteButton
+    )
   }
   
   override func configureConstraints() {
     super.configureConstraints()
     tableView.snp.makeConstraints {
       $0.edges.equalToSuperview()
+    }
+    
+    addNoteButton.snp.makeConstraints {
+      $0.trailing.equalToSuperview().inset(20)
+      $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).inset(26)
+      $0.width.height.equalTo(56)
     }
   }
 }
