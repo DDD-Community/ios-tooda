@@ -10,6 +10,10 @@ import UIKit
 
 final class TextInputPopUpView: BasePopUpView {
   
+  // MARK: - Rx Stream
+  
+  lazy var textFieldStream = textField.rx.text
+  
   // MARK: - UI Components
   
   private let textField = UITextField()
