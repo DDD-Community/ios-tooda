@@ -8,6 +8,8 @@
 
 import UIKit
 
+import RxSwift
+
 class BasePopUpView: UIView {
   
   // MARK: - Constants
@@ -15,6 +17,10 @@ class BasePopUpView: UIView {
   private enum Font {
     static let title = TextStyle.subTitle(color: .gray1)
   }
+  
+  // MARK: - Properties
+  
+  lazy var disposeBag = DisposeBag()
   
   // MARK: - UI Components
   
