@@ -25,15 +25,16 @@ final class PopUpReactor: Reactor {
   // MARK: Reactor
   
   enum Action {
-    
+    case didSelectOption(Int)
   }
 
   enum Mutation {
-    
+
   }
   
   struct Dependency {
     let type: PopUpType
+    let coordinator: AppCoordinatorType
   }
   
   struct State {
@@ -66,5 +67,38 @@ final class PopUpReactor: Reactor {
   init(dependency: Dependency) {
     self.dependency = dependency
     self.initialState = State.generateInitialState()
+  }
+}
+
+// MARK: - Mutate
+
+extension PopUpReactor {
+  func mutate(action: Action) -> Observable<Mutation> {
+    switch action {
+    case let .didSelectOption(index):
+      return didSelectOption(index: index)
+    }
+  }
+}
+
+// MARK: - Private Functions
+
+extension PopUpReactor {
+
+  private func didSelectOption(index: Int) -> Observable<Mutation> {
+    if let selectedEmoji = initialState.emojiOptionsSectionModels.first?.items[safe: index] {
+      
+      if case let .list(optionPublishRelay) = dependency.type {
+        optionPublishRelay.accept(selectedEmoji)
+      }
+    }
+    
+    dependency.coordinator.close(
+      style: .dismiss,
+      animated: false,
+      completion: nil
+    )
+    
+    return Observable<Mutation>.empty()
   }
 }
