@@ -16,6 +16,7 @@ target 'Tooda' do
 	pod 'SwiftLint'
   pod 'Firebase/Crashlytics'
   pod 'Firebase/Analytics'
+  pod 'SwiftLinkPreview', '~> 3.4.0'
 	pod 'netfox', configuration: %w(Debug)
 
   # Pods for TodaTest
