@@ -25,6 +25,7 @@ final class CreateNoteViewReactor: Reactor {
     let service: NetworkingProtocol
     let coordinator: AppCoordinatorType
     let authorization: AppAuthorizationType
+    let linkPreviewService: LinkPreViewServiceType
     let createDiarySectionFactory: CreateNoteSectionType
   }
 
