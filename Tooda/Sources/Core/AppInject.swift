@@ -80,6 +80,10 @@ final class AppInject: AppInjectRegister, AppInjectResolve {
         ]
       )
     }
+    
+    container.register(LinkPreViewServiceType.self) { _ in
+      LinkPreviewService()
+    }.inObjectScope(.container)
   }
   
   func resolve<Object>(_ serviceType: Object.Type) -> Object {
