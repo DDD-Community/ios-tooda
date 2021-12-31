@@ -143,6 +143,60 @@ class NoteLinkCell: BaseTableViewCell, View {
   }
 
   func bind(reactor: Reactor) {
+    
+    Observable.just(())
+      .map { Reactor.Action.fetchLink }
+      .bind(to: reactor.action)
+      .disposed(by: self.disposeBag)
+    
+    reactor.state
+      .map { $0.isLoading }
+      .asDriver(onErrorJustReturn: false)
+      .drive(onNext: { [weak self] in
+        self?.indicatorViewDidChanged(by: $0)
+      })
+      .disposed(by: self.disposeBag)
+    
+    reactor.state
+      .compactMap { $0.response }
+      .subscribeOn(MainScheduler.asyncInstance)
+      .subscribe(onNext: { [weak self] in
+        self?.fetchLinkData($0)
+      }).disposed(by: self.disposeBag)
+    
+    reactor.state
+      .map { $0.hasNotTitle }
+      .asDriver(onErrorJustReturn: true)
+      .drive(onNext: { [weak self] in
+        self?.subViewsVisibilityDidChanged(by: $0)
+      }).disposed(by: self.disposeBag)
+  }
+}
 
+// MARK: - Extension
+
+extension NoteLinkCell {
+  private func fetchLinkData(_ response: LinkPreviewResponse?) {
+    guard let response = response else {
+      return
+    }
+    
+    self.thumnailView.image = response.imageURL?.urlImage
+    self.titleLabel.attributedText = response.title?.styled(with: Font.title)
+    self.canonicalLabel.attributedText = response.canonicalUrl?.styled(with: Font.caption)
+    self.descriptionLabel.attributedText = response.description?.styled(with: Font.caption)
+  }
+  
+  private func subViewsVisibilityDidChanged(by hasNotTitle: Bool) {
+    self.linkIconView.isHidden = hasNotTitle
+    self.lineView.isHidden = hasNotTitle
+  }
+  
+  private func indicatorViewDidChanged(by isLoading: Bool) {
+    if isLoading {
+      self.indcatorView.startAnimating()
+    } else {
+      self.indcatorView.stopAnimating()
+    }
   }
 }
