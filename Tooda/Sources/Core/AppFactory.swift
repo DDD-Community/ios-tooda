@@ -125,7 +125,12 @@ final class AppFactory: AppFactoryType {
       return StockRateInputViewController(reactor: reactor)
 
     case .popUp(let type):
-      let reactor = PopUpReactor(dependency: .init(type: type))
+      let reactor = PopUpReactor(
+        dependency: .init(
+          type: type,
+          coordinator: self.dependency.appInject.resolve(AppCoordinatorType.self)
+        )
+      )
       return PopUpViewController(reactor: reactor)
 
     case .searchResult:
