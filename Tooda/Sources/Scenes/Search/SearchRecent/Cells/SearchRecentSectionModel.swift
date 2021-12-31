@@ -37,10 +37,10 @@ extension SearchRecentSectionModel: SectionModelType {
     var edgeInsets: UIEdgeInsets {
       switch self {
       case .header:
-        return .init(top: 32.0, bottom: 16.0)
+        return .init(top: 32.0, left: 20.0, bottom: 16.0, right: 20.0)
 
       case .keyword:
-        return .zero
+        return .init(horizontal: 20.0)
       }
     }
   }
