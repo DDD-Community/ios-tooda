@@ -80,12 +80,13 @@ final class SearchViewController: BaseViewController<SearchReactor> {
       .disposed(by: self.disposeBag)
 
     self.recentViewController.rxSearch
+      .asObservable()
       .do(onNext: { [weak self] _ in
         guard let self = self else { return }
         self.searchBar.resignFirstResponder()
         self.moveToResultViewController()
       })
-      .subscribe()
+      .bind(to: self.resultViewController.rxSearch)
       .disposed(by: self.disposeBag)
   }
 
