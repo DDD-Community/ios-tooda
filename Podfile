@@ -12,6 +12,8 @@ def shared_pods
   pod 'CocoaLumberjack/Swift'
   pod 'Then'
   pod 'Swinject'
+  pod 'Firebase/Crashlytics'
+  pod 'Firebase/Analytics'
   pod 'RxViewController'
 end
 
