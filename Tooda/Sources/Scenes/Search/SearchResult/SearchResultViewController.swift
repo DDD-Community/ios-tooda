@@ -46,17 +46,31 @@ final class SearchResultViewController: BaseViewController<SearchResultReactor> 
     $0.keyboardDismissMode = .onDrag
   }
 
+  private let emptyView = SearchResultEmptyView().then {
+    $0.isHidden = true
+  }
+
 
   // MARK: Configuring
 
   override func configureUI() {
-    self.view.addSubviews(self.tableView)
+    self.view.do {
+      $0.addSubview(self.tableView)
+      $0.addSubview(self.emptyView)
+    }
   }
 
   override func configureConstraints() {
     self.tableView.snp.makeConstraints {
       $0.top.equalTo(self.view.safeAreaLayoutGuide.snp.top)
       $0.bottom.equalTo(self.view.keyboardLayoutGuide.snp.top)
+      $0.left.equalTo(self.view.safeAreaLayoutGuide.snp.left)
+      $0.right.equalTo(self.view.safeAreaLayoutGuide.snp.right)
+    }
+
+    self.emptyView.snp.makeConstraints {
+      $0.top.equalTo(self.view.safeAreaLayoutGuide.snp.top)
+      $0.bottom.equalToSuperview()
       $0.left.equalTo(self.view.safeAreaLayoutGuide.snp.left)
       $0.right.equalTo(self.view.safeAreaLayoutGuide.snp.right)
     }
@@ -78,6 +92,11 @@ final class SearchResultViewController: BaseViewController<SearchResultReactor> 
 
     reactor.state
       .map { $0.notes }
+      .do(onNext: { [weak self] items in
+        let isItemsEmpty = items.isEmpty
+        self?.tableView.isHidden = isItemsEmpty
+        self?.emptyView.isHidden = !isItemsEmpty
+      })
       .bind(to: self.tableView.rx.items(
         cellIdentifier: NoteListCell.reuseIdentifier,
         cellType: NoteListCell.self
