@@ -131,8 +131,9 @@ final class AppFactory: AppFactoryType {
           coordinator: self.dependency.appInject.resolve(AppCoordinatorType.self)
         )
       )
-      return PopUpViewController(reactor: reactor)
-
+      return PopUpViewController(reactor: reactor).then {
+        $0.modalPresentationStyle = .overFullScreen
+      }
     case .searchResult:
       let reactor = SearchResultReactor(
         dependency: .init(
