@@ -16,4 +16,10 @@ extension UITextField {
     }
     self.attributedPlaceholder = NSAttributedString(string: placeholderText, attributes: [NSAttributedString.Key.foregroundColor: color])
   }
+  
+  func addLeftInputCursorPadding(padding: CGFloat) {
+    let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: padding, height: self.frame.height))
+    self.leftView = paddingView
+    self.leftViewMode = ViewMode.always
+  }
 }
