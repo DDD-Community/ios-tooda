@@ -13,6 +13,13 @@ import RxSwift
 
 class PopUpViewController: BaseViewController<PopUpReactor> {
   
+  // MARK: - Constants
+  
+  enum Font {
+    static let popupTitle = TextStyle.subTitleBold(color: .gray1)
+    static let bottomButtonTitle = TextStyle.subTitleBold(color: .white)
+  }
+  
   // MARK: - UI Components
   
   private let dimmedView = UIView().then {
@@ -20,17 +27,21 @@ class PopUpViewController: BaseViewController<PopUpReactor> {
   }
   
   private let optionsPopUpView = OptionsPopUpView().then {
+    $0.setTitle(with: "오늘의 한줄평", style: Font.popupTitle)
+    $0.setBottomButtonTitle(with: "작성 완료", style: Font.bottomButtonTitle)
     $0.isHidden = true
     $0.alpha = 0
   }
   
   private let textInputPopUpView = TextInputPopUpView().then {
+    $0.setTitle(with: "URL 입력", style: Font.popupTitle)
+    $0.setBottomButtonTitle(with: "추가", style: Font.bottomButtonTitle)
     $0.isHidden = true
     $0.alpha = 0
   }
   
   private let displayPopUpAnimator = UIViewPropertyAnimator(
-    duration: 0.5,
+    duration: 0.4,
     curve: .easeOut
   )
   
@@ -49,6 +60,11 @@ class PopUpViewController: BaseViewController<PopUpReactor> {
   
   override func viewDidLoad() {
     super.viewDidLoad()
+    setupUI()
+  }
+  
+  override func viewWillAppear(_ animated: Bool) {
+    super.viewWillAppear(animated)
     showPopUpView()
   }
   
