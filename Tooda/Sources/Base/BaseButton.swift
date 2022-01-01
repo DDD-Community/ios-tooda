@@ -8,10 +8,15 @@
 
 import UIKit
 
+import RxCocoa
+import RxSwift
+
 class BaseButton: UIButton {
   
-  var width: CGFloat?
-  var height: CGFloat
+  private let width: CGFloat?
+  private let height: CGFloat
+  
+  private let disposeBag = DisposeBag()
 
   override var buttonType: UIButton.ButtonType {
     return .system
@@ -30,11 +35,12 @@ class BaseButton: UIButton {
   
   private func baseConfigure() {
     self.do {
-      $0.backgroundColor = ToodaAsset.Colors.mainGreen.color
+      $0.backgroundColor = UIColor.mainGreen
       $0.layer.cornerRadius = CGFloat(height / 2)
       $0.layer.shadowColor = UIColor.black.withAlphaComponent(0.25).cgColor
-      $0.layer.shadowOffset = CGSize(width: 4, height: 4)
+      $0.layer.shadowOffset = CGSize(width: 0, height: 8)
       $0.layer.shadowOpacity = 1
+      $0.layer.shadowRadius = 12
     }
     
     if let width = width {
@@ -47,6 +53,22 @@ class BaseButton: UIButton {
         $0.height.equalTo(height)
       }
     }
+    
+    Driver<Void>.merge(
+      rx.controlEvent(.touchUpOutside).asDriver(),
+      rx.controlEvent(.touchUpInside).asDriver()
+    )
+    .drive { [weak self] _ in
+      self?.layer.shadowOpacity = 1
+    }
+    .disposed(by: disposeBag)
+    
+    rx.controlEvent(.touchDown)
+      .asDriver()
+      .drive { [weak self] _ in
+        self?.layer.shadowOpacity = 0
+      }
+      .disposed(by: disposeBag)
   }
   
   func setButtonTitle(with title: String, style: String.Style) {
@@ -54,5 +76,15 @@ class BaseButton: UIButton {
       title.styled(with: style),
       for: .normal
     )
+  }
+  
+  func setOnOff(isOn: Bool) {
+    if isOn {
+      backgroundColor = UIColor.mainGreen
+      layer.shadowOpacity = 1
+    } else {
+      backgroundColor = UIColor.gray3
+      layer.shadowOpacity = 0
+    }
   }
 }
