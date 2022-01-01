@@ -36,7 +36,9 @@ class BasePopUpView: UIView {
   // MARK: - Internal methods
   
   func setTitle(with title: String, style: String.Style) {
-    titleLabel.attributedText = title.styled(with: style)
+    titleLabel.attributedText = title
+                                  .styled(with: style)
+                                  .alignment(with: .center)
   }
   
   func setBottomButtonTitle(with title: String, style: String.Style) {
