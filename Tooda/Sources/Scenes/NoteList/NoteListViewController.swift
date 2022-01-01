@@ -13,6 +13,13 @@ import RxSwift
 import RxDataSources
 
 final class NoteListViewController: BaseViewController<NoteListReactor> {
+
+  // MARK: Payload
+
+  struct Payload {
+    let year: Int
+    let month: Int
+  }
   
   // MARK: - Constants
   
@@ -77,7 +84,7 @@ final class NoteListViewController: BaseViewController<NoteListReactor> {
   
   // MARK: - Con(De)structor
   
-  init(reactor: NoteListReactor) {
+  init(reactor: NoteListReactor, payload: Payload) {
     super.init()
     self.reactor = reactor
   }

@@ -99,17 +99,21 @@ final class AppFactory: AppFactoryType {
         resultViewController: self.makeViewController(from: .searchResult) as! SearchResultViewController
       )
 
-    case .noteList:
+    case let .noteList(payload):
       let reactor = NoteListReactor(
         dependency: .init(
           service: self.dependency.appInject.resolve(NetworkingProtocol.self),
           coordinator: self.dependency.appInject.resolve(AppCoordinatorType.self)
         )
       )
-      let viewController = NoteListViewController(reactor: reactor)
+      let viewController = NoteListViewController(
+        reactor: reactor,
+        payload: payload
+      )
       let navigationController = UINavigationController(rootViewController: viewController)
       navigationController.modalPresentationStyle = .overFullScreen
       return navigationController
+
     case .searchRecent:
       let reactor = SearchRecentReactor(
         dependency: .init(
