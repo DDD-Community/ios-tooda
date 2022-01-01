@@ -152,6 +152,11 @@ final class HomeViewController: BaseViewController<HomeReactor> {
       .bind(to: reactor.action)
       .disposed(by: self.disposeBag)
 
+    self.notebookCollectionView.rx.itemSelected
+      .map { HomeReactor.Action.presentNotelist(notebookIndex: $0.item) }
+      .bind(to: reactor.action)
+      .disposed(by: self.disposeBag)
+
     // State
     self.reactor?.state
       .map { $0.notebookViewModels }
