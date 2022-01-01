@@ -82,9 +82,11 @@ class BaseButton: UIButton {
     if isOn {
       backgroundColor = UIColor.mainGreen
       layer.shadowOpacity = 1
+      isUserInteractionEnabled = true
     } else {
       backgroundColor = UIColor.gray3
       layer.shadowOpacity = 0
+      isUserInteractionEnabled = false
     }
   }
 }
