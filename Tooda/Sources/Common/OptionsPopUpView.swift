@@ -35,25 +35,43 @@ final class OptionsPopUpView: BasePopUpView {
   
   // MARK: - UI Components
   
-  private let tableView = SelfSizingTableView()
+  private let tableView = SelfSizingTableView().then {
+    $0.rowHeight = UITableView.automaticDimension
+    $0.register(OneLineReviewOptionCell.self)
+    $0.separatorStyle = .none
+  }
   
   // MARK: - Overridden: ParentClass
-
+  
+  override init(frame: CGRect) {
+    super.init(frame: frame)
+    setupUI()
+  }
+  
+  required init?(coder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
+  }
+  
   override func setupUI() {
     super.setupUI()
     insertContentViewLayout(
       view: tableView,
       margin: UIEdgeInsets(top: 18, left: 0, bottom: 26, right: 0)
     )
+    
+    setBottomButtonOnOff(isOn: false)
+  }
+  
+  override func layoutSubviews() {
+    super.layoutSubviews()
+    tableView.reloadData()
+    tableView.invalidateIntrinsicContentSize()
   }
   
   // MARK: - Internal methods
   
-  func registerCell(cellType: UITableViewCell.Type) {
-    tableView.register(cellType)
-  }
-  
   func bindDataSource(sectionModel: Observable<[EmojiOptionsSectionModel]>) {
+    
     sectionModel
       .bind(to: tableView.rx.items(dataSource: dataSource))
       .disposed(by: disposeBag)
