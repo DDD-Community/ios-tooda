@@ -18,7 +18,7 @@ final class OptionsPopUpView: BasePopUpView {
   
   typealias Section = RxTableViewSectionedReloadDataSource<EmojiOptionsSectionModel>
   
-  // MARK: - Rx Stream
+  // MARK: - RxStream
   
   lazy var didSelectOptionStream = tableView.rx.itemSelected
   
@@ -58,8 +58,6 @@ final class OptionsPopUpView: BasePopUpView {
       view: tableView,
       margin: UIEdgeInsets(top: 18, left: 0, bottom: 26, right: 0)
     )
-    
-    setBottomButtonOnOff(isOn: false)
   }
   
   override func layoutSubviews() {

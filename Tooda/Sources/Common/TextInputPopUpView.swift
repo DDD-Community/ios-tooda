@@ -19,9 +19,9 @@ final class TextInputPopUpView: BasePopUpView {
     static let placeholder = TextStyle.body(color: .gray2)
   }
   
-  // MARK: - Rx Stream
+  // MARK: - RxStream
   
-  lazy var textFieldStream = textField.rx.text
+  lazy var textInputStream = textField.rx.text.asObservable()
   
   // MARK: - UI Components
   
