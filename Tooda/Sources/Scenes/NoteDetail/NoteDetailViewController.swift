@@ -42,5 +42,17 @@ final class NoteDetailViewController: BaseViewController<NoteDetailReactor> {
 
   override func bind(reactor: NoteDetailReactor) {
 
+    // Action
+    self.rx.viewDidLoad
+      .asObservable()
+      .flatMap { [weak self] _ -> Observable<Void> in
+        guard let self = self else {
+          return Observable<Void>.empty()
+        }
+        return self.configureBackBarButtonItemIfNeeded()
+      }
+      .map { NoteDetailReactor.Action.back }
+      .bind(to: reactor.action)
+      .disposed(by: self.disposeBag)
   }
 }

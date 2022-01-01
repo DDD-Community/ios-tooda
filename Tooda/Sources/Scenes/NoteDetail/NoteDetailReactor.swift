@@ -15,14 +15,14 @@ final class NoteDetailReactor: Reactor {
   // MARK: Dependency
 
   struct Dependency {
-
+    let coordinator: AppCoordinatorType
   }
 
 
   // MARK: Reactor
 
   enum Action {
-
+    case back
   }
 
   enum Mutation {
@@ -51,7 +51,15 @@ final class NoteDetailReactor: Reactor {
 extension NoteDetailReactor {
 
   func mutate(action: Action) -> Observable<Mutation> {
-    return .empty()
+    switch action {
+    case .back:
+      self.dependency.coordinator.close(
+        style: .pop,
+        animated: true,
+        completion: nil
+      )
+      return .empty()
+    }
   }
 }
 

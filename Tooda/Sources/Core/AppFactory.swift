@@ -137,7 +137,9 @@ final class AppFactory: AppFactoryType {
 
     case .noteDetail:
       let reactor = NoteDetailReactor(
-        dependency: .init()
+        dependency: .init(
+          coordinator: self.dependency.appInject.resolve(AppCoordinatorType.self)
+        )
       )
 
       return NoteDetailViewController(reactor: reactor)
