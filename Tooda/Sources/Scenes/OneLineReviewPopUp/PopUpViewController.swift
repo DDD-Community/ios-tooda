@@ -42,7 +42,7 @@ class PopUpViewController: BaseViewController<PopUpReactor> {
   
   private let displayPopUpAnimator = UIViewPropertyAnimator(
     duration: 0.4,
-    curve: .easeOut
+    dampingRatio: 0.5
   )
   
   // MARK: - Con(De)structor
@@ -57,11 +57,6 @@ class PopUpViewController: BaseViewController<PopUpReactor> {
   }
   
   // MARK: - Overridden: ParentClass
-  
-  override func viewDidLoad() {
-    super.viewDidLoad()
-    setupUI()
-  }
   
   override func viewWillAppear(_ animated: Bool) {
     super.viewWillAppear(animated)
@@ -90,12 +85,61 @@ class PopUpViewController: BaseViewController<PopUpReactor> {
     }
     
     optionsPopUpView.snp.makeConstraints {
+      $0.width.equalTo(315)
       $0.center.equalToSuperview()
     }
     
     textInputPopUpView.snp.makeConstraints {
+      $0.width.equalTo(315)
       $0.center.equalToSuperview()
     }
+  }
+  
+  override func bind(reactor: PopUpReactor) {
+    switch reactor.dependency.type {
+    case .list:
+      let sectionModelStream = reactor.state
+        // sticker set 될 때 마다 binding 되는 것 방지
+        .filter { $0.selectedSticker == nil }
+        .map { $0.emojiOptionsSectionModels }
+      optionsPopUpView.bindDataSource(sectionModel: sectionModelStream)
+      
+      optionsPopUpView.didSelectOptionStream
+        .map { $0.row }
+        .map { PopUpReactor.Action.didSelectOption($0) }
+        .bind(to: reactor.action)
+        .disposed(by: disposeBag)
+      
+    default:
+      break
+    }
+    
+    Observable<Void>.merge(
+      [optionsPopUpView.didTapDismissButton,
+       textInputPopUpView.didTapDismissButton])
+      .map { PopUpReactor.Action.dismiss }
+      .bind(to: reactor.action)
+      .disposed(by: disposeBag)
+    
+    optionsPopUpView.didTapBottomButton
+      .map { PopUpReactor.Action.didTapBottonButton }
+      .bind(to: reactor.action)
+      .disposed(by: disposeBag)
+    
+    textInputPopUpView.didTapBottomButton
+      .withLatestFrom(textInputPopUpView.textInputStream)
+      .compactMap { $0 }
+      .map { PopUpReactor.Action.didAddTextInput($0) }
+      .bind(to: reactor.action)
+      .disposed(by: disposeBag)
+    
+    reactor.state.map { $0.selectedSticker }
+      .asDriver(onErrorJustReturn: nil)
+      .drive { [weak self] sticker in
+        guard let self = self else { return }
+        self.optionsPopUpView.setBottomButtonOnOff(isOn: sticker != nil)
+      }
+      .disposed(by: disposeBag)
   }
   
   // MARK: - Private methods
