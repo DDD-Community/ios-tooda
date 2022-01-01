@@ -134,6 +134,13 @@ final class AppFactory: AppFactoryType {
       )
 
       return SearchResultViewController(reactor: reactor)
+
+    case .noteDetail:
+      let reactor = NoteDetailReactor(
+        dependency: .init()
+      )
+
+      return NoteDetailViewController(reactor: reactor)
     }
   }
 }

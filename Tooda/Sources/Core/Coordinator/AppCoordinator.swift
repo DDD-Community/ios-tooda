@@ -128,6 +128,8 @@ final class AppCoordinator: AppCoordinatorType {
           return $0 is PopUpViewController
         case .searchResult:
           return $0 is SearchResultViewController
+        case .noteDetail:
+          return $0 is NoteDetailViewController
         }
       }) else { return }
 

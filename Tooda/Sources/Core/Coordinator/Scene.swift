@@ -24,6 +24,7 @@ enum Scene {
   case stockRateInput(payload: StockRateInputReactor.Payload)
   case popUp(type: PopUpReactor.PopUpType)
   case searchResult
+  case noteDetail
   
   var screenName: String {
     switch self {
@@ -38,6 +39,7 @@ enum Scene {
     case .stockRateInput:     return "stockRateInput"
     case .popUp:              return "popUp"
     case .searchResult:       return "searchResult"
+    case .noteDetail:         return "noteDetail"
     }
   }
 }
