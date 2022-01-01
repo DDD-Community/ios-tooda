@@ -69,6 +69,8 @@ final class PopUpReactor: Reactor {
   
   let initialState: State
   
+  // MARK: - Con(De)structor
+  
   init(dependency: Dependency) {
     self.dependency = dependency
     self.initialState = State.generateInitialState()
@@ -95,7 +97,6 @@ extension PopUpReactor {
 // MARK: - Private Functions
 
 extension PopUpReactor {
-
   private func didSelectOptionMutation(index: Int) -> Observable<Mutation> {
     guard let selectedEmoji = initialState.emojiOptionsSectionModels.first?.items[safe: index] else { return Observable<Mutation>.empty() }
     
@@ -146,7 +147,6 @@ extension PopUpReactor {
 // MARK: - Reduce
 
 extension PopUpReactor {
-
   func reduce(state: State, mutation: Mutation) -> State {
     var newState = state
 

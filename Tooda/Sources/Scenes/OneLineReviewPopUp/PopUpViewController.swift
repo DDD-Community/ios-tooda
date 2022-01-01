@@ -11,11 +11,11 @@ import UIKit
 import RxCocoa
 import RxSwift
 
-class PopUpViewController: BaseViewController<PopUpReactor> {
+final class PopUpViewController: BaseViewController<PopUpReactor> {
   
   // MARK: - Constants
   
-  enum Font {
+  private enum Font {
     static let popupTitle = TextStyle.subTitleBold(color: .gray1)
     static let bottomButtonTitle = TextStyle.subTitleBold(color: .white)
   }
@@ -109,7 +109,6 @@ class PopUpViewController: BaseViewController<PopUpReactor> {
         .map { PopUpReactor.Action.didSelectOption($0) }
         .bind(to: reactor.action)
         .disposed(by: disposeBag)
-      
     default:
       break
     }
