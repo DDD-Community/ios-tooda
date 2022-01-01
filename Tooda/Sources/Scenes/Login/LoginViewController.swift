@@ -15,6 +15,10 @@ final class LoginViewController: BaseViewController<LoginReactor> {
   
   // MARK: Constants
   
+  private enum Font {
+    static let buttonTitle = TextStyle.subTitleBold(color: .white)
+  }
+  
   private enum Metric {
     static let loginButtonHeight: CGFloat = 56
   }
@@ -29,7 +33,7 @@ final class LoginViewController: BaseViewController<LoginReactor> {
   private let loginButton = BaseButton(width: nil, height: Metric.loginButtonHeight).then {
     $0.setButtonTitle(
       with: "시작하기",
-      style: TextStyle.subTitleBold(color: .white)
+      style: Font.buttonTitle
     )
   }
   
@@ -47,14 +51,7 @@ final class LoginViewController: BaseViewController<LoginReactor> {
   deinit {
     print("\(#file) deinitialized")
   }
-  
-  // MARK: - Lifecycle Overridden
-  
-  override func viewDidLoad() {
-    super.viewDidLoad()
-    bindUI()
-  }
-  
+
   // MARK: - Bind
   
   override func bind(reactor: LoginReactor) {
@@ -75,26 +72,7 @@ final class LoginViewController: BaseViewController<LoginReactor> {
   }
   
   // MARK: - SetupUI
-  
-  private func bindUI() {
-    
-    Driver<Void>.merge(
-      loginButton.rx.controlEvent(.touchUpOutside).asDriver(),
-      loginButton.rx.controlEvent(.touchUpInside).asDriver()
-    )
-    .drive { [weak self] _ in
-      self?.loginButton.layer.shadowOpacity = 1
-    }
-    .disposed(by: disposeBag)
-    
-    loginButton.rx.controlEvent(.touchDown)
-      .asDriver()
-      .drive { [weak self] _ in
-        self?.loginButton.layer.shadowOpacity = 0
-      }
-      .disposed(by: disposeBag)
-  }
-  
+
   override func configureUI() {
     view.backgroundColor = .white
   }
