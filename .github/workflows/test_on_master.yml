@@ -1,13 +1,11 @@
 name: Swift
 on:
   push:
-    branches: [ feature/jaewook/test-code ]
+    branches: [ feature/myeongsoo/gitactionTest#1 ]
 
 jobs:
   build:
-
-    runs-on: macos-latest
-
+    runs-on: macos-11
     steps:
     - uses: actions/checkout@v2
     - uses: tuist/tuist-action@0.13.0
@@ -22,7 +20,7 @@ jobs:
       shell: bash
     - name: Build
       run: |
-           xcodebuild clean build -workspace "Tooda.xcworkspace" -scheme "ToodaTest" -destination "platform=iOS Simulator,name=iPhone 11 Pro,OS=latest" CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO ONLY_ACTIVE_ARCH=YES
+        xcodebuild clean build -workspace "Tooda.xcworkspace" -scheme "ToodaTest" -destination "platform=iOS Simulator,name=iPhone 11 Pro,OS=latest" CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO ONLY_ACTIVE_ARCH=YES
     - name: Run tests
       run: | 
         xcodebuild test -project Tooda.xcworkspace -scheme ToodaTests -destination 'platform=iOS Simulator,name=iPhone 11 Pro,OS=14.4'
