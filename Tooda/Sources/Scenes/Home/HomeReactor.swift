@@ -32,6 +32,7 @@ final class HomeReactor: Reactor {
     case pushSearch
     case pushSettings
     case presentCreateNote(dateString: String)
+    case presentNotelist(notebookIndex: Int)
   }
 
   enum Mutation {
@@ -118,11 +119,16 @@ extension HomeReactor {
     case .pushSearch:
       self.pushSearch()
       return Observable<Mutation>.empty()
+
     case .pushSettings:
       pushSettings()
       return Observable<Mutation>.empty()
+
     case .presentCreateNote(let today):
       presentCreateNote(today)
+      return Observable<Mutation>.empty()
+
+    case let .presentNotelist(notebookIndex):
       return Observable<Mutation>.empty()
     }
   }
