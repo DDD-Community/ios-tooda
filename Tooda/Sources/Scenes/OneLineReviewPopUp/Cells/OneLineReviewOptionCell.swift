@@ -23,7 +23,8 @@ final class OneLineReviewOptionCell: BaseTableViewCell {
   
   private let cardView = UIView().then {
     $0.layer.borderWidth = 1
-    $0.layer.borderColor = UIColor.gray1.cgColor
+    $0.layer.borderColor = UIColor.gray5.cgColor
+    $0.layer.cornerRadius = 8
   }
   
   private let emojiImageView = UIImageView()
@@ -32,10 +33,8 @@ final class OneLineReviewOptionCell: BaseTableViewCell {
   
   // MARK: - Overridden: ParentClass
   
-  override var isSelected: Bool {
-    didSet {
-      setSelected(isSelected: isSelected)
-    }
+  override func setSelected(_ selected: Bool, animated: Bool) {
+    configureSelected(isSelected: selected)
   }
   
   override func configureUI() {
@@ -82,7 +81,6 @@ final class OneLineReviewOptionCell: BaseTableViewCell {
       style: style,
       reuseIdentifier: reuseIdentifier
     )
-    setupUI()
   }
   
   required init?(coder: NSCoder) {
@@ -94,18 +92,18 @@ final class OneLineReviewOptionCell: BaseTableViewCell {
   func configure(sticker: Sticker) {
     super.configure()
     emojiImageView.image = sticker.image
-    titleLabel.text = sticker.rawValue
+    titleLabel.attributedText = sticker.optionTitle.styled(with: Font.title)
   }
   
   // MARK: - Private methods
   
-  private func setSelected(isSelected: Bool) {
+  private func configureSelected(isSelected: Bool) {
     if isSelected {
       cardView.backgroundColor = .subGreen
       cardView.layer.borderColor = UIColor.mainGreen.cgColor
     } else {
       cardView.backgroundColor = .white
-      cardView.layer.borderColor = UIColor.gray1.cgColor
+      cardView.layer.borderColor = UIColor.gray5.cgColor
     }
   }
 }
