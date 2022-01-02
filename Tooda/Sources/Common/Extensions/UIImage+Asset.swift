@@ -34,6 +34,7 @@ enum AppImage: String {
   case closeBlack = "close_black"
   case iconCancelBlack = "icon_cancel_black"
   case iconHistory14 = "icon_history_14"
+  case iconSmileEmoji = "icon_smile_emoji"
   
   case closeButton = "cancel"
   case moreButton = "more"
@@ -41,6 +42,7 @@ enum AppImage: String {
 
   // Emoji
   case emojiToodaGray = "emoji_tooda_gray"
+  case addNewNoteButton = "add_new_note_btn"
 }
 
 extension UIImage {
