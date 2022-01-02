@@ -17,7 +17,7 @@ class NoteContentCell: BaseTableViewCell, View {
 
   var disposeBag: DisposeBag = DisposeBag()
   
-  private enum Constants {
+  private enum Const {
     static let baseColor: UIColor = UIColor.gray3
     
     static let baseTextColor: UIColor = UIColor.gray1
@@ -32,23 +32,23 @@ class NoteContentCell: BaseTableViewCell, View {
   let titleTextField = BolderTextField(frame: .zero).then {
     $0.font = UIFont.systemFont(ofSize: 13, weight: .bold)
     $0.textColor = UIColor(type: .gray3)
-    $0.attributedPlaceholder = Constants.titlePlaceHolderStyledText
-    $0.layer.borderColor = Constants.baseColor.cgColor
+    $0.attributedPlaceholder = Const.titlePlaceHolderStyledText
+    $0.layer.borderColor = Const.baseColor.cgColor
     $0.layer.cornerRadius = 8.0
   }
 
   let contentTextFieldBackgroundView = UIView().then {
     $0.clipsToBounds = true
     $0.layer.cornerRadius = 8.0
-    $0.layer.borderColor = Constants.baseColor.cgColor
+    $0.layer.borderColor = Const.baseColor.cgColor
     $0.layer.borderWidth = 1.0
   }
 
   let contentTextField = UITextField().then {
     $0.font = UIFont.systemFont(ofSize: 13, weight: .regular)
-    $0.textColor = Constants.baseColor
+    $0.textColor = Const.baseColor
     $0.contentVerticalAlignment = .top
-    $0.attributedPlaceholder = Constants.contentPlaceHolderStyledText
+    $0.attributedPlaceholder = Const.contentPlaceHolderStyledText
   }
 
   func configure(reactor: Reactor) {
