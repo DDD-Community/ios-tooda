@@ -58,6 +58,9 @@ class NoteContentCell: BaseTableViewCell, View {
   func configure(reactor: Reactor) {
     super.configure()
     self.reactor = reactor
+    
+    self.titleTextField.delegate = self
+    self.contentTextView.delegate = self
   }
   
   // MARK: Cell Life Cycle
@@ -108,5 +111,21 @@ class NoteContentCell: BaseTableViewCell, View {
 
   func bind(reactor: Reactor) {
 
+  }
+}
+
+// MARK: - Extensions
+
+extension NoteContentCell: UITextFieldDelegate {
+  func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+    return TextInputLimiter(maxLength: Const.maximumTitleTextLength)
+      .shouldTextInMaxLength(propertyValue: textField.text, range: range, replace: string)
+  }
+}
+
+extension NoteContentCell: UITextViewDelegate {
+  func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+    return TextInputLimiter(maxLength: Const.maximumContnetTextLenght)
+      .shouldTextInMaxLength(propertyValue: textView.text, range: range, replace: text)
   }
 }
