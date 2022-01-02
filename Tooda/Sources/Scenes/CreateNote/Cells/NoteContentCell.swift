@@ -30,15 +30,19 @@ class NoteContentCell: BaseTableViewCell, View {
     static let contentPlaceHolderStyledText = "오늘 알게된 투자 정보, 매매 기록 등을 입력해보세요.\n(최대 \(maximumContnetTextLenght)자)".styled(with: TextStyle.body(color: baseColor))
   }
 
-  let titleTextField = BolderTextField(frame: .zero).then {
-    $0.font = UIFont.systemFont(ofSize: 13, weight: .bold)
-    $0.textColor = UIColor(type: .gray3)
-    $0.attributedPlaceholder = Const.titlePlaceHolderStyledText
-    $0.layer.borderColor = Const.baseColor.cgColor
+  private let titleTextFieldBackgroundView = UIView().then {
     $0.layer.cornerRadius = 8.0
+    $0.layer.borderColor = UIColor.gray4.cgColor
+    $0.layer.borderWidth = 1.0
+  }
+  
+  let titleTextField = UITextField().then {
+    $0.font = UIFont.systemFont(ofSize: 13, weight: .bold)
+    $0.textColor = Const.baseTextColor
+    $0.attributedPlaceholder = Const.titlePlaceHolderStyledText
   }
 
-  let contentTextFieldBackgroundView = UIView().then {
+  let contentTextViewBackGroundView = UIView().then {
     $0.clipsToBounds = true
     $0.layer.cornerRadius = 8.0
     $0.layer.borderColor = Const.baseColor.cgColor
@@ -67,34 +71,39 @@ class NoteContentCell: BaseTableViewCell, View {
   override func configureUI() {
     super.configureUI()
 
-    [titleTextField, contentTextFieldBackgroundView].forEach {
+    [titleTextFieldBackgroundView, contentTextViewBackGroundView].forEach {
       self.contentView.addSubview($0)
     }
-
+    
+    [titleTextField].forEach {
+      self.titleTextFieldBackgroundView.addSubview($0)
+    }
+    
     [contentTextView].forEach {
-      self.contentTextFieldBackgroundView.addSubview($0)
+      self.contentTextViewBackGroundView.addSubview($0)
     }
   }
 
   override func setupConstraints() {
     super.setupConstraints()
 
-    titleTextField.snp.makeConstraints {
+    titleTextFieldBackgroundView.snp.makeConstraints {
       $0.top.left.right.width.equalToSuperview()
       $0.height.equalTo(43)
     }
-
-    contentTextFieldBackgroundView.snp.makeConstraints {
-      $0.top.equalTo(titleTextField.snp.bottom).offset(10)
+    
+    titleTextField.snp.makeConstraints {
+      $0.edges.equalToSuperview().inset(UIEdgeInsets(top: 12, left: 14, bottom: 10, right: 14))
+    }
+    
+    contentTextViewBackGroundView.snp.makeConstraints {
+      $0.top.equalTo(titleTextFieldBackgroundView.snp.bottom).offset(10)
       $0.left.right.bottom.width.equalToSuperview()
       $0.height.equalTo(169)
     }
-
+    
     contentTextView.snp.makeConstraints {
-      $0.top.equalToSuperview().offset(16)
-      $0.left.equalToSuperview().offset(14)
-      $0.right.equalToSuperview().offset(-14)
-      $0.bottom.equalToSuperview().offset(-16)
+      $0.edges.equalToSuperview().inset(UIEdgeInsets(top: 12, left: 9, bottom: 10, right: 9))
     }
   }
 
