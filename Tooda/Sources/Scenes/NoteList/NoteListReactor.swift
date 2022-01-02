@@ -26,6 +26,7 @@ final class NoteListReactor: Reactor {
   }
   
   enum Mutation {
+    case setIsEmpty(Bool)
     case setNoteListModel([NoteListModel])
   }
   
@@ -36,6 +37,7 @@ final class NoteListReactor: Reactor {
   
   struct State {
     var noteListModel: [NoteListModel]
+    var isEmpty: Bool
   }
   
   init(dependency: Dependency) {
@@ -46,7 +48,7 @@ final class NoteListReactor: Reactor {
   
   let dependency: Dependency
   
-  let initialState: State = State(noteListModel: [])
+  let initialState: State = State(noteListModel: [], isEmpty: false)
 }
 
 // MARK: - Mutate
@@ -64,14 +66,19 @@ extension NoteListReactor {
     return dependency.service.request(NoteAPI.list(limit: 15, cursor: 0))
       .map([Note].self)
       .asObservable()
-      .map { Mutation.setNoteListModel(
-        [
-          NoteListModel(
-            identity: Constants.sectionIdentifier,
-            items: $0
+      .map {
+        if $0.isEmpty {
+          return Mutation.setIsEmpty(true)
+        } else {
+          return Mutation.setNoteListModel(
+            [
+              NoteListModel(
+                identity: Constants.sectionIdentifier,
+                items: $0
+              )
+            ]
           )
-        ]
-      )
+        }
     }
   }
 }
@@ -82,11 +89,15 @@ extension NoteListReactor {
   
   func reduce(state: State, mutation: Mutation) -> State {
     var newState = state
+    newState.isEmpty = false
     
     switch mutation {
     case let .setNoteListModel(model):
       newState.noteListModel = model
-      return newState
+    case let .setIsEmpty(isEmpty):
+      newState.isEmpty = isEmpty
     }
+    
+    return newState
   }
 }
