@@ -25,6 +25,7 @@ final class CreateNoteViewReactor: Reactor {
     let service: NetworkingProtocol
     let coordinator: AppCoordinatorType
     let authorization: AppAuthorizationType
+    let linkPreviewService: LinkPreViewServiceType
     let createDiarySectionFactory: CreateNoteSectionType
   }
 
@@ -36,6 +37,7 @@ final class CreateNoteViewReactor: Reactor {
     case uploadImage(Data)
     case showAddStockView
     case stockItemDidAdded(NoteStock)
+    case linkURLDidAdded(String)
   }
 
   enum Mutation {
@@ -43,6 +45,7 @@ final class CreateNoteViewReactor: Reactor {
     case present(ViewPresentType)
     case fetchImageSection(NoteSectionItem)
     case fetchStockSection(NoteSectionItem)
+    case fetchLinkSection(NoteSectionItem)
   }
 
   struct State: Then {
@@ -76,6 +79,8 @@ final class CreateNoteViewReactor: Reactor {
       return presentAddStockView()
     case .stockItemDidAdded(let stock):
       return self.makeStockSectionItem(stock)
+    case .linkURLDidAdded(let url):
+      return self.makeLinkSectionItem(url)
     case .dismissView:
         return dismissView()
     default:
@@ -99,6 +104,8 @@ final class CreateNoteViewReactor: Reactor {
       newState.sections[NoteSection.Identity.image.rawValue].items = [sectionItem]
     case .fetchStockSection(let sectionItem):
       newState.sections[NoteSection.Identity.stock.rawValue].items.append(sectionItem)
+    case .fetchLinkSection(let sectionItem):
+      newState.sections[NoteSection.Identity.link.rawValue].items.append(sectionItem)
     }
 
     return newState
@@ -205,6 +212,17 @@ extension CreateNoteViewReactor {
     let sectionItem = NoteSectionItem.stock(reator)
     
     return .just(.fetchStockSection(sectionItem))
+  }
+  
+  private func makeLinkSectionItem(_ url: String) -> Observable<Mutation> {
+    let linkReactor = NoteLinkCellReactor(dependency: .init(
+      service: self.dependency.linkPreviewService),
+                                          payload: url
+    )
+    
+    let linkSectionItem: NoteSectionItem = NoteSectionItem.link(linkReactor)
+    
+    return .just(.fetchLinkSection(linkSectionItem))
   }
 }
 

@@ -19,6 +19,10 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
 
   typealias Section = RxTableViewSectionedReloadDataSource<NoteSection>
   
+  private enum Const {
+    static let linkItemMaxCount: Int = 2
+  }
+  
   private enum Metric {
     static let linkButtonSize: CGFloat = 20.0
   }
@@ -29,6 +33,8 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
   let imagePickerDataSelectedRelay: PublishRelay<Data> = PublishRelay()
   
   let rxAddStockDidTapRelay: PublishRelay<Void> = PublishRelay()
+  
+  private let rxLinkURLDidAddedRelay: PublishRelay<String> = PublishRelay()
   
   // MARK: Properties
   lazy var dataSource: Section = Section(configureCell: { _, tableView, indexPath, item -> UITableViewCell in
@@ -206,6 +212,12 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
     
     rxAddStockDidTapRelay
       .map { Reactor.Action.showAddStockView }
+      .bind(to: reactor.action)
+      .disposed(by: self.disposeBag)
+    
+    rxLinkURLDidAddedRelay
+      .take(Const.linkItemMaxCount)
+      .map { Reactor.Action.linkURLDidAdded($0) }
       .bind(to: reactor.action)
       .disposed(by: self.disposeBag)
     
