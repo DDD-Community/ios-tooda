@@ -42,10 +42,9 @@ class NoteContentCell: BaseTableViewCell, View {
     $0.attributedPlaceholder = Const.titlePlaceHolderStyledText
   }
 
-  let contentTextViewBackGroundView = UIView().then {
-    $0.clipsToBounds = true
+  private let contentTextViewBackGroundView = UIView().then {
     $0.layer.cornerRadius = 8.0
-    $0.layer.borderColor = Const.baseColor.cgColor
+    $0.layer.borderColor = UIColor.gray4.cgColor
     $0.layer.borderWidth = 1.0
   }
 
