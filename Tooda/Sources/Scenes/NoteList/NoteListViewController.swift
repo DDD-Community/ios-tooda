@@ -207,7 +207,9 @@ final class NoteListViewController: BaseViewController<NoteListReactor> {
     }
     
     let descriptionLabel = UILabel().then {
-      $0.attributedText = "새로운 투자기록을\n작성해보세요!".styled(with: Font.description)
+      $0.attributedText = "새로운 투자기록을\n작성해보세요!"
+                            .styled(with: Font.description)
+                            .alignment(with: .center)
       $0.numberOfLines = 0
     }
     
