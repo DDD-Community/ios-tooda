@@ -11,6 +11,7 @@ import UIKit
 import ReactorKit
 import SnapKit
 import Then
+import UITextView_Placeholder
 
 class NoteContentCell: BaseTableViewCell, View {
   typealias Reactor = NoteContentCellReactor
@@ -44,10 +45,10 @@ class NoteContentCell: BaseTableViewCell, View {
     $0.layer.borderWidth = 1.0
   }
 
-  let contentTextField = UITextField().then {
+  let contentTextView = UITextView().then {
     $0.font = UIFont.systemFont(ofSize: 13, weight: .regular)
-    $0.textColor = Const.baseColor
-    $0.contentVerticalAlignment = .top
+    $0.textColor = Const.baseTextColor
+    $0.textAlignment = .left
     $0.attributedPlaceholder = Const.contentPlaceHolderStyledText
   }
 
@@ -70,7 +71,7 @@ class NoteContentCell: BaseTableViewCell, View {
       self.contentView.addSubview($0)
     }
 
-    [contentTextField].forEach {
+    [contentTextView].forEach {
       self.contentTextFieldBackgroundView.addSubview($0)
     }
   }
@@ -89,7 +90,7 @@ class NoteContentCell: BaseTableViewCell, View {
       $0.height.equalTo(169)
     }
 
-    contentTextField.snp.makeConstraints {
+    contentTextView.snp.makeConstraints {
       $0.top.equalToSuperview().offset(16)
       $0.left.equalToSuperview().offset(14)
       $0.right.equalToSuperview().offset(-14)
