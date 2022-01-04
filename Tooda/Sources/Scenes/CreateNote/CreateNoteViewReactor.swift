@@ -233,8 +233,8 @@ let createDiarySectionFactory: CreateNoteSectionType = { authorization, coordina
     NoteSection(identity: .content, items: []),
     NoteSection(identity: .stock, items: []),
     NoteSection(identity: .addStock, items: []),
-    NoteSection(identity: .image, items: []),
-    NoteSection(identity: .link, items: [])
+    NoteSection(identity: .link, items: []),
+    NoteSection(identity: .image, items: [])
   ]
 
   let contentReactor: NoteContentCellReactor = NoteContentCellReactor()

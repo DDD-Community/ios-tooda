@@ -13,8 +13,8 @@ struct NoteSection {
     case content
     case stock
     case addStock
-    case image
     case link
+    case image
   }
   let identity: Identity
   var items: [NoteSectionItem]
