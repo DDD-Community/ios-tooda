@@ -125,9 +125,15 @@ final class AppFactory: AppFactoryType {
       return StockRateInputViewController(reactor: reactor)
 
     case .popUp(let type):
-      let reactor = PopUpReactor(dependency: .init(type: type))
-      return PopUpViewController(reactor: reactor)
-
+      let reactor = PopUpReactor(
+        dependency: .init(
+          type: type,
+          coordinator: self.dependency.appInject.resolve(AppCoordinatorType.self)
+        )
+      )
+      return PopUpViewController(reactor: reactor).then {
+        $0.modalPresentationStyle = .overFullScreen
+      }
     case .searchResult:
       let reactor = SearchResultReactor(
         dependency: .init(

@@ -8,23 +8,42 @@
 
 import UIKit
 
+import RxSwift
+
 class BasePopUpView: UIView {
   
-  // MARK: - Constants
+  // MARK: - RxStream
   
-  private enum Font {
-    static let title = TextStyle.subTitle(color: .gray1)
-  }
+  lazy var didTapDismissButton = dismissButton.rx.tap.asObservable()
+  
+  lazy var didTapBottomButton = bottomButton.rx.tap.asObservable()
+  
+  // MARK: - Properties
+  
+  lazy var disposeBag = DisposeBag()
   
   // MARK: - UI Components
   
-  private let titleLabel = UILabel().then {
-    $0.textAlignment = .center
+  private let titleLabel = UILabel()
+  
+  private let dismissButton = UIButton(type: .system).then {
+    $0.setImage(UIImage(type: .iconCancelBlack), for: .normal)
+    $0.tintColor = .black
   }
   
-  private let dismissButton = UIButton(type: .system)
-  
   private let bottomButton = BaseButton(width: nil, height: 48)
+  
+  // MARK: - Internal methods
+  
+  func setTitle(with title: String, style: String.Style) {
+    titleLabel.attributedText = title
+                                  .styled(with: style)
+                                  .alignment(with: .center)
+  }
+  
+  func setBottomButtonTitle(with title: String, style: String.Style) {
+    bottomButton.setButtonTitle(with: title, style: style)
+  }
   
   func setupUI() {
     self.do {
@@ -43,13 +62,14 @@ class BasePopUpView: UIView {
     }
     
     dismissButton.snp.makeConstraints {
-      $0.trailing.equalToSuperview().inset(26)
-      $0.top.equalToSuperview().inset(24)
-      $0.width.height.equalTo(12)
+      $0.trailing.equalToSuperview().inset(20)
+      $0.top.equalToSuperview().inset(18)
+      $0.width.height.equalTo(24)
     }
     
-    dismissButton.snp.makeConstraints {
+    bottomButton.snp.makeConstraints {
       $0.leading.trailing.equalToSuperview().inset(21)
+      $0.bottom.equalToSuperview().inset(30)
     }
   }
   
@@ -59,7 +79,11 @@ class BasePopUpView: UIView {
       $0.top.equalTo(titleLabel.snp.bottom).offset(margin.top)
       $0.leading.equalToSuperview().inset(margin.left)
       $0.trailing.equalToSuperview().inset(margin.right)
-      $0.bottom.equalToSuperview().inset(margin.bottom)
+      $0.bottom.equalTo(bottomButton.snp.top).offset(-margin.bottom)
     }
+  }
+  
+  func setBottomButtonOnOff(isOn: Bool) {
+    bottomButton.setOnOff(isOn: isOn)
   }
 }
