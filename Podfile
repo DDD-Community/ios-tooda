@@ -12,7 +12,11 @@ def shared_pods
   pod 'CocoaLumberjack/Swift'
   pod 'Then'
   pod 'Swinject'
+  pod 'Firebase/Crashlytics'
+  pod 'Firebase/Analytics'
   pod 'RxViewController'
+  pod 'SwiftLinkPreview', '~> 3.4.0'
+  pod 'UITextView+Placeholder', '~> 1.2'
 end
 
 target 'Tooda' do

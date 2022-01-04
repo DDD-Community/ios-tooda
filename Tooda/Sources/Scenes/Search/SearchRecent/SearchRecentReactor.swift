@@ -22,6 +22,13 @@ final class SearchRecentReactor: Reactor {
   }
 
 
+  // MARK: Constants
+
+  private enum Const {
+    static let keywordLimitCount: Int = 10
+  }
+
+
   // MARK: Reactor
 
   enum Action {
@@ -120,6 +127,8 @@ extension SearchRecentReactor {
     if let alreadyExistKeywordIndex = localKeywords.firstIndex(where: { $0 == text }) {
       guard alreadyExistKeywordIndex != 0 else { return .empty() }
       localKeywords.remove(at: alreadyExistKeywordIndex)
+    } else if localKeywords.count >= Const.keywordLimitCount {
+      localKeywords.removeLast()
     }
 
     localKeywords.insert(text, at: 0)

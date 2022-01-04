@@ -17,7 +17,7 @@ class NoteImageCell: BaseTableViewCell, View {
   typealias Section = RxCollectionViewSectionedReloadDataSource<NoteImageSection>
   
   private enum Constants {
-    static let baseItemValue: CGFloat = 94
+    static let baseItemValue: CGFloat = 74
   }
 
   var disposeBag: DisposeBag = DisposeBag()

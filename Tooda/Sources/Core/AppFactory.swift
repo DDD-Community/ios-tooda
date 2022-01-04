@@ -44,6 +44,8 @@ final class AppFactory: AppFactoryType {
           service: self.dependency.appInject.resolve(NetworkingProtocol.self),
           coordinator: self.dependency.appInject.resolve(AppCoordinatorType.self),
           authorization: self.dependency.appInject.resolve(AppAuthorizationType.self),
+          linkPreviewService:
+            self.dependency.appInject.resolve(LinkPreViewServiceType.self),
           createDiarySectionFactory: createDiarySectionFactory)
       )
         
@@ -128,7 +130,9 @@ final class AppFactory: AppFactoryType {
 
     case .searchResult:
       let reactor = SearchResultReactor(
-        dependency: .init()
+        dependency: .init(
+          networking: self.dependency.appInject.resolve(NetworkingProtocol.self)
+        )
       )
 
       return SearchResultViewController(reactor: reactor)

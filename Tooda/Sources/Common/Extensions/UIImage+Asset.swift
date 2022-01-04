@@ -38,6 +38,9 @@ enum AppImage: String {
   case closeButton = "cancel"
   case moreButton = "more"
   case link = "link"
+
+  // Emoji
+  case emojiToodaGray = "emoji_tooda_gray"
 }
 
 extension UIImage {

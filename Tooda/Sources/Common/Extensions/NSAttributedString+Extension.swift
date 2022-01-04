@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 
 extension NSAttributedString {
   typealias Style = [NSAttributedString.Key: Any]
@@ -65,5 +66,23 @@ extension NSAttributedString {
 
       return result
     })
+  }
+
+  func alignment(with alignment: NSTextAlignment) -> NSAttributedString {
+    guard let mutableAttr = self.mutableCopy() as? NSMutableAttributedString,
+          let styleAttribute = mutableAttr.attributes(
+            at: 0,
+            effectiveRange: nil
+          )[.paragraphStyle] as? NSMutableParagraphStyle
+    else {
+      return self
+    }
+
+    styleAttribute.alignment = .center
+    var attributes = mutableAttr.attributes(at: 0, effectiveRange: nil)
+    attributes.updateValue(styleAttribute, forKey: .paragraphStyle)
+    mutableAttr.setAttributes(attributes, range: .init(mutableAttr.string) ?? .init())
+
+    return mutableAttr
   }
 }
