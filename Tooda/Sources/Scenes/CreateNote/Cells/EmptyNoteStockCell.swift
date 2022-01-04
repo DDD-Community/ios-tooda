@@ -25,7 +25,6 @@ class EmptyNoteStockCell: BaseTableViewCell, View {
   let containerView = UIView().then {
     $0.layer.borderColor = Constants.baseColor?.cgColor
     $0.layer.borderWidth = 1.0
-    $0.layer.cornerRadius = 8.0
     $0.layer.masksToBounds = true
   }
   
