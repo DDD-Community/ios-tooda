@@ -260,7 +260,6 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
     
     reactor.state
       .map { $0.shouldReigsterButtonEnabled }
-      .distinctUntilChanged()
       .asDriver(onErrorJustReturn: false)
       .drive(onNext: { [weak self] in
         self?.registerButton.setOnOff(isOn: $0)
