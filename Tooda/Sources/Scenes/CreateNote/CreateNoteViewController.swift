@@ -87,6 +87,13 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
                                                style: .plain,
                                                target: nil,
                                                action: nil)
+  
+  private let registerButton = BaseButton(width: 53, height: 28).then {
+    $0.setButtonTitle(with: "등록", style: TextStyle.body2Bold(color: UIColor.white))
+    $0.configureShadow(color: .clear, x: 0, y: 0, blur: 0, spread: 0)
+  }
+  
+  private lazy var rightBarButton = UIBarButtonItem(customView: self.registerButton)
 
   private lazy var tableView = UITableView().then {
     $0.separatorStyle = .none
@@ -246,6 +253,7 @@ extension CreateNoteViewController {
   func configureNavigation() {
     self.navigationItem.titleView = self.titleLabel
     self.navigationItem.leftBarButtonItem = self.closeBarbutton
+    self.navigationItem.rightBarButtonItem = self.rightBarButton
   }
   
   private func configureTapGesture() {
