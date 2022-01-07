@@ -36,3 +36,15 @@ final class NoteImageItemCellReactor: Reactor {
     return newState
   }
 }
+
+// MARK: - Extensions
+
+extension NoteImageItemCellReactor: Hashable {
+  static func == (lhs: NoteImageItemCellReactor, rhs: NoteImageItemCellReactor) -> Bool {
+    return lhs.currentState.item.id == rhs.currentState.item.id
+  }
+  
+  func hash(into hasher: inout Hasher) {
+    hasher.combine(ObjectIdentifier(self).hashValue)
+  }
+}

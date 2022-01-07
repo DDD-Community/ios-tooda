@@ -137,3 +137,13 @@ let noteImageSectionFactory: NoteImageSectionType = { images -> [NoteImageSectio
   
   return sections
 }
+
+extension NoteImageCellReactor: Hashable {
+  static func == (lhs: NoteImageCellReactor, rhs: NoteImageCellReactor) -> Bool {
+    return lhs.currentState.sections == rhs.currentState.sections
+  }
+  
+  func hash(into hasher: inout Hasher) {
+    hasher.combine(ObjectIdentifier(self).hashValue)
+  }
+}
