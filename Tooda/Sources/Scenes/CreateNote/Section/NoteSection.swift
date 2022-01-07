@@ -20,7 +20,7 @@ struct NoteSection {
   var items: [NoteSectionItem]
 }
 
-extension NoteSection: SectionModelType {
+extension NoteSection: AnimatableSectionModelType {
   init(original: NoteSection, items: [NoteSectionItem]) {
     self = .init(identity: original.identity, items: items)
   }
