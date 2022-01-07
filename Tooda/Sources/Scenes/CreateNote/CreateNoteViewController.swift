@@ -46,7 +46,6 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
       cell.configure(reactor: reactor)
         
       cell.rx.textValueDidChanged
-        .filter { !($0.0.isEmpty && $0.1.isEmpty) }
         .map { (title: $0.0, content: $0.1) }
         .bind(to: self.rxTextDidChangedRelay)
         .disposed(by: cell.disposeBag)

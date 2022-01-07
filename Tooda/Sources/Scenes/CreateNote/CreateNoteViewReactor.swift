@@ -236,7 +236,10 @@ extension CreateNoteViewReactor {
 // MARK: TextInput DidChanged
 extension CreateNoteViewReactor {
   private func textValueDidChanged(_ title: String, _ content: String) -> Observable<Mutation> {
-    return .concat([.just(.shouldRegisterButtonEnabeld(!title.isEmpty))])
+    
+    let shouldButtonEnabled = !(title.isEmpty || content.isEmpty)
+    
+    return .concat([.just(.shouldRegisterButtonEnabeld(shouldButtonEnabled))])
   }
 }
 
