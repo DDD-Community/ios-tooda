@@ -58,3 +58,14 @@ extension NoteStockCellReactor.Payload {
     }
   }
 }
+
+extension NoteStockCellReactor: Hashable {
+  static func == (lhs: NoteStockCellReactor, rhs: NoteStockCellReactor) -> Bool {
+    return lhs.currentState.payload.name == rhs.currentState.payload.name &&
+    lhs.currentState.payload.rate == rhs.currentState.payload.rate
+  }
+  
+  func hash(into hasher: inout Hasher) {
+    hasher.combine(ObjectIdentifier(self).hashValue)
+  }
+}
