@@ -51,6 +51,7 @@ final class CreateNoteViewReactor: Reactor {
   struct State: Then {
     var sections: [NoteSection] = []
     var presentType: ViewPresentType?
+    var shouldReigsterButtonEnabled: Bool = false
   }
 
   let initialState: State

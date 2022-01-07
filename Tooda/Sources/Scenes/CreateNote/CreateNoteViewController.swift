@@ -244,6 +244,13 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
       .drive(onNext: { [weak self] in
         self?.present(by: $0)
       }).disposed(by: self.disposeBag)
+    
+    reactor.state
+      .map { $0.shouldReigsterButtonEnabled }
+      .asDriver(onErrorJustReturn: false)
+      .drive(onNext: { [weak self] in
+        self?.registerButton.setOnOff(isOn: $0)
+      }).disposed(by: self.disposeBag)
   }
 }
 
