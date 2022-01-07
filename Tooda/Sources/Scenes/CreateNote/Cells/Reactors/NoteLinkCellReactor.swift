@@ -92,3 +92,15 @@ extension NoteLinkCellReactor {
     }
   }
 }
+
+// MARK: - Extensions
+
+extension NoteLinkCellReactor: Hashable {
+  static func == (lhs: NoteLinkCellReactor, rhs: NoteLinkCellReactor) -> Bool {
+    return lhs.payload == rhs.payload
+  }
+  
+  func hash(into hasher: inout Hasher) {
+    hasher.combine(ObjectIdentifier(self).hashValue)
+  }
+}
