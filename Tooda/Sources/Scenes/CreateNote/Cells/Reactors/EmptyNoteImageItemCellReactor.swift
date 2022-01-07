@@ -22,6 +22,7 @@ final class EmptyNoteImageItemCellReactor: Reactor {
   }
   
   let initialState: State
+  private let uuid: String = UUID().uuidString
   
   init() {
     initialState = State()
@@ -34,5 +35,15 @@ final class EmptyNoteImageItemCellReactor: Reactor {
   func reduce(state: State, mutation: Action) -> State {
     var newState = state
     return newState
+  }
+}
+
+extension EmptyNoteImageItemCellReactor: Hashable {
+  static func == (lhs: EmptyNoteImageItemCellReactor, rhs: EmptyNoteImageItemCellReactor) -> Bool {
+    return lhs.uuid == rhs.uuid
+  }
+  
+  func hash(into hasher: inout Hasher) {
+    hasher.combine(ObjectIdentifier(self).hashValue)
   }
 }
