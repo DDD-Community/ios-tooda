@@ -24,6 +24,13 @@ extension NoteImageSection: SectionModelType {
 }
 
 enum NoteImageSectionItem {
+enum NoteImageSectionItem: Hashable {
   case empty(EmptyNoteImageItemCellReactor)
   case item(NoteImageItemCellReactor)
+}
+
+extension NoteImageSectionItem: IdentifiableType {
+  var identity: String {
+    return "\(self.hashValue)"
+  }
 }
