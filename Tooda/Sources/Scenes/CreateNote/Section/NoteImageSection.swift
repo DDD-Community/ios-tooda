@@ -23,7 +23,12 @@ extension NoteImageSection: SectionModelType {
   }
 }
 
-enum NoteImageSectionItem {
+extension NoteImageSection: Equatable {
+  static func == (lhs: NoteImageSection, rhs: NoteImageSection) -> Bool {
+    return lhs.items == rhs.items
+  }
+}
+
 enum NoteImageSectionItem: Hashable {
   case empty(EmptyNoteImageItemCellReactor)
   case item(NoteImageItemCellReactor)
