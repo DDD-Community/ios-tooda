@@ -234,7 +234,7 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
       .disposed(by: self.disposeBag)
     
     rxCombinedTextDidChangedRelay
-      .map { Reactor.Action.textValueDidChanged(title: $0.title, content: $0.content)}
+      .map { Reactor.Action.makeTitleAndContent(title: $0.title, content: $0.content)}
       .bind(to: reactor.action)
       .disposed(by: self.disposeBag)
     

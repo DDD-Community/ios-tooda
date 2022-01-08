@@ -38,7 +38,7 @@ final class CreateNoteViewReactor: Reactor {
     case showAddStockView
     case stockItemDidAdded(NoteStock)
     case linkURLDidAdded(String)
-    case textValueDidChanged(title: String, content: String)
+    case makeTitleAndContent(title: String, content: String)
     case linkButtonDidTapped
   }
 
@@ -89,7 +89,7 @@ final class CreateNoteViewReactor: Reactor {
       return self.makeStockSectionItem(stock)
     case .linkURLDidAdded(let url):
       return self.makeLinkSectionItem(url)
-    case .textValueDidChanged(let title, let content):
+    case .makeTitleAndContent(let title, let content):
       return self.makeTitleAndContent(title, content)
     case .linkButtonDidTapped:
         return self.linkButtonDidTapped()
