@@ -58,10 +58,14 @@ final class CreateNoteViewReactor: Reactor {
   }
 
   let initialState: State
+  
+  private let linkItemMaxCount: Int = 2
 
   let dependency: Dependency
   
   private let addStockCompletionRelay: PublishRelay<NoteStock> = PublishRelay()
+  
+  private let addLinkURLCompletionRelay: PublishRelay<String> = PublishRelay()
 
   init(dependency: Dependency) {
     self.dependency = dependency
@@ -123,7 +127,7 @@ final class CreateNoteViewReactor: Reactor {
   }
   
   func transform(action: Observable<Action>) -> Observable<Action> {
-    return Observable.merge(action, self.addStockCompletionRelay.map { Action.stockItemDidAdded($0) })
+    return Observable.merge(action, self.addStockCompletionRelay.map { Action.stockItemDidAdded($0) }, self.addLinkURLCompletionRelay.take(self.linkItemMaxCount).map { Action.linkURLDidAdded($0) })
   }
 
   private func makeSections() -> [NoteSection] {
@@ -252,6 +256,8 @@ extension CreateNoteViewReactor {
 
 extension CreateNoteViewReactor {
   private func linkButtonDidTapped() -> Observable<Mutation> {
+    
+    self.dependency.coordinator.transition(to: .popUp(type: .textInput(self.addLinkURLCompletionRelay)), using: .modal, animated: true)
     
     return .empty()
   }
