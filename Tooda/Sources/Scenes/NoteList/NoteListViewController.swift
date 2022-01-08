@@ -65,11 +65,13 @@ final class NoteListViewController: BaseViewController<NoteListReactor> {
   )
   
   private let addNoteButton = UIButton(type: .system).then {
-    $0.layer.shadowColor = UIColor.black.withAlphaComponent(0.2).cgColor
-    $0.layer.shadowOpacity = 1
-    $0.layer.shadowRadius = 20
-    $0.layer.shadowOffset = CGSize(width: 0, height: 8)
-    $0.layer.cornerRadius = 28
+    $0.configureShadow(
+      color: UIColor.black.withAlphaComponent(0.2),
+      x: 0,
+      y: 8,
+      blur: 56,
+      spread: 0
+    )
     $0.setImage(UIImage(type: .addNewNoteButton)?.withRenderingMode(.alwaysOriginal), for: .normal)
   }
   
