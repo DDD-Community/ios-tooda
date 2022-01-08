@@ -11,7 +11,7 @@ import Then
 import SnapKit
 
 protocol CreateNoteGuideViewDelegate: AnyObject {
-  func contentDidTapped()
+  func contentDidTapped(dateString: String)
 }
 
 final class CreateNoteGuideView: UIView {
@@ -121,7 +121,7 @@ final class CreateNoteGuideView: UIView {
   
   @objc
   private func contentViewDidTapped(_ sender: Any?) {
-    self.delegate?.contentDidTapped()
+    self.delegate?.contentDidTapped(dateString: self.todayString)
   }
   
   private func applyGradientAndShadow(_ view: UIView) {
