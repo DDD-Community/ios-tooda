@@ -30,6 +30,8 @@ final class CreateNoteGuideView: UIView {
   
   weak var delegate: CreateNoteGuideViewDelegate?
   
+  private var todayString: String = Date().string(.dot)
+  
   let contentView = UIView().then {
     $0.layer.masksToBounds = false
   }
@@ -74,7 +76,7 @@ final class CreateNoteGuideView: UIView {
   private func configureUI() {
     
     self.titleLabel.do {
-      $0.attributedText = Date().string(.dot).styled(with: Font.date)
+      $0.attributedText = self.todayString.styled(with: Font.date)
     }
     
     self.addSubview(contentView)
