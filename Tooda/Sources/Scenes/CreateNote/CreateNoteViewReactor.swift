@@ -257,7 +257,7 @@ extension CreateNoteViewReactor {
 extension CreateNoteViewReactor {
   private func linkButtonDidTapped() -> Observable<Mutation> {
     
-    self.dependency.coordinator.transition(to: .popUp(type: .textInput(self.addLinkURLCompletionRelay)), using: .modal, animated: true)
+    self.dependency.coordinator.transition(to: .popUp(type: .textInput(self.addLinkURLCompletionRelay)), using: .modal, animated: false)
     
     return .empty()
   }
