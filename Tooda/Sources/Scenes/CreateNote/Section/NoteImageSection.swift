@@ -23,19 +23,7 @@ extension NoteImageSection: SectionModelType {
   }
 }
 
-extension NoteImageSection: Equatable {
-  static func == (lhs: NoteImageSection, rhs: NoteImageSection) -> Bool {
-    return lhs.items == rhs.items
-  }
-}
-
-enum NoteImageSectionItem: Hashable {
+enum NoteImageSectionItem {
   case empty(EmptyNoteImageItemCellReactor)
   case item(NoteImageItemCellReactor)
-}
-
-extension NoteImageSectionItem: IdentifiableType {
-  var identity: String {
-    return "\(self.hashValue)"
-  }
 }
