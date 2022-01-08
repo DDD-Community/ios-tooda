@@ -10,13 +10,23 @@ import Foundation
 struct AddNoteDTO {
   var title: String
   var content: String
-  var stocks: [NoteStock]?
-  var links: [String]?
-  var images: [String]?
+  var stocks: [NoteStock]
+  var links: [String]
+  var images: [String]
   var sticker: Sticker
 }
 
 extension AddNoteDTO {
+  
+  init() {
+    title = ""
+    content = ""
+    stocks = []
+    links = []
+    images = []
+    sticker = .wow
+  }
+  
   func asBodyParameters() -> [String: Any] {
     var parameters: [String: Any] = [:]
     
@@ -26,19 +36,19 @@ extension AddNoteDTO {
       "sticker": sticker
     ])
     
-    if let stocks = stocks {
+    if stocks.isNotEmpty {
       parameters.concat(dict: [
         "stocks": stocks
       ])
     }
     
-    if let links = links {
+    if links.isNotEmpty {
       parameters.concat(dict: [
         "links": links
       ])
     }
     
-    if let images = images {
+    if images.isNotEmpty {
       parameters.concat(dict: [
         "images": images
       ])
