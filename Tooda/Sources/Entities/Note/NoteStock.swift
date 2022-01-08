@@ -10,9 +10,9 @@ import Foundation
 import UIKit
 
 enum StockChangeState: String, Codable {
-	case rise
-	case even
-	case fall
+  case rise = "RISE"
+  case even = "EVEN"
+  case fall = "FALL"
 }
 
 extension StockChangeState {
