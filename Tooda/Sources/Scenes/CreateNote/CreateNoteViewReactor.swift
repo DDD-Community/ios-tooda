@@ -85,7 +85,7 @@ final class CreateNoteViewReactor: Reactor {
     case .linkURLDidAdded(let url):
       return self.makeLinkSectionItem(url)
     case .textValueDidChanged(let title, let content):
-      return self.textValueDidChanged(title, content)
+      return self.makeTitleAndContent(title, content)
     case .dismissView:
         return dismissView()
     default:
@@ -235,11 +235,12 @@ extension CreateNoteViewReactor {
 
 // MARK: TextInput DidChanged
 extension CreateNoteViewReactor {
-  private func textValueDidChanged(_ title: String, _ content: String) -> Observable<Mutation> {
+  private func makeTitleAndContent(_ title: String, _ content: String) -> Observable<Mutation> {
     
     let shouldButtonEnabled = !(title.isEmpty || content.isEmpty)
     
-    return .concat([.just(.shouldRegisterButtonEnabeld(shouldButtonEnabled))])
+    // TODO: 노트 등록을 위한 title과 content를 State에 전달할 Mutation을 연결할 예정이에요.
+    return .just(.shouldRegisterButtonEnabeld(shouldButtonEnabled))
   }
 }
 
