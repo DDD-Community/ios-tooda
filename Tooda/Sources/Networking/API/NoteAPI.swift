@@ -11,7 +11,7 @@ import Foundation
 import Moya
 
 enum NoteAPI {
-  case create(diary: Note)
+  case create(dto: AddNoteDTO)
   case list(limit: Int, cursor: Int)
   case delete(id: String)
   case addImage(data: Data)
@@ -49,7 +49,9 @@ extension NoteAPI: BaseAPI {
     
     switch self {
       case .create(let note):
-        // TODO: diary 파라미터 작성
+        
+        body.concat(dict: note.asBodyParameters())
+        
         return .requestCompositeParameters(bodyParameters: body, bodyEncoding: JSONEncoding.default, urlParameters: parameters)
       case .addImage(let imageData):
         let imageData = MultipartFormData(provider: .data(imageData), name: "files", fileName: "image.jpeg", mimeType: "image/jpeg")
