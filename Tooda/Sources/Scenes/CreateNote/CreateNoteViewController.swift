@@ -83,12 +83,13 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
         return cell
     }
   }, canEditRowAtIndexPath: { _, _ in true })
-
+  
+  private let dateString: String
 
   // MARK: UI-Properties
   
-  private let titleLabel = UILabel().then {
-    $0.attributedText = Date().string(.dot).styled(with: TextStyle.subTitle(color: .gray1))
+  private lazy var titleLabel = UILabel().then {
+    $0.attributedText = self.dateString.styled(with: TextStyle.subTitle(color: .gray1))
   }
   
   private let closeBarbutton = UIBarButtonItem(image: UIImage(type: .iconCancelBlack),
@@ -144,10 +145,12 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
     fatalError("init(coder:) has not been implemented")
   }
 
-  init(reactor: Reactor) {
+  init(dateString: String, reactor: Reactor) {
     defer {
       self.reactor = reactor
     }
+    
+    self.dateString = dateString
     super.init()
   }
   

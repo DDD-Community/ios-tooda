@@ -49,7 +49,7 @@ final class AppFactory: AppFactoryType {
           createDiarySectionFactory: createDiarySectionFactory)
       )
         
-      let viewController = CreateNoteViewController(reactor: reactor)
+      let viewController = CreateNoteViewController(dateString: today, reactor: reactor)
       let navigationController = UINavigationController(rootViewController: viewController)
       navigationController.modalPresentationStyle = .overFullScreen
       return navigationController
