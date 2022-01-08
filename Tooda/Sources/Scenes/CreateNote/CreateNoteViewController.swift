@@ -219,6 +219,11 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
       .bind(to: reactor.action)
       .disposed(by: self.disposeBag)
     
+    self.linkButton.rx.tap
+      .map { _ in Reactor.Action.linkButtonDidTapped }
+      .bind(to: reactor.action)
+      .disposed(by: self.disposeBag)
+    
     imageItemCellDidTapRelay
       .map { Reactor.Action.didSelectedImageItem($0) }
       .bind(to: reactor.action)
