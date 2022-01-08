@@ -30,7 +30,7 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
   
   let rxAddStockDidTapRelay: PublishRelay<Void> = PublishRelay()
   
-  private let rxTextDidChangedRelay: PublishRelay<(title: String, content: String)> = PublishRelay()
+  private let rxCombinedTextDidChangedRelay: PublishRelay<(title: String, content: String)> = PublishRelay()
   
   // MARK: Properties
   lazy var dataSource: Section = Section(configureCell: { _, tableView, indexPath, item -> UITableViewCell in
@@ -39,9 +39,9 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
       let cell = tableView.dequeue(NoteContentCell.self, indexPath: indexPath)
       cell.configure(reactor: reactor)
         
-      cell.rx.textValueDidChanged
+      cell.rx.combinedTextDidChanged
         .map { (title: $0.0, content: $0.1) }
-        .bind(to: self.rxTextDidChangedRelay)
+        .bind(to: self.rxCombinedTextDidChangedRelay)
         .disposed(by: cell.disposeBag)
         
       return cell
@@ -233,8 +233,8 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
       .bind(to: reactor.action)
       .disposed(by: self.disposeBag)
     
-    rxTextDidChangedRelay
-      .map { Reactor.Action.textValueDidChanged(title: $0.title, content: $0.content)}
+    rxCombinedTextDidChangedRelay
+      .map { Reactor.Action.makeTitleAndContent(title: $0.title, content: $0.content)}
       .bind(to: reactor.action)
       .disposed(by: self.disposeBag)
     
