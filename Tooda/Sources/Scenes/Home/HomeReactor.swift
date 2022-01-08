@@ -276,8 +276,9 @@ extension HomeReactor {
   }
   
   private func presentCreateNote() {
+    // FIXME: dateString에 실제 값을 전달해요.
     self.dependency.coordinator.transition(
-      to: .createNote,
+      to: .createNote(dateString: ""),
       using: .modal,
       animated: true,
       completion: nil

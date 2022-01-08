@@ -38,7 +38,7 @@ final class AppFactory: AppFactoryType {
       )
       return HomeViewController(reactor: reactor)
 
-    case .createNote:
+    case .createNote(let today):
       let reactor = CreateNoteViewReactor(
         dependency: .init(
           service: self.dependency.appInject.resolve(NetworkingProtocol.self),
