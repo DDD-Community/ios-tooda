@@ -39,6 +39,7 @@ final class CreateNoteViewReactor: Reactor {
     case stockItemDidAdded(NoteStock)
     case linkURLDidAdded(String)
     case textValueDidChanged(title: String, content: String)
+    case linkButtonDidTapped
   }
 
   enum Mutation {
@@ -86,6 +87,8 @@ final class CreateNoteViewReactor: Reactor {
       return self.makeLinkSectionItem(url)
     case .textValueDidChanged(let title, let content):
       return self.makeTitleAndContent(title, content)
+    case .linkButtonDidTapped:
+        return self.linkButtonDidTapped()
     case .dismissView:
         return dismissView()
     default:
@@ -242,6 +245,15 @@ extension CreateNoteViewReactor {
     
     // TODO: 노트 등록을 위한 title과 content를 State에 전달할 Mutation을 연결할 예정이에요.
     return .just(.shouldRegisterButtonEnabeld(shouldButtonEnabled))
+  }
+}
+
+// MARK: LinkButton DidTapped
+
+extension CreateNoteViewReactor {
+  private func linkButtonDidTapped() -> Observable<Mutation> {
+    
+    return .empty()
   }
 }
 
