@@ -19,10 +19,6 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
 
   typealias Section = RxTableViewSectionedAnimatedDataSource<NoteSection>
   
-  private enum Const {
-    static let linkItemMaxCount: Int = 2
-  }
-  
   private enum Metric {
     static let linkButtonSize: CGFloat = 20.0
   }
@@ -33,8 +29,6 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
   let imagePickerDataSelectedRelay: PublishRelay<Data> = PublishRelay()
   
   let rxAddStockDidTapRelay: PublishRelay<Void> = PublishRelay()
-  
-  private let rxLinkURLDidAddedRelay: PublishRelay<String> = PublishRelay()
   
   private let rxTextDidChangedRelay: PublishRelay<(title: String, content: String)> = PublishRelay()
   
@@ -219,6 +213,11 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
       .bind(to: reactor.action)
       .disposed(by: self.disposeBag)
     
+    self.linkButton.rx.tap
+      .map { _ in Reactor.Action.linkButtonDidTapped }
+      .bind(to: reactor.action)
+      .disposed(by: self.disposeBag)
+    
     imageItemCellDidTapRelay
       .map { Reactor.Action.didSelectedImageItem($0) }
       .bind(to: reactor.action)
@@ -231,12 +230,6 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
     
     rxAddStockDidTapRelay
       .map { Reactor.Action.showAddStockView }
-      .bind(to: reactor.action)
-      .disposed(by: self.disposeBag)
-    
-    rxLinkURLDidAddedRelay
-      .take(Const.linkItemMaxCount)
-      .map { Reactor.Action.linkURLDidAdded($0) }
       .bind(to: reactor.action)
       .disposed(by: self.disposeBag)
     
@@ -260,7 +253,6 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
     
     reactor.state
       .map { $0.shouldReigsterButtonEnabled }
-      .distinctUntilChanged()
       .asDriver(onErrorJustReturn: false)
       .drive(onNext: { [weak self] in
         self?.registerButton.setOnOff(isOn: $0)

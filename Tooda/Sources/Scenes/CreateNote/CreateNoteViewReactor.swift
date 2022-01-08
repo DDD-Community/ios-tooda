@@ -39,6 +39,7 @@ final class CreateNoteViewReactor: Reactor {
     case stockItemDidAdded(NoteStock)
     case linkURLDidAdded(String)
     case textValueDidChanged(title: String, content: String)
+    case linkButtonDidTapped
   }
 
   enum Mutation {
@@ -57,10 +58,14 @@ final class CreateNoteViewReactor: Reactor {
   }
 
   let initialState: State
+  
+  private let linkItemMaxCount: Int = 2
 
   let dependency: Dependency
   
   private let addStockCompletionRelay: PublishRelay<NoteStock> = PublishRelay()
+  
+  private let addLinkURLCompletionRelay: PublishRelay<String> = PublishRelay()
 
   init(dependency: Dependency) {
     self.dependency = dependency
@@ -86,6 +91,8 @@ final class CreateNoteViewReactor: Reactor {
       return self.makeLinkSectionItem(url)
     case .textValueDidChanged(let title, let content):
       return self.makeTitleAndContent(title, content)
+    case .linkButtonDidTapped:
+        return self.linkButtonDidTapped()
     case .dismissView:
         return dismissView()
     default:
@@ -120,7 +127,7 @@ final class CreateNoteViewReactor: Reactor {
   }
   
   func transform(action: Observable<Action>) -> Observable<Action> {
-    return Observable.merge(action, self.addStockCompletionRelay.map { Action.stockItemDidAdded($0) })
+    return Observable.merge(action, self.addStockCompletionRelay.map { Action.stockItemDidAdded($0) }, self.addLinkURLCompletionRelay.take(self.linkItemMaxCount).map { Action.linkURLDidAdded($0) })
   }
 
   private func makeSections() -> [NoteSection] {
@@ -242,6 +249,17 @@ extension CreateNoteViewReactor {
     
     // TODO: 노트 등록을 위한 title과 content를 State에 전달할 Mutation을 연결할 예정이에요.
     return .just(.shouldRegisterButtonEnabeld(shouldButtonEnabled))
+  }
+}
+
+// MARK: LinkButton DidTapped
+
+extension CreateNoteViewReactor {
+  private func linkButtonDidTapped() -> Observable<Mutation> {
+    
+    self.dependency.coordinator.transition(to: .popUp(type: .textInput(self.addLinkURLCompletionRelay)), using: .modal, animated: false)
+    
+    return .empty()
   }
 }
 
