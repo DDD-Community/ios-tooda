@@ -106,8 +106,10 @@ final class AppFactory: AppFactoryType {
           coordinator: self.dependency.appInject.resolve(AppCoordinatorType.self)
         )
       )
-      return NoteListViewController(reactor: reactor)
-
+      let viewController = NoteListViewController(reactor: reactor)
+      let navigationController = UINavigationController(rootViewController: viewController)
+      navigationController.modalPresentationStyle = .overFullScreen
+      return navigationController
     case .searchRecent:
       let reactor = SearchRecentReactor(
         dependency: .init(
