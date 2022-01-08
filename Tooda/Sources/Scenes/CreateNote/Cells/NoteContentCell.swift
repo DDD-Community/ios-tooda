@@ -133,7 +133,7 @@ extension NoteContentCell: UITextViewDelegate {
 // MARK: - Reactive Extension
 
 extension Reactive where Base: NoteContentCell {
-  var textValueDidChanged: Observable<(String, String)> {
+  var combinedTextDidChanged: Observable<(String, String)> {
     return Observable.combineLatest(
       self.base.titleTextField.rx.text.orEmpty.asObservable(),
       self.base.contentTextView.rx.text.orEmpty.asObservable()
