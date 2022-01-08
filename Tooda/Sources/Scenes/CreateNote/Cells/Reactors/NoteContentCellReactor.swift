@@ -23,6 +23,7 @@ final class NoteContentCellReactor: Reactor {
   }
 
   let initialState: State
+  private let uuid: String = UUID().uuidString
 
   init() {
     initialState = State()
@@ -37,4 +38,16 @@ final class NoteContentCellReactor: Reactor {
     return newState
   }
 
+}
+
+// MARK: - Extensions
+
+extension NoteContentCellReactor: Hashable {
+  static func == (lhs: NoteContentCellReactor, rhs: NoteContentCellReactor) -> Bool {
+    return lhs.uuid == rhs.uuid
+  }
+  
+  func hash(into hasher: inout Hasher) {
+    hasher.combine(ObjectIdentifier(self).hashValue)
+  }
 }

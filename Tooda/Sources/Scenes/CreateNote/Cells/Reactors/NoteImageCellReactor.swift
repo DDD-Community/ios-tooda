@@ -38,6 +38,8 @@ final class NoteImageCellReactor: Reactor {
   let dependency: Dependency
   
   let disposeBag: DisposeBag = DisposeBag()
+  
+  private let uuid: String = UUID().uuidString
 
   init(dependency: Dependency) {
     self.dependency = dependency
@@ -136,4 +138,14 @@ let noteImageSectionFactory: NoteImageSectionType = { images -> [NoteImageSectio
   sections[NoteImageSection.Identity.item.rawValue].items = imageSectionItems
   
   return sections
+}
+
+extension NoteImageCellReactor: Hashable {
+  static func == (lhs: NoteImageCellReactor, rhs: NoteImageCellReactor) -> Bool {
+    return lhs.uuid == rhs.uuid
+  }
+  
+  func hash(into hasher: inout Hasher) {
+    hasher.combine(ObjectIdentifier(self).hashValue)
+  }
 }

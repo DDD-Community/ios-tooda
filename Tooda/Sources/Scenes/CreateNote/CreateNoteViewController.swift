@@ -17,7 +17,7 @@ import SnapKit
 class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
   typealias Reactor = CreateNoteViewReactor
 
-  typealias Section = RxTableViewSectionedReloadDataSource<NoteSection>
+  typealias Section = RxTableViewSectionedAnimatedDataSource<NoteSection>
   
   private enum Const {
     static let linkItemMaxCount: Int = 2

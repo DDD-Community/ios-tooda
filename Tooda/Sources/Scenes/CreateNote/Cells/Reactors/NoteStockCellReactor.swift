@@ -27,6 +27,8 @@ final class NoteStockCellReactor: Reactor {
   }
 
   let initialState: State
+  
+  private let uuid: String = UUID().uuidString
 
   init(payload: Payload) {
     initialState = State(payload: payload)
@@ -56,5 +58,15 @@ extension NoteStockCellReactor.Payload {
       default:
         return .fall
     }
+  }
+}
+
+extension NoteStockCellReactor: Hashable {
+  static func == (lhs: NoteStockCellReactor, rhs: NoteStockCellReactor) -> Bool {
+    return lhs.uuid == rhs.uuid
+  }
+  
+  func hash(into hasher: inout Hasher) {
+    hasher.combine(ObjectIdentifier(self).hashValue)
   }
 }

@@ -20,16 +20,22 @@ struct NoteSection {
   var items: [NoteSectionItem]
 }
 
-extension NoteSection: SectionModelType {
+extension NoteSection: AnimatableSectionModelType {
   init(original: NoteSection, items: [NoteSectionItem]) {
     self = .init(identity: original.identity, items: items)
   }
 }
 
-enum NoteSectionItem {
+enum NoteSectionItem: Hashable {
   case content(NoteContentCellReactor)
   case addStock(EmptyNoteStockCellReactor)
   case stock(NoteStockCellReactor)
   case image(NoteImageCellReactor)
   case link(NoteLinkCellReactor)
+}
+
+extension NoteSectionItem: IdentifiableType {
+  var identity: String {
+    return "\(self.hashValue)"
+  }
 }

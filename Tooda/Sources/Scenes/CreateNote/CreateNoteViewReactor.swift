@@ -97,6 +97,7 @@ final class CreateNoteViewReactor: Reactor {
     
     var newState = State().with {
       $0.sections = state.sections
+      $0.shouldReigsterButtonEnabled = state.shouldReigsterButtonEnabled
       $0.presentType = nil
     }
     
