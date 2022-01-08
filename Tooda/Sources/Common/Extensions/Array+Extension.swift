@@ -13,3 +13,9 @@ extension Array {
     return indices ~= index ? self[index] : nil
   }
 }
+
+extension Collection {
+  var isNotEmpty: Bool {
+    return !self.isEmpty
+  }
+}
