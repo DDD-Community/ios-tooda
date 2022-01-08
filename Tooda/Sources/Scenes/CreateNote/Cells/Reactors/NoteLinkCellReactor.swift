@@ -36,6 +36,8 @@ final class NoteLinkCellReactor: Reactor {
   let initialState: State
   private let dependency: Dependency
   private let payload: String
+  
+  private let uuid: String = UUID().uuidString
 
   init(
     dependency: Dependency,
@@ -97,7 +99,7 @@ extension NoteLinkCellReactor {
 
 extension NoteLinkCellReactor: Hashable {
   static func == (lhs: NoteLinkCellReactor, rhs: NoteLinkCellReactor) -> Bool {
-    return lhs.payload == rhs.payload
+    return lhs.uuid == rhs.uuid
   }
   
   func hash(into hasher: inout Hasher) {
