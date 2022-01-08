@@ -79,6 +79,10 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
 
   // MARK: UI-Properties
   
+  private let titleLabel = UILabel().then {
+    $0.attributedText = Date().string(.dot).styled(with: TextStyle.subTitle(color: .gray1))
+  }
+  
   private let closeBarbutton = UIBarButtonItem(image: UIImage(type: .iconCancelBlack),
                                                style: .plain,
                                                target: nil,
@@ -240,7 +244,7 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
 
 extension CreateNoteViewController {
   func configureNavigation() {
-    self.navigationItem.title = Date().description
+    self.navigationItem.titleView = self.titleLabel
     self.navigationItem.leftBarButtonItem = self.closeBarbutton
   }
   
