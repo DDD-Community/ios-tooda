@@ -38,6 +38,7 @@ final class CreateNoteViewReactor: Reactor {
     case showAddStockView
     case stockItemDidAdded(NoteStock)
     case linkURLDidAdded(String)
+    case textValueDidChanged(title: String, content: String)
   }
 
   enum Mutation {
@@ -46,11 +47,13 @@ final class CreateNoteViewReactor: Reactor {
     case fetchImageSection(NoteSectionItem)
     case fetchStockSection(NoteSectionItem)
     case fetchLinkSection(NoteSectionItem)
+    case shouldRegisterButtonEnabeld(Bool)
   }
 
   struct State: Then {
     var sections: [NoteSection] = []
     var presentType: ViewPresentType?
+    var shouldReigsterButtonEnabled: Bool = false
   }
 
   let initialState: State
@@ -81,6 +84,8 @@ final class CreateNoteViewReactor: Reactor {
       return self.makeStockSectionItem(stock)
     case .linkURLDidAdded(let url):
       return self.makeLinkSectionItem(url)
+    case .textValueDidChanged(let title, let content):
+      return self.makeTitleAndContent(title, content)
     case .dismissView:
         return dismissView()
     default:
@@ -106,6 +111,8 @@ final class CreateNoteViewReactor: Reactor {
       newState.sections[NoteSection.Identity.stock.rawValue].items.append(sectionItem)
     case .fetchLinkSection(let sectionItem):
       newState.sections[NoteSection.Identity.link.rawValue].items.append(sectionItem)
+    case .shouldRegisterButtonEnabeld(let enabled):
+      newState.shouldReigsterButtonEnabled = enabled
     }
 
     return newState
@@ -223,6 +230,17 @@ extension CreateNoteViewReactor {
     let linkSectionItem: NoteSectionItem = NoteSectionItem.link(linkReactor)
     
     return .just(.fetchLinkSection(linkSectionItem))
+  }
+}
+
+// MARK: TextInput DidChanged
+extension CreateNoteViewReactor {
+  private func makeTitleAndContent(_ title: String, _ content: String) -> Observable<Mutation> {
+    
+    let shouldButtonEnabled = !(title.isEmpty || content.isEmpty)
+    
+    // TODO: 노트 등록을 위한 title과 content를 State에 전달할 Mutation을 연결할 예정이에요.
+    return .just(.shouldRegisterButtonEnabeld(shouldButtonEnabled))
   }
 }
 

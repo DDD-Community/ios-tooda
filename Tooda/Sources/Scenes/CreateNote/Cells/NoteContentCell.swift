@@ -129,3 +129,14 @@ extension NoteContentCell: UITextViewDelegate {
       .shouldTextInMaxLength(propertyValue: textView.text, range: range, replace: text)
   }
 }
+
+// MARK: - Reactive Extension
+
+extension Reactive where Base: NoteContentCell {
+  var textValueDidChanged: Observable<(String, String)> {
+    return Observable.combineLatest(
+      self.base.titleTextField.rx.text.orEmpty.asObservable(),
+      self.base.contentTextView.rx.text.orEmpty.asObservable()
+    )
+  }
+}

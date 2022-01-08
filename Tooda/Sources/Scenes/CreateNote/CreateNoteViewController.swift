@@ -36,12 +36,20 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
   
   private let rxLinkURLDidAddedRelay: PublishRelay<String> = PublishRelay()
   
+  private let rxTextDidChangedRelay: PublishRelay<(title: String, content: String)> = PublishRelay()
+  
   // MARK: Properties
   lazy var dataSource: Section = Section(configureCell: { _, tableView, indexPath, item -> UITableViewCell in
     switch item {
     case .content(let reactor):
       let cell = tableView.dequeue(NoteContentCell.self, indexPath: indexPath)
       cell.configure(reactor: reactor)
+        
+      cell.rx.textValueDidChanged
+        .map { (title: $0.0, content: $0.1) }
+        .bind(to: self.rxTextDidChangedRelay)
+        .disposed(by: cell.disposeBag)
+        
       return cell
     case .addStock(let reactor):
       let cell = tableView.dequeue(EmptyNoteStockCell.self, indexPath: indexPath)
@@ -87,6 +95,13 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
                                                style: .plain,
                                                target: nil,
                                                action: nil)
+  
+  private let registerButton = BaseButton(width: 53, height: 28).then {
+    $0.setButtonTitle(with: "등록", style: TextStyle.body2Bold(color: UIColor.white))
+    $0.configureShadow(color: .clear, x: 0, y: 0, blur: 0, spread: 0)
+  }
+  
+  private lazy var rightBarButton = UIBarButtonItem(customView: self.registerButton)
 
   private lazy var tableView = UITableView().then {
     $0.separatorStyle = .none
@@ -225,6 +240,11 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
       .bind(to: reactor.action)
       .disposed(by: self.disposeBag)
     
+    rxTextDidChangedRelay
+      .map { Reactor.Action.textValueDidChanged(title: $0.title, content: $0.content)}
+      .bind(to: reactor.action)
+      .disposed(by: self.disposeBag)
+    
     // State
     reactor.state
       .map { $0.sections }
@@ -237,6 +257,14 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
       .drive(onNext: { [weak self] in
         self?.present(by: $0)
       }).disposed(by: self.disposeBag)
+    
+    reactor.state
+      .map { $0.shouldReigsterButtonEnabled }
+      .distinctUntilChanged()
+      .asDriver(onErrorJustReturn: false)
+      .drive(onNext: { [weak self] in
+        self?.registerButton.setOnOff(isOn: $0)
+      }).disposed(by: self.disposeBag)
   }
 }
 
@@ -246,6 +274,7 @@ extension CreateNoteViewController {
   func configureNavigation() {
     self.navigationItem.titleView = self.titleLabel
     self.navigationItem.leftBarButtonItem = self.closeBarbutton
+    self.navigationItem.rightBarButtonItem = self.rightBarButton
   }
   
   private func configureTapGesture() {
