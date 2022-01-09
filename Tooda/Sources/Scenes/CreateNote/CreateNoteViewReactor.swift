@@ -67,11 +67,12 @@ final class CreateNoteViewReactor: Reactor {
 
   let dependency: Dependency
   
-  private let addStockCompletionRelay: PublishRelay<NoteStock> = PublishRelay()
+  // MARK: Global Events
   
+  private let addStockCompletionRelay: PublishRelay<NoteStock> = PublishRelay()
   private let addLinkURLCompletionRelay: PublishRelay<String> = PublishRelay()
-
   private let addStickerCompletionRelay: PublishRelay<Sticker> = PublishRelay()
+  
   init(dependency: Dependency) {
     self.dependency = dependency
     self.initialState = State()
@@ -85,8 +86,8 @@ final class CreateNoteViewReactor: Reactor {
       return checkAuthorizationAndSelectedItem(indexPath: index)
     case .uploadImage(let data):
       return self.uploadImage(data)
-        .flatMap { [weak self] response -> Observable<Mutation> in
-        return self?.fetchImageSection(with: response) ?? .empty()
+        .flatMap { [weak self] imageURL -> Observable<Mutation> in
+          return self?.fetchImageSection(with: imageURL) ?? .empty()
       }
     case .showAddStockView:
       return presentAddStockView()
