@@ -101,8 +101,8 @@ extension String {
 extension Reactive where Base: NoteImageItemCell {
   var deleteButtonDidTap: Observable<IndexPath> {
     return self.base.deleteButton.rx.tap
-      .flatMap { _ -> Observable<IndexPath> in
-        guard let indexPath = self.base.indexPath else { return .empty() }
+      .flatMap { [weak base]_ -> Observable<IndexPath> in
+        guard let indexPath = base?.indexPath else { return .empty() }
         return Observable.just(indexPath)
       }
   }
