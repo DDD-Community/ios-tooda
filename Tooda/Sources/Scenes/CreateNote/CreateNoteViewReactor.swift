@@ -40,6 +40,7 @@ final class CreateNoteViewReactor: Reactor {
     case linkURLDidAdded(String)
     case makeTitleAndContent(title: String, content: String)
     case linkButtonDidTapped
+    case registerButtonDidTapped
   }
 
   enum Mutation {
@@ -67,6 +68,7 @@ final class CreateNoteViewReactor: Reactor {
   
   private let addLinkURLCompletionRelay: PublishRelay<String> = PublishRelay()
 
+  private let addStickerCompletionRelay: PublishRelay<Sticker> = PublishRelay()
   init(dependency: Dependency) {
     self.dependency = dependency
     self.initialState = State()
@@ -93,6 +95,8 @@ final class CreateNoteViewReactor: Reactor {
       return self.makeTitleAndContent(title, content)
     case .linkButtonDidTapped:
         return self.linkButtonDidTapped()
+    case .registerButtonDidTapped:
+        return self.registerButtonDidTapped()
     case .dismissView:
         return dismissView()
     default:
@@ -263,6 +267,14 @@ extension CreateNoteViewReactor {
   }
 }
 
+extension CreateNoteViewReactor {
+  private func registerButtonDidTapped() -> Observable<Mutation> {
+    
+    self.dependency.coordinator.transition(to: .popUp(type: .list(self.addStickerCompletionRelay)), using: .modal, animated: false, completion: nil)
+    
+    return .empty()
+  }
+}
 typealias CreateNoteSectionType = (AppAuthorizationType, AppCoordinatorType) -> [NoteSection]
 
 let createDiarySectionFactory: CreateNoteSectionType = { authorization, coordinator -> [NoteSection] in
