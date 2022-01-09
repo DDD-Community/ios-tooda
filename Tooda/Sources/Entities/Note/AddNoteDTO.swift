@@ -33,12 +33,12 @@ extension AddNoteDTO {
     parameters.concat(dict: [
       "title": title,
       "content": content,
-      "sticker": sticker
+      "sticker": sticker.rawValue
     ])
     
     if stocks.isNotEmpty {
       parameters.concat(dict: [
-        "stocks": stocks
+        "stocks": stocks.map { $0.asParameter() }
       ])
     }
     
