@@ -57,6 +57,8 @@ final class CreateNoteViewReactor: Reactor {
     var presentType: ViewPresentType?
     var shouldReigsterButtonEnabled: Bool = false
   }
+  
+  private var addNoteDTO: AddNoteDTO = AddNoteDTO()
 
   let initialState: State
   
@@ -214,6 +216,8 @@ extension CreateNoteViewReactor {
 
 
     imageCellReactor.action.onNext(.addImage(imageURL))
+    
+    self.addNoteDTO.images.append(imageURL)
 
     return .empty()
   }
@@ -230,6 +234,8 @@ extension CreateNoteViewReactor {
     
     let sectionItem = NoteSectionItem.stock(reator)
     
+    self.addNoteDTO.stocks.append(stock)
+    
     return .just(.fetchStockSection(sectionItem))
   }
   
@@ -241,6 +247,8 @@ extension CreateNoteViewReactor {
     
     let linkSectionItem: NoteSectionItem = NoteSectionItem.link(linkReactor)
     
+    self.addNoteDTO.links.append(url)
+    
     return .just(.fetchLinkSection(linkSectionItem))
   }
 }
@@ -251,7 +259,9 @@ extension CreateNoteViewReactor {
     
     let shouldButtonEnabled = !(title.isEmpty || content.isEmpty)
     
-    // TODO: 노트 등록을 위한 title과 content를 State에 전달할 Mutation을 연결할 예정이에요.
+    self.addNoteDTO.title = title
+    self.addNoteDTO.content = content
+    
     return .just(.shouldRegisterButtonEnabeld(shouldButtonEnabled))
   }
 }
