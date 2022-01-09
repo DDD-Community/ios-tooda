@@ -45,3 +45,27 @@ struct NoteStock: Codable {
 	var change: StockChangeState?
 	var changeRate: Float?
 }
+
+extension NoteStock {
+  func asParameter() -> [String: Any] {
+    var parameters: [String: Any] = [:]
+    
+    parameters.concat(dict: [
+      "name": name
+    ])
+    
+    if let change = change {
+      parameters.concat(dict: [
+        "change": change.rawValue.uppercased()
+      ])
+    }
+    
+    if let changeRate = changeRate {
+      parameters.concat(dict: [
+        "changeRate": changeRate
+      ])
+    }
+    
+    return parameters
+  }
+}
