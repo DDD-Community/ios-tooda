@@ -41,6 +41,7 @@ final class CreateNoteViewReactor: Reactor {
     case makeTitleAndContent(title: String, content: String)
     case linkButtonDidTapped
     case registerButtonDidTapped
+    case stckerDidPicked(Sticker)
   }
 
   enum Mutation {
@@ -99,6 +100,8 @@ final class CreateNoteViewReactor: Reactor {
         return self.linkButtonDidTapped()
     case .registerButtonDidTapped:
         return self.registerButtonDidTapped()
+    case .stckerDidPicked(let sticker):
+        return self.registNoteAndDismissView(sticker)
     case .dismissView:
         return dismissView()
     default:
@@ -133,7 +136,17 @@ final class CreateNoteViewReactor: Reactor {
   }
   
   func transform(action: Observable<Action>) -> Observable<Action> {
-    return Observable.merge(action, self.addStockCompletionRelay.map { Action.stockItemDidAdded($0) }, self.addLinkURLCompletionRelay.take(self.linkItemMaxCount).map { Action.linkURLDidAdded($0) })
+    return Observable.merge(
+      action,
+      self.addStockCompletionRelay
+        .map { Action.stockItemDidAdded($0) },
+      self.addLinkURLCompletionRelay
+        .take(self.linkItemMaxCount)
+        .map { Action.linkURLDidAdded($0) },
+      self.addStickerCompletionRelay
+        .map { Action.stckerDidPicked($0) }
+        .debounce(.milliseconds(300), scheduler: MainScheduler.asyncInstance)
+    )
   }
 
   private func makeSections() -> [NoteSection] {
@@ -277,6 +290,8 @@ extension CreateNoteViewReactor {
   }
 }
 
+// MARK: RegisterButton DidTapped
+
 extension CreateNoteViewReactor {
   private func registerButtonDidTapped() -> Observable<Mutation> {
     
@@ -284,7 +299,24 @@ extension CreateNoteViewReactor {
     
     return .empty()
   }
+  
+  private func registNoteAndDismissView(_ sticker: Sticker) -> Observable<Mutation> {
+    self.addNoteDTO.sticker = sticker
+    
+    return self.dependency.service.request(NoteAPI.create(dto: self.addNoteDTO))
+      .map(Note.self)
+      .asObservable()
+      .map { String($0.id) }
+      .flatMap { [weak self] noteID -> Observable<Mutation> in
+        if noteID.isNotEmpty {
+          return self?.dismissView() ?? .empty()
+        } else {
+          return .empty()
+        }
+      }
+  }
 }
+
 typealias CreateNoteSectionType = (AppAuthorizationType, AppCoordinatorType) -> [NoteSection]
 
 let createDiarySectionFactory: CreateNoteSectionType = { authorization, coordinator -> [NoteSection] in
