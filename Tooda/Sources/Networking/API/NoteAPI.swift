@@ -22,7 +22,7 @@ extension NoteAPI: BaseAPI {
   var path: String {
     switch self {
       case .create:
-        return "/diary"
+        return "diary"
       case .list:
         return "diary"
       case .addImage:

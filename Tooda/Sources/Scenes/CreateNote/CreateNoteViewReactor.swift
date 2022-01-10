@@ -40,6 +40,8 @@ final class CreateNoteViewReactor: Reactor {
     case linkURLDidAdded(String)
     case makeTitleAndContent(title: String, content: String)
     case linkButtonDidTapped
+    case registerButtonDidTapped
+    case stckerDidPicked(Sticker)
   }
 
   enum Mutation {
@@ -56,6 +58,8 @@ final class CreateNoteViewReactor: Reactor {
     var presentType: ViewPresentType?
     var shouldReigsterButtonEnabled: Bool = false
   }
+  
+  private var addNoteDTO: AddNoteDTO = AddNoteDTO()
 
   let initialState: State
   
@@ -63,10 +67,12 @@ final class CreateNoteViewReactor: Reactor {
 
   let dependency: Dependency
   
-  private let addStockCompletionRelay: PublishRelay<NoteStock> = PublishRelay()
+  // MARK: Global Events
   
+  private let addStockCompletionRelay: PublishRelay<NoteStock> = PublishRelay()
   private let addLinkURLCompletionRelay: PublishRelay<String> = PublishRelay()
-
+  private let addStickerCompletionRelay: PublishRelay<Sticker> = PublishRelay()
+  
   init(dependency: Dependency) {
     self.dependency = dependency
     self.initialState = State()
@@ -80,8 +86,8 @@ final class CreateNoteViewReactor: Reactor {
       return checkAuthorizationAndSelectedItem(indexPath: index)
     case .uploadImage(let data):
       return self.uploadImage(data)
-        .flatMap { [weak self] response -> Observable<Mutation> in
-        return self?.fetchImageSection(with: response) ?? .empty()
+        .flatMap { [weak self] imageURL -> Observable<Mutation> in
+          return self?.fetchImageSection(with: imageURL) ?? .empty()
       }
     case .showAddStockView:
       return presentAddStockView()
@@ -93,6 +99,10 @@ final class CreateNoteViewReactor: Reactor {
       return self.makeTitleAndContent(title, content)
     case .linkButtonDidTapped:
         return self.linkButtonDidTapped()
+    case .registerButtonDidTapped:
+        return self.registerButtonDidTapped()
+    case .stckerDidPicked(let sticker):
+        return self.registNoteAndDismissView(sticker)
     case .dismissView:
         return dismissView()
     default:
@@ -127,7 +137,17 @@ final class CreateNoteViewReactor: Reactor {
   }
   
   func transform(action: Observable<Action>) -> Observable<Action> {
-    return Observable.merge(action, self.addStockCompletionRelay.map { Action.stockItemDidAdded($0) }, self.addLinkURLCompletionRelay.take(self.linkItemMaxCount).map { Action.linkURLDidAdded($0) })
+    return Observable.merge(
+      action,
+      self.addStockCompletionRelay
+        .map { Action.stockItemDidAdded($0) },
+      self.addLinkURLCompletionRelay
+        .take(self.linkItemMaxCount)
+        .map { Action.linkURLDidAdded($0) },
+      self.addStickerCompletionRelay
+        .map { Action.stckerDidPicked($0) }
+        .debounce(.milliseconds(300), scheduler: MainScheduler.asyncInstance)
+    )
   }
 
   private func makeSections() -> [NoteSection] {
@@ -210,6 +230,8 @@ extension CreateNoteViewReactor {
 
 
     imageCellReactor.action.onNext(.addImage(imageURL))
+    
+    self.addNoteDTO.images.append(imageURL)
 
     return .empty()
   }
@@ -226,6 +248,8 @@ extension CreateNoteViewReactor {
     
     let sectionItem = NoteSectionItem.stock(reator)
     
+    self.addNoteDTO.stocks.append(stock)
+    
     return .just(.fetchStockSection(sectionItem))
   }
   
@@ -237,6 +261,8 @@ extension CreateNoteViewReactor {
     
     let linkSectionItem: NoteSectionItem = NoteSectionItem.link(linkReactor)
     
+    self.addNoteDTO.links.append(url)
+    
     return .just(.fetchLinkSection(linkSectionItem))
   }
 }
@@ -247,7 +273,9 @@ extension CreateNoteViewReactor {
     
     let shouldButtonEnabled = !(title.isEmpty || content.isEmpty)
     
-    // TODO: 노트 등록을 위한 title과 content를 State에 전달할 Mutation을 연결할 예정이에요.
+    self.addNoteDTO.title = title
+    self.addNoteDTO.content = content
+    
     return .just(.shouldRegisterButtonEnabeld(shouldButtonEnabled))
   }
 }
@@ -260,6 +288,33 @@ extension CreateNoteViewReactor {
     self.dependency.coordinator.transition(to: .popUp(type: .textInput(self.addLinkURLCompletionRelay)), using: .modal, animated: false)
     
     return .empty()
+  }
+}
+
+// MARK: RegisterButton DidTapped
+
+extension CreateNoteViewReactor {
+  private func registerButtonDidTapped() -> Observable<Mutation> {
+    
+    self.dependency.coordinator.transition(to: .popUp(type: .list(self.addStickerCompletionRelay)), using: .modal, animated: false, completion: nil)
+    
+    return .empty()
+  }
+  
+  private func registNoteAndDismissView(_ sticker: Sticker) -> Observable<Mutation> {
+    self.addNoteDTO.sticker = sticker
+    
+    return self.dependency.service.request(NoteAPI.create(dto: self.addNoteDTO))
+      .map(Note.self)
+      .asObservable()
+      .map { String($0.id) }
+      .flatMap { [weak self] noteID -> Observable<Mutation> in
+        if noteID.isNotEmpty {
+          return self?.dismissView() ?? .empty()
+        } else {
+          return .empty()
+        }
+      }
   }
 }
 
