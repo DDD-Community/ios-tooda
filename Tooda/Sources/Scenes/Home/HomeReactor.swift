@@ -31,7 +31,7 @@ final class HomeReactor: Reactor {
     // routing
     case pushSearch
     case pushSettings
-    case presentCreateNote
+    case presentCreateNote(dateString: String)
   }
 
   enum Mutation {
@@ -121,8 +121,8 @@ extension HomeReactor {
     case .pushSettings:
       pushSettings()
       return Observable<Mutation>.empty()
-    case .presentCreateNote:
-      presentCreateNote()
+    case .presentCreateNote(let today):
+      presentCreateNote(today)
       return Observable<Mutation>.empty()
     }
   }
@@ -275,9 +275,9 @@ extension HomeReactor {
     )
   }
   
-  private func presentCreateNote() {
+  private func presentCreateNote(_ dateString: String) {
     self.dependency.coordinator.transition(
-      to: .createNote,
+      to: .createNote(dateString: dateString),
       using: .modal,
       animated: true,
       completion: nil
