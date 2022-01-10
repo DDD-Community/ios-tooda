@@ -86,7 +86,7 @@ final class HomeViewController: BaseViewController<HomeReactor> {
 
   private let rxScrollToItem = BehaviorRelay<Int>(value: 0)
   private let rxPickDate = PublishRelay<Date>()
-  private let rxNoteGuideViewTap = PublishRelay<Void>()
+  private let rxNoteGuideViewTap = PublishRelay<String>()
 
   // MARK: Initializing
 
@@ -138,7 +138,7 @@ final class HomeViewController: BaseViewController<HomeReactor> {
     
     self.rxNoteGuideViewTap
       .asObservable()
-      .map { HomeReactor.Action.presentCreateNote }
+      .map { HomeReactor.Action.presentCreateNote(dateString: $0) }
       .bind(to: reactor.action)
       .disposed(by: self.disposeBag)
 
@@ -322,7 +322,7 @@ extension HomeViewController: UICollectionViewDelegateFlowLayout {
 // MARK: - CreateNoteGuideViewDelegate
 
 extension HomeViewController: CreateNoteGuideViewDelegate {
-  func contentDidTapped() {
-    self.rxNoteGuideViewTap.accept(())
+  func contentDidTapped(dateString: String) {
+    self.rxNoteGuideViewTap.accept(dateString)
   }
 }
