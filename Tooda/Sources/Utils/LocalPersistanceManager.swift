@@ -11,12 +11,14 @@ import Foundation
 protocol LocalPersistanceManagerType {
   func value<T>(forKey key: LocalPersistenceKey) -> T?
   func set<T>(value: T?, forKey key: LocalPersistenceKey)
+  func delete(forKey key: LocalPersistenceKey)
   
   func objectValue<T: Codable>(forKey key: LocalPersistenceKey) -> T?
   func setObject<T: Codable>(value: T?, forKey key: LocalPersistenceKey)
 }
 
 final class LocalPersistanceManager: LocalPersistanceManagerType {
+  
   private let keyChainService: LocalPersistenceServiceType
   private let userDefaultService: LocalPersistenceServiceType
   
@@ -61,6 +63,15 @@ final class LocalPersistanceManager: LocalPersistanceManagerType {
       return keyChainService.setObject(value: value, forKey: key)
     default:
       return userDefaultService.setObject(value: value, forKey: key)
+    }
+  }
+  
+  func delete(forKey key: LocalPersistenceKey) {
+    switch key {
+    case .appToken:
+      return keyChainService.delete(forKey: key)
+    default:
+      return userDefaultService.delete(forKey: key)
     }
   }
 }

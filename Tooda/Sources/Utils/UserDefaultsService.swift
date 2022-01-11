@@ -23,6 +23,7 @@ enum LocalPersistenceType: String {
 protocol LocalPersistenceServiceType {
 	func value<T>(forKey key: LocalPersistenceKey) -> T?
 	func set<T>(value: T?, forKey key: LocalPersistenceKey)
+  func delete(forKey key: LocalPersistenceKey)
 	
 	func objectValue<T: Codable>(forKey key: LocalPersistenceKey) -> T?
 	func setObject<T: Codable>(value: T?, forKey key: LocalPersistenceKey)
@@ -57,6 +58,10 @@ extension LocalPersistanceManager {
       let decoder = JSONDecoder()
       guard let decodedData = try? decoder.decode(T.self, from: storedValue) else { return nil }
       return decodedData
+    }
+    
+    func delete(forKey key: LocalPersistenceKey) {
+      defaults.removeObject(forKey: key.rawValue)
     }
   }
 }

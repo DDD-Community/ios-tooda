@@ -11,6 +11,7 @@ import Security
 
 extension LocalPersistanceManager {
   final class KeyChainService: LocalPersistenceServiceType {
+    
     func value<T>(forKey key: LocalPersistenceKey) -> T? {
       let query = [
         kSecClass as String: kSecClassGenericPassword,
@@ -53,6 +54,17 @@ extension LocalPersistanceManager {
         return
       }
       set(value: encodedData, forKey: key)
+    }
+    
+    func delete(forKey key: LocalPersistenceKey) {
+      let query = [
+        kSecClass as String: kSecClassGenericPassword as String,
+        kSecAttrAccount as String: key.rawValue,
+        kSecAttrService as String: key.rawValue,
+      ] as [String: Any?]
+
+      SecItemDelete(query as CFDictionary)
+      SecItemAdd(query as CFDictionary, nil)
     }
   }
 }
