@@ -13,6 +13,7 @@ import Moya
 enum NoteAPI {
   case create(dto: AddNoteDTO)
   case list(limit: Int, cursor: Int)
+  case monthlyList(limit: Int?, cursor: Int?, year: Int, month: Int)
   case delete(id: String)
   case addImage(data: Data)
   // TODO: update는 서버 스펙 전달 받는대로
@@ -23,6 +24,8 @@ extension NoteAPI: BaseAPI {
     switch self {
       case .create:
         return "diary"
+      case .monthlyList:
+        return "diary/date"
       case .list:
         return "diary"
       case .addImage:
@@ -36,7 +39,7 @@ extension NoteAPI: BaseAPI {
     switch self {
       case .create, .addImage:
         return .post
-      case .list:
+      case .list, .monthlyList:
         return .get
       case .delete:
         return .delete
@@ -58,7 +61,7 @@ extension NoteAPI: BaseAPI {
         let multipartData = [imageData]
         
         return .uploadMultipart(multipartData)
-      case .list, .delete:
+      case .list, .delete, .monthlyList:
         return .requestParameters(parameters: parameters, encoding: parameterEncoding)
     }
   }
@@ -76,6 +79,18 @@ extension NoteAPI: BaseAPI {
       parameters["limit"] = limit
       parameters["cursor"] = cursor
       return parameters
+    case let .monthlyList(limit, cursor, year, month):
+      if let limit = limit {
+        parameters["limit"] = limit
+      }
+      
+      if let cursor = cursor {
+        parameters["cursor"] = cursor
+      }
+      
+      parameters["year"] = year
+      parameters["month"] = month
+      return parameters
     }
   }
   
@@ -83,7 +98,7 @@ extension NoteAPI: BaseAPI {
     switch self {
       case .create, .delete, .addImage:
         return JSONEncoding.default
-      case .list:
+      case .list, .monthlyList:
         return URLEncoding.queryString
     }
   }
