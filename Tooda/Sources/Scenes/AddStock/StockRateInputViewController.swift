@@ -92,7 +92,7 @@ class StockRateInputViewController: BaseViewController<StockRateInputReactor> {
     $0.backgroundColor = UIColor(type: .white)
   }
   
-  private let addButton = UIButton(type: .system).then {
+  private let doneButton = UIButton(type: .system).then {
     $0.setBackgroundImage(UIColor.gray3.image(), for: .disabled)
     $0.setBackgroundImage(UIColor.mainGreen.image(), for: .normal)
     
@@ -124,9 +124,9 @@ class StockRateInputViewController: BaseViewController<StockRateInputReactor> {
     
     self.textFieldBackgroundView.addSubview(textField)
     
-    self.buttonBackGroundView.addSubview(addButton)
+    self.buttonBackGroundView.addSubview(doneButton)
     
-    self.addButton.do {
+    self.doneButton.do {
       if self.isEditable {
         $0.setAttributedTitle(
           "수정".styled(with: Font.addButton),
@@ -181,7 +181,7 @@ class StockRateInputViewController: BaseViewController<StockRateInputReactor> {
       $0.bottom.equalTo(self.view.keyboardLayoutGuide.snp.top)
     }
     
-    addButton.snp.makeConstraints {
+    doneButton.snp.makeConstraints {
       $0.top.equalToSuperview().offset(16)
       $0.left.right.equalToSuperview().inset(20)
       $0.bottom.equalToSuperview().offset(-24)
@@ -201,7 +201,7 @@ class StockRateInputViewController: BaseViewController<StockRateInputReactor> {
       .bind(to: reactor.action)
       .disposed(by: self.disposeBag)
     
-    self.addButton.rx.tap
+    self.doneButton.rx.tap
       .map { Reactor.Action.addButtonDidTapped }
       .bind(to: reactor.action)
       .disposed(by: self.disposeBag)
@@ -267,7 +267,7 @@ extension StockRateInputViewController {
   }
   
   private func addButtonDidChanged(_ isEnabled: Bool) {
-    self.addButton.isEnabled = isEnabled
+    self.doneButton.isEnabled = isEnabled
   }
   
   private func textFieldVisiblityDidChanged(by isEven: Bool) {
