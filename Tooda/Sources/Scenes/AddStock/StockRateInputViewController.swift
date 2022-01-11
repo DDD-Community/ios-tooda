@@ -34,10 +34,14 @@ class StockRateInputViewController: BaseViewController<StockRateInputReactor> {
     static let addButtonHeight: CGFloat = 48
   }
   
-  init(reactor: Reactor) {
+  private let isEditable: Bool
+  
+  init(reactor: Reactor, isEditable: Bool) {
     defer {
       self.reactor = reactor
     }
+    
+    self.isEditable = isEditable
     super.init()
   }
   
@@ -89,11 +93,6 @@ class StockRateInputViewController: BaseViewController<StockRateInputReactor> {
   }
   
   private let addButton = UIButton(type: .system).then {
-    $0.setAttributedTitle(
-      "추가".styled(with: Font.addButton),
-      for: .normal
-    )
-    
     $0.setBackgroundImage(UIColor.gray3.image(), for: .disabled)
     $0.setBackgroundImage(UIColor.mainGreen.image(), for: .normal)
     
@@ -126,6 +125,20 @@ class StockRateInputViewController: BaseViewController<StockRateInputReactor> {
     self.textFieldBackgroundView.addSubview(textField)
     
     self.buttonBackGroundView.addSubview(addButton)
+    
+    self.addButton.do {
+      if self.isEditable {
+        $0.setAttributedTitle(
+          "수정".styled(with: Font.addButton),
+          for: .normal
+        )
+      } else {
+        $0.setAttributedTitle(
+          "추가".styled(with: Font.addButton),
+          for: .normal
+        )
+      }
+    }
   }
   
   override func configureConstraints() {
