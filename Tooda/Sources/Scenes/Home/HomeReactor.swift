@@ -32,6 +32,7 @@ final class HomeReactor: Reactor {
     case pushSearch
     case pushSettings
     case presentCreateNote(dateString: String)
+    case presentNotelist(notebookIndex: Int)
   }
 
   enum Mutation {
@@ -118,11 +119,17 @@ extension HomeReactor {
     case .pushSearch:
       self.pushSearch()
       return Observable<Mutation>.empty()
+
     case .pushSettings:
       pushSettings()
       return Observable<Mutation>.empty()
+
     case .presentCreateNote(let today):
       presentCreateNote(today)
+      return Observable<Mutation>.empty()
+
+    case let .presentNotelist(notebookIndex):
+      self.presentNoteList(index: notebookIndex)
       return Observable<Mutation>.empty()
     }
   }
@@ -279,6 +286,19 @@ extension HomeReactor {
     self.dependency.coordinator.transition(
       to: .createNote(dateString: dateString),
       using: .modal,
+      animated: true,
+      completion: nil
+    )
+  }
+
+  private func presentNoteList(index: Int) {
+    guard let selectedNotebook = self.currentState.notebooks[safe: index] else { return }
+    self.dependency.coordinator.transition(
+      to: .noteList(payload: .init(
+        year: selectedNotebook.year,
+        month: selectedNotebook.month
+      )),
+      using: .push,
       animated: true,
       completion: nil
     )

@@ -19,7 +19,7 @@ enum Scene {
   case settings
   case addStock(completion: PublishRelay<NoteStock>)
   case search
-  case noteList
+  case noteList(payload: NoteListViewController.Payload)
   case searchRecent
   case stockRateInput(payload: StockRateInputReactor.Payload)
   case popUp(type: PopUpReactor.PopUpType)
