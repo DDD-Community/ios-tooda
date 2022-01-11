@@ -44,6 +44,7 @@ final class CreateNoteViewReactor: Reactor {
     case stckerDidPicked(Sticker)
     case stockItemDidDeleted(IndexPath)
     case showStockItemEditView(IndexPath)
+    case stockItemDidUpdated(NoteStock)
   }
 
   enum Mutation {
@@ -67,8 +68,9 @@ final class CreateNoteViewReactor: Reactor {
   let initialState: State
   
   private let linkItemMaxCount: Int = 2
-
+  
   private var lastEditableStockCellIndexPath: IndexPath?
+
   let dependency: Dependency
   
   // MARK: Global Events
@@ -78,6 +80,7 @@ final class CreateNoteViewReactor: Reactor {
   private let addStickerCompletionRelay: PublishRelay<Sticker> = PublishRelay()
   
   private let stockItemEditCompletionRelay: PublishRelay<NoteStock> = PublishRelay()
+  
   init(dependency: Dependency) {
     self.dependency = dependency
     self.initialState = State()
@@ -112,6 +115,8 @@ final class CreateNoteViewReactor: Reactor {
         return self.stockItemDidDeleted(index)
     case .showStockItemEditView(let index):
         return self.showStockItemEditView(index)
+    case .stockItemDidUpdated(let stock):
+        return self.stockItemDidUpdated(stock)
     case .dismissView:
         return dismissView()
     default:
@@ -157,7 +162,10 @@ final class CreateNoteViewReactor: Reactor {
         .map { Action.linkURLDidAdded($0) },
       self.addStickerCompletionRelay
         .map { Action.stckerDidPicked($0) }
-        .debounce(.milliseconds(300), scheduler: MainScheduler.asyncInstance)
+        .debounce(.milliseconds(300), scheduler: MainScheduler.asyncInstance),
+      self.stockItemEditCompletionRelay
+        .map { Action.stockItemDidUpdated($0) }
+        .debounce(.microseconds(300), scheduler: MainScheduler.asyncInstance)
     )
   }
 
@@ -329,6 +337,8 @@ extension CreateNoteViewReactor {
   }
 }
 
+// MARK: - StockItem Edit & Delete
+
 extension CreateNoteViewReactor {
   private func stockItemDidDeleted(_ index: IndexPath) -> Observable<Mutation> {
     
@@ -336,6 +346,7 @@ extension CreateNoteViewReactor {
 
     return .just(.stockItemDidDeleted(index))
   }
+  
   private func showStockItemEditView(_ index: IndexPath) -> Observable<Mutation> {
     
     guard let sectionItem = self.currentState.sections[NoteSection.Identity.stock.rawValue].items[safe: index.row] else {
@@ -363,7 +374,22 @@ extension CreateNoteViewReactor {
     
     return .empty()
   }
+  
+  private func stockItemDidUpdated(_ stock: NoteStock) -> Observable<Mutation> {
     
+    guard let indexPath = self.lastEditableStockCellIndexPath,
+          let sectionItem = self.currentState.sections[NoteSection.Identity.stock.rawValue].items[safe: indexPath.row]
+    else { return .empty() }
+    
+    if case let NoteSectionItem.stock(reactor) = sectionItem {
+      reactor.action.onNext(.payloadDidChanged(stock))
+      self.lastEditableStockCellIndexPath = nil
+      self.addNoteDTO.stocks.remove(at: indexPath.row)
+      self.addNoteDTO.stocks.insert(stock, at: indexPath.row)
+    }
+    
+    return .empty()
+  }
 }
 
 typealias CreateNoteSectionType = (AppAuthorizationType, AppCoordinatorType) -> [NoteSection]
