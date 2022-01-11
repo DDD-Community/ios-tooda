@@ -10,11 +10,11 @@ import ReactorKit
 
 final class NoteStockCellReactor: Reactor {
   enum Action {
-
+    case payloadDidChanged(NoteStock)
   }
 
   enum Mutation {
-
+    case payloadDidChanged(NoteStock)
   }
 
   struct State {
@@ -35,11 +35,24 @@ final class NoteStockCellReactor: Reactor {
   }
 
   func mutate(action: Action) -> Observable<Mutation> {
+    
+    switch action {
+      case .payloadDidChanged(let stock):
+        return .just(.payloadDidChanged(stock))
+    }
+    
     return .empty()
   }
 
-  func reduce(state: State, mutation: Action) -> State {
+  func reduce(state: State, mutation: Mutation) -> State {
     var newState = state
+    
+    switch mutation {
+      case .payloadDidChanged(let stock):
+        newState.payload.name = stock.name
+        newState.payload.rate = stock.changeRate ?? 0.0
+    }
+    
     return newState
   }
 }
