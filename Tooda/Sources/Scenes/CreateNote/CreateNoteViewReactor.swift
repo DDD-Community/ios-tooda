@@ -42,6 +42,7 @@ final class CreateNoteViewReactor: Reactor {
     case linkButtonDidTapped
     case registerButtonDidTapped
     case stckerDidPicked(Sticker)
+    case stockItemDidDeleted(IndexPath)
   }
 
   enum Mutation {
@@ -51,6 +52,7 @@ final class CreateNoteViewReactor: Reactor {
     case fetchStockSection(NoteSectionItem)
     case fetchLinkSection(NoteSectionItem)
     case shouldRegisterButtonEnabeld(Bool)
+    case stockItemDidDeleted(IndexPath)
   }
 
   struct State: Then {
@@ -103,6 +105,8 @@ final class CreateNoteViewReactor: Reactor {
         return self.registerButtonDidTapped()
     case .stckerDidPicked(let sticker):
         return self.registNoteAndDismissView(sticker)
+    case .stockItemDidDeleted(let index):
+        return self.stockItemDidDeleted(index)
     case .dismissView:
         return dismissView()
     default:
@@ -131,6 +135,8 @@ final class CreateNoteViewReactor: Reactor {
       newState.sections[NoteSection.Identity.link.rawValue].items.append(sectionItem)
     case .shouldRegisterButtonEnabeld(let enabled):
       newState.shouldReigsterButtonEnabled = enabled
+    case .stockItemDidDeleted(let index):
+      newState.sections[NoteSection.Identity.stock.rawValue].items.remove(at: index.row)
     }
 
     return newState
@@ -318,6 +324,14 @@ extension CreateNoteViewReactor {
   }
 }
 
+extension CreateNoteViewReactor {
+  private func stockItemDidDeleted(_ index: IndexPath) -> Observable<Mutation> {
+    
+    self.addNoteDTO.stocks.remove(at: index.row)
+
+    return .just(.stockItemDidDeleted(index))
+  }
+}
 typealias CreateNoteSectionType = (AppAuthorizationType, AppCoordinatorType) -> [NoteSection]
 
 let createDiarySectionFactory: CreateNoteSectionType = { authorization, coordinator -> [NoteSection] in
