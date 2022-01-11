@@ -43,6 +43,7 @@ final class CreateNoteViewReactor: Reactor {
     case registerButtonDidTapped
     case stckerDidPicked(Sticker)
     case stockItemDidDeleted(IndexPath)
+    case showStockItemEditView(IndexPath)
   }
 
   enum Mutation {
@@ -67,6 +68,7 @@ final class CreateNoteViewReactor: Reactor {
   
   private let linkItemMaxCount: Int = 2
 
+  private var lastEditableStockCellIndexPath: IndexPath?
   let dependency: Dependency
   
   // MARK: Global Events
@@ -75,6 +77,7 @@ final class CreateNoteViewReactor: Reactor {
   private let addLinkURLCompletionRelay: PublishRelay<String> = PublishRelay()
   private let addStickerCompletionRelay: PublishRelay<Sticker> = PublishRelay()
   
+  private let stockItemEditCompletionRelay: PublishRelay<NoteStock> = PublishRelay()
   init(dependency: Dependency) {
     self.dependency = dependency
     self.initialState = State()
@@ -107,6 +110,8 @@ final class CreateNoteViewReactor: Reactor {
         return self.registNoteAndDismissView(sticker)
     case .stockItemDidDeleted(let index):
         return self.stockItemDidDeleted(index)
+    case .showStockItemEditView(let index):
+        return self.showStockItemEditView(index)
     case .dismissView:
         return dismissView()
     default:
@@ -331,7 +336,36 @@ extension CreateNoteViewReactor {
 
     return .just(.stockItemDidDeleted(index))
   }
+  private func showStockItemEditView(_ index: IndexPath) -> Observable<Mutation> {
+    
+    guard let sectionItem = self.currentState.sections[NoteSection.Identity.stock.rawValue].items[safe: index.row] else {
+      return .empty()
+    }
+    
+    if case let NoteSectionItem.stock(reactor) = sectionItem {
+      let stockItem = reactor.currentState.payload
+      
+      self.lastEditableStockCellIndexPath = index
+      
+      self.dependency.coordinator.transition(
+        to: .stockRateInput(
+          payload: .init(
+            name: stockItem.name,
+            completion: self.stockItemEditCompletionRelay
+          ),
+          isEditable: true
+        ),
+        using: .modal,
+        animated: true,
+        completion: nil
+      )
+    }
+    
+    return .empty()
+  }
+    
 }
+
 typealias CreateNoteSectionType = (AppAuthorizationType, AppCoordinatorType) -> [NoteSection]
 
 let createDiarySectionFactory: CreateNoteSectionType = { authorization, coordinator -> [NoteSection] in

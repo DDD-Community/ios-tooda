@@ -254,6 +254,12 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
       .map { Reactor.Action.stockItemDidDeleted($0) }
       .bind(to: reactor.action)
       .disposed(by: self.disposeBag)
+    
+    rxStockItemDidEditRelay
+      .map { Reactor.Action.showStockItemEditView($0) }
+      .bind(to: reactor.action)
+      .disposed(by: self.disposeBag)
+    
     // State
     reactor.state
       .map { $0.sections }
