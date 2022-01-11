@@ -30,6 +30,10 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
   
   let rxAddStockDidTapRelay: PublishRelay<Void> = PublishRelay()
   
+  private let rxStockItemDeleteRelay: PublishRelay<IndexPath> = PublishRelay()
+  
+  private let rxStockItemDidEditRelay: PublishRelay<IndexPath> = PublishRelay()
+  
   private let rxCombinedTextDidChangedRelay: PublishRelay<(title: String, content: String)> = PublishRelay()
   
   // MARK: Properties
@@ -395,7 +399,21 @@ extension CreateNoteViewController {
   }
   
   private func deleteCellAction(at indexPath: IndexPath) -> UIContextualAction {
-    let action = UIContextualAction(style: .destructive, title: "삭제") { _, _, completionHandler in
+    let action = UIContextualAction(style: .destructive, title: "삭제") { [weak self] _, _, completionHandler in
+      
+      let alertController = UIAlertController(title: nil, message: "종목을 삭제하시겠습니까?", preferredStyle: .alert)
+      
+      let ok = UIAlertAction(title: "확인", style: .destructive, handler: { [weak self] _ in
+        self?.rxStockItemDeleteRelay.accept(indexPath)
+      })
+      
+      let cancel = UIAlertAction(title: "취소", style: .default, handler: nil)
+      
+      alertController.addAction(cancel)
+      alertController.addAction(ok)
+      
+      self?.present(alertController, animated: true, completion: nil)
+      
       completionHandler(true)
     }
     
@@ -403,7 +421,8 @@ extension CreateNoteViewController {
   }
   
   private func editCellAction(at indexPath: IndexPath) -> UIContextualAction {
-    let action = UIContextualAction(style: .normal, title: "수정") { _, _, completionHandler in
+    let action = UIContextualAction(style: .normal, title: "수정") { [weak self] _, _, completionHandler in
+      self?.rxStockItemDidEditRelay.accept(indexPath)
       completionHandler(true)
     }
     
