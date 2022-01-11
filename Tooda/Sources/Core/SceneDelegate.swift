@@ -29,7 +29,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     self.window = window
     
     appCoordinator.start(
-      from: .login,
+      from: determineInitialScene(),
       shouldNavigationWrapped: true
     )
   }
@@ -62,7 +62,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     // to restore the scene back to its current state.
   }
   
-  
+  func determineInitialScene() -> Scene {
+    let localPersistanceManager = appInject.resolve(LocalPersistanceManagerType.self)
+    if let _: AppToken = localPersistanceManager.objectValue(forKey: .appToken) {
+      return .home
+    } else {
+      return .login
+    }
+  }
 }
 
 extension SceneDelegate {
