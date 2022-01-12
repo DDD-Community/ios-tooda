@@ -11,6 +11,7 @@ import UIKit
 import RxCocoa
 import RxSwift
 import RxDataSources
+import SafariServices
 
 final class SettingsViewController: BaseViewController<SettingsReactor> {
   
@@ -90,15 +91,24 @@ final class SettingsViewController: BaseViewController<SettingsReactor> {
   
   // MARK: - Overridden: ParentClass
   
-  override func viewDidLoad() {
-    super.viewDidLoad()
-    
-  }
-  
   override func bind(reactor: SettingsReactor) {
+    
+    rx.viewDidLoad
+      .asObservable()
+      .flatMap { [weak self] _ -> Observable<Void> in
+        return self?.configureBackBarButtonItemIfNeeded() ?? .empty() }
+      .map { SettingsReactor.Action.didTapbackbutton }
+      .bind(to: reactor.action)
+      .disposed(by: disposeBag)
+    
     reactor.state
       .map { $0.sectionModel }
       .bind(to: tableView.rx.items(dataSource: dataSource))
+      .disposed(by: disposeBag)
+    
+    tableView.rx.itemSelected
+      .map { SettingsReactor.Action.didTapPlainSettingItem(index: $0.item) }
+      .bind(to: reactor.action)
       .disposed(by: disposeBag)
   }
   
