@@ -8,7 +8,16 @@
 
 import Foundation
 
-struct Note: Codable {
+import RxDataSources
+
+struct Note: Codable, IdentifiableType, Equatable {
+    static func == (lhs: Note, rhs: Note) -> Bool {
+        return lhs.id == rhs.id
+    }
+
+    var identity: Int {
+        return id
+    }
 	var id: Int
 	var title: String
 	var content: String

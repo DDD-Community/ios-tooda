@@ -23,7 +23,7 @@ final class NoteListViewController: BaseViewController<NoteListReactor> {
   
   // MARK: - Constants
   
-  typealias Section = RxTableViewSectionedReloadDataSource<NoteListModel>
+  typealias Section = RxTableViewSectionedAnimatedDataSource<NoteListModel>
   
   private enum Font {
     static let title = TextStyle.subTitle(color: .gray1)
