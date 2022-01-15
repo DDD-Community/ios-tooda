@@ -106,6 +106,11 @@ final class NoteListViewController: BaseViewController<NoteListReactor> {
       .bind(to: reactor.action)
       .disposed(by: disposeBag)
     
+    tableView.rx.willDisplayCell
+      .map { NoteListReactor.Action.pagnationLoad(willDisplayIndex: $0.indexPath.row) }
+      .bind(to: reactor.action)
+      .disposed(by: self.disposeBag)
+    
     reactor.state
       .map { $0.noteListModel }
       .bind(to: tableView.rx.items(dataSource: self.dataSource))
