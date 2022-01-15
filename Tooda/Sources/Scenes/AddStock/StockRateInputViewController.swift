@@ -126,18 +126,13 @@ class StockRateInputViewController: BaseViewController<StockRateInputReactor> {
     
     self.buttonBackGroundView.addSubview(doneButton)
     
+    let buttonTitle = self.isEditable ? "수정".styled(with: Font.addButton) : "추가".styled(with: Font.addButton)
+    
     self.doneButton.do {
-      if self.isEditable {
-        $0.setAttributedTitle(
-          "수정".styled(with: Font.addButton),
-          for: .normal
-        )
-      } else {
-        $0.setAttributedTitle(
-          "추가".styled(with: Font.addButton),
-          for: .normal
-        )
-      }
+      $0.setAttributedTitle(
+        buttonTitle,
+        for: .normal
+      )
     }
   }
   
