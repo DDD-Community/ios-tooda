@@ -21,7 +21,7 @@ struct Note: Codable, IdentifiableType, Equatable {
 	var id: Int
 	var title: String
 	var content: String
-	var createdAt: String
+	var createdAt: String?
 	var updatedAt: String?
 	var sticker: Sticker?
 	var noteStocks: [NoteStock]
