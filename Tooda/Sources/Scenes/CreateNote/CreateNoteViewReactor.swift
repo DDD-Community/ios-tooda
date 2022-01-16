@@ -54,7 +54,7 @@ final class CreateNoteViewReactor: Reactor {
     case fetchStockSection(NoteSectionItem)
     case fetchLinkSection(NoteSectionItem)
     case shouldRegisterButtonEnabeld(Bool)
-    case stockItemDidDeleted(IndexPath)
+    case stockItemDidDeleted(Int)
   }
 
   struct State: Then {
@@ -111,8 +111,8 @@ final class CreateNoteViewReactor: Reactor {
         return self.registerButtonDidTapped()
     case .stckerDidPicked(let sticker):
         return self.registNoteAndDismissView(sticker)
-    case .stockItemDidDeleted(let index):
-        return self.stockItemDidDeleted(index)
+    case .stockItemDidDeleted(let indexPath):
+        return self.stockItemDidDeleted(indexPath.row)
     case .showStockItemEditView(let index):
         return self.showStockItemEditView(index)
     case .stockItemDidUpdated(let stock):
@@ -145,8 +145,8 @@ final class CreateNoteViewReactor: Reactor {
       newState.sections[NoteSection.Identity.link.rawValue].items.append(sectionItem)
     case .shouldRegisterButtonEnabeld(let enabled):
       newState.shouldReigsterButtonEnabled = enabled
-    case .stockItemDidDeleted(let index):
-      newState.sections[NoteSection.Identity.stock.rawValue].items.remove(at: index.row)
+    case .stockItemDidDeleted(let row):
+      newState.sections[NoteSection.Identity.stock.rawValue].items.remove(at: row)
     }
 
     return newState
@@ -340,11 +340,11 @@ extension CreateNoteViewReactor {
 // MARK: - StockItem Edit & Delete
 
 extension CreateNoteViewReactor {
-  private func stockItemDidDeleted(_ index: IndexPath) -> Observable<Mutation> {
+  private func stockItemDidDeleted(_ row: Int) -> Observable<Mutation> {
     
-    self.addNoteDTO.stocks.remove(at: index.row)
+    self.addNoteDTO.stocks.remove(at: row)
 
-    return .just(.stockItemDidDeleted(index))
+    return .just(.stockItemDidDeleted(row))
   }
   
   private func showStockItemEditView(_ index: IndexPath) -> Observable<Mutation> {
