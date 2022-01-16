@@ -16,6 +16,11 @@ class StockRateInputViewController: BaseViewController<StockRateInputReactor> {
   
   // MARK: Enum
   
+  enum EditMode {
+    case input
+    case modify
+  }
+  
   private enum Font {
     static let title = TextStyle.titleBold(color: .gray1)
     static let descprtion = TextStyle.body(color: .gray3)
