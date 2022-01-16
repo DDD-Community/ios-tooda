@@ -135,10 +135,10 @@ extension HomeReactor {
     }
   }
 
-  private func loadMutation() -> Observable<Mutation> {
+  private func loadMutation(date: Date = Date()) -> Observable<Mutation> {
     return self.dependency.service.request(
       NotebookAPI.meta(
-        year: Date().year   // TODO: 데이터 받는걸로 변경 예정
+        year: date.year
       )
     )
       .map([NotebookMeta].self)
