@@ -47,7 +47,10 @@ final class AppFactory: AppFactoryType {
           authorization: self.dependency.appInject.resolve(AppAuthorizationType.self),
           linkPreviewService:
             self.dependency.appInject.resolve(LinkPreViewServiceType.self),
-          createDiarySectionFactory: createDiarySectionFactory)
+          createDiarySectionFactory: createDiarySectionFactory,
+          modifiableNoteSectionFactory: nil
+        ),
+        modifiableNote: nil
       )
         
       let viewController = CreateNoteViewController(dateString: today, reactor: reactor)

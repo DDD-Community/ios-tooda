@@ -26,7 +26,8 @@ final class CreateNoteViewReactor: Reactor {
     let coordinator: AppCoordinatorType
     let authorization: AppAuthorizationType
     let linkPreviewService: LinkPreViewServiceType
-    let createDiarySectionFactory: CreateNoteSectionType
+    let createDiarySectionFactory: CreateNoteSectionType?
+    let modifiableNoteSectionFactory: ModifiableNoteSectionType?
   }
 
   enum Action {
@@ -81,9 +82,13 @@ final class CreateNoteViewReactor: Reactor {
   
   private let stockItemEditCompletionRelay: PublishRelay<NoteStock> = PublishRelay()
   
-  init(dependency: Dependency) {
+  init(dependency: Dependency, modifiableNote: AddNoteDTO?) {
     self.dependency = dependency
     self.initialState = State()
+    
+    if let modifiableNote = modifiableNote {
+      self.addNoteDTO = modifiableNote
+    }
   }
 
   func mutate(action: Action) -> Observable<Mutation> {
@@ -170,8 +175,18 @@ final class CreateNoteViewReactor: Reactor {
   }
 
   private func makeSections() -> [NoteSection] {
-    let sections = self.dependency.createDiarySectionFactory(self.dependency.authorization, self.dependency.coordinator)
-    return sections
+    
+    if let createSectionFactory = self.dependency.createDiarySectionFactory {
+      let sections = createSectionFactory(self.dependency.authorization, self.dependency.coordinator)
+      return sections
+    }
+    
+    if let modifySectionFactory = self.dependency.modifiableNoteSectionFactory {
+      let sections = modifySectionFactory(self.addNoteDTO, self.dependency.linkPreviewService)
+      return sections
+    }
+    
+    return []
   }
   
   private func didSelectedImageItem(_ indexPath: IndexPath) -> Observable<Mutation> {
