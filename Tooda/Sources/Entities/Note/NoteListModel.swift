@@ -13,7 +13,7 @@ struct NoteListModel {
   var items: [Note]
 }
 
-extension NoteListModel: SectionModelType {
+extension NoteListModel: AnimatableSectionModelType {
   init(
     original: NoteListModel,
     items: [Note]
