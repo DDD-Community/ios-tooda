@@ -135,65 +135,15 @@ extension HomeReactor {
   }
 
   private func loadMutation() -> Observable<Mutation> {
-    var mockNotebooks = [
-      NotebookMeta(
-        year: 2022,
-        month: 1,
-        noteCount: 10,
-        createdAt: Date(year: 2021, month: 9, day: 10),
-        updatedAt: Date(year: 2021, month: 9, day: 12),
-        stickers: [
-          .angry,
-          .chicken,
-          .pencil
-        ]
-      ),
-      NotebookMeta(
-        year: 2021,
-        month: 2,
-        noteCount: 5,
-        createdAt: Date(),
-        updatedAt: Date(),
-        stickers: [
-          .wow,
-          .thinking,
-          .sad
-        ]
-      ),
-      NotebookMeta(
-        year: 2021,
-        month: 3,
-        noteCount: 7,
-        createdAt: Date(),
-        updatedAt: Date(),
-        stickers: [
-          .angry,
-          .chicken,
-          .chicken
-        ]
+    return self.dependency.service.request(
+      NotebookAPI.meta(
+        year: Date().year   // TODO: 데이터 받는걸로 변경 예정
       )
-    ]
-
-    if let lastMonth = mockNotebooks.last?.month,
-       lastMonth != Date().month {
-      mockNotebooks.append(self.createCurrentNotebook())
-    }
-
-    return Observable.just(Mutation.setNotebooks(mockNotebooks))
-    // TODO: create 되면 추가할 예정
-    //    return self.dependency.service.request(NotebookAPI.meta(year: self.currentState.date.year))
-    //      .map([NotebookMeta].self)
-    //      .asObservable()
-    //      .map { Mutation.setNotebooks($0) }
-  }
-
-  private func createCurrentNotebook() -> NotebookMeta {
-    let currentDate = Date()
-
-    return NotebookMeta(
-      year: currentDate.year,
-      month: currentDate.month
     )
+      .map([NotebookMeta].self)
+      .catchAndReturn([])
+      .asObservable()
+      .map { Mutation.setNotebooks($0) }
   }
 }
 
