@@ -50,7 +50,7 @@ final class NoteListReactor: Reactor {
   
   struct State {
     var noteListModel: [NoteListModel]
-    var isEmpty: Bool
+    var isEmpty: Bool?
     let fetchWindowSize: Int = 15
     let prefetchThreshold: Int = 4
     var isLoading: Bool = false
@@ -112,9 +112,8 @@ extension NoteListReactor {
       )
       .map(NoteListDTO.self)
       .asObservable()
-      .flatMap { [weak self] noteDTO -> Observable<Mutation> in
-        guard let self = self,
-              let noteList = noteDTO.noteList else {
+      .flatMap { noteDTO -> Observable<Mutation> in
+        guard let noteList = noteDTO.noteList else {
           return Observable<Mutation>.empty()
         }
         if noteList.isEmpty {
@@ -134,6 +133,7 @@ extension NoteListReactor {
           )
           return Observable<Mutation>.concat([
             Observable.just(Mutation.setIsLoading(true)),
+            Observable.just(Mutation.setIsEmpty(false)),
             Observable.just(noteListModelMutation),
             Observable.just(Mutation.setNextCursor(noteDTO.cursor)),
             Observable.just(Mutation.setIsLoading(false))
@@ -160,7 +160,7 @@ extension NoteListReactor {
       )
       .map(NoteListDTO.self)
       .asObservable()
-      .flatMap { [weak self] noteDTO -> Observable<Mutation> in
+      .flatMap { noteDTO -> Observable<Mutation> in
         guard let noteList = noteDTO.noteList else {
           return Observable<Mutation>.empty()
         }
@@ -181,7 +181,7 @@ extension NoteListReactor {
   
   func reduce(state: State, mutation: Mutation) -> State {
     var newState = state
-    newState.isEmpty = false
+    newState.isEmpty = nil
     
     switch mutation {
     case let .setNoteListModel(model):

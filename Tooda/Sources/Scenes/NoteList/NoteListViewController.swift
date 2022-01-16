@@ -118,6 +118,7 @@ final class NoteListViewController: BaseViewController<NoteListReactor> {
     
     reactor.state
       .map { $0.isEmpty }
+      .compactMap { $0 }
       .asDriver(onErrorJustReturn: false)
       .drive { [weak self] isEmpty in
         guard let self = self else { return }
