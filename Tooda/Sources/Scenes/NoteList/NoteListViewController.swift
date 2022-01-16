@@ -13,13 +13,6 @@ import RxSwift
 import RxDataSources
 
 final class NoteListViewController: BaseViewController<NoteListReactor> {
-
-  // MARK: Payload
-
-  struct Payload {
-    let year: Int
-    let month: Int
-  }
   
   // MARK: - Constants
   
@@ -40,9 +33,7 @@ final class NoteListViewController: BaseViewController<NoteListReactor> {
   
   // MARK: - UI Components
   
-  private lazy var titleLabel = UILabel().then {
-    $0.attributedText = "2021년 1월".styled(with: Font.title)
-  }
+  private lazy var titleLabel = UILabel()
   
   private let searchBarButton = UIBarButtonItem().then {
     $0.image = UIImage(type: .searchBarButton)
@@ -84,7 +75,7 @@ final class NoteListViewController: BaseViewController<NoteListReactor> {
   
   // MARK: - Con(De)structor
   
-  init(reactor: NoteListReactor, payload: Payload) {
+  init(reactor: NoteListReactor) {
     super.init()
     self.reactor = reactor
   }
@@ -108,7 +99,12 @@ final class NoteListViewController: BaseViewController<NoteListReactor> {
     rx.viewWillAppear.take(1)
       .map { _ in NoteListReactor.Action.initialLoad }
       .bind(to: reactor.action)
-      .disposed(by: self.disposeBag)
+      .disposed(by: disposeBag)
+    
+    dismissBarButton.rx.tap
+      .map { _ in NoteListReactor.Action.dismiss }
+      .bind(to: reactor.action)
+      .disposed(by: disposeBag)
     
     reactor.state
       .map { $0.noteListModel }
@@ -137,9 +133,18 @@ final class NoteListViewController: BaseViewController<NoteListReactor> {
     tableView.rx.setDelegate(self)
       .disposed(by: disposeBag)
     
+    reactor.state
+      .map { $0.dateInfo }
+      .asDriver(onErrorJustReturn: (year: Date().year, month: Date().month))
+      .drive { [weak self] dateInfo in
+        guard let self = self else { return }
+        self.setNavigationTitle(year: dateInfo.year, month: dateInfo.month)
+      }
+      .disposed(by: disposeBag)
   }
   
   private func bindUI() {
+    
     moreDetailButton.rx.tap.asDriver()
       .drive { [weak self] _ in
         guard let self = self else { return }
@@ -173,7 +178,6 @@ final class NoteListViewController: BaseViewController<NoteListReactor> {
   // MARK: - configureUI
   
   override func configureUI() {
-    navigationItem.titleView = titleLabel
     navigationItem.leftBarButtonItem = dismissBarButton
     navigationItem.rightBarButtonItems = [
       moreDetailButton,
@@ -209,6 +213,11 @@ final class NoteListViewController: BaseViewController<NoteListReactor> {
   }
   
   // MARK: Private
+  
+  private func setNavigationTitle(year: Int, month: Int) {
+    titleLabel.text = "\(year)년 \(month)월"
+    navigationItem.titleView = titleLabel
+  }
   
   private func setupEmptyBackgroundView() {
     let imageView = UIImageView().then {

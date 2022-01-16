@@ -137,7 +137,7 @@ extension HomeReactor {
   private func loadMutation() -> Observable<Mutation> {
     var mockNotebooks = [
       NotebookMeta(
-        year: 2021,
+        year: 2022,
         month: 1,
         noteCount: 10,
         createdAt: Date(year: 2021, month: 9, day: 10),
@@ -298,7 +298,7 @@ extension HomeReactor {
         year: selectedNotebook.year,
         month: selectedNotebook.month
       )),
-      using: .push,
+      using: .modal,
       animated: true,
       completion: nil
     )

@@ -108,13 +108,11 @@ final class AppFactory: AppFactoryType {
       let reactor = NoteListReactor(
         dependency: .init(
           service: self.dependency.appInject.resolve(NetworkingProtocol.self),
-          coordinator: self.dependency.appInject.resolve(AppCoordinatorType.self)
+          coordinator: self.dependency.appInject.resolve(AppCoordinatorType.self),
+          payload: payload
         )
       )
-      let viewController = NoteListViewController(
-        reactor: reactor,
-        payload: payload
-      )
+      let viewController = NoteListViewController(reactor: reactor)
       let navigationController = UINavigationController(rootViewController: viewController)
       navigationController.modalPresentationStyle = .overFullScreen
       return navigationController
