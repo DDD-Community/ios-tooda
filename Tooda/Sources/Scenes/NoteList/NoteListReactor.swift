@@ -14,6 +14,8 @@ import RxSwift
 final class NoteListReactor: Reactor {
   
   // MARK: Constants
+  
+  typealias DateInfo = (year: Int, month: Int)
 
   struct Payload {
     let year: Int
@@ -33,7 +35,6 @@ final class NoteListReactor: Reactor {
   
   enum Mutation {
     case setIsEmpty(Bool)
-    case setPayload(Payload)
     case setNoteListModel([NoteListModel])
   }
   
@@ -48,7 +49,7 @@ final class NoteListReactor: Reactor {
     var isEmpty: Bool
     let fetchWindowSize: Int = 15
     var cursor: Int?
-    var payload: Payload?
+    var dateInfo: DateInfo
   }
   
   init(dependency: Dependency) {
@@ -59,11 +60,14 @@ final class NoteListReactor: Reactor {
   
   let dependency: Dependency
   
-  let initialState: State = State(
+  lazy var initialState: State = State(
     noteListModel: [],
     isEmpty: false,
     cursor: nil,
-    payload: nil
+    dateInfo: (
+      year: dependency.payload.year,
+      month: dependency.payload.month
+    )
   )
 }
 
@@ -94,20 +98,15 @@ extension NoteListReactor {
       NoteAPI.monthlyList(
         limit: initialState.fetchWindowSize,
         cursor: initialState.cursor,
-        year: dependency.payload.year,
-        month: dependency.payload.month
+        year: initialState.dateInfo.year,
+        month: initialState.dateInfo.month
         )
       )
       .map([Note].self)
       .asObservable()
-      .flatMap { [weak self] noteList -> Observable<Mutation> in
-        guard let self = self else { return Observable<Mutation>.empty() }
-        let payloadStream = Observable.just(Mutation.setPayload(self.dependency.payload))
+      .flatMap { noteList -> Observable<Mutation> in
         if noteList.isEmpty {
-          return Observable<Mutation>.concat([
-            payloadStream,
-            Observable.just(Mutation.setIsEmpty(true))
-          ])
+          return Observable<Mutation>.just(Mutation.setIsEmpty(true))
         } else {
           let noteListModelMutation = Mutation.setNoteListModel(
             [
@@ -117,10 +116,7 @@ extension NoteListReactor {
               )
             ]
           )
-          return Observable<Mutation>.concat([
-            payloadStream,
-            Observable.just(noteListModelMutation)
-          ])
+          return Observable<Mutation>.just(noteListModelMutation)
         }
     }
   }
@@ -139,8 +135,6 @@ extension NoteListReactor {
       newState.noteListModel = model
     case let .setIsEmpty(isEmpty):
       newState.isEmpty = isEmpty
-    case let .setPayload(payload):
-      newState.payload = payload
     }
     
     return newState
