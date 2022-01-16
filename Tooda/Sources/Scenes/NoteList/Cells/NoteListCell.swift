@@ -25,10 +25,14 @@ final class NoteListCell: BaseTableViewCell {
   private let cardView = UIView().then {
     $0.backgroundColor = .white
     $0.layer.cornerRadius = 8
-    $0.layer.shadowOffset = CGSize(width: 0, height: 8)
-    $0.layer.shadowOpacity = 1
-    $0.layer.shadowRadius = 20
-    $0.layer.shadowColor = UIColor.gray6.withAlphaComponent(0.12).cgColor
+    $0.configureShadow(
+      color: UIColor.gray6.withAlphaComponent(0.12),
+      alpha: 1,
+      x: 0,
+      y: 8,
+      blur: 40,
+      spread: 0
+    )
   }
   
   private let emojiImageView = UIImageView().then {
@@ -62,8 +66,8 @@ final class NoteListCell: BaseTableViewCell {
   
   override func configureUI() {
     super.configureUI()
+    backgroundColor = .clear
     contentView.do {
-      $0.backgroundColor = .gray5
       $0.addSubview(cardView)
     }
     
