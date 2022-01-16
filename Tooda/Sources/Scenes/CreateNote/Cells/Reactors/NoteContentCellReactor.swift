@@ -19,14 +19,19 @@ final class NoteContentCellReactor: Reactor {
   }
 
   struct State {
-
+    var payload: Payload?
+  }
+  
+  struct Payload {
+    var title: String
+    var content: String
   }
 
   let initialState: State
   private let uuid: String = UUID().uuidString
 
-  init() {
-    initialState = State()
+  init(payload: Payload?) {
+    initialState = State(payload: payload)
   }
 
 //	func mutate(action: Action) -> Observable<Mutation> {

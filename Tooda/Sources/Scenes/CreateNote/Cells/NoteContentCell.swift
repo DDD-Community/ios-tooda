@@ -111,6 +111,15 @@ class NoteContentCell: BaseTableViewCell, View {
 
   func bind(reactor: Reactor) {
 
+    reactor.state
+      .map { $0.payload }
+      .compactMap { $0 }
+      .asDriver(onErrorJustReturn: .init(title: "", content: ""))
+      .drive(onNext: { [weak self] in
+        self?.titleTextField.text = $0.title
+        self?.contentTextView.text = $0.content
+      })
+      .disposed(by: self.disposeBag)
   }
 }
 

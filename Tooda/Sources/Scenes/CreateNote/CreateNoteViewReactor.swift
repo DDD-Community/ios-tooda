@@ -407,8 +407,8 @@ let createDiarySectionFactory: CreateNoteSectionType = { authorization, coordina
     NoteSection(identity: .link, items: []),
     NoteSection(identity: .image, items: [])
   ]
-
-  let contentReactor: NoteContentCellReactor = NoteContentCellReactor()
+  
+  let contentReactor: NoteContentCellReactor = NoteContentCellReactor(payload: .init(title: "", content: ""))
   let contentSectionItem: NoteSectionItem = NoteSectionItem.content(contentReactor)
   
   let addStockReactor: EmptyNoteStockCellReactor = EmptyNoteStockCellReactor()
