@@ -296,10 +296,12 @@ extension CreateNoteViewReactor {
 extension CreateNoteViewReactor {
   private func registerButtonDidTapped() -> Observable<Mutation> {
     
-    self.dependency.coordinator.transition(to: .popUp(type: .list(self.addStickerCompletionRelay)),
-                                           using: .modal,
-                                           animated: false,
-                                           completion: nil)
+self.dependency.coordinator.transition(
+     to: .popUp(type: .list(self.addStickerCompletionRelay)),
+     using: .modal,
+     animated: false,
+     completion: nil
+)
     
     return .empty()
   }
