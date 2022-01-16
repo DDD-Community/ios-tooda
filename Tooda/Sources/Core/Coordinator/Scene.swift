@@ -16,6 +16,7 @@ enum Scene {
   case login
   case home
   case createNote(dateString: String)
+  case modifyNote(dateString: String, note: AddNoteDTO)
   case settings
   case addStock(completion: PublishRelay<NoteStock>)
   case search
@@ -32,6 +33,7 @@ enum Scene {
     case .login:              return "login"
     case .home:               return "home"
     case .createNote:         return "createNote"
+    case .modifyNote:         return "modifyNote"
     case .settings:           return "settings"
     case .addStock:           return "addStock"
     case .search:             return "search"

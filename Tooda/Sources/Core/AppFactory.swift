@@ -57,6 +57,25 @@ final class AppFactory: AppFactoryType {
       let navigationController = UINavigationController(rootViewController: viewController)
       navigationController.modalPresentationStyle = .overFullScreen
       return navigationController
+        
+    case .modifyNote(let dateString, let note):
+        let reactor = CreateNoteViewReactor(
+          dependency: .init(
+            service: self.dependency.appInject.resolve(NetworkingProtocol.self),
+            coordinator: self.dependency.appInject.resolve(AppCoordinatorType.self),
+            authorization: self.dependency.appInject.resolve(AppAuthorizationType.self),
+            linkPreviewService:
+              self.dependency.appInject.resolve(LinkPreViewServiceType.self),
+            createDiarySectionFactory: nil,
+            modifiableNoteSectionFactory: modifiableNoteSectionFactory
+          ),
+          modifiableNote: note
+        )
+        
+        let viewController = CreateNoteViewController(dateString: dateString, reactor: reactor)
+        let navigationController = UINavigationController(rootViewController: viewController)
+        navigationController.modalPresentationStyle = .overFullScreen
+        return navigationController
 
     case .login:
       let reactor = LoginReactor(
