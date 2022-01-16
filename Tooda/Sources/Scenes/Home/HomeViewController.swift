@@ -183,8 +183,7 @@ final class HomeViewController: BaseViewController<HomeReactor> {
       }).disposed(by: self.disposeBag)
 
     reactor.state
-      .filter { $0.selectedIndex != nil }
-      .map { $0.selectedIndex! }
+      .map { $0.selectedIndex }
       .distinctUntilChanged()
       .subscribe(onNext: { [weak self] index in
         self?.notebookCollectionView.scrollToItem(

@@ -44,7 +44,7 @@ final class HomeReactor: Reactor {
     // Entities
     var notebooks: [NotebookMeta]
     var selectedNotobook: NotebookMeta?
-    var selectedIndex: Int?
+    var selectedIndex: Int
 
     // ViewModels
     var notebookViewModels: [NotebookCell.ViewModel]
@@ -70,6 +70,7 @@ final class HomeReactor: Reactor {
     return State(
       notebooks: [],
       selectedNotobook: nil,
+      selectedIndex: 0,
       notebookViewModels: []
     )
   }()
