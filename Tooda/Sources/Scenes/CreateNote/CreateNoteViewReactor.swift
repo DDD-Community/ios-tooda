@@ -11,6 +11,7 @@ import ReactorKit
 import Then
 import RxRelay
 
+// TODO: 노트 등록이 아닌 입력과 관련된 이름으로 변경해요.
 final class CreateNoteViewReactor: Reactor {
   
   enum ViewPresentType {
