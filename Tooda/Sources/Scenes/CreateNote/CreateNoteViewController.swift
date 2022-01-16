@@ -33,7 +33,7 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
   private let rxCombinedTextDidChangedRelay: PublishRelay<(title: String, content: String)> = PublishRelay()
   
   // MARK: Properties
-  lazy var dataSource: Section = Section(configureCell: { _, tableView, indexPath, item -> UITableViewCell in
+  lazy var dataSource: Section = Section(configureCell: { [weak self] _, tableView, indexPath, item -> UITableViewCell in
     switch item {
     case .content(let reactor):
       let cell = tableView.dequeue(NoteContentCell.self, indexPath: indexPath)
@@ -41,7 +41,9 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
         
       cell.rx.combinedTextDidChanged
         .map { (title: $0.0, content: $0.1) }
-        .bind(to: self.rxCombinedTextDidChangedRelay)
+        .subscribe(onNext: { [weak self] in
+          self?.rxCombinedTextDidChangedRelay.accept($0)
+        })
         .disposed(by: cell.disposeBag)
         
       return cell
@@ -51,7 +53,9 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
         
       cell.rx.didTapAddStock
         .debounce(.milliseconds(500), scheduler: MainScheduler.instance)
-        .bind(to: self.rxAddStockDidTapRelay)
+        .subscribe(onNext: { [weak self] in
+          self?.rxAddStockDidTapRelay.accept($0)
+        })
         .disposed(by: cell.disposeBag)
         
       return cell
@@ -61,7 +65,9 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
       
       cell.rx.didSelectedItemCell
         .throttle(.milliseconds(500), scheduler: MainScheduler.instance)
-        .bind(to: self.imageItemCellDidTapRelay)
+        .subscribe(onNext: { [weak self] in
+          self?.imageItemCellDidTapRelay.accept($0)
+        })
         .disposed(by: cell.disposeBag)
       
       cell.selectionStyle = .none

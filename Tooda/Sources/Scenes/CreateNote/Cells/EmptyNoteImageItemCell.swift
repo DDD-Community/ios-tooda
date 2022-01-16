@@ -70,8 +70,8 @@ class EmptyNoteImageItemCell: BaseCollectionViewCell, View {
 extension Reactive where Base: EmptyNoteImageItemCell {
   var addImageButtonDidTap: Observable<IndexPath> {
     return self.base.addImageButton.rx.tap
-      .flatMap { _ -> Observable<IndexPath> in
-        guard let indexPath = self.base.indexPath else { return .empty() }
+      .flatMap { [weak base] _ -> Observable<IndexPath> in
+        guard let indexPath = base?.indexPath else { return .empty() }
         return Observable.just(indexPath)
       }
   }
