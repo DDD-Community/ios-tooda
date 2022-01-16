@@ -364,7 +364,7 @@ extension CreateNoteViewReactor {
             name: stockItem.name,
             completion: self.stockItemEditCompletionRelay
           ),
-          isEditable: true
+          editMode: .modify
         ),
         using: .modal,
         animated: true,

@@ -124,14 +124,14 @@ final class AppFactory: AppFactoryType {
       )
 
       return SearchRecentViewController(reactor: reactor)
-    case .stockRateInput(let payload, let isEditable):
+    case .stockRateInput(let payload, let editMode):
         let reactor = StockRateInputReactor(dependency: .init(
         coordinator: self.dependency.appInject.resolve(AppCoordinatorType.self)),
                                             payload: payload)
         
-      let viewController = StockRateInputViewController(reactor: reactor, isEditable: isEditable)
+      let viewController = StockRateInputViewController(reactor: reactor, editMode: editMode)
         
-      if isEditable {
+      if editMode == .input {
         viewController.modalPresentationStyle = .overFullScreen
       }
         

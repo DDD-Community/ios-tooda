@@ -39,14 +39,15 @@ class StockRateInputViewController: BaseViewController<StockRateInputReactor> {
     static let addButtonHeight: CGFloat = 48
   }
   
-  private let isEditable: Bool
+  private let editMode: EditMode
   
-  init(reactor: Reactor, isEditable: Bool) {
+  init(reactor: Reactor, editMode: EditMode) {
     defer {
       self.reactor = reactor
     }
     
-    self.isEditable = isEditable
+    self.editMode = editMode
+    
     super.init()
   }
   
@@ -131,7 +132,7 @@ class StockRateInputViewController: BaseViewController<StockRateInputReactor> {
     
     self.buttonBackGroundView.addSubview(doneButton)
     
-    let buttonTitle = self.isEditable ? "수정".styled(with: Font.addButton) : "추가".styled(with: Font.addButton)
+    let buttonTitle = self.editMode == .modify ? "수정".styled(with: Font.addButton) : "추가".styled(with: Font.addButton)
     
     self.doneButton.do {
       $0.setAttributedTitle(
