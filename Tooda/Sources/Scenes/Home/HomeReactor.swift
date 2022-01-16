@@ -41,6 +41,10 @@ final class HomeReactor: Reactor {
   }
   
   struct State {
+    enum Exception {
+      case emptyNoteAlert
+    }
+
     // Entities
     var notebooks: [NotebookMeta]
     var selectedNotobook: NotebookMeta?
@@ -48,6 +52,7 @@ final class HomeReactor: Reactor {
 
     // ViewModels
     var notebookViewModels: [NotebookCell.ViewModel]
+    var exception: Exception?
   }
 
   // MARK: Constants
@@ -71,7 +76,8 @@ final class HomeReactor: Reactor {
       notebooks: [],
       selectedNotobook: nil,
       selectedIndex: 0,
-      notebookViewModels: []
+      notebookViewModels: [],
+      exception: nil
     )
   }()
 
@@ -165,7 +171,11 @@ extension HomeReactor {
 
     case let .selectNotebook(notebookIndex):
       guard let notebookIndex = notebookIndex,
-            let notebook = state.notebooks[safe: notebookIndex] else { break }
+            let notebook = state.notebooks[safe: notebookIndex]
+      else {
+        newState.exception = .emptyNoteAlert
+        break
+      }
       newState.selectedIndex = notebookIndex
       newState.selectedNotobook = notebook
     }
