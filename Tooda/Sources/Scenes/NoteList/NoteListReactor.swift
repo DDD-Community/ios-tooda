@@ -31,11 +31,15 @@ final class NoteListReactor: Reactor {
   enum Action {
     case initialLoad
     case dismiss
+    case pagnationLoad(willDisplayIndex: Int)
   }
   
   enum Mutation {
     case setIsEmpty(Bool)
+    case setIsLoading(Bool)
+    case setNextCursor(Int?)
     case setNoteListModel([NoteListModel])
+    case setPagnationLoadedNotes([Note])
   }
   
   struct Dependency {
@@ -46,8 +50,10 @@ final class NoteListReactor: Reactor {
   
   struct State {
     var noteListModel: [NoteListModel]
-    var isEmpty: Bool
+    var isEmpty: Bool?
     let fetchWindowSize: Int = 15
+    let prefetchThreshold: Int = 4
+    var isLoading: Bool = false
     var cursor: Int?
     var dateInfo: DateInfo
   }
@@ -81,6 +87,8 @@ extension NoteListReactor {
       return loadMutation()
     case .dismiss:
       return dismissMutation()
+    case let .pagnationLoad(willDisplayIndex):
+      return pagnationLoadMutation(nextDisplayIndex: willDisplayIndex)
     }
   }
   
@@ -102,11 +110,18 @@ extension NoteListReactor {
         month: initialState.dateInfo.month
         )
       )
-      .map([Note].self)
+      .map(NoteListDTO.self)
       .asObservable()
-      .flatMap { noteList -> Observable<Mutation> in
+      .flatMap { noteDTO -> Observable<Mutation> in
+        guard let noteList = noteDTO.noteList else {
+          return Observable<Mutation>.empty()
+        }
         if noteList.isEmpty {
-          return Observable<Mutation>.just(Mutation.setIsEmpty(true))
+          return Observable<Mutation>.concat([
+            Observable.just(Mutation.setIsLoading(true)),
+            Observable.just(Mutation.setIsEmpty(true)),
+            Observable.just(Mutation.setIsLoading(false))
+          ])
         } else {
           let noteListModelMutation = Mutation.setNoteListModel(
             [
@@ -116,8 +131,46 @@ extension NoteListReactor {
               )
             ]
           )
-          return Observable<Mutation>.just(noteListModelMutation)
+          return Observable<Mutation>.concat([
+            Observable.just(Mutation.setIsLoading(true)),
+            Observable.just(Mutation.setIsEmpty(false)),
+            Observable.just(noteListModelMutation),
+            Observable.just(Mutation.setNextCursor(noteDTO.cursor)),
+            Observable.just(Mutation.setIsLoading(false))
+          ])
         }
+    }
+  }
+  
+  private func pagnationLoadMutation(nextDisplayIndex: Int) -> Observable<Mutation> {
+    guard let itemCount = currentState.noteListModel.first?.items.count,
+      (itemCount - currentState.prefetchThreshold) <= nextDisplayIndex,
+      !currentState.isLoading,
+      currentState.cursor != nil else {
+      return Observable<Mutation>.empty()
+    }
+    
+    return dependency.service.request(
+      NoteAPI.monthlyList(
+        limit: currentState.fetchWindowSize,
+        cursor: currentState.cursor,
+        year: dependency.payload.year,
+        month: dependency.payload.month
+        )
+      )
+      .map(NoteListDTO.self)
+      .asObservable()
+      .flatMap { noteDTO -> Observable<Mutation> in
+        guard let noteList = noteDTO.noteList else {
+          return Observable<Mutation>.empty()
+        }
+        
+        return Observable<Mutation>.concat([
+          Observable.just(Mutation.setIsLoading(true)),
+          Observable.just(Mutation.setNextCursor(noteDTO.cursor)),
+          Observable.just(Mutation.setPagnationLoadedNotes(noteList)),
+          Observable.just(Mutation.setIsLoading(false))
+        ])
     }
   }
 }
@@ -128,13 +181,22 @@ extension NoteListReactor {
   
   func reduce(state: State, mutation: Mutation) -> State {
     var newState = state
-    newState.isEmpty = false
+    newState.isEmpty = nil
     
     switch mutation {
     case let .setNoteListModel(model):
       newState.noteListModel = model
     case let .setIsEmpty(isEmpty):
       newState.isEmpty = isEmpty
+    case let .setIsLoading(isLoading):
+      newState.isLoading = isLoading
+    case let .setNextCursor(cursor):
+      newState.cursor = cursor
+    case let .setPagnationLoadedNotes(notes):
+      if var model = newState.noteListModel.first {
+        model.items.append(contentsOf: notes)
+        newState.noteListModel = [model]
+      }
     }
     
     return newState
