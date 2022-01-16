@@ -157,8 +157,10 @@ extension HomeReactor {
 
     switch mutation {
     case let .setNotebooks(metas):
-      newState.notebooks = metas
-      newState.notebookViewModels = self.mappingToNoteBooks(metas: metas)
+      let addedMetas = self.addCurrentNotebookIfNeeded(metas: metas)
+      newState.notebooks = addedMetas
+      newState.notebookViewModels = self.mappingToNoteBooks(metas: addedMetas)
+      newState.selectedNotobook = newState.notebooks[safe: 0]
 
     case let .selectNotebook(notebookIndex):
       guard let notebookIndex = notebookIndex,
@@ -168,6 +170,24 @@ extension HomeReactor {
     }
 
     return newState
+  }
+
+  private func addCurrentNotebookIfNeeded(metas: [NotebookMeta]) -> [NotebookMeta] {
+    let currentDate = Date()
+    let lastMonth = metas.last?.month ?? 0
+
+    guard metas.last?.year ?? currentDate.year == currentDate.year,
+          lastMonth != currentDate.month
+    else {
+      return metas
+    }
+
+    return metas.with {
+      $0.append(NotebookMeta(
+        year: currentDate.year,
+        month: currentDate.month
+      ))
+    }
   }
 
   private func mappingToNoteBooks(metas: [NotebookMeta]) -> [NotebookCell.ViewModel] {
