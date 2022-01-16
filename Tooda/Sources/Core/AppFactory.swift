@@ -131,10 +131,6 @@ final class AppFactory: AppFactoryType {
         
       let viewController = StockRateInputViewController(reactor: reactor, editMode: editMode)
         
-      if editMode == .input {
-        viewController.modalPresentationStyle = .overFullScreen
-      }
-        
       return viewController
 
     case .popUp(let type):

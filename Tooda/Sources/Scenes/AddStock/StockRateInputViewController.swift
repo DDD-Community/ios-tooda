@@ -44,6 +44,10 @@ class StockRateInputViewController: BaseViewController<StockRateInputReactor> {
   init(reactor: Reactor, editMode: EditMode) {
     defer {
       self.reactor = reactor
+      
+      if editMode == .modify {
+        self.modalPresentationStyle = .overFullScreen
+      }
     }
     
     self.editMode = editMode
