@@ -413,7 +413,7 @@ extension CreateNoteViewController {
       
       let alertController = UIAlertController(title: nil, message: "종목을 삭제하시겠습니까?", preferredStyle: .alert)
       
-      let ok = UIAlertAction(title: "확인", style: .destructive, handler: { [weak self] _ in
+      let ok = UIAlertAction(title: "확인", style: .destructive, handler: { _ in
         self?.rxStockItemDeleteRelay.accept(indexPath)
       })
       
