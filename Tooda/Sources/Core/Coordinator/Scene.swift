@@ -21,7 +21,7 @@ enum Scene {
   case search
   case noteList(payload: NoteListReactor.Payload)
   case searchRecent
-  case stockRateInput(payload: StockRateInputReactor.Payload)
+  case stockRateInput(payload: StockRateInputReactor.Payload, editMode: StockRateInputViewController.EditMode = .input)
   case popUp(type: PopUpReactor.PopUpType)
   case searchResult
   case noteDetail

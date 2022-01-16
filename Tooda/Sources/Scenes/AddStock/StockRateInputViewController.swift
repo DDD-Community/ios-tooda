@@ -16,6 +16,11 @@ class StockRateInputViewController: BaseViewController<StockRateInputReactor> {
   
   // MARK: Enum
   
+  enum EditMode {
+    case input
+    case modify
+  }
+  
   private enum Font {
     static let title = TextStyle.titleBold(color: .gray1)
     static let descprtion = TextStyle.body(color: .gray3)
@@ -34,10 +39,19 @@ class StockRateInputViewController: BaseViewController<StockRateInputReactor> {
     static let addButtonHeight: CGFloat = 48
   }
   
-  init(reactor: Reactor) {
+  private let editMode: EditMode
+  
+  init(reactor: Reactor, editMode: EditMode) {
     defer {
       self.reactor = reactor
+      
+      if editMode == .modify {
+        self.modalPresentationStyle = .overFullScreen
+      }
     }
+    
+    self.editMode = editMode
+    
     super.init()
   }
   
@@ -88,12 +102,7 @@ class StockRateInputViewController: BaseViewController<StockRateInputReactor> {
     $0.backgroundColor = UIColor(type: .white)
   }
   
-  private let addButton = UIButton(type: .system).then {
-    $0.setAttributedTitle(
-      "추가".styled(with: Font.addButton),
-      for: .normal
-    )
-    
+  private let doneButton = UIButton(type: .system).then {
     $0.setBackgroundImage(UIColor.gray3.image(), for: .disabled)
     $0.setBackgroundImage(UIColor.mainGreen.image(), for: .normal)
     
@@ -125,7 +134,16 @@ class StockRateInputViewController: BaseViewController<StockRateInputReactor> {
     
     self.textFieldBackgroundView.addSubview(textField)
     
-    self.buttonBackGroundView.addSubview(addButton)
+    self.buttonBackGroundView.addSubview(doneButton)
+    
+    let buttonTitle = self.editMode == .modify ? "수정".styled(with: Font.addButton) : "추가".styled(with: Font.addButton)
+    
+    self.doneButton.do {
+      $0.setAttributedTitle(
+        buttonTitle,
+        for: .normal
+      )
+    }
   }
   
   override func configureConstraints() {
@@ -168,7 +186,7 @@ class StockRateInputViewController: BaseViewController<StockRateInputReactor> {
       $0.bottom.equalTo(self.view.keyboardLayoutGuide.snp.top)
     }
     
-    addButton.snp.makeConstraints {
+    doneButton.snp.makeConstraints {
       $0.top.equalToSuperview().offset(16)
       $0.left.right.equalToSuperview().inset(20)
       $0.bottom.equalToSuperview().offset(-24)
@@ -188,7 +206,7 @@ class StockRateInputViewController: BaseViewController<StockRateInputReactor> {
       .bind(to: reactor.action)
       .disposed(by: self.disposeBag)
     
-    self.addButton.rx.tap
+    self.doneButton.rx.tap
       .map { Reactor.Action.addButtonDidTapped }
       .bind(to: reactor.action)
       .disposed(by: self.disposeBag)
@@ -254,7 +272,7 @@ extension StockRateInputViewController {
   }
   
   private func addButtonDidChanged(_ isEnabled: Bool) {
-    self.addButton.isEnabled = isEnabled
+    self.doneButton.isEnabled = isEnabled
   }
   
   private func textFieldVisiblityDidChanged(by isEven: Bool) {

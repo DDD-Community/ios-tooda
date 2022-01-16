@@ -127,11 +127,14 @@ final class AppFactory: AppFactoryType {
       )
 
       return SearchRecentViewController(reactor: reactor)
-    case .stockRateInput(let payload):
+    case .stockRateInput(let payload, let editMode):
         let reactor = StockRateInputReactor(dependency: .init(
         coordinator: self.dependency.appInject.resolve(AppCoordinatorType.self)),
                                             payload: payload)
-      return StockRateInputViewController(reactor: reactor)
+        
+      let viewController = StockRateInputViewController(reactor: reactor, editMode: editMode)
+        
+      return viewController
 
     case .popUp(let type):
       let reactor = PopUpReactor(

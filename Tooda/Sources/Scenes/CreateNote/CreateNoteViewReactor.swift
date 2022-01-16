@@ -42,6 +42,9 @@ final class CreateNoteViewReactor: Reactor {
     case linkButtonDidTapped
     case registerButtonDidTapped
     case stckerDidPicked(Sticker)
+    case stockItemDidDeleted(IndexPath)
+    case showStockItemEditView(IndexPath)
+    case stockItemDidUpdated(NoteStock)
   }
 
   enum Mutation {
@@ -51,6 +54,7 @@ final class CreateNoteViewReactor: Reactor {
     case fetchStockSection(NoteSectionItem)
     case fetchLinkSection(NoteSectionItem)
     case shouldRegisterButtonEnabeld(Bool)
+    case stockItemDidDeleted(Int)
   }
 
   struct State: Then {
@@ -64,6 +68,8 @@ final class CreateNoteViewReactor: Reactor {
   let initialState: State
   
   private let linkItemMaxCount: Int = 2
+  
+  private var lastEditableStockCellIndexPath: IndexPath?
 
   let dependency: Dependency
   
@@ -72,6 +78,8 @@ final class CreateNoteViewReactor: Reactor {
   private let addStockCompletionRelay: PublishRelay<NoteStock> = PublishRelay()
   private let addLinkURLCompletionRelay: PublishRelay<String> = PublishRelay()
   private let addStickerCompletionRelay: PublishRelay<Sticker> = PublishRelay()
+  
+  private let stockItemEditCompletionRelay: PublishRelay<NoteStock> = PublishRelay()
   
   init(dependency: Dependency) {
     self.dependency = dependency
@@ -103,6 +111,12 @@ final class CreateNoteViewReactor: Reactor {
         return self.registerButtonDidTapped()
     case .stckerDidPicked(let sticker):
         return self.registNoteAndDismissView(sticker)
+    case .stockItemDidDeleted(let indexPath):
+        return self.stockItemDidDeleted(indexPath.row)
+    case .showStockItemEditView(let index):
+        return self.showStockItemEditView(index)
+    case .stockItemDidUpdated(let stock):
+        return self.stockItemDidUpdated(stock)
     case .dismissView:
         return dismissView()
     default:
@@ -131,6 +145,8 @@ final class CreateNoteViewReactor: Reactor {
       newState.sections[NoteSection.Identity.link.rawValue].items.append(sectionItem)
     case .shouldRegisterButtonEnabeld(let enabled):
       newState.shouldReigsterButtonEnabled = enabled
+    case .stockItemDidDeleted(let row):
+      newState.sections[NoteSection.Identity.stock.rawValue].items.remove(at: row)
     }
 
     return newState
@@ -146,7 +162,10 @@ final class CreateNoteViewReactor: Reactor {
         .map { Action.linkURLDidAdded($0) },
       self.addStickerCompletionRelay
         .map { Action.stckerDidPicked($0) }
-        .debounce(.milliseconds(300), scheduler: MainScheduler.asyncInstance)
+        .debounce(.milliseconds(300), scheduler: MainScheduler.asyncInstance),
+      self.stockItemEditCompletionRelay
+        .map { Action.stockItemDidUpdated($0) }
+        .debounce(.microseconds(300), scheduler: MainScheduler.asyncInstance)
     )
   }
 
@@ -320,6 +339,61 @@ self.dependency.coordinator.transition(
           return .empty()
         }
       }
+  }
+}
+
+// MARK: - StockItem Edit & Delete
+
+extension CreateNoteViewReactor {
+  private func stockItemDidDeleted(_ row: Int) -> Observable<Mutation> {
+    
+    self.addNoteDTO.stocks.remove(at: row)
+
+    return .just(.stockItemDidDeleted(row))
+  }
+  
+  private func showStockItemEditView(_ index: IndexPath) -> Observable<Mutation> {
+    
+    guard let sectionItem = self.currentState.sections[NoteSection.Identity.stock.rawValue].items[safe: index.row] else {
+      return .empty()
+    }
+    
+    if case let NoteSectionItem.stock(reactor) = sectionItem {
+      let stockItem = reactor.currentState.payload
+      
+      self.lastEditableStockCellIndexPath = index
+      
+      self.dependency.coordinator.transition(
+        to: .stockRateInput(
+          payload: .init(
+            name: stockItem.name,
+            completion: self.stockItemEditCompletionRelay
+          ),
+          editMode: .modify
+        ),
+        using: .modal,
+        animated: true,
+        completion: nil
+      )
+    }
+    
+    return .empty()
+  }
+  
+  private func stockItemDidUpdated(_ stock: NoteStock) -> Observable<Mutation> {
+    
+    guard let indexPath = self.lastEditableStockCellIndexPath,
+          let sectionItem = self.currentState.sections[NoteSection.Identity.stock.rawValue].items[safe: indexPath.row]
+    else { return .empty() }
+    
+    if case let NoteSectionItem.stock(reactor) = sectionItem {
+      reactor.action.onNext(.payloadDidChanged(stock))
+      self.lastEditableStockCellIndexPath = nil
+      self.addNoteDTO.stocks.remove(at: indexPath.row)
+      self.addNoteDTO.stocks.insert(stock, at: indexPath.row)
+    }
+    
+    return .empty()
   }
 }
 
