@@ -10,6 +10,7 @@ import Foundation
 
 import ReactorKit
 import Swinject
+import SafariServices
 
 enum TransitionStyle {
   case push
@@ -89,7 +90,9 @@ final class AppCoordinator: AppCoordinatorType {
         animated: animated,
         completion: completion
       )
-      self.currentViewController = viewController
+      if determineShouldConfigureCurrentViewController(scene: scene) {
+        self.currentViewController = viewController
+      }
     }
   }
   
@@ -130,6 +133,8 @@ final class AppCoordinator: AppCoordinatorType {
           return $0 is SearchResultViewController
         case .noteDetail:
           return $0 is NoteDetailViewController
+        case .inAppBrowser:
+          return $0 is SFSafariViewController
         }
       }) else { return }
 
@@ -157,6 +162,15 @@ final class AppCoordinator: AppCoordinatorType {
           completion?()
         })
       }
+    }
+  }
+  
+  private func determineShouldConfigureCurrentViewController(scene: Scene) -> Bool {
+    switch scene {
+    case .inAppBrowser:
+      return false
+    default:
+      return true
     }
   }
 }

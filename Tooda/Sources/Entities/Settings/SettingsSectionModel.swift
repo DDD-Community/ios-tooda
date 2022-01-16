@@ -18,7 +18,7 @@ struct SettingsSectionModel {
       case .notification:
         return "알림 설정"
       case .etc:
-        return "기타"
+        return "앱 정보"
       }
     }
     

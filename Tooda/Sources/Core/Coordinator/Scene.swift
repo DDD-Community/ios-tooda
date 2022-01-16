@@ -25,6 +25,7 @@ enum Scene {
   case popUp(type: PopUpReactor.PopUpType)
   case searchResult
   case noteDetail
+  case inAppBrowser(url: URL)
   
   var screenName: String {
     switch self {
@@ -40,6 +41,7 @@ enum Scene {
     case .popUp:              return "popUp"
     case .searchResult:       return "searchResult"
     case .noteDetail:         return "noteDetail"
+    case .inAppBrowser:       return "inAppBrowser"
     }
   }
 }

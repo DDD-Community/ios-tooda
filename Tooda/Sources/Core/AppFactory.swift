@@ -10,6 +10,7 @@ import Foundation
 
 import Swinject
 import UIKit
+import SafariServices
 
 protocol AppFactoryType {
   func makeViewController(from scene: Scene) -> UIViewController
@@ -65,7 +66,11 @@ final class AppFactory: AppFactoryType {
       return LoginViewController(reactor: reactor)
 
     case .settings:
-      let reactor = SettingsReactor(dependency: .init())
+      let reactor = SettingsReactor(
+        dependency: .init(
+          coordinator: self.dependency.appInject.resolve(AppCoordinatorType.self)
+        )
+      )
       return SettingsViewController(reactor: reactor)
       
     case .addStock(let completionRelay):
@@ -157,6 +162,8 @@ final class AppFactory: AppFactoryType {
       )
 
       return NoteDetailViewController(reactor: reactor)
+    case let .inAppBrowser(url):
+      return SFSafariViewController(url: url)
     }
   }
 }

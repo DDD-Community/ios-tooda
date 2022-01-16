@@ -10,4 +10,5 @@ import Foundation
 
 struct PlainSettingsInfo {
   let title: String
+  let url: URL?
 }

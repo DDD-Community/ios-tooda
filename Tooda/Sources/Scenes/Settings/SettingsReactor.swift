@@ -16,7 +16,8 @@ final class SettingsReactor: Reactor {
   // MARK: Reactor
   
   enum Action {
-    
+    case didTapPlainSettingItem(index: Int)
+    case didTapbackbutton
   }
 
   enum Mutation {
@@ -24,7 +25,7 @@ final class SettingsReactor: Reactor {
   }
   
   struct Dependency {
-    
+    let coordinator: AppCoordinatorType
   }
   
   struct State {
@@ -33,26 +34,25 @@ final class SettingsReactor: Reactor {
     static func generateInitialState() -> State {
       return State(sectionModel: [
         SettingsSectionModel(
-          identity: .notification,
-          items: [
-            SettingsItem.interactive(
-              InteractiveSettingsInfo(
-                title: "푸시 알림",
-                description: "매일 다이어리를 쓰도록 도와줍니다",
-                isOn: false
-              ))
-          ]),
-        SettingsSectionModel(
           identity: .etc,
           items: [
             SettingsItem.plain(
-              PlainSettingsInfo(title: "공지사항")
+              PlainSettingsInfo(
+                title: "공지사항",
+                url: URL(string: "https://bit.ly/3ncoDLu")
+              )
             ),
             SettingsItem.plain(
-              PlainSettingsInfo(title: "자주 묻는 질문")
+              PlainSettingsInfo(
+                title: "자주 묻는 질문",
+                url: URL(string: "https://bit.ly/3r4LNoc")
+              )
             ),
             SettingsItem.plain(
-              PlainSettingsInfo(title: "약관 및 정책")
+              PlainSettingsInfo(
+                title: "약관 및 정책",
+                url: URL(string: "https://bit.ly/3ratAFw")
+              )
             )
           ]
         ) 
@@ -70,4 +70,42 @@ final class SettingsReactor: Reactor {
   let dependency: Dependency
   
   let initialState: State
+}
+
+// MARK: - Mutate
+
+extension SettingsReactor {
+  
+  func mutate(action: Action) -> Observable<Mutation> {
+    switch action {
+    case let .didTapPlainSettingItem(index):
+      return presentSafariViewControllerMutation(index: index)
+    case .didTapbackbutton:
+      return dismissMutation()
+    }
+  }
+  
+  private func presentSafariViewControllerMutation(index: Int) -> Observable<Mutation> {
+    if case let .plain(settingInfo) = initialState.sectionModel.first?.items[safe: index],
+       let url = settingInfo.url {
+      dependency.coordinator.transition(
+        to: .inAppBrowser(url: url),
+        using: .modal,
+        animated: true,
+        completion: nil
+      )
+    }
+   
+    return Observable<Mutation>.empty()
+  }
+  
+  private func dismissMutation() -> Observable<Mutation> {
+    dependency.coordinator.close(
+      style: .pop,
+      animated: true,
+      completion: nil
+    )
+   
+    return Observable<Mutation>.empty()
+  }
 }
