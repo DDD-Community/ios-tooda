@@ -30,11 +30,22 @@ final class NoteDetailTitleCell: UITableViewCell {
   
   override func configureUI() {
     super.configureUI()
-    
+    contentView.addSubviews(
+      titleLabel,
+      dateLabel
+    )
   }
   
   override func setupConstraints() {
     super.setupConstraints()
+    titleLabel.snp.makeConstraints {
+      $0.top.equalToSuperview().inset(1)
+      $0.leading.trailing.equalToSuperview().inset(19)
+    }
     
+    dateLabel.snp.makeConstraints {
+      $0.top.equalTo(titleLabel.snp.bottom).offset(5)
+      $0.leading.trailing.equalToSuperview().inset(19)
+    }
   }
 }
