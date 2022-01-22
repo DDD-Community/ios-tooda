@@ -8,10 +8,14 @@
 import UIKit
 
 final class NoteDetailTitleCell: UITableViewCell {
+  
+  // MARK: - UI Components
 
   private let titleLabel = UILabel()
   
   private let dateLabel = UILabel()
+  
+  // MARK: - Con(De)structor
   
   override init(
     style: UITableViewCell.CellStyle,
@@ -23,10 +27,7 @@ final class NoteDetailTitleCell: UITableViewCell {
     )
   }
   
-  func configure() {
-    
-  }
-  
+  // MARK: - Overridden: ParentClass
   
   override func configureUI() {
     super.configureUI()
@@ -47,5 +48,12 @@ final class NoteDetailTitleCell: UITableViewCell {
       $0.top.equalTo(titleLabel.snp.bottom).offset(5)
       $0.leading.trailing.equalToSuperview().inset(19)
     }
+  }
+  
+  
+  // MARK: - Internal methods
+  
+  func configure() {
+    
   }
 }

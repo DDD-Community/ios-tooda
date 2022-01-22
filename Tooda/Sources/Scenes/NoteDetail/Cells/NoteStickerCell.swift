@@ -9,11 +9,15 @@ import UIKit
 
 final class NoteStickerCell: BaseTableViewCell {
   
+  // MARK: - UI Components
+  
   private let stickerImageView = UIImageView().then {
     $0.contentMode = .scaleAspectFit
   }
   
   private let titleLabel = UILabel()
+  
+  // MARK: - Con(De)structor
 
   override init(
     style: UITableViewCell.CellStyle,
@@ -25,9 +29,7 @@ final class NoteStickerCell: BaseTableViewCell {
     )
   }
   
-  func configure() {
-    
-  }
+  // MARK: - Overridden: ParentClass
   
   override func configureUI() {
     super.configureUI()

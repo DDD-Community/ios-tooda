@@ -10,8 +10,12 @@ import UIKit
 import SnapKit
 
 final class NoteDetailTextContentCell: UITableViewCell {
+  
+  // MARK: - UI Components
 
   private let descriptionLabel = UILabel()
+  
+  // MARK: - Con(De)structor
   
   override init(
     style: UITableViewCell.CellStyle,
@@ -23,10 +27,7 @@ final class NoteDetailTextContentCell: UITableViewCell {
     )
   }
   
-  func configure() {
-    
-  }
-
+  // MARK: - Overridden: ParentClass
   
   override func configureUI() {
     super.configureUI()
@@ -40,5 +41,11 @@ final class NoteDetailTextContentCell: UITableViewCell {
       $0.top.bottom.equalToSuperview().inset(15)
       $0.leading.trailing.equalToSuperview().inset(20)
     }
+  }
+  
+  // MARK: - Internal methods
+  
+  func configure() {
+    
   }
 }
