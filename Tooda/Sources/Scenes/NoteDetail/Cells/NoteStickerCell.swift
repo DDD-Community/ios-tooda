@@ -41,6 +41,15 @@ final class NoteStickerCell: BaseTableViewCell {
   override func setupConstraints() {
     super.setupConstraints()
     
-    stickerImageView
+    stickerImageView.snp.makeConstraints {
+      $0.leading.equalToSuperview().inset(21)
+      $0.centerY.equalToSuperview()
+    }
+    
+    titleLabel.snp.makeConstraints {
+      $0.leading.equalTo(stickerImageView.snp.trailing).offset(8)
+      $0.centerY.equalToSuperview()
+      $0.trailing.equalToSuperview().inset(20)
+    }
   }
 }
