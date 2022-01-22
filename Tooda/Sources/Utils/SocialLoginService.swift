@@ -6,3 +6,25 @@
 //
 
 import Foundation
+
+import RxSwift
+import RxCocoa
+
+enum SocialLoginType {
+  case apple
+}
+
+final class SocialLoginService {
+  
+  enum SocialLoginError: Error {
+    case parsingError
+  }
+  
+  typealias SocialLoginResult = (token: String?, type: SocialLoginType, error: Error?)
+  
+  private let tokenProvider = PublishRelay<SocialLoginResult>
+  
+  init(tokenProvider: PublishRelay<SocialLoginResult>) {
+    self.tokenProvider = tokenProvider
+  }
+}
