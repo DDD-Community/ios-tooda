@@ -41,7 +41,6 @@ final class NoteStickerCell: BaseTableViewCell {
       stickerImageView,
       titleLabel
     )
-    
   }
   
   override func setupConstraints() {
