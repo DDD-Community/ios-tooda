@@ -41,9 +41,9 @@ final class NoteImageCellReactor: Reactor {
   
   private let uuid: String = UUID().uuidString
 
-  init(dependency: Dependency) {
+  init(dependency: Dependency, images: [NoteImage] = []) {
     self.dependency = dependency
-    initialState = State(sections: dependency.factory([]))
+    initialState = State(sections: dependency.factory(images))
   }
 
   func mutate(action: Action) -> Observable<Mutation> {

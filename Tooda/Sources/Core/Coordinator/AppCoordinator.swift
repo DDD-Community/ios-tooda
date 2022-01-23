@@ -113,7 +113,7 @@ final class AppCoordinator: AppCoordinatorType {
           return $0 is LoginViewController
         case .home:
           return $0 is HomeViewController
-        case .createNote:
+        case .createNote, .modifyNote:
           return $0 is CreateNoteViewController
         case .settings:
           return $0 is SettingsViewController

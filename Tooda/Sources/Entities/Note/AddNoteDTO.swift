@@ -7,7 +7,11 @@
 
 import Foundation
 
+// TODO: 등록, 수정을 동시에 다룰 수 있는 자료형으로 변경할 예정이에요.
 struct AddNoteDTO {
+  var id: String?
+  var updatedAt: String?
+  var createdAt: String?
   var title: String
   var content: String
   var stocks: [NoteStock]

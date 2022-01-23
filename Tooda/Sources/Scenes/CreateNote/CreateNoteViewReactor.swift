@@ -11,6 +11,7 @@ import ReactorKit
 import Then
 import RxRelay
 
+// TODO: 노트 등록이 아닌 입력과 관련된 이름으로 변경해요.
 final class CreateNoteViewReactor: Reactor {
   
   enum ViewPresentType {
@@ -26,7 +27,8 @@ final class CreateNoteViewReactor: Reactor {
     let coordinator: AppCoordinatorType
     let authorization: AppAuthorizationType
     let linkPreviewService: LinkPreViewServiceType
-    let createDiarySectionFactory: CreateNoteSectionType
+    let createDiarySectionFactory: CreateNoteSectionType?
+    let modifiableNoteSectionFactory: ModifiableNoteSectionType?
   }
 
   enum Action {
@@ -81,9 +83,13 @@ final class CreateNoteViewReactor: Reactor {
   
   private let stockItemEditCompletionRelay: PublishRelay<NoteStock> = PublishRelay()
   
-  init(dependency: Dependency) {
+  init(dependency: Dependency, modifiableNote: AddNoteDTO?) {
     self.dependency = dependency
     self.initialState = State()
+    
+    if let modifiableNote = modifiableNote {
+      self.addNoteDTO = modifiableNote
+    }
   }
 
   func mutate(action: Action) -> Observable<Mutation> {
@@ -170,8 +176,18 @@ final class CreateNoteViewReactor: Reactor {
   }
 
   private func makeSections() -> [NoteSection] {
-    let sections = self.dependency.createDiarySectionFactory(self.dependency.authorization, self.dependency.coordinator)
-    return sections
+    
+    if let createSectionFactory = self.dependency.createDiarySectionFactory {
+      let sections = createSectionFactory(self.dependency.authorization, self.dependency.coordinator)
+      return sections
+    }
+    
+    if let modifySectionFactory = self.dependency.modifiableNoteSectionFactory {
+      let sections = modifySectionFactory(self.addNoteDTO, self.dependency.linkPreviewService)
+      return sections
+    }
+    
+    return []
   }
   
   private func didSelectedImageItem(_ indexPath: IndexPath) -> Observable<Mutation> {
@@ -407,8 +423,8 @@ let createDiarySectionFactory: CreateNoteSectionType = { authorization, coordina
     NoteSection(identity: .link, items: []),
     NoteSection(identity: .image, items: [])
   ]
-
-  let contentReactor: NoteContentCellReactor = NoteContentCellReactor()
+  
+  let contentReactor: NoteContentCellReactor = NoteContentCellReactor(payload: .init(title: "", content: ""))
   let contentSectionItem: NoteSectionItem = NoteSectionItem.content(contentReactor)
   
   let addStockReactor: EmptyNoteStockCellReactor = EmptyNoteStockCellReactor()
@@ -445,4 +461,51 @@ extension CreateNoteViewReactor {
     
     return .empty()
   }
+}
+
+typealias ModifiableNoteSectionType = (AddNoteDTO, LinkPreViewServiceType) -> [NoteSection]
+
+let modifiableNoteSectionFactory: (AddNoteDTO, LinkPreViewServiceType) -> [NoteSection] = { note, previewService -> [NoteSection] in
+  var sections: [NoteSection] = [
+    NoteSection(identity: .content, items: []),
+    NoteSection(identity: .stock, items: []),
+    NoteSection(identity: .addStock, items: []),
+    NoteSection(identity: .link, items: []),
+    NoteSection(identity: .image, items: [])
+  ]
+  
+  let contentReactor: NoteContentCellReactor = NoteContentCellReactor(payload: .init(title: note.title, content: note.content))
+  let contentSectionItem: NoteSectionItem = NoteSectionItem.content(contentReactor)
+  
+  if note.stocks.isNotEmpty {
+    let sectionItems = note.stocks
+      .map { NoteStockCellReactor(payload: .init(name: $0.name, rate: $0.changeRate ?? 0)) }
+      .map { NoteSectionItem.stock($0) }
+    
+    sections[NoteSection.Identity.stock.rawValue].items = sectionItems
+  }
+  
+  let addStockReactor: EmptyNoteStockCellReactor = EmptyNoteStockCellReactor()
+  let addStockSectionItem: NoteSectionItem = NoteSectionItem.addStock(addStockReactor)
+  
+  let imageReactor: NoteImageCellReactor = NoteImageCellReactor(
+    dependency: .init(
+      factory: noteImageSectionFactory
+    ),
+    images: note.images.map { NoteImage(id: 0, url: $0) }
+  )
+  
+  let imageSectionItem: NoteSectionItem = NoteSectionItem.image(imageReactor)
+  
+  let linkSectionItems = note.links
+    .map { NoteLinkCellReactor(dependency: .init(service: previewService), payload: $0) }
+    .map { NoteSectionItem.link($0) }
+  
+  sections[NoteSection.Identity.link.rawValue].items = linkSectionItems
+  
+  sections[NoteSection.Identity.content.rawValue].items = [contentSectionItem]
+  sections[NoteSection.Identity.addStock.rawValue].items = [addStockSectionItem]
+  sections[NoteSection.Identity.image.rawValue].items = [imageSectionItem]
+  
+  return sections
 }
