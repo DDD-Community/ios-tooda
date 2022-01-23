@@ -14,6 +14,17 @@ import Then
 import SnapKit
 
 final class NoteDetailViewController: BaseViewController<NoteDetailReactor> {
+  
+  // MARK: UI Properties
+  
+  private let tableView = UITableView().then {
+    $0.separatorStyle = .none
+    $0.backgroundColor = .white
+    $0.estimatedRowHeight = UITableView.automaticDimension
+    $0.alwaysBounceHorizontal = false
+    
+    $0.allowsSelection = false
+  }
 
   // MARK: Initializing
 
@@ -30,11 +41,17 @@ final class NoteDetailViewController: BaseViewController<NoteDetailReactor> {
   // MARK: Configuring
 
   override func configureUI() {
-
+    super.configureUI()
+    self.view.addSubviews(tableView)
   }
 
   override func configureConstraints() {
-
+    super.configureConstraints()
+    
+    tableView.snp.makeConstraints {
+      $0.top.equalTo(self.view.safeAreaLayoutGuide)
+      $0.leading.trailing.bottom.equalToSuperview()
+    }
   }
 
 
