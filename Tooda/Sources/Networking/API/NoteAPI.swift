@@ -17,6 +17,7 @@ enum NoteAPI {
   case delete(id: String)
   case addImage(data: Data)
   // TODO: update는 서버 스펙 전달 받는대로
+  case detail(id: String)
 }
 
 extension NoteAPI: BaseAPI {
@@ -32,6 +33,8 @@ extension NoteAPI: BaseAPI {
         return "diary/image"
       case .delete(let id):
         return "/diary/\(id)"
+      case .detail(let id):
+        return "diary/\(id)"
     }
   }
   
@@ -39,7 +42,7 @@ extension NoteAPI: BaseAPI {
     switch self {
       case .create, .addImage:
         return .post
-      case .list, .monthlyList:
+      case .list, .monthlyList, .detail:
         return .get
       case .delete:
         return .delete
@@ -61,7 +64,7 @@ extension NoteAPI: BaseAPI {
         let multipartData = [imageData]
         
         return .uploadMultipart(multipartData)
-      case .list, .delete, .monthlyList:
+      case .list, .delete, .monthlyList, .detail:
         return .requestParameters(parameters: parameters, encoding: parameterEncoding)
     }
   }
@@ -73,7 +76,7 @@ extension NoteAPI: BaseAPI {
     var parameters: [String: Any] = defaultParameters
     
     switch self {
-    case .create, .delete, .addImage:
+    case .create, .delete, .addImage, .detail:
       return parameters
     case let .list(limit, cursor):
       parameters["limit"] = limit
@@ -98,7 +101,7 @@ extension NoteAPI: BaseAPI {
     switch self {
       case .create, .delete, .addImage:
         return JSONEncoding.default
-      case .list, .monthlyList:
+      case .list, .monthlyList, .detail:
         return URLEncoding.queryString
     }
   }
