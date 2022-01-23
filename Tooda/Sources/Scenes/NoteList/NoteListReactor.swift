@@ -107,7 +107,7 @@ extension NoteListReactor {
   private func routeToCreateNote() -> Observable<Mutation> {
     dependency.coordinator.transition(
       to: .createNote(dateString: "\(currentState.dateInfo.year).\(currentState.dateInfo.month)"),
-      using: .push,
+      using: .modal,
       animated: true,
       completion: nil
     )
