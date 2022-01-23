@@ -16,7 +16,7 @@ enum NoteAPI {
   case monthlyList(limit: Int?, cursor: Int?, year: Int, month: Int)
   case delete(id: String)
   case addImage(data: Data)
-  // TODO: update는 서버 스펙 전달 받는대로
+  case update(dto: NoteRequestDTO)
   case detail(id: String)
 }
 
@@ -33,6 +33,8 @@ extension NoteAPI: BaseAPI {
         return "diary/image"
       case .delete(let id):
         return "/diary/\(id)"
+      case .update(let dto):
+        return "diary/\(dto.id ?? "")"
       case .detail(let id):
         return "diary/\(id)"
     }
@@ -46,6 +48,8 @@ extension NoteAPI: BaseAPI {
         return .get
       case .delete:
         return .delete
+      case .update:
+        return .put
     }
   }
   
@@ -54,7 +58,7 @@ extension NoteAPI: BaseAPI {
     var body: [String: Any] = [:]
     
     switch self {
-      case .create(let note):
+      case .create(let note), .update(let note):
         
         body.concat(dict: note.asBodyParameters())
         
@@ -76,7 +80,7 @@ extension NoteAPI: BaseAPI {
     var parameters: [String: Any] = defaultParameters
     
     switch self {
-    case .create, .delete, .addImage, .detail:
+    case .create, .delete, .addImage, .detail, .update:
       return parameters
     case let .list(limit, cursor):
       parameters["limit"] = limit
@@ -99,7 +103,7 @@ extension NoteAPI: BaseAPI {
   
   var parameterEncoding: ParameterEncoding {
     switch self {
-      case .create, .delete, .addImage:
+      case .create, .delete, .addImage, .update:
         return JSONEncoding.default
       case .list, .monthlyList, .detail:
         return URLEncoding.queryString

@@ -22,6 +22,7 @@ struct NoteRequestDTO {
 extension NoteRequestDTO {
   
   init() {
+    id = nil
     title = ""
     content = ""
     stocks = []
@@ -32,6 +33,12 @@ extension NoteRequestDTO {
   
   func asBodyParameters() -> [String: Any] {
     var parameters: [String: Any] = [:]
+    
+    if let id = id {
+      parameters.concat(dict: [
+        "id": id
+      ])
+    }
     
     parameters.concat(dict: [
       "title": title,
