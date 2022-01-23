@@ -96,6 +96,7 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
   
   private let dateString: String
 
+  private var editMode: EditMode
   // MARK: UI-Properties
   
   private lazy var titleLabel = UILabel().then {
@@ -158,12 +159,13 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
     fatalError("init(coder:) has not been implemented")
   }
 
-  init(dateString: String, reactor: Reactor) {
+  init(dateString: String, reactor: Reactor, mode: EditMode) {
     defer {
       self.reactor = reactor
     }
     
     self.dateString = dateString
+    self.editMode = mode
     super.init()
   }
   
