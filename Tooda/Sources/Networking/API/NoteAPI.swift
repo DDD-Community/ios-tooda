@@ -11,7 +11,7 @@ import Foundation
 import Moya
 
 enum NoteAPI {
-  case create(dto: AddNoteDTO)
+  case create(dto: NoteRequestDTO)
   case list(limit: Int, cursor: Int)
   case monthlyList(limit: Int?, cursor: Int?, year: Int, month: Int)
   case delete(id: String)
