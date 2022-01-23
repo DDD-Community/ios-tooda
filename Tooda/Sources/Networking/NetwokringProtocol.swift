@@ -55,7 +55,7 @@ final class Networking: MoyaProvider<MultiTarget>, NetworkingProtocol {
       .filterSuccessfulStatusCodes()
       .do(
       onSuccess: { value in
-        let message = "SUCCESS: \(requestString) (\(value.statusCode))"
+        let message = "SUCCESS: \(requestString) (\(value.statusCode)) \(String(data: value.data, encoding: .utf8) ?? "")"
         log.debug(message, file: file, function: function, line: line)
       },
       onError: { error in
