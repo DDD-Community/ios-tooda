@@ -20,6 +20,11 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
 
   typealias Section = RxTableViewSectionedAnimatedDataSource<NoteSection>
   
+  enum EditMode {
+    case add
+    case update
+  }
+  
   private enum Metric {
     static let linkButtonSize: CGFloat = 20.0
   }
