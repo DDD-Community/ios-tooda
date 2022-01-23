@@ -65,7 +65,7 @@ final class CreateNoteViewReactor: Reactor {
     var shouldReigsterButtonEnabled: Bool = false
   }
   
-  private var addNoteDTO: NoteRequestDTO = NoteRequestDTO()
+  private var noteRequestDTO: NoteRequestDTO = NoteRequestDTO()
 
   let initialState: State
   
@@ -88,7 +88,7 @@ final class CreateNoteViewReactor: Reactor {
     self.initialState = State()
     
     if let modifiableNote = modifiableNote {
-      self.addNoteDTO = modifiableNote
+      self.noteRequestDTO = modifiableNote
     }
   }
 
@@ -183,7 +183,7 @@ final class CreateNoteViewReactor: Reactor {
     }
     
     if let modifySectionFactory = self.dependency.modifiableNoteSectionFactory {
-      let sections = modifySectionFactory(self.addNoteDTO, self.dependency.linkPreviewService)
+      let sections = modifySectionFactory(self.noteRequestDTO, self.dependency.linkPreviewService)
       return sections
     }
     
@@ -266,7 +266,7 @@ extension CreateNoteViewReactor {
 
     imageCellReactor.action.onNext(.addImage(imageURL))
     
-    self.addNoteDTO.images.append(imageURL)
+    self.noteRequestDTO.images.append(imageURL)
 
     return .empty()
   }
@@ -283,7 +283,7 @@ extension CreateNoteViewReactor {
     
     let sectionItem = NoteSectionItem.stock(reator)
     
-    self.addNoteDTO.stocks.append(stock)
+    self.noteRequestDTO.stocks.append(stock)
     
     return .just(.fetchStockSection(sectionItem))
   }
@@ -296,7 +296,7 @@ extension CreateNoteViewReactor {
     
     let linkSectionItem: NoteSectionItem = NoteSectionItem.link(linkReactor)
     
-    self.addNoteDTO.links.append(url)
+    self.noteRequestDTO.links.append(url)
     
     return .just(.fetchLinkSection(linkSectionItem))
   }
@@ -308,8 +308,8 @@ extension CreateNoteViewReactor {
     
     let shouldButtonEnabled = !(title.isEmpty || content.isEmpty)
     
-    self.addNoteDTO.title = title
-    self.addNoteDTO.content = content
+    self.noteRequestDTO.title = title
+    self.noteRequestDTO.content = content
     
     return .just(.shouldRegisterButtonEnabeld(shouldButtonEnabled))
   }
@@ -342,9 +342,9 @@ self.dependency.coordinator.transition(
   }
   
   private func registNoteAndDismissView(_ sticker: Sticker) -> Observable<Mutation> {
-    self.addNoteDTO.sticker = sticker
+    self.noteRequestDTO.sticker = sticker
     
-    return self.dependency.service.request(NoteAPI.create(dto: self.addNoteDTO))
+    return self.dependency.service.request(NoteAPI.create(dto: self.noteRequestDTO))
       .map(Note.self)
       .asObservable()
       .map { String($0.id) }
@@ -363,7 +363,7 @@ self.dependency.coordinator.transition(
 extension CreateNoteViewReactor {
   private func stockItemDidDeleted(_ row: Int) -> Observable<Mutation> {
     
-    self.addNoteDTO.stocks.remove(at: row)
+    self.noteRequestDTO.stocks.remove(at: row)
 
     return .just(.stockItemDidDeleted(row))
   }
@@ -405,8 +405,8 @@ extension CreateNoteViewReactor {
     if case let NoteSectionItem.stock(reactor) = sectionItem {
       reactor.action.onNext(.payloadDidChanged(stock))
       self.lastEditableStockCellIndexPath = nil
-      self.addNoteDTO.stocks.remove(at: indexPath.row)
-      self.addNoteDTO.stocks.insert(stock, at: indexPath.row)
+      self.noteRequestDTO.stocks.remove(at: indexPath.row)
+      self.noteRequestDTO.stocks.insert(stock, at: indexPath.row)
     }
     
     return .empty()
