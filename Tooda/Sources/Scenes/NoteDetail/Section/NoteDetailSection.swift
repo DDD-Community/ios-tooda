@@ -10,7 +10,6 @@ import RxDataSources
 struct NoteDetailSection {
   enum Identity: Int {
     case header
-    case content
     case stock
     case link
     case image
