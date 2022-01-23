@@ -34,6 +34,7 @@ enum AppImage: String {
   case closeBlack = "close_black"
   case iconCancelBlack = "icon_cancel_black"
   case iconHistory14 = "icon_history_14"
+  case iconLinkChain = "icon_link_chain"
   case iconSmileEmoji = "icon_smile_emoji"
   
   case closeButton = "cancel"

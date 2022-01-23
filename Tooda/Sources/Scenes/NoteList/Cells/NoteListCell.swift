@@ -45,6 +45,8 @@ final class NoteListCell: BaseTableViewCell {
   
   private let linkImageView = UIImageView().then {
     $0.contentMode = .scaleAspectFit
+    $0.image = UIImage(type: .iconLinkChain)
+    $0.isHidden = true
   }
   
   private let descriptionLabel = UILabel().then {
@@ -107,6 +109,11 @@ final class NoteListCell: BaseTableViewCell {
       $0.top.equalTo(titleLabel.snp.bottom).offset(8)
     }
     
+    linkImageView.snp.makeConstraints {
+      $0.leading.equalTo(recordDateLabel.snp.trailing).offset(6)
+      $0.centerY.equalTo(recordDateLabel)
+    }
+    
     descriptionLabel.snp.makeConstraints {
       $0.leading.trailing.equalToSuperview().inset(20)
       $0.top.equalTo(recordDateLabel.snp.bottom).offset(16)
@@ -128,9 +135,17 @@ final class NoteListCell: BaseTableViewCell {
   
   func configure(with note: Note) {
     super.configure()
+    selectionStyle = .none
     emojiImageView.image = note.sticker?.image
     titleLabel.attributedText = note.title.styled(with: Font.title)
-    recordDateLabel.attributedText = "\(note.createdAt) 기록".styled(with: Font.recordDate)
+    if let dateString = note.createdAt,
+       let date = dateString.convertToDate(),
+       let weekName = Date.WeekDay(rawValue: date.weekday)?.name {
+      
+      recordDateLabel.attributedText = "\(date.string(.dot)) (\(weekName)) \(date.hour):\(date.minute) 기록".styled(with: Font.recordDate)
+    }
+    
+    linkImageView.isHidden = note.noteLinks?.first == nil ? true : false
     descriptionLabel.attributedText = note.content.styled(with: Font.description)
     updateImages(images: note.noteImages)
     

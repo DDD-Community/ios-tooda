@@ -64,6 +64,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
   
   func determineInitialScene() -> Scene {
     let localPersistanceManager = appInject.resolve(LocalPersistanceManagerType.self)
+    localPersistanceManager.delete(forKey: .appToken)
     if let _: AppToken = localPersistanceManager.objectValue(forKey: .appToken) {
       return .home
     } else {

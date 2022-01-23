@@ -9,6 +9,28 @@
 import Foundation
 
 extension Date {
+  
+  enum WeekDay: Int {
+    case sunday = 0
+    case monday
+    case tuesday
+    case wednesday
+    case thursday
+    case friday
+    case saturday
+    
+    var name: String {
+      switch self {
+      case .monday:     return "월"
+      case .tuesday:    return "화"
+      case .wednesday:  return "수"
+      case .thursday:   return "목"
+      case .friday:     return "금"
+      case .saturday:   return "토"
+      case .sunday:     return "일"
+      }
+    }
+  }
 
   init(year: Int, month: Int, day: Int, hour: Int, minute: Int, second: Int) {
     var dateComponents = DateComponents()
@@ -31,6 +53,7 @@ extension Date {
   }
 
   enum DateFormatType: String {
+    case server = "yyyy-MM-dd'T'HH:mm:ss.SSS"
     case base = "yyyy-MM-dd'T'HH:mm:ss'Z'"
     case ko = "yyyy년 MM월 dd일"
     case dot = "yyyy.MM.dd"
