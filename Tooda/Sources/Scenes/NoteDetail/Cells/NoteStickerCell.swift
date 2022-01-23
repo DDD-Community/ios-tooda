@@ -29,6 +29,10 @@ final class NoteStickerCell: BaseTableViewCell {
     )
   }
   
+  required init?(coder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
+  }
+  
   // MARK: - Overridden: ParentClass
   
   override func configureUI() {
