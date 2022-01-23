@@ -32,6 +32,7 @@ final class NoteListReactor: Reactor {
     case initialLoad
     case dismiss
     case pagnationLoad(willDisplayIndex: Int)
+    case addNoteButtonTap
   }
   
   enum Mutation {
@@ -89,12 +90,24 @@ extension NoteListReactor {
       return dismissMutation()
     case let .pagnationLoad(willDisplayIndex):
       return pagnationLoadMutation(nextDisplayIndex: willDisplayIndex)
+    case .addNoteButtonTap:
+      return routeToCreateNote()
     }
   }
   
   private func dismissMutation() -> Observable<Mutation> {
     dependency.coordinator.close(
       style: .dismiss,
+      animated: true,
+      completion: nil
+    )
+    return Observable<Mutation>.empty()
+  }
+  
+  private func routeToCreateNote() -> Observable<Mutation> {
+    dependency.coordinator.transition(
+      to: .createNote(dateString: "\(currentState.dateInfo.year).\(currentState.dateInfo.month)"),
+      using: .modal,
       animated: true,
       completion: nil
     )

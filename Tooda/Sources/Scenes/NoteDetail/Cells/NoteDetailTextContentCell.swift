@@ -9,7 +9,7 @@ import UIKit
 
 import SnapKit
 
-final class NoteDetailTextContentCell: UITableViewCell {
+final class NoteDetailTextContentCell: BaseTableViewCell {
   
   // MARK: - UI Components
 
@@ -27,6 +27,10 @@ final class NoteDetailTextContentCell: UITableViewCell {
     )
   }
   
+  required init?(coder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
+  }
+  
   // MARK: - Overridden: ParentClass
   
   override func configureUI() {
@@ -41,11 +45,5 @@ final class NoteDetailTextContentCell: UITableViewCell {
       $0.top.bottom.equalToSuperview().inset(15)
       $0.leading.trailing.equalToSuperview().inset(20)
     }
-  }
-  
-  // MARK: - Internal methods
-  
-  func configure() {
-    
   }
 }
