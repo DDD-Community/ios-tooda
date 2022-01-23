@@ -112,7 +112,10 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
     $0.configureShadow(color: .clear, x: 0, y: 0, blur: 0, spread: 0)
   }
   
-  private lazy var rightBarButton = UIBarButtonItem(customView: self.registerButton)
+  private let updateButton = BaseButton(width: 53, height: 28).then {
+    $0.setButtonTitle(with: "수정", style: TextStyle.body2Bold(color: UIColor.white))
+    $0.configureShadow(color: .clear, x: 0, y: 0, blur: 0, spread: 0)
+  }
 
   private lazy var tableView = UITableView().then {
     $0.separatorStyle = .none
