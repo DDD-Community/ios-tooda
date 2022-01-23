@@ -38,9 +38,14 @@ final class HomeReactor: Reactor {
   enum Mutation {
     case setNotebooks([NotebookMeta])
     case selectNotebook(notebookIndex: Int?)
+    case makeException(State.Exception)
   }
   
   struct State {
+    enum Exception {
+      case emptyNoteAlert
+    }
+
     // Entities
     var notebooks: [NotebookMeta]
     var selectedNotobook: NotebookMeta?
@@ -48,6 +53,7 @@ final class HomeReactor: Reactor {
 
     // ViewModels
     var notebookViewModels: [NotebookCell.ViewModel]
+    var exception: Exception?
   }
 
   // MARK: Constants
@@ -71,7 +77,8 @@ final class HomeReactor: Reactor {
       notebooks: [],
       selectedNotobook: nil,
       selectedIndex: 0,
-      notebookViewModels: []
+      notebookViewModels: [],
+      exception: nil
     )
   }()
 
@@ -109,13 +116,7 @@ extension HomeReactor {
       return Observable<Mutation>.just(.selectNotebook(notebookIndex: index))
 
     case let .pickDate(date):
-      return Observable<Mutation>.just(
-        .selectNotebook(
-          notebookIndex: self.currentState.notebooks.firstIndex(where: {
-            $0.year == date.year && $0.month == date.month
-          })
-        )
-      )
+      return self.pickDateMutation(date)
 
     case .pushSearch:
       self.pushSearch()
@@ -135,16 +136,47 @@ extension HomeReactor {
     }
   }
 
-  private func loadMutation() -> Observable<Mutation> {
+  private func loadMutation(date: Date = Date()) -> Observable<Mutation> {
     return self.dependency.service.request(
       NotebookAPI.meta(
-        year: Date().year   // TODO: 데이터 받는걸로 변경 예정
+        year: date.year
       )
     )
       .map([NotebookMeta].self)
       .catchAndReturn([])
       .asObservable()
       .map { Mutation.setNotebooks($0) }
+  }
+
+  private func pickDateMutation(_ date: Date) -> Observable<Mutation> {
+    if date.year == Date().year {
+      return Observable<Mutation>.just(
+        .selectNotebook(
+          notebookIndex: self.currentState.notebooks.firstIndex(where: {
+            $0.year == date.year && $0.month == date.month
+          })
+        )
+      )
+    } else {
+      return self.dependency.service.request(
+        NotebookAPI.meta(
+          year: date.year
+        )
+      )
+        .map([NotebookMeta].self)
+        .catchAndReturn([])
+        .asObservable()
+        .flatMap { books -> Observable<Mutation> in
+          guard let index = books.firstIndex(where: { $0.month == date.month })
+          else {
+            return .just(.makeException(.emptyNoteAlert))
+          }
+          return Observable<Mutation>.concat([
+            .just(.setNotebooks(books)),
+            .just(.selectNotebook(notebookIndex: index))
+          ])
+        }
+    }
   }
 }
 
@@ -165,9 +197,16 @@ extension HomeReactor {
 
     case let .selectNotebook(notebookIndex):
       guard let notebookIndex = notebookIndex,
-            let notebook = state.notebooks[safe: notebookIndex] else { break }
+            let notebook = state.notebooks[safe: notebookIndex]
+      else {
+        newState.exception = .emptyNoteAlert
+        break
+      }
       newState.selectedIndex = notebookIndex
       newState.selectedNotobook = notebook
+
+    case let .makeException(exception):
+      newState.exception = exception
     }
 
     return newState

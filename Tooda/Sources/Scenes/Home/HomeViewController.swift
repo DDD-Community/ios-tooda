@@ -125,6 +125,7 @@ final class HomeViewController: BaseViewController<HomeReactor> {
       .disposed(by: self.disposeBag)
 
     self.rxScrollToItem
+      .skip(1)
       .asObservable()
       .map { HomeReactor.Action.paging(index: $0) }
       .bind(to: reactor.action)
@@ -191,6 +192,22 @@ final class HomeViewController: BaseViewController<HomeReactor> {
           at: .centeredHorizontally,
           animated: true
         )
+      }).disposed(by: self.disposeBag)
+
+    reactor.state
+      .map { $0.exception }
+      .subscribe(onNext: { [weak self] exception in
+        switch exception {
+        case .emptyNoteAlert:
+          self?.presentEmptyNoteAlert(onRetry: {
+            self?.presentDatePickerAlert(onConfirm: { [weak self] date in
+              self?.rxPickDate.accept(date)
+            })
+          })
+
+        case .none:
+          return
+        }
       }).disposed(by: self.disposeBag)
   }
   
@@ -277,6 +294,29 @@ extension HomeViewController {
       $0.leading.equalToSuperview()
       $0.trailing.equalToSuperview()
       $0.bottom.equalToSuperview().inset(110.0)
+    }
+
+    self.present(alertController, animated: true)
+  }
+
+  private func presentEmptyNoteAlert(onRetry: @escaping () -> Void) {
+    let alertController = UIAlertController(
+      title: "앗, 노트가 없네요",
+      message: "다른 날짜를 지정해보세요!",
+      preferredStyle: .alert
+    ).then {
+      $0.addAction(.init(
+        title: "취소",
+        style: .cancel,
+        handler: nil
+      ))
+      $0.addAction(.init(
+        title: "다시 시도",
+        style: .default,
+        handler: { _ in
+          onRetry()
+        }
+      ))
     }
 
     self.present(alertController, animated: true)
