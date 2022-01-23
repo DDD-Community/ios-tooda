@@ -9,6 +9,5 @@
 import Foundation
 
 struct AppToken: Codable {
-	var accessToken: String
-	var refreshToken: String
+	var accessToken: String?
 }
