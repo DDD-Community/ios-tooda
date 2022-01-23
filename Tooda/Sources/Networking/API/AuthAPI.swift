@@ -11,7 +11,7 @@ import Foundation
 import Moya
 
 enum AuthAPI {
-  case signUp(uuidString: String)
+  case signUp(token: String)
   case refresh(refreshToken: String)
 }
 
@@ -19,7 +19,7 @@ extension AuthAPI: BaseAPI {
   var path: String {
     switch self {
     case .signUp:
-      return "auth/sign-up"
+      return "auth/sign-up/apple"
     case .refresh:
       return "/auth/refresh"
     }
@@ -37,9 +37,9 @@ extension AuthAPI: BaseAPI {
     var body: [String: Any] = [:]
 
     switch self {
-    case .signUp(let uuid):
+    case .signUp(let token):
 
-      body.concat(dict: ["deviceId": uuid])
+      body.concat(dict: ["identityToken": token])
 
       return .requestCompositeParameters(bodyParameters: body, bodyEncoding: JSONEncoding.default, urlParameters: parameters)
     case .refresh(let refreshToken):

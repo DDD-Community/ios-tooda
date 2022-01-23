@@ -23,8 +23,8 @@ final class AccessTokenPlugin: PluginType {
 
 		var request = request
     
-    if let token = token, !token.accessToken.isEmpty {
-      request.addValue("Bearer \(token.accessToken)", forHTTPHeaderField: "Authorization")
+    if let accessToken = token?.accessToken, !accessToken.isEmpty {
+      request.addValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
 		}
 
     return request
