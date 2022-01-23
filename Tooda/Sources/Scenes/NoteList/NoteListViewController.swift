@@ -102,7 +102,7 @@ final class NoteListViewController: BaseViewController<NoteListReactor> {
       .disposed(by: disposeBag)
     
     addNoteButton.rx.tap
-      .map { _ in NoteListReactor.Action.dismiss }
+      .map { _ in NoteListReactor.Action.addNoteButtonTap }
       .bind(to: reactor.action)
       .disposed(by: disposeBag)
     
