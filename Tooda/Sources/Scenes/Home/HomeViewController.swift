@@ -187,6 +187,8 @@ final class HomeViewController: BaseViewController<HomeReactor> {
       .map { $0.selectedIndex }
       .distinctUntilChanged()
       .subscribe(onNext: { [weak self] index in
+        guard let index = index else { return }
+
         self?.notebookCollectionView.scrollToItem(
           at: .init(item: index, section: 0),
           at: .centeredHorizontally,
