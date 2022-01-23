@@ -65,7 +65,7 @@ final class CreateNoteViewReactor: Reactor {
     var shouldReigsterButtonEnabled: Bool = false
   }
   
-  private var addNoteDTO: AddNoteDTO = AddNoteDTO()
+  private var addNoteDTO: NoteRequestDTO = NoteRequestDTO()
 
   let initialState: State
   
@@ -83,7 +83,7 @@ final class CreateNoteViewReactor: Reactor {
   
   private let stockItemEditCompletionRelay: PublishRelay<NoteStock> = PublishRelay()
   
-  init(dependency: Dependency, modifiableNote: AddNoteDTO?) {
+  init(dependency: Dependency, modifiableNote: NoteRequestDTO?) {
     self.dependency = dependency
     self.initialState = State()
     
@@ -463,9 +463,9 @@ extension CreateNoteViewReactor {
   }
 }
 
-typealias ModifiableNoteSectionType = (AddNoteDTO, LinkPreViewServiceType) -> [NoteSection]
+typealias ModifiableNoteSectionType = (NoteRequestDTO, LinkPreViewServiceType) -> [NoteSection]
 
-let modifiableNoteSectionFactory: (AddNoteDTO, LinkPreViewServiceType) -> [NoteSection] = { note, previewService -> [NoteSection] in
+let modifiableNoteSectionFactory: (NoteRequestDTO, LinkPreViewServiceType) -> [NoteSection] = { note, previewService -> [NoteSection] in
   var sections: [NoteSection] = [
     NoteSection(identity: .content, items: []),
     NoteSection(identity: .stock, items: []),

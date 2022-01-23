@@ -1,5 +1,5 @@
 //
-//  AddNoteDTO.swift
+//  NoteRequestDTO.swift
 //  Tooda
 //
 //  Created by Lyine on 2022/01/08.
@@ -7,8 +7,7 @@
 
 import Foundation
 
-// TODO: 등록, 수정을 동시에 다룰 수 있는 자료형으로 변경할 예정이에요.
-struct AddNoteDTO {
+struct NoteRequestDTO {
   var id: String?
   var updatedAt: String?
   var createdAt: String?
@@ -20,7 +19,7 @@ struct AddNoteDTO {
   var sticker: Sticker
 }
 
-extension AddNoteDTO {
+extension NoteRequestDTO {
   
   init() {
     title = ""

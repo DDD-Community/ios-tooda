@@ -16,7 +16,7 @@ enum Scene {
   case login
   case home
   case createNote(dateString: String)
-  case modifyNote(dateString: String, note: AddNoteDTO)
+  case modifyNote(dateString: String, note: NoteRequestDTO)
   case settings
   case addStock(completion: PublishRelay<NoteStock>)
   case search
