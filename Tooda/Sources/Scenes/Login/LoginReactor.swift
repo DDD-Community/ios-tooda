@@ -110,11 +110,14 @@ extension LoginReactor {
   }
   
   func transform(mutation: Observable<Mutation>) -> Observable<Mutation> {
-    let new = dependency.socialLoginService.tokenProvider.flatMap { [weak self] result -> Observable<Mutation> in
+    let signInMutation = dependency.socialLoginService.tokenProvider.flatMap { [weak self] result -> Observable<Mutation> in
       guard let self = self else { return mutation }
+      if result.error != nil {
+        // TODO: 에러처리
+      }
       return self.signInMutation(with: result.token ?? "")
     }
-    return Observable.merge(mutation, new)
+    return Observable.merge(mutation, signInMutation)
   }
 
   func reduce(state: State, mutation: Mutation) -> State {
