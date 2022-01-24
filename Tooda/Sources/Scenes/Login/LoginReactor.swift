@@ -10,6 +10,7 @@ import Foundation
 
 import ReactorKit
 import RxSwift
+import RxCocoa
 import Firebase
 
 final class LoginReactor: Reactor {
@@ -20,6 +21,7 @@ final class LoginReactor: Reactor {
     let service: NetworkingProtocol
     let coordinator: AppCoordinatorType
     let localPersistanceManager: LocalPersistanceManagerType
+    let socialLoginService: SocialLoginServiceType
   }
   
   enum Action {
@@ -55,23 +57,40 @@ extension LoginReactor {
   func mutate(action: Action) -> Observable<Mutation> {
     switch action {
     case .login:
-      return loginMutation()
+      return socialLoginMutation()
     }
   }
   
-  private func loginMutation() -> Observable<Mutation> {
-    return dependency.service
-      .request(AuthAPI.signUp(uuidString: deviceUUID() ?? ""))
-      .map(AppToken.self)
-      .asObservable()
+  private func socialLoginMutation() -> Observable<Mutation> {
+    dependency.socialLoginService.signIn(type: .apple)
+    
+    return Observable.empty()
+  }
+  
+  private func signInMutation(with token: String) -> Observable<Mutation> {
+    return Observable<String>.just(token)
       .flatMap { [weak self] token -> Observable<Mutation> in
         guard let self = self else { return Observable.empty() }
-        let mutation = Mutation.setAppToken(token: token)
-        return Observable<Mutation>.concat([
-          Observable<Mutation>.just(mutation),
-          self.routeToHomeMutation()
-        ])
-    }
+        return self.dependency.service.request(
+            AuthAPI.signUp(token: token)
+          )
+          .map(AppToken.self)
+          .catchAndReturn(AppToken(accessToken: nil))
+          .asObservable()
+          .flatMap { [weak self] token -> Observable<Mutation> in
+            guard let self = self else { return Observable.empty() }
+            if token.accessToken == nil {
+              // TODO: 에러처리
+              return Observable.empty()
+            } else {
+              return Observable<Mutation>.concat([
+                Observable<Mutation>.just(Mutation.setAppToken(token: token)),
+                Observable<Mutation>.just(Mutation.setIsAuthorized(isAuthorized: true)),
+                self.routeToHomeMutation()
+              ])
+            }
+          }
+      }
   }
   
   private func routeToHomeMutation() -> Observable<Mutation> {
@@ -88,6 +107,17 @@ extension LoginReactor {
     )
     
     return Observable<Mutation>.empty()
+  }
+  
+  func transform(mutation: Observable<Mutation>) -> Observable<Mutation> {
+    let signInMutation = dependency.socialLoginService.tokenProvider.flatMap { [weak self] result -> Observable<Mutation> in
+      guard let self = self else { return mutation }
+      if result.error != nil {
+        // TODO: 에러처리
+      }
+      return self.signInMutation(with: result.token ?? "")
+    }
+    return Observable.merge(mutation, signInMutation)
   }
 
   func reduce(state: State, mutation: Mutation) -> State {

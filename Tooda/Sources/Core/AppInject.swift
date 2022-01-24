@@ -84,6 +84,10 @@ final class AppInject: AppInjectRegister, AppInjectResolve {
     container.register(LinkPreViewServiceType.self) { _ in
       LinkPreviewService()
     }.inObjectScope(.container)
+    
+    container.register(SocialLoginServiceType.self) { _ in
+      SocialLoginService()
+    }
   }
   
   func resolve<Object>(_ serviceType: Object.Type) -> Object {

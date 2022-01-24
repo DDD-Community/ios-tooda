@@ -82,7 +82,9 @@ final class AppFactory: AppFactoryType {
         dependency: .init(
           service: self.dependency.appInject.resolve(NetworkingProtocol.self),
           coordinator: self.dependency.appInject.resolve(AppCoordinatorType.self),
-          localPersistanceManager: self.dependency.appInject.resolve(LocalPersistanceManagerType.self)
+          localPersistanceManager: self.dependency.appInject.resolve(LocalPersistanceManagerType.self),
+          socialLoginService: self.dependency.appInject.resolve(SocialLoginServiceType.self)
+          
         )
       )
       return LoginViewController(reactor: reactor)
