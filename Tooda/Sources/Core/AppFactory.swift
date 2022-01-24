@@ -53,7 +53,7 @@ final class AppFactory: AppFactoryType {
         modifiableNote: nil
       )
         
-      let viewController = CreateNoteViewController(dateString: today, reactor: reactor)
+      let viewController = CreateNoteViewController(dateString: today, reactor: reactor, mode: .add)
       let navigationController = UINavigationController(rootViewController: viewController)
       navigationController.modalPresentationStyle = .overFullScreen
       return navigationController
@@ -72,7 +72,7 @@ final class AppFactory: AppFactoryType {
           modifiableNote: note
         )
         
-        let viewController = CreateNoteViewController(dateString: dateString, reactor: reactor)
+        let viewController = CreateNoteViewController(dateString: dateString, reactor: reactor, mode: .update)
         let navigationController = UINavigationController(rootViewController: viewController)
         navigationController.modalPresentationStyle = .overFullScreen
         return navigationController

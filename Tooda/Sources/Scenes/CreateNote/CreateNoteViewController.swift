@@ -20,6 +20,11 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
 
   typealias Section = RxTableViewSectionedAnimatedDataSource<NoteSection>
   
+  enum EditMode {
+    case add
+    case update
+  }
+  
   private enum Metric {
     static let linkButtonSize: CGFloat = 20.0
   }
@@ -91,6 +96,7 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
   
   private let dateString: String
 
+  private var editMode: EditMode
   // MARK: UI-Properties
   
   private lazy var titleLabel = UILabel().then {
@@ -107,7 +113,19 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
     $0.configureShadow(color: .clear, x: 0, y: 0, blur: 0, spread: 0)
   }
   
-  private lazy var rightBarButton = UIBarButtonItem(customView: self.registerButton)
+  private let updateButton = BaseButton(width: 53, height: 28).then {
+    $0.setButtonTitle(with: "수정", style: TextStyle.body2Bold(color: UIColor.white))
+    $0.configureShadow(color: .clear, x: 0, y: 0, blur: 0, spread: 0)
+  }
+  
+  private var rightBarButton: UIBarButtonItem {
+    switch self.editMode {
+      case .add:
+        return UIBarButtonItem(customView: self.registerButton)
+      case .update:
+        return UIBarButtonItem(customView: self.updateButton)
+    }
+  }
 
   private lazy var tableView = UITableView().then {
     $0.separatorStyle = .none
@@ -150,12 +168,13 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
     fatalError("init(coder:) has not been implemented")
   }
 
-  init(dateString: String, reactor: Reactor) {
+  init(dateString: String, reactor: Reactor, mode: EditMode) {
     defer {
       self.reactor = reactor
     }
     
     self.dateString = dateString
+    self.editMode = mode
     super.init()
   }
   
@@ -234,6 +253,11 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
     
     self.registerButton.rx.tap
       .map { _ in Reactor.Action.registerButtonDidTapped }
+      .bind(to: reactor.action)
+      .disposed(by: self.disposeBag)
+    
+    self.updateButton.rx.tap
+      .map { _ in Reactor.Action.updateButtonDidTapped }
       .bind(to: reactor.action)
       .disposed(by: self.disposeBag)
     

@@ -43,6 +43,7 @@ final class CreateNoteViewReactor: Reactor {
     case makeTitleAndContent(title: String, content: String)
     case linkButtonDidTapped
     case registerButtonDidTapped
+    case updateButtonDidTapped
     case stckerDidPicked(Sticker)
     case stockItemDidDeleted(IndexPath)
     case showStockItemEditView(IndexPath)
@@ -115,6 +116,8 @@ final class CreateNoteViewReactor: Reactor {
         return self.linkButtonDidTapped()
     case .registerButtonDidTapped:
         return self.registerButtonDidTapped()
+    case .updateButtonDidTapped:
+        return self.updateButtonDidTapped()
     case .stckerDidPicked(let sticker):
         return self.registNoteAndDismissView(sticker)
     case .stockItemDidDeleted(let indexPath):
@@ -355,6 +358,16 @@ self.dependency.coordinator.transition(
           return .empty()
         }
       }
+  }
+}
+
+// MARK: - Update Button Did Tap
+
+extension CreateNoteViewReactor {
+  
+  // TODO: 노트 한줄평 PopUp을 연결해요.
+  private func updateButtonDidTapped() -> Observable<Mutation> {
+    return .empty()
   }
 }
 
