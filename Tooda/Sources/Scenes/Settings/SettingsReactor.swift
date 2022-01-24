@@ -17,6 +17,11 @@ final class SettingsReactor: Reactor {
   
   enum Action {
     case didTapPlainSettingItem(index: Int)
+    case didTapAcountSettingItem(
+          action: SettingsSectionModel
+                                  .SectionType
+                                  .AccountUserAction
+         )
     case didTapbackbutton
   }
 
@@ -25,7 +30,9 @@ final class SettingsReactor: Reactor {
   }
   
   struct Dependency {
+    let service: NetworkingProtocol
     let coordinator: AppCoordinatorType
+    let localPersistanceManager: LocalPersistanceManagerType
   }
   
   struct State {
@@ -34,7 +41,7 @@ final class SettingsReactor: Reactor {
     static func generateInitialState() -> State {
       return State(sectionModel: [
         SettingsSectionModel(
-          identity: .etc,
+          identity: .appInfo,
           items: [
             SettingsItem.plain(
               PlainSettingsInfo(
@@ -55,7 +62,24 @@ final class SettingsReactor: Reactor {
               )
             )
           ]
-        ) 
+        ),
+        SettingsSectionModel(
+          identity: .account,
+          items: [
+            SettingsItem.plain(
+              PlainSettingsInfo(
+                title: "로그아웃",
+                url: URL(string: "https://bit.ly/3ncoDLu")
+              )
+            ),
+            SettingsItem.plain(
+              PlainSettingsInfo(
+                title: "탈퇴하기",
+                url: URL(string: "https://bit.ly/3r4LNoc")
+              )
+            )
+          ]
+        )
       ])
     }
   }
@@ -82,6 +106,13 @@ extension SettingsReactor {
       return presentSafariViewControllerMutation(index: index)
     case .didTapbackbutton:
       return dismissMutation()
+    case let .didTapAcountSettingItem(action):
+      switch action {
+      case .logOut:
+        return logOutMutation()
+      case .dropOut:
+        return dropOutMutation()
+      }
     }
   }
   
@@ -107,5 +138,33 @@ extension SettingsReactor {
     )
    
     return Observable<Mutation>.empty()
+  }
+  
+  private func logOutMutation() -> Observable<Mutation> {
+    self.dependency.localPersistanceManager.delete(forKey: .appToken)
+    dependency.coordinator.start(
+      from: .login,
+      shouldNavigationWrapped: false
+    )
+    
+    return Observable<Mutation>.empty()
+  }
+  
+  private func dropOutMutation() -> Observable<Mutation> {
+    return dependency.service.request(AuthAPI.deleteUser)
+      // TODO: 에러처리
+      .filterSuccessfulStatusCodes()
+      .asObservable()
+      .flatMap { [weak self] _ -> Observable<Mutation> in
+        guard let self = self else { return Observable<Mutation>.empty() }
+        
+        self.dependency.localPersistanceManager.delete(forKey: .appToken)
+        self.dependency.coordinator.start(
+          from: .login,
+          shouldNavigationWrapped: false
+        )
+        
+        return Observable<Mutation>.empty()
+      }
   }
 }
