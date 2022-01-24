@@ -92,7 +92,9 @@ final class AppFactory: AppFactoryType {
     case .settings:
       let reactor = SettingsReactor(
         dependency: .init(
-          coordinator: self.dependency.appInject.resolve(AppCoordinatorType.self)
+          service: self.dependency.appInject.resolve(NetworkingProtocol.self),
+          coordinator: self.dependency.appInject.resolve(AppCoordinatorType.self),
+          localPersistanceManager: self.dependency.appInject.resolve(LocalPersistanceManagerType.self)
         )
       )
       return SettingsViewController(reactor: reactor)
