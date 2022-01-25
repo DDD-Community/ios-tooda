@@ -11,12 +11,17 @@ import ReactorKit
 import RxSwift
 
 final class NoteDetailReactor: Reactor {
+  
+  struct Payload {
+    let id: Int
+  }
 
   // MARK: Dependency
 
   struct Dependency {
     let service: NetworkingProtocol
     let coordinator: AppCoordinatorType
+    let payload: Payload
   }
 
   // MARK: Reactor
@@ -32,6 +37,11 @@ final class NoteDetailReactor: Reactor {
 
   struct State {
     var sectionModel: [NoteDetailSection]
+    let noteID: Int
+    
+    static func generateInitialState(noteID: Int) -> State {
+      return State(sectionModel: [], noteID: noteID)
+    }
   }
 
 
@@ -39,10 +49,12 @@ final class NoteDetailReactor: Reactor {
 
   private let dependency: Dependency
 
-  let initialState: State = State(sectionModel: [])
+  let initialState: State
 
   init(dependency: Dependency) {
     self.dependency = dependency
+    self.initialState =
+      State.generateInitialState(noteID: dependency.payload.id)
   }
 }
 
@@ -54,7 +66,7 @@ extension NoteDetailReactor {
   func mutate(action: Action) -> Observable<Mutation> {
     switch action {
     case .loadData:
-      loadDataMutation()
+      return loadDataMutation()
     case .back:
       self.dependency.coordinator.close(
         style: .pop,
@@ -66,7 +78,7 @@ extension NoteDetailReactor {
   }
   
   private func loadDataMutation() -> Observable<Mutation> {
-    return dependency.service.request(NoteAPI.detail(id: ""))
+    return dependency.service.request(NoteAPI.detail(id: initialState.noteID))
       .map(Note.self)
       .asObservable()
       .flatMap { note -> Observable<Mutation> in
