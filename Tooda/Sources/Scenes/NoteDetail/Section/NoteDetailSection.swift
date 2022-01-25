@@ -26,8 +26,7 @@ extension NoteDetailSection: SectionModelType {
 
 enum NoteDetailSectionItem {
   case sticker(Sticker)
-  case title(String)
-  case updateDate(String)
+  case title(String, String?)
   case content(String)
   case stock(NoteStockCellReactor)
   case image(String)
