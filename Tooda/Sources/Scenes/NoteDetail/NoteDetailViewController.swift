@@ -10,10 +10,46 @@ import UIKit
 import ReactorKit
 import RxSwift
 import RxCocoa
+import RxDataSources
 import Then
 import SnapKit
 
 final class NoteDetailViewController: BaseViewController<NoteDetailReactor> {
+  
+  typealias Section = RxTableViewSectionedReloadDataSource<NoteDetailSection>
+  
+  lazy var dataSource: Section = Section(configureCell: { section, tableView, indexPath, item -> UITableViewCell in
+    guard let sectionType = section.sectionModels[safe: indexPath.section]?.identity else {
+      return UITableViewCell()
+    }
+    switch sectionType {
+    case .header:
+      
+      if case let .sticker(sticker) = item {
+        let noteStickerCell = tableView.dequeue(NoteStickerCell.self, indexPath: indexPath)
+        noteStickerCell.configure(sticker: sticker)
+        return noteStickerCell
+      }
+      
+      if case let .title(title, date) = item {
+        let noteStickerCell = tableView.dequeue(NoteStickerCell.self, indexPath: indexPath)
+        return noteStickerCell
+      }
+      
+      if case let .content(content) = item {
+        let noteStickerCell = tableView.dequeue(NoteStickerCell.self, indexPath: indexPath)
+        return noteStickerCell
+      }
+      
+      return UITableViewCell()
+    case .image:
+      return UITableViewCell()
+    case .link:
+      return UITableViewCell()
+    case .stock:
+      return UITableViewCell()
+    }
+  })
   
   // MARK: UI Properties
   
@@ -22,8 +58,12 @@ final class NoteDetailViewController: BaseViewController<NoteDetailReactor> {
     $0.backgroundColor = .white
     $0.estimatedRowHeight = UITableView.automaticDimension
     $0.alwaysBounceHorizontal = false
-    
     $0.allowsSelection = false
+    $0.estimatedRowHeight = UITableView.automaticDimension
+    $0.register(UITableViewCell.self)
+    $0.register(NoteStickerCell.self)
+    $0.register(NoteDetailTitleCell.self)
+    $0.register(NoteDetailTextContentCell.self)
   }
 
   // MARK: Initializing
@@ -71,5 +111,15 @@ final class NoteDetailViewController: BaseViewController<NoteDetailReactor> {
       .map { NoteDetailReactor.Action.back }
       .bind(to: reactor.action)
       .disposed(by: self.disposeBag)
+    
+    Observable<Void>.just(())
+      .map { NoteDetailReactor.Action.loadData }
+      .bind(to: reactor.action)
+      .disposed(by: self.disposeBag)
+    
+    reactor.state
+      .map { $0.sectionModel }
+      .bind(to: tableView.rx.items(dataSource: dataSource))
+      .disposed(by: disposeBag)
   }
 }
