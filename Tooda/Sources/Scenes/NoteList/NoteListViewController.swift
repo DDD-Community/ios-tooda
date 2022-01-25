@@ -144,6 +144,11 @@ final class NoteListViewController: BaseViewController<NoteListReactor> {
     tableView.rx.setDelegate(self)
       .disposed(by: disposeBag)
     
+    tableView.rx.itemSelected
+      .map { NoteListReactor.Action.noteCellTap(index: $0.item) }
+      .bind(to: reactor.action)
+      .disposed(by: self.disposeBag)
+    
     reactor.state
       .map { $0.dateInfo }
       .asDriver(onErrorJustReturn: (year: Date().year, month: Date().month))
