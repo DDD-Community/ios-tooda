@@ -11,6 +11,10 @@ import SnapKit
 
 final class NoteDetailTextContentCell: BaseTableViewCell {
   
+  enum Font {
+    static let content = TextStyle.body(color: .gray1)
+  }
+  
   // MARK: - UI Components
 
   private let descriptionLabel = UILabel()
@@ -45,5 +49,11 @@ final class NoteDetailTextContentCell: BaseTableViewCell {
       $0.top.bottom.equalToSuperview().inset(15)
       $0.leading.trailing.equalToSuperview().inset(20)
     }
+  }
+  
+  // MARK: - Internal methods
+  
+  func configure(content: String) {
+    descriptionLabel.attributedText = content.styled(with: Font.content)
   }
 }
