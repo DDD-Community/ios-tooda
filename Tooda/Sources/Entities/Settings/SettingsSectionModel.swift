@@ -11,14 +11,31 @@ import RxDataSources
 struct SettingsSectionModel {
   enum SectionType: Int {
     case notification
-    case etc
+    case appInfo
+    case account
+    
+    enum AccountUserAction: Int {
+      case logOut
+      case dropOut
+      
+      var alertTitle: String {
+        switch self {
+        case .logOut:
+          return "로그아웃 하시겠습니까?"
+        case .dropOut:
+          return "탈퇴하시겠습니까?"
+        }
+      }
+    }
     
     var title: String {
       switch self {
       case .notification:
         return "알림 설정"
-      case .etc:
+      case .appInfo:
         return "앱 정보"
+      case .account:
+        return "계정"
       }
     }
     
@@ -26,22 +43,19 @@ struct SettingsSectionModel {
       switch self {
       case .notification:
         return nil
-      case .etc:
+      case .appInfo:
         if let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String {
           return "현재 버전 \(appVersion)"
         } else {
           return nil
         }
+      case .account:
+        return nil
       }
     }
     
     var cellHeight: CGFloat {
-      switch self {
-      case .notification:
-        return 54
-      case .etc:
-        return 54
-      }
+      return 54
     }
   }
   let identity: SectionType

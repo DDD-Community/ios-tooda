@@ -13,6 +13,7 @@ import Moya
 enum AuthAPI {
   case signUp(token: String)
   case refresh(refreshToken: String)
+  case deleteUser
 }
 
 extension AuthAPI: BaseAPI {
@@ -22,6 +23,8 @@ extension AuthAPI: BaseAPI {
       return "auth/sign-up/apple"
     case .refresh:
       return "/auth/refresh"
+    case .deleteUser:
+      return "user"
     }
   }
 
@@ -29,6 +32,8 @@ extension AuthAPI: BaseAPI {
     switch self {
     case .signUp, .refresh:
       return .post
+    case .deleteUser:
+      return .delete
     }
   }
 
@@ -47,6 +52,8 @@ extension AuthAPI: BaseAPI {
       body.concat(dict: ["refreshToken": refreshToken])
 
       return .requestCompositeParameters(bodyParameters: body, bodyEncoding: JSONEncoding.default, urlParameters: parameters)
+    case .deleteUser:
+      return .requestPlain
     }
   }
 
@@ -59,12 +66,14 @@ extension AuthAPI: BaseAPI {
     switch self {
     case .signUp, .refresh:
       return parameters
+    case .deleteUser:
+      return nil
     }
   }
 
   var parameterEncoding: ParameterEncoding {
     switch self {
-    case .signUp, .refresh:
+    case .signUp, .refresh, .deleteUser:
       return JSONEncoding.default
     }
   }

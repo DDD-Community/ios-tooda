@@ -54,7 +54,7 @@ final class SettingsViewController: BaseViewController<SettingsReactor> {
       }
       
       return interactiveCell
-    case .etc:
+    case .appInfo, .account:
       let infoCell = tableView.dequeue(SettingsInfoCell.self, indexPath: indexPath)
       if case let .plain(info) = item {
         infoCell.configure(with: info.title)
@@ -106,8 +106,42 @@ final class SettingsViewController: BaseViewController<SettingsReactor> {
       .bind(to: tableView.rx.items(dataSource: dataSource))
       .disposed(by: disposeBag)
     
-    tableView.rx.itemSelected
+    let sharedItemSelected = tableView.rx.itemSelected.share()
+    
+    sharedItemSelected
+      .filter { $0.section != SettingsSectionModel.SectionType.appInfo.rawValue }
       .map { SettingsReactor.Action.didTapPlainSettingItem(index: $0.item) }
+      .bind(to: reactor.action)
+      .disposed(by: disposeBag)
+    
+    sharedItemSelected
+      .filter { $0.section != SettingsSectionModel.SectionType.account.rawValue }
+      .map { SettingsSectionModel.SectionType.AccountUserAction(rawValue: $0.item) }
+      .compactMap { $0 }
+      .flatMap { [weak self] action -> Observable<SettingsSectionModel.SectionType.AccountUserAction> in
+        guard let self = self else { return .empty() }
+        let actions = [
+          UIAlertController.AlertAction(
+            title: "확인",
+            style: .default
+          ),
+          UIAlertController.AlertAction(
+            title: "취소",
+            style: .cancel
+          )
+        ]
+        return UIAlertController.present(
+          in: self,
+          title: action.alertTitle,
+          message: nil,
+          style: .alert,
+          actions: actions
+        )
+        .filter { $0 == 0 }
+        .flatMap { _ in Observable<SettingsSectionModel.SectionType.AccountUserAction>.just(action)
+        }
+      }
+      .map { SettingsReactor.Action.didTapAcountSettingItem(action: $0) }
       .bind(to: reactor.action)
       .disposed(by: disposeBag)
   }
@@ -171,7 +205,13 @@ extension SettingsViewController: UITableViewDelegate {
     
     let footer = tableView.dequeue(SettingsSectionFooterView.self)
     footer.configure(title: type.footerTitle)
-    return footer
+    
+    switch type {
+    case .appInfo:
+      return footer
+    default:
+      return nil
+    }
   }
   
   func tableView(
@@ -184,8 +224,10 @@ extension SettingsViewController: UITableViewDelegate {
     switch type {
     case .notification:
       return 21
-    case .etc:
+    case .appInfo:
       return 63
+    case .account:
+      return 0
     }
   }
 }
