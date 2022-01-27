@@ -9,6 +9,11 @@ import UIKit
 
 final class NoteDetailTitleCell: BaseTableViewCell {
   
+  enum Font {
+    static let title = TextStyle.titleBold(color: .gray1)
+    static let dateInfo = TextStyle.captionBold(color: .gray1)
+  }
+  
   // MARK: - UI Components
 
   private let titleLabel = UILabel()
@@ -51,6 +56,19 @@ final class NoteDetailTitleCell: BaseTableViewCell {
     dateLabel.snp.makeConstraints {
       $0.top.equalTo(titleLabel.snp.bottom).offset(5)
       $0.leading.trailing.equalToSuperview().inset(19)
+      $0.bottom.equalToSuperview().inset(15)
+    }
+  }
+  
+  // MARK: - Internal methods
+  
+  func configure(title: String?, date: String?) {
+    if let title = title {
+      titleLabel.attributedText = title.styled(with: Font.title)
+    }
+    
+    if let dateString = date {
+      dateLabel.attributedText = dateString.styled(with: Font.dateInfo)
     }
   }
 }
