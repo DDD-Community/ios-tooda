@@ -93,6 +93,16 @@ extension NoteDetailReactor {
           items: stockSectionItems ?? []
         )
         
+        let linkSectionItems = note.noteLinks?
+          .compactMap { $0.url }
+          .map { NoteLinkCellReactor.init(dependency: .init(service: self.dependency.linkPreviewService), payload: $0) }
+          .map { NoteDetailSectionItem.link($0) }
+        
+        let linkSection = NoteDetailSection(
+          identity: .link,
+          items: linkSectionItems ?? []
+        )
+        
         let sectionModels = [
           NoteDetailSection(
             identity: .header,
@@ -102,7 +112,8 @@ extension NoteDetailReactor {
               .content(note.content)
             ]
           ),
-          stockSection
+          stockSection,
+          linkSection
         ]
         return Observable<Mutation>.just(
           Mutation.setNoteDetailSectionModel(sectionModels)
