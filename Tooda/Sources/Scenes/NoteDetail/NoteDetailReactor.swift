@@ -82,6 +82,16 @@ extension NoteDetailReactor {
       .map(Note.self)
       .asObservable()
       .flatMap { note -> Observable<Mutation> in
+        
+        let stockSectionItems = note.noteStocks?
+          .map { NoteStockCellReactor.init(payload: .init(name: $0.name, rate: $0.changeRate ?? 0.0)) }
+          .map { NoteDetailSectionItem.stock($0) }
+        
+        let stockSection = NoteDetailSection(
+          identity: .stock,
+          items: stockSectionItems ?? []
+        )
+        
         let sectionModels = [
           NoteDetailSection(
             identity: .header,
@@ -90,7 +100,8 @@ extension NoteDetailReactor {
               .title(note.title, note.updatedAt ?? note.createdAt),
               .content(note.content)
             ]
-          )
+          ),
+          stockSection
         ]
         return Observable<Mutation>.just(
           Mutation.setNoteDetailSectionModel(sectionModels)
