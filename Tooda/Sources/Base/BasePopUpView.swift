@@ -31,7 +31,11 @@ class BasePopUpView: UIView {
     $0.tintColor = .black
   }
   
-  private let bottomButton = BaseButton(width: nil, height: 48)
+  private let bottomButton = BaseButton(
+    width: nil,
+    height: 48,
+    type: .base
+  )
   
   // MARK: - Internal methods
   

@@ -13,7 +13,7 @@ import Then
 
 final class LoginViewController: BaseViewController<LoginReactor> {
   
-  // MARK: Constants
+  // MARK: - Constants
   
   private enum Font {
     static let buttonTitle = TextStyle.subTitleBold(color: .white)
@@ -30,9 +30,9 @@ final class LoginViewController: BaseViewController<LoginReactor> {
     $0.image = UIImage(type: .login)
   }
   
-  private let loginButton = BaseButton(width: nil, height: Metric.loginButtonHeight).then {
+  private let loginButton = BaseButton(width: nil, height: Metric.loginButtonHeight, type: .appleLogin).then {
     $0.setButtonTitle(
-      with: "시작하기",
+      with: "Apple로 계속하기",
       style: Font.buttonTitle
     )
   }
