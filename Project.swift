@@ -66,6 +66,7 @@ class BaseProjectFactory: ProjectFactory {
         infoPlist: "\(projectName)/Sources/SupportFiles/Info.plist",
         sources: ["\(projectName)/Sources/**"],
         resources: ["\(projectName)/Resources/**"],
+        entitlements: "\(projectName)/Sources/SupportFiles/Tooda.entitlements",
         scripts: targetScripts,
         dependencies: []
       ),
