@@ -21,6 +21,7 @@ final class NoteDetailReactor: Reactor {
   struct Dependency {
     let service: NetworkingProtocol
     let coordinator: AppCoordinatorType
+    let linkPreviewService: LinkPreViewServiceType
     let payload: Payload
   }
 
