@@ -13,6 +13,11 @@ import RxSwift
 
 class BaseButton: UIButton {
   
+  enum ButtonType {
+    case base
+    case appleLogin
+  }
+  
   private let width: CGFloat?
   private let height: CGFloat
   
@@ -22,20 +27,31 @@ class BaseButton: UIButton {
     return .system
   }
   
-  init(width: CGFloat?, height: CGFloat) {
+  init(width: CGFloat?, height: CGFloat, type: ButtonType) {
     self.width = width
     self.height = height
     super.init(frame: .zero)
-    baseConfigure()
+    baseConfigure(type: type)
   }
   
   required init?(coder: NSCoder) {
     fatalError("init(coder:) has not been implemented")
   }
   
-  private func baseConfigure() {
+  private func baseConfigure(type: ButtonType) {
+    
+    switch type {
+    case .base:
+      backgroundColor = UIColor.mainGreen
+    case .appleLogin:
+      backgroundColor = UIColor.black
+      setImage(
+        UIImage(type: .iconAppleLogin),
+        for: .normal
+      )
+    }
+    
     self.do {
-      $0.backgroundColor = UIColor.mainGreen
       $0.layer.cornerRadius = CGFloat(height / 2)
       $0.layer.shadowColor = UIColor.black.withAlphaComponent(0.25).cgColor
       $0.layer.shadowOffset = CGSize(width: 0, height: 8)
