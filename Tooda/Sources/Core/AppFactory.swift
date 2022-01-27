@@ -181,10 +181,12 @@ final class AppFactory: AppFactoryType {
 
       return SearchResultViewController(reactor: reactor)
 
-    case .noteDetail:
+    case let .noteDetail(payload):
       let reactor = NoteDetailReactor(
         dependency: .init(
-          coordinator: self.dependency.appInject.resolve(AppCoordinatorType.self)
+          service: self.dependency.appInject.resolve(NetworkingProtocol.self),
+          coordinator: self.dependency.appInject.resolve(AppCoordinatorType.self),
+          payload: payload
         )
       )
 

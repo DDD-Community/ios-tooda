@@ -55,6 +55,14 @@ final class NoteStickerCell: BaseTableViewCell {
       $0.leading.equalTo(stickerImageView.snp.trailing).offset(8)
       $0.centerY.equalToSuperview()
       $0.trailing.equalToSuperview().inset(20)
+      $0.top.bottom.equalToSuperview().inset(11)
     }
+  }
+  
+  // MARK: - Internal methods
+  
+  func configure(sticker: Sticker) {
+    stickerImageView.image = sticker.image
+    titleLabel.text = sticker.optionTitle
   }
 }

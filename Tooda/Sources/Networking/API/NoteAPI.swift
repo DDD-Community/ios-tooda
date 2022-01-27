@@ -17,7 +17,7 @@ enum NoteAPI {
   case delete(id: String)
   case addImage(data: Data)
   case update(dto: NoteRequestDTO)
-  case detail(id: String)
+  case detail(id: Int)
 }
 
 extension NoteAPI: BaseAPI {

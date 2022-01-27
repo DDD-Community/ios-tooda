@@ -25,7 +25,7 @@ enum Scene {
   case stockRateInput(payload: StockRateInputReactor.Payload, editMode: StockRateInputViewController.EditMode = .input)
   case popUp(type: PopUpReactor.PopUpType)
   case searchResult
-  case noteDetail
+  case noteDetail(payload: NoteDetailReactor.Payload)
   case inAppBrowser(url: URL)
   
   var screenName: String {

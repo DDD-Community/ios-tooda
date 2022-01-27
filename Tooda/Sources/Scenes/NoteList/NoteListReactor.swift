@@ -33,6 +33,7 @@ final class NoteListReactor: Reactor {
     case dismiss
     case pagnationLoad(willDisplayIndex: Int)
     case addNoteButtonTap
+    case noteCellTap(index: Int)
   }
   
   enum Mutation {
@@ -92,6 +93,8 @@ extension NoteListReactor {
       return pagnationLoadMutation(nextDisplayIndex: willDisplayIndex)
     case .addNoteButtonTap:
       return routeToCreateNote()
+    case let .noteCellTap(selectedIndex):
+      return routeToNoteDetail(selectedIndex: selectedIndex)
     }
   }
   
@@ -108,6 +111,17 @@ extension NoteListReactor {
     dependency.coordinator.transition(
       to: .createNote(dateString: "\(currentState.dateInfo.year).\(currentState.dateInfo.month)"),
       using: .modal,
+      animated: true,
+      completion: nil
+    )
+    return Observable<Mutation>.empty()
+  }
+  
+  private func routeToNoteDetail(selectedIndex: Int) -> Observable<Mutation> {
+    guard let noteID = currentState.noteListModel.first?.items[safe: selectedIndex]?.id else { return Observable<Mutation>.empty() }
+    dependency.coordinator.transition(
+      to: .noteDetail(payload: NoteDetailReactor.Payload(id: noteID)),
+      using: .push,
       animated: true,
       completion: nil
     )
