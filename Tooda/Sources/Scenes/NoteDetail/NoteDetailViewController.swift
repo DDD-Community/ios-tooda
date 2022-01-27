@@ -32,13 +32,15 @@ final class NoteDetailViewController: BaseViewController<NoteDetailReactor> {
       }
       
       if case let .title(title, date) = item {
-        let noteStickerCell = tableView.dequeue(NoteStickerCell.self, indexPath: indexPath)
-        return noteStickerCell
+        let noteDetailTitleCell = tableView.dequeue(NoteDetailTitleCell.self, indexPath: indexPath)
+        noteDetailTitleCell.configure(title: title, date: date)
+        return noteDetailTitleCell
       }
       
       if case let .content(content) = item {
-        let noteStickerCell = tableView.dequeue(NoteStickerCell.self, indexPath: indexPath)
-        return noteStickerCell
+        let noteDetailTextContentCell = tableView.dequeue(NoteDetailTextContentCell.self, indexPath: indexPath)
+        noteDetailTextContentCell.configure(content: content)
+        return noteDetailTextContentCell
       }
       
       return UITableViewCell()
@@ -65,6 +67,10 @@ final class NoteDetailViewController: BaseViewController<NoteDetailReactor> {
     $0.register(NoteDetailTitleCell.self)
     $0.register(NoteDetailTextContentCell.self)
   }
+  
+  private let moreDetailButton = UIBarButtonItem().then {
+    $0.image = UIImage(type: .moreButton)
+  }
 
   // MARK: Initializing
 
@@ -83,6 +89,8 @@ final class NoteDetailViewController: BaseViewController<NoteDetailReactor> {
   override func configureUI() {
     super.configureUI()
     self.view.addSubviews(tableView)
+    navigationItem.rightBarButtonItems = [moreDetailButton]
+    bindUI()
   }
 
   override func configureConstraints() {
@@ -122,4 +130,44 @@ final class NoteDetailViewController: BaseViewController<NoteDetailReactor> {
       .bind(to: tableView.rx.items(dataSource: dataSource))
       .disposed(by: disposeBag)
   }
+  
+  private func bindUI() {
+    moreDetailButton.rx.tap.asDriver()
+      .drive { [weak self] _ in
+        guard let self = self else { return }
+        let actionSheet = UIAlertController(
+          title: nil,
+          message: nil,
+          preferredStyle: .actionSheet
+        )
+        
+        actionSheet.addAction(
+          UIAlertAction(
+            title: "노트 삭제",
+            style: .destructive,
+            handler: nil
+          )
+        )
+        
+        actionSheet.addAction(
+          UIAlertAction(
+            title: "노트 수정",
+            style: .default,
+            handler: nil
+          )
+        )
+        
+        actionSheet.addAction(
+          UIAlertAction(
+            title: "취소",
+            style: .cancel,
+            handler: nil
+          )
+        )
+        self.present(actionSheet, animated: true, completion: nil)
+    }
+    .disposed(by: disposeBag)
+
+  }
+  
 }

@@ -9,6 +9,10 @@ import UIKit
 
 final class NoteStickerCell: BaseTableViewCell {
   
+  enum Font {
+    static let title = TextStyle.bodyBold(color: .gray1)
+  }
+  
   // MARK: - UI Components
   
   private let stickerImageView = UIImageView().then {
@@ -47,7 +51,8 @@ final class NoteStickerCell: BaseTableViewCell {
     super.setupConstraints()
     
     stickerImageView.snp.makeConstraints {
-      $0.leading.equalToSuperview().inset(21)
+      $0.leading.equalToSuperview().inset(19)
+      $0.width.height.equalTo(24)
       $0.centerY.equalToSuperview()
     }
     
@@ -55,14 +60,15 @@ final class NoteStickerCell: BaseTableViewCell {
       $0.leading.equalTo(stickerImageView.snp.trailing).offset(8)
       $0.centerY.equalToSuperview()
       $0.trailing.equalToSuperview().inset(20)
-      $0.top.bottom.equalToSuperview().inset(11)
+      $0.top.bottom.equalToSuperview().inset(20)
     }
   }
   
   // MARK: - Internal methods
   
   func configure(sticker: Sticker) {
+    super.configure()
     stickerImageView.image = sticker.image
-    titleLabel.text = sticker.optionTitle
+    titleLabel.attributedText = sticker.optionTitle.styled(with: Font.title)
   }
 }
