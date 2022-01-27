@@ -87,7 +87,7 @@ extension NoteDetailReactor {
             identity: .header,
             items: [
               .sticker(note.sticker ?? Sticker.wow),
-              .title(note.title, note.updatedAt),
+              .title(note.title, note.updatedAt ?? note.createdAt),
               .content(note.content)
             ]
           )
