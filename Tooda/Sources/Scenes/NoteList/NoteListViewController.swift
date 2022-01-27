@@ -39,10 +39,6 @@ final class NoteListViewController: BaseViewController<NoteListReactor> {
     $0.image = UIImage(type: .searchBarButton)
   }
   
-  private let moreDetailButton = UIBarButtonItem().then {
-    $0.image = UIImage(type: .moreButton)
-  }
-  
   private let emptyDefaultView = UIView().then {
     $0.backgroundColor = .gray5
   }
@@ -89,11 +85,6 @@ final class NoteListViewController: BaseViewController<NoteListReactor> {
   }
   
   // MARK: - Overridden: ParentClass
-  
-  override func viewDidLoad() {
-    super.viewDidLoad()
-    bindUI()
-  }
   
   override func bind(reactor: NoteListReactor) {
     rx.viewWillAppear.take(1)
@@ -159,46 +150,11 @@ final class NoteListViewController: BaseViewController<NoteListReactor> {
       .disposed(by: disposeBag)
   }
   
-  private func bindUI() {
-    
-    moreDetailButton.rx.tap.asDriver()
-      .drive { [weak self] _ in
-        guard let self = self else { return }
-        let actionSheet = UIAlertController(
-          title: nil,
-          message: nil,
-          preferredStyle: .actionSheet
-        )
-        
-        actionSheet.addAction(
-          UIAlertAction(
-            title: "다이어리 삭제",
-            style: .destructive,
-            handler: nil
-          )
-        )
-        
-        actionSheet.addAction(
-          UIAlertAction(
-            title: "취소",
-            style: .cancel,
-            handler: nil
-          )
-        )
-        self.present(actionSheet, animated: true, completion: nil)
-    }
-    .disposed(by: disposeBag)
-
-  }
-  
   // MARK: - configureUI
   
   override func configureUI() {
     navigationItem.leftBarButtonItem = dismissBarButton
-    navigationItem.rightBarButtonItems = [
-      moreDetailButton,
-      searchBarButton
-    ]
+    navigationItem.rightBarButtonItem = searchBarButton
     navigationController?.navigationBar.backgroundColor = .white
     UIApplication.shared.statusBarUIView?.backgroundColor = .white
     view.addSubviews(
