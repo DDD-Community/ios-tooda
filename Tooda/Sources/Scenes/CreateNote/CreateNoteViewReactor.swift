@@ -45,6 +45,7 @@ final class CreateNoteViewReactor: Reactor {
     case registerButtonDidTapped
     case updateButtonDidTapped
     case stckerDidPicked(Sticker)
+    case updateStikcerDidPicked(Sticker)
     case stockItemDidDeleted(IndexPath)
     case showStockItemEditView(IndexPath)
     case stockItemDidUpdated(NoteStock)
@@ -81,6 +82,7 @@ final class CreateNoteViewReactor: Reactor {
   private let addStockCompletionRelay: PublishRelay<NoteStock> = PublishRelay()
   private let addLinkURLCompletionRelay: PublishRelay<String> = PublishRelay()
   private let addStickerCompletionRelay: PublishRelay<Sticker> = PublishRelay()
+  private let updateStickerCompletionRelay: PublishRelay<Sticker> = PublishRelay()
   
   private let stockItemEditCompletionRelay: PublishRelay<NoteStock> = PublishRelay()
   
@@ -120,6 +122,8 @@ final class CreateNoteViewReactor: Reactor {
         return self.updateButtonDidTapped()
     case .stckerDidPicked(let sticker):
         return self.registNoteAndDismissView(sticker)
+    case .updateStikcerDidPicked(let sticker):
+        return self.updateNoteAndDismissView(sticker)
     case .stockItemDidDeleted(let indexPath):
         return self.stockItemDidDeleted(indexPath.row)
     case .showStockItemEditView(let index):
@@ -174,6 +178,9 @@ final class CreateNoteViewReactor: Reactor {
         .debounce(.milliseconds(300), scheduler: MainScheduler.asyncInstance),
       self.stockItemEditCompletionRelay
         .map { Action.stockItemDidUpdated($0) }
+        .debounce(.microseconds(300), scheduler: MainScheduler.asyncInstance),
+      self.updateStickerCompletionRelay
+        .map { Action.updateStikcerDidPicked($0) }
         .debounce(.microseconds(300), scheduler: MainScheduler.asyncInstance)
     )
   }
@@ -365,9 +372,30 @@ self.dependency.coordinator.transition(
 
 extension CreateNoteViewReactor {
   
-  // TODO: 노트 한줄평 PopUp을 연결해요.
   private func updateButtonDidTapped() -> Observable<Mutation> {
+    
+    self.dependency.coordinator.transition(to: .popUp(type: .list(self.updateStickerCompletionRelay)),
+                                           using: .modal,
+                                           animated: false,
+                                           completion: nil)
+    
     return .empty()
+  }
+  
+  private func updateNoteAndDismissView(_ sticker: Sticker) -> Observable<Mutation> {
+    self.noteRequestDTO.sticker = sticker
+    
+    return self.dependency.service.request(NoteAPI.update(dto: self.noteRequestDTO))
+      .map(Note.self)
+      .asObservable()
+      .map { String($0.id) }
+      .flatMap { [weak self] noteID -> Observable<Mutation> in
+        if noteID.isNotEmpty {
+          return self?.dismissView() ?? .empty()
+        } else {
+          return .empty()
+        }
+      }
   }
 }
 
