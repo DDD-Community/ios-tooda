@@ -146,12 +146,9 @@ final class AppCoordinator: AppCoordinatorType {
       completion?()
       
     case .pop:
-      currentViewController
-        .navigationController?
-        .popViewController(animated: animated)
+      popViewControllerWhenNavigtionWrapped(currentViewController, animated)
+      popViewControllerWhenNoneNavigationWrapped(currentViewController, animated)
       completion?()
-
-      self.currentViewController = self.currentViewController?.navigationController?.viewControllers.last
       
     case .dismiss:
       currentViewController.dismiss(animated: animated, completion: completion)
@@ -187,5 +184,20 @@ extension AppCoordinator {
       viewController,
       animated: animated
     )
+  }
+  
+  private func popViewControllerWhenNavigtionWrapped(_ currentViewController: UIViewController, _ animated: Bool) {
+    if let navigationController = currentViewController as? UINavigationController, let lastViewController = navigationController.viewControllers.last {
+      self.currentViewController = lastViewController
+      navigationController.popViewController(animated: animated)
+    }
+  }
+  
+  private func popViewControllerWhenNoneNavigationWrapped(_ currentViewController: UIViewController, _ animated: Bool) {
+    currentViewController
+      .navigationController?
+      .popViewController(animated: animated)
+    
+    self.currentViewController = self.currentViewController?.navigationController?.viewControllers.last
   }
 }
