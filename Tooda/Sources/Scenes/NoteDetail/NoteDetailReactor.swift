@@ -79,6 +79,7 @@ extension NoteDetailReactor {
       )
       return .empty()
       case .editNote:
+        self.editNote()
         return .empty()
     }
   }
@@ -126,6 +127,23 @@ extension NoteDetailReactor {
         ])
       }
   }
+  
+  private func editNote() {
+    guard let note = self.currentState.note else { return }
+    
+    let noteRequestDTO = NoteRequestDTO(id: "\(note.id)",
+                                        updatedAt: note.updatedAt,
+                                        createdAt: note.createdAt,
+                                        title: note.title,
+                                        content: note.content,
+                                        stocks: note.noteStocks?.map { $0 } ?? [],
+                                        links: note.noteLinks?.compactMap { $0.url } ?? [],
+                                        images: note.noteImages.map { $0.imageURL },
+                                        sticker: note.sticker ?? .wow)
+    
+    let dateString = note.createdAt?.convertToDate()?.string(.dot) ?? ""
+    
+    self.dependency.coordinator.transition(to: .modifyNote(dateString: dateString, note: noteRequestDTO), using: .modal, animated: true, completion: nil)
   }
 }
 
