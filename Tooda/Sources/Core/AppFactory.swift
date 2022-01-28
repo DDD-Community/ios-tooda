@@ -48,7 +48,8 @@ final class AppFactory: AppFactoryType {
           linkPreviewService:
             self.dependency.appInject.resolve(LinkPreViewServiceType.self),
           createDiarySectionFactory: createDiarySectionFactory,
-          modifiableNoteSectionFactory: nil
+          modifiableNoteSectionFactory: nil,
+          updateCompletionRelay: nil
         ),
         modifiableNote: nil
       )
@@ -67,7 +68,8 @@ final class AppFactory: AppFactoryType {
             linkPreviewService:
               self.dependency.appInject.resolve(LinkPreViewServiceType.self),
             createDiarySectionFactory: nil,
-            modifiableNoteSectionFactory: modifiableNoteSectionFactory
+            modifiableNoteSectionFactory: modifiableNoteSectionFactory,
+            updateCompletionRelay: nil
           ),
           modifiableNote: note
         )

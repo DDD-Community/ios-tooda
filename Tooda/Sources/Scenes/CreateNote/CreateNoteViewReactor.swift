@@ -22,13 +22,32 @@ final class CreateNoteViewReactor: Reactor {
   
   let scheduler: Scheduler = MainScheduler.asyncInstance
 
-  struct Dependency {
+  class Dependency {
     let service: NetworkingProtocol
     let coordinator: AppCoordinatorType
     let authorization: AppAuthorizationType
     let linkPreviewService: LinkPreViewServiceType
     let createDiarySectionFactory: CreateNoteSectionType?
     let modifiableNoteSectionFactory: ModifiableNoteSectionType?
+    weak var updateCompletionRelay: PublishRelay<Note>?
+    
+    init(
+      service: NetworkingProtocol,
+      coordinator: AppCoordinatorType,
+      authorization: AppAuthorizationType,
+      linkPreviewService: LinkPreViewServiceType,
+      createDiarySectionFactory: CreateNoteSectionType?,
+      modifiableNoteSectionFactory: ModifiableNoteSectionType?,
+      updateCompletionRelay: PublishRelay<Note>?
+    ) {
+      self.service = service
+      self.coordinator = coordinator
+      self.authorization = authorization
+      self.linkPreviewService = linkPreviewService
+      self.createDiarySectionFactory = createDiarySectionFactory
+      self.modifiableNoteSectionFactory = modifiableNoteSectionFactory
+      self.updateCompletionRelay = updateCompletionRelay
+    }
   }
 
   enum Action {
