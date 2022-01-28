@@ -224,6 +224,7 @@ final class CreateNoteViewReactor: Reactor {
         
         return .just(.present(.showPhotoPicker))
       case .item:
+        self.noteRequestDTO.images.remove(at: indexPath.row)
         imageCellReactor.action.onNext(.removeImage(indexPath))
     }
     
