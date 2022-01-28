@@ -65,6 +65,9 @@ final class NoteDetailViewController: BaseViewController<NoteDetailReactor> {
     }
   })
   
+  
+  private let editNoteButtonRelay: PublishRelay<Void> = PublishRelay()
+  
   // MARK: UI Properties
   
   private let tableView = UITableView().then {
@@ -139,6 +142,11 @@ final class NoteDetailViewController: BaseViewController<NoteDetailReactor> {
       .bind(to: reactor.action)
       .disposed(by: self.disposeBag)
     
+    self.editNoteButtonRelay
+      .map { NoteDetailReactor.Action.editNote }
+      .bind(to: reactor.action)
+      .disposed(by: self.disposeBag)
+    
     reactor.state
       .map { $0.sectionModel }
       .bind(to: tableView.rx.items(dataSource: dataSource))
@@ -167,7 +175,9 @@ final class NoteDetailViewController: BaseViewController<NoteDetailReactor> {
           UIAlertAction(
             title: "노트 수정",
             style: .default,
-            handler: nil
+            handler: { [weak self] _ in
+              self?.editNoteButtonRelay.accept(())
+            }
           )
         )
         

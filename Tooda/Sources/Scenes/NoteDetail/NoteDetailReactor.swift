@@ -30,6 +30,7 @@ final class NoteDetailReactor: Reactor {
   enum Action {
     case loadData
     case back
+    case editNote
   }
 
   enum Mutation {
@@ -75,6 +76,8 @@ extension NoteDetailReactor {
         completion: nil
       )
       return .empty()
+      case .editNote:
+        return .empty()
     }
   }
   
