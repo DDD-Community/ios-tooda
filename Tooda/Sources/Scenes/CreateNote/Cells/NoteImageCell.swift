@@ -97,7 +97,8 @@ class NoteImageCell: BaseTableViewCell, View {
     
     collectionView.snp.makeConstraints {
       $0.top.equalToSuperview().offset(10)
-      $0.left.right.bottom.equalToSuperview()
+      $0.leading.trailing.equalToSuperview().inset(20)
+      $0.bottom.equalToSuperview()
       $0.height.equalTo(Constants.baseItemValue)
     }
   }
