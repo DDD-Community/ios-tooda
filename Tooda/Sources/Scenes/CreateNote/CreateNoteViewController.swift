@@ -210,8 +210,7 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
 
     tableView.snp.makeConstraints {
       $0.top.equalTo(self.view.safeAreaLayoutGuide.snp.top).offset(16)
-      $0.left.equalToSuperview().offset(14)
-      $0.right.equalToSuperview().offset(-14)
+      $0.leading.trailing.equalToSuperview()
       $0.bottom.equalTo(self.view.safeAreaLayoutGuide.snp.bottom)
     }
     
