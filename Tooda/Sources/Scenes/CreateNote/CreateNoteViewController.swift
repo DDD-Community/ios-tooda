@@ -148,15 +148,14 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
     $0.axis = .vertical
     $0.alignment = .fill
     $0.spacing = 8.0
+    $0.backgroundColor = .white
   }
   
   private let lineView = UIView().then {
     $0.backgroundColor = .gray5
   }
   
-  private let linkContainerView = UIView().then {
-    $0.backgroundColor = .white
-  }
+  private let linkContainerView = UIView()
   
   private let linkButton = UIButton().then {
     $0.setImage(UIImage(type: .link), for: .normal)
