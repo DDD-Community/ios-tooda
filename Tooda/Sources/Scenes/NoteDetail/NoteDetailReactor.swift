@@ -35,11 +35,13 @@ final class NoteDetailReactor: Reactor {
 
   enum Mutation {
     case setNoteDetailSectionModel([NoteDetailSection])
+    case fetchNote(Note)
   }
 
   struct State {
     var sectionModel: [NoteDetailSection]
     let noteID: Int
+    var note: Note?
     
     static func generateInitialState(noteID: Int) -> State {
       return State(sectionModel: [], noteID: noteID)
@@ -118,10 +120,12 @@ extension NoteDetailReactor {
           stockSection,
           linkSection
         ]
-        return Observable<Mutation>.just(
-          Mutation.setNoteDetailSectionModel(sectionModels)
-        )
+        return Observable<Mutation>.concat([
+          .just(Mutation.setNoteDetailSectionModel(sectionModels)),
+          .just(Mutation.fetchNote(note))
+        ])
       }
+  }
   }
 }
 
@@ -136,6 +140,8 @@ extension NoteDetailReactor {
     switch mutation {
     case let .setNoteDetailSectionModel(sectionModel):
       newState.sectionModel = sectionModel
+    case let .fetchNote(note):
+      newState.note = note
     }
     
     return newState
