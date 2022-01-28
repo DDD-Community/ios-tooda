@@ -9,6 +9,7 @@ import Foundation
 
 import ReactorKit
 import RxSwift
+import RxRelay
 
 final class NoteDetailReactor: Reactor {
   
@@ -52,6 +53,8 @@ final class NoteDetailReactor: Reactor {
   // MARK: Properties
 
   private let dependency: Dependency
+  
+  private let noteUpdateCompletionRelay: PublishRelay<Note> = PublishRelay()
 
   let initialState: State
 
@@ -59,6 +62,16 @@ final class NoteDetailReactor: Reactor {
     self.dependency = dependency
     self.initialState =
       State.generateInitialState(noteID: dependency.payload.id)
+  }
+  
+  func transform(action: Observable<Action>) -> Observable<Action> {
+    return Observable.merge(
+      action,
+      self.noteUpdateCompletionRelay
+        .map { _ in Action.loadData }
+        .debug()
+        .debounce(.milliseconds(300), scheduler: MainScheduler.asyncInstance)
+    )
   }
 }
 
@@ -143,7 +156,10 @@ extension NoteDetailReactor {
     
     let dateString = note.createdAt?.convertToDate()?.string(.dot) ?? ""
     
-    self.dependency.coordinator.transition(to: .modifyNote(dateString: dateString, note: noteRequestDTO), using: .modal, animated: true, completion: nil)
+    self.dependency.coordinator.transition(to: .modifyNote(dateString: dateString,
+                                                           note: noteRequestDTO,
+                                                           updateCompletonRelay: self.noteUpdateCompletionRelay),
+                                           using: .modal, animated: true, completion: nil)
   }
 }
 

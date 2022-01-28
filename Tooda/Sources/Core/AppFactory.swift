@@ -59,7 +59,7 @@ final class AppFactory: AppFactoryType {
       navigationController.modalPresentationStyle = .overFullScreen
       return navigationController
         
-    case .modifyNote(let dateString, let note):
+    case .modifyNote(let dateString, let note, let updateCompletionRelay):
         let reactor = CreateNoteViewReactor(
           dependency: .init(
             service: self.dependency.appInject.resolve(NetworkingProtocol.self),
@@ -69,7 +69,7 @@ final class AppFactory: AppFactoryType {
               self.dependency.appInject.resolve(LinkPreViewServiceType.self),
             createDiarySectionFactory: nil,
             modifiableNoteSectionFactory: modifiableNoteSectionFactory,
-            updateCompletionRelay: nil
+            updateCompletionRelay: updateCompletionRelay
           ),
           modifiableNote: note
         )
