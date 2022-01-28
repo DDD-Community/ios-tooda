@@ -408,9 +408,9 @@ extension CreateNoteViewReactor {
     return self.dependency.service.request(NoteAPI.update(dto: self.noteRequestDTO))
       .map(Note.self)
       .asObservable()
-      .map { String($0.id) }
-      .flatMap { [weak self] noteID -> Observable<Mutation> in
-        if noteID.isNotEmpty {
+      .flatMap { [weak self] note -> Observable<Mutation> in
+        if "\(note.id)".isNotEmpty {
+          self?.dependency.updateCompletionRelay?.accept(note)
           return self?.dismissView() ?? .empty()
         } else {
           return .empty()
