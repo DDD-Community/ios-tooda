@@ -37,6 +37,10 @@ class EmptyNoteStockCell: BaseTableViewCell, View {
   
   let addStockButton = UIButton()
   
+  let symbolImageVIew = UIImageView(image: UIImage(type: .iconCrossSymbol)).then {
+    $0.contentMode = .scaleAspectFit
+  }
+  
   func configure(reactor: Reactor) {
     super.configure()
     self.reactor = reactor
@@ -60,7 +64,7 @@ class EmptyNoteStockCell: BaseTableViewCell, View {
       self.contentView.addSubview($0)
     }
     
-    [titleLabel].forEach {
+    [titleLabel, symbolImageVIew].forEach {
       self.containerView.addSubview($0)
     }
   }
@@ -82,6 +86,12 @@ class EmptyNoteStockCell: BaseTableViewCell, View {
       $0.top.equalToSuperview().offset(12)
       $0.left.equalToSuperview().offset(14)
       $0.bottom.equalToSuperview().offset(-11)
+    }
+    
+    symbolImageVIew.snp.makeConstraints {
+      $0.centerY.equalTo(self.titleLabel)
+      $0.right.equalToSuperview().offset(-13)
+      $0.size.equalTo(14)
     }
   }
 }
