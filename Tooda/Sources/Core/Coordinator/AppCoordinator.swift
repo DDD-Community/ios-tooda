@@ -151,13 +151,13 @@ final class AppCoordinator: AppCoordinatorType {
       completion?()
       
     case .dismiss:
-      currentViewController.dismiss(animated: animated, completion: completion)
-
       if let presentingViewController = currentViewController.presentingViewController {
         currentViewController.dismiss(animated: animated, completion: {
           self.currentViewController = presentingViewController
           completion?()
         })
+      } else {
+        currentViewController.dismiss(animated: animated, completion: completion)
       }
     }
   }
