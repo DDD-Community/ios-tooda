@@ -76,7 +76,8 @@ final class SnackBarManager {
       withDuration: duration,
       delay: 0
     ) {
-      snackBar.snp.updateConstraints { $0.bottom.equalToSuperview().offset(-40)
+      snackBar.snp.updateConstraints {
+        $0.bottom.equalToSuperview().offset(-40)
       }
       
       UIView.addKeyframe(
@@ -85,7 +86,8 @@ final class SnackBarManager {
         keyWindow.layoutIfNeeded()
       }
       
-      snackBar.snp.updateConstraints { $0.bottom.equalToSuperview().offset(60)
+      snackBar.snp.updateConstraints {
+        $0.bottom.equalToSuperview().offset(60)
       }
       
       UIView.addKeyframe(
