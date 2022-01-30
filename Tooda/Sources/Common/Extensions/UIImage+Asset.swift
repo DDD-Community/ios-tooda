@@ -38,6 +38,7 @@ enum AppImage: String {
   case iconLinkChain = "icon_link_chain"
   case iconSmileEmoji = "icon_smile_emoji"
   case iconNegativeEmoji = "icon_negative_emoji"
+  case iconPositiveEmoji = "icon_positive_emoji"
   case iconCrossSymbol = "icon_cross_symbol"
   
   case closeButton = "cancel"
