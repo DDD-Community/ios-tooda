@@ -75,6 +75,7 @@ final class CreateNoteViewReactor: Reactor {
     case fetchLinkSection(NoteSectionItem)
     case shouldRegisterButtonEnabeld(Bool)
     case stockItemDidDeleted(Int)
+    case linkItemDidDeleted(Int)
     case requestNoteDataDidChanged(NoteRequestDTO)
   }
 
@@ -186,6 +187,8 @@ final class CreateNoteViewReactor: Reactor {
       newState.shouldReigsterButtonEnabled = enabled
     case .stockItemDidDeleted(let row):
       newState.sections[NoteSection.Identity.stock.rawValue].items.remove(at: row)
+    case .linkItemDidDeleted(let row):
+      newState.sections[NoteSection.Identity.link.rawValue].items.remove(at: row)
     case .requestNoteDataDidChanged(let data):
       newState.requestNote = data
     }
