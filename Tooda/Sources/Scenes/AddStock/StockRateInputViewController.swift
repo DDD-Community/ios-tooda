@@ -87,7 +87,7 @@ class StockRateInputViewController: BaseViewController<StockRateInputReactor> {
   
   private lazy var textField = UITextField().then {
     $0.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
-    $0.keyboardType = .numberPad
+    $0.keyboardType = .decimalPad
     $0.placeholder = "상승률/하락률"
   }
   
