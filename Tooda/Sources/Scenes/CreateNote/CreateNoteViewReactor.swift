@@ -95,8 +95,6 @@ final class CreateNoteViewReactor: Reactor {
   
   private let linkItemMaxCount: Int = 2
   
-  static let stockItemMaxCount: Int = 5
-  
   private var lastEditableStockCellIndexPath: IndexPath?
 
   let dependency: Dependency
@@ -560,8 +558,7 @@ extension CreateNoteViewReactor {
 
 extension CreateNoteViewReactor {
   private func emptyStockItemDidChanged(by count: Int) -> Observable<Mutation> {
-    let isEnabeld = count < CreateNoteViewReactor.stockItemMaxCount
-    let reactor = EmptyNoteStockCellReactor(isEnabled: isEnabeld)
+    let reactor = EmptyNoteStockCellReactor(itemCount: count)
     let sectionItem = NoteSectionItem.addStock(reactor)
     return .just(.fetchEmptyStockItem(sectionItem))
   }
@@ -581,7 +578,7 @@ let createDiarySectionFactory: CreateNoteSectionType = { authorization, coordina
   let contentReactor: NoteContentCellReactor = NoteContentCellReactor(payload: .init(title: "", content: ""))
   let contentSectionItem: NoteSectionItem = NoteSectionItem.content(contentReactor)
   
-  let addStockReactor: EmptyNoteStockCellReactor = EmptyNoteStockCellReactor(isEnabled: true)
+  let addStockReactor: EmptyNoteStockCellReactor = EmptyNoteStockCellReactor()
   let addStockSectionItem: NoteSectionItem = NoteSectionItem.addStock(addStockReactor)
   
   let imageReactor: NoteImageCellReactor = NoteImageCellReactor(dependency: .init(factory: noteImageSectionFactory))
@@ -639,9 +636,7 @@ let modifiableNoteSectionFactory: (NoteRequestDTO, LinkPreViewServiceType) -> [N
     sections[NoteSection.Identity.stock.rawValue].items = sectionItems
   }
   
-  let isEnabled = note.stocks.count < CreateNoteViewReactor.stockItemMaxCount
-  
-  let addStockReactor: EmptyNoteStockCellReactor = EmptyNoteStockCellReactor(isEnabled: isEnabled)
+  let addStockReactor: EmptyNoteStockCellReactor = EmptyNoteStockCellReactor(itemCount: note.stocks.count)
   let addStockSectionItem: NoteSectionItem = NoteSectionItem.addStock(addStockReactor)
   
   let imageReactor: NoteImageCellReactor = NoteImageCellReactor(

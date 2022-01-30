@@ -24,7 +24,8 @@ final class EmptyNoteStockCellReactor: Reactor {
   let initialState: State
   private let uuid: String = UUID().uuidString
 
-  init(isEnabled: Bool) {
+  init(itemCount: Int = 0) {
+    let isEnabled = itemCount < EmptyNoteStockCellReactor.itemMaxCount
     initialState = State(isEnabled: isEnabled)
   }
 
@@ -36,6 +37,8 @@ final class EmptyNoteStockCellReactor: Reactor {
     var newState = state
     return newState
   }
+  
+  static let itemMaxCount: Int = 5
 }
 
 extension EmptyNoteStockCellReactor: Hashable {
