@@ -50,7 +50,8 @@ final class AppFactory: AppFactoryType {
           createDiarySectionFactory: createDiarySectionFactory,
           modifiableNoteSectionFactory: nil
         ),
-        modifiableNote: nil
+        modifiableNote: nil,
+        payload: .init(updateCompletionRelay: nil)
       )
         
       let viewController = CreateNoteViewController(dateString: today, reactor: reactor, mode: .add)
@@ -58,7 +59,7 @@ final class AppFactory: AppFactoryType {
       navigationController.modalPresentationStyle = .overFullScreen
       return navigationController
         
-    case .modifyNote(let dateString, let note):
+    case .modifyNote(let dateString, let note, let updateCompletionRelay):
         let reactor = CreateNoteViewReactor(
           dependency: .init(
             service: self.dependency.appInject.resolve(NetworkingProtocol.self),
@@ -69,7 +70,8 @@ final class AppFactory: AppFactoryType {
             createDiarySectionFactory: nil,
             modifiableNoteSectionFactory: modifiableNoteSectionFactory
           ),
-          modifiableNote: note
+          modifiableNote: note,
+          payload: .init(updateCompletionRelay: nil)
         )
         
         let viewController = CreateNoteViewController(dateString: dateString, reactor: reactor, mode: .update)

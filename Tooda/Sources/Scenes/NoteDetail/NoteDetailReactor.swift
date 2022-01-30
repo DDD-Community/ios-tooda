@@ -9,6 +9,7 @@ import Foundation
 
 import ReactorKit
 import RxSwift
+import RxRelay
 
 final class NoteDetailReactor: Reactor {
   
@@ -30,15 +31,18 @@ final class NoteDetailReactor: Reactor {
   enum Action {
     case loadData
     case back
+    case editNote
   }
 
   enum Mutation {
     case setNoteDetailSectionModel([NoteDetailSection])
+    case fetchNote(Note)
   }
 
   struct State {
     var sectionModel: [NoteDetailSection]
     let noteID: Int
+    var note: Note?
     
     static func generateInitialState(noteID: Int) -> State {
       return State(sectionModel: [], noteID: noteID)
@@ -49,6 +53,8 @@ final class NoteDetailReactor: Reactor {
   // MARK: Properties
 
   private let dependency: Dependency
+  
+  private let noteUpdateCompletionRelay: PublishRelay<Note> = PublishRelay()
 
   let initialState: State
 
@@ -56,6 +62,16 @@ final class NoteDetailReactor: Reactor {
     self.dependency = dependency
     self.initialState =
       State.generateInitialState(noteID: dependency.payload.id)
+  }
+  
+  func transform(action: Observable<Action>) -> Observable<Action> {
+    return Observable.merge(
+      action,
+      self.noteUpdateCompletionRelay
+        .map { _ in Action.loadData }
+        .debug()
+        .debounce(.milliseconds(300), scheduler: MainScheduler.asyncInstance)
+    )
   }
 }
 
@@ -75,6 +91,9 @@ extension NoteDetailReactor {
         completion: nil
       )
       return .empty()
+      case .editNote:
+        self.editNote()
+        return .empty()
     }
   }
   
@@ -115,10 +134,32 @@ extension NoteDetailReactor {
           stockSection,
           linkSection
         ]
-        return Observable<Mutation>.just(
-          Mutation.setNoteDetailSectionModel(sectionModels)
-        )
+        return Observable<Mutation>.concat([
+          .just(Mutation.setNoteDetailSectionModel(sectionModels)),
+          .just(Mutation.fetchNote(note))
+        ])
       }
+  }
+  
+  private func editNote() {
+    guard let note = self.currentState.note else { return }
+    
+    let noteRequestDTO = NoteRequestDTO(id: "\(note.id)",
+                                        updatedAt: note.updatedAt,
+                                        createdAt: note.createdAt,
+                                        title: note.title,
+                                        content: note.content,
+                                        stocks: note.noteStocks?.map { $0 } ?? [],
+                                        links: note.noteLinks?.compactMap { $0.url } ?? [],
+                                        images: note.noteImages.map { $0.imageURL },
+                                        sticker: note.sticker ?? .wow)
+    
+    let dateString = note.createdAt?.convertToDate()?.string(.dot) ?? ""
+    
+    self.dependency.coordinator.transition(to: .modifyNote(dateString: dateString,
+                                                           note: noteRequestDTO,
+                                                           updateCompletonRelay: self.noteUpdateCompletionRelay),
+                                           using: .modal, animated: true, completion: nil)
   }
 }
 
@@ -133,6 +174,8 @@ extension NoteDetailReactor {
     switch mutation {
     case let .setNoteDetailSectionModel(sectionModel):
       newState.sectionModel = sectionModel
+    case let .fetchNote(note):
+      newState.note = note
     }
     
     return newState
