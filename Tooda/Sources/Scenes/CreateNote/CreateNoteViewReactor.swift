@@ -75,19 +75,19 @@ final class CreateNoteViewReactor: Reactor {
     case fetchLinkSection(NoteSectionItem)
     case shouldRegisterButtonEnabeld(Bool)
     case stockItemDidDeleted(Int)
+    case requestNoteDataDidChanged(NoteRequestDTO)
   }
 
   struct State: Then {
     var sections: [NoteSection] = []
     var presentType: ViewPresentType?
     var shouldReigsterButtonEnabled: Bool = false
+    var requestNote: NoteRequestDTO = NoteRequestDTO()
   }
   
   struct Payload {
     var updateCompletionRelay: PublishRelay<Note>?
   }
-  
-  private var noteRequestDTO: NoteRequestDTO = NoteRequestDTO()
 
   let initialState: State
   
@@ -110,12 +110,14 @@ final class CreateNoteViewReactor: Reactor {
   
   init(dependency: Dependency, modifiableNote: NoteRequestDTO?, payload: Payload) {
     self.dependency = dependency
-    self.initialState = State()
-    self.payload = payload
     
-    if let modifiableNote = modifiableNote {
-      self.noteRequestDTO = modifiableNote
+    if let requestNote = modifiableNote {
+      self.initialState = State(requestNote: requestNote)
+    } else {
+      self.initialState = State()
     }
+    
+    self.payload = payload
   }
 
   func mutate(action: Action) -> Observable<Mutation> {
@@ -144,9 +146,9 @@ final class CreateNoteViewReactor: Reactor {
     case .updateButtonDidTapped:
         return self.updateButtonDidTapped()
     case .stckerDidPicked(let sticker):
-        return self.registNoteAndDismissView(sticker)
+        return self.addStickerAndAddNote(sticker)
     case .updateStikcerDidPicked(let sticker):
-        return self.updateNoteAndDismissView(sticker)
+        return self.addStickerAndUpdateNote(sticker)
     case .stockItemDidDeleted(let indexPath):
         return self.stockItemDidDeleted(indexPath.row)
     case .showStockItemEditView(let index):
@@ -166,6 +168,7 @@ final class CreateNoteViewReactor: Reactor {
       $0.sections = state.sections
       $0.shouldReigsterButtonEnabled = state.shouldReigsterButtonEnabled
       $0.presentType = nil
+      $0.requestNote = state.requestNote
     }
     
     switch mutation {
@@ -183,6 +186,8 @@ final class CreateNoteViewReactor: Reactor {
       newState.shouldReigsterButtonEnabled = enabled
     case .stockItemDidDeleted(let row):
       newState.sections[NoteSection.Identity.stock.rawValue].items.remove(at: row)
+    case .requestNoteDataDidChanged(let data):
+      newState.requestNote = data
     }
 
     return newState
@@ -213,7 +218,7 @@ final class CreateNoteViewReactor: Reactor {
     }
     
     if let modifySectionFactory = self.dependency.modifiableNoteSectionFactory {
-      let sections = modifySectionFactory(self.noteRequestDTO, self.dependency.linkPreviewService)
+      let sections = modifySectionFactory(self.currentState.requestNote, self.dependency.linkPreviewService)
       return sections
     }
     
@@ -244,8 +249,12 @@ final class CreateNoteViewReactor: Reactor {
         
         return .just(.present(.showPhotoPicker))
       case .item:
-        self.noteRequestDTO.images.remove(at: indexPath.row)
         imageCellReactor.action.onNext(.removeImage(indexPath))
+        
+        var requestNote = self.currentState.requestNote
+        requestNote.images.remove(at: indexPath.row)
+        
+        return .just(.requestNoteDataDidChanged(requestNote))
     }
     
     return .empty()
@@ -297,9 +306,9 @@ extension CreateNoteViewReactor {
 
     imageCellReactor.action.onNext(.addImage(imageURL))
     
-    self.noteRequestDTO.images.append(imageURL)
-
-    return .empty()
+    var requestNote = self.currentState.requestNote
+    requestNote.images.append(imageURL)
+    return .just(.requestNoteDataDidChanged(requestNote))
   }
 }
 
@@ -314,9 +323,13 @@ extension CreateNoteViewReactor {
     
     let sectionItem = NoteSectionItem.stock(reator)
     
-    self.noteRequestDTO.stocks.append(stock)
+    var requestNote = self.currentState.requestNote
+    requestNote.stocks.append(stock)
     
-    return .just(.fetchStockSection(sectionItem))
+    return .concat([
+      .just(.requestNoteDataDidChanged(requestNote)),
+      .just(.fetchStockSection(sectionItem))
+    ])
   }
   
   private func makeLinkSectionItem(_ url: String) -> Observable<Mutation> {
@@ -327,9 +340,13 @@ extension CreateNoteViewReactor {
     
     let linkSectionItem: NoteSectionItem = NoteSectionItem.link(linkReactor)
     
-    self.noteRequestDTO.links.append(url)
+    var requestNote = self.currentState.requestNote
+    requestNote.links.append(url)
     
-    return .just(.fetchLinkSection(linkSectionItem))
+    return .concat([
+      .just(.requestNoteDataDidChanged(requestNote)),
+      .just(.fetchLinkSection(linkSectionItem))
+    ])
   }
 }
 
@@ -339,10 +356,14 @@ extension CreateNoteViewReactor {
     
     let shouldButtonEnabled = !(title.isEmpty || content.isEmpty)
     
-    self.noteRequestDTO.title = title
-    self.noteRequestDTO.content = content
+    var requestNote = self.currentState.requestNote
+    requestNote.title = title
+    requestNote.content = content
     
-    return .just(.shouldRegisterButtonEnabeld(shouldButtonEnabled))
+    return Observable.concat([
+      .just(.requestNoteDataDidChanged(requestNote)),
+      .just(.shouldRegisterButtonEnabeld(shouldButtonEnabled))
+    ])
   }
 }
 
@@ -372,10 +393,18 @@ self.dependency.coordinator.transition(
     return .empty()
   }
   
-  private func registNoteAndDismissView(_ sticker: Sticker) -> Observable<Mutation> {
-    self.noteRequestDTO.sticker = sticker
+  private func addStickerAndAddNote(_ sticker: Sticker) -> Observable<Mutation> {
+    var requestNote = self.currentState.requestNote
+    requestNote.sticker = sticker
     
-    return self.dependency.service.request(NoteAPI.create(dto: self.noteRequestDTO))
+    return Observable.concat([
+      .just(.requestNoteDataDidChanged(requestNote)),
+      self.registNoteAndDismissView()
+    ])
+  }
+  
+  private func registNoteAndDismissView() -> Observable<Mutation> {
+    return self.dependency.service.request(NoteAPI.create(dto: self.currentState.requestNote))
       .map(Note.self)
       .asObservable()
       .map { String($0.id) }
@@ -403,10 +432,18 @@ extension CreateNoteViewReactor {
     return .empty()
   }
   
-  private func updateNoteAndDismissView(_ sticker: Sticker) -> Observable<Mutation> {
-    self.noteRequestDTO.sticker = sticker
+  private func addStickerAndUpdateNote(_ sticker: Sticker) -> Observable<Mutation> {
+    var requestNote = self.currentState.requestNote
+    requestNote.sticker = sticker
     
-    return self.dependency.service.request(NoteAPI.update(dto: self.noteRequestDTO))
+    return Observable.concat([
+      .just(.requestNoteDataDidChanged(requestNote)),
+      self.updateNoteAndDismissView()
+    ])
+  }
+  
+  private func updateNoteAndDismissView() -> Observable<Mutation> {
+    return self.dependency.service.request(NoteAPI.update(dto: self.currentState.requestNote))
       .map(Note.self)
       .asObservable()
       .flatMap { [weak self] note -> Observable<Mutation> in
@@ -425,9 +462,13 @@ extension CreateNoteViewReactor {
 extension CreateNoteViewReactor {
   private func stockItemDidDeleted(_ row: Int) -> Observable<Mutation> {
     
-    self.noteRequestDTO.stocks.remove(at: row)
-
-    return .just(.stockItemDidDeleted(row))
+    var requestNote = self.currentState.requestNote
+    requestNote.stocks.remove(at: row)
+    
+    return Observable.concat([
+      .just(.requestNoteDataDidChanged(requestNote)),
+      .just(.stockItemDidDeleted(row))
+    ])
   }
   
   private func showStockItemEditView(_ index: IndexPath) -> Observable<Mutation> {
@@ -467,8 +508,12 @@ extension CreateNoteViewReactor {
     if case let NoteSectionItem.stock(reactor) = sectionItem {
       reactor.action.onNext(.payloadDidChanged(stock))
       self.lastEditableStockCellIndexPath = nil
-      self.noteRequestDTO.stocks.remove(at: indexPath.row)
-      self.noteRequestDTO.stocks.insert(stock, at: indexPath.row)
+      
+      var requestNote = self.currentState.requestNote
+      requestNote.stocks.remove(at: indexPath.row)
+      requestNote.stocks.insert(stock, at: indexPath.row)
+      
+      return .just(.requestNoteDataDidChanged(requestNote))
     }
     
     return .empty()
