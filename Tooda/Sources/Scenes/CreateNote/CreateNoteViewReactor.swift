@@ -94,6 +94,8 @@ final class CreateNoteViewReactor: Reactor {
   
   private let linkItemMaxCount: Int = 2
   
+  static let stockItemMaxCount: Int = 5
+  
   private var lastEditableStockCellIndexPath: IndexPath?
 
   let dependency: Dependency
@@ -564,7 +566,7 @@ let createDiarySectionFactory: CreateNoteSectionType = { authorization, coordina
   let contentReactor: NoteContentCellReactor = NoteContentCellReactor(payload: .init(title: "", content: ""))
   let contentSectionItem: NoteSectionItem = NoteSectionItem.content(contentReactor)
   
-  let addStockReactor: EmptyNoteStockCellReactor = EmptyNoteStockCellReactor()
+  let addStockReactor: EmptyNoteStockCellReactor = EmptyNoteStockCellReactor(isEnabled: true)
   let addStockSectionItem: NoteSectionItem = NoteSectionItem.addStock(addStockReactor)
   
   let imageReactor: NoteImageCellReactor = NoteImageCellReactor(dependency: .init(factory: noteImageSectionFactory))
@@ -622,7 +624,9 @@ let modifiableNoteSectionFactory: (NoteRequestDTO, LinkPreViewServiceType) -> [N
     sections[NoteSection.Identity.stock.rawValue].items = sectionItems
   }
   
-  let addStockReactor: EmptyNoteStockCellReactor = EmptyNoteStockCellReactor()
+  let isEnabled = note.stocks.count < CreateNoteViewReactor.stockItemMaxCount
+  
+  let addStockReactor: EmptyNoteStockCellReactor = EmptyNoteStockCellReactor(isEnabled: isEnabled)
   let addStockSectionItem: NoteSectionItem = NoteSectionItem.addStock(addStockReactor)
   
   let imageReactor: NoteImageCellReactor = NoteImageCellReactor(

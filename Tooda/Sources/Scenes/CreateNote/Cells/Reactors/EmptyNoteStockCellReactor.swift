@@ -18,14 +18,14 @@ final class EmptyNoteStockCellReactor: Reactor {
   }
 
   struct State {
-
+    var isEnabled: Bool
   }
 
   let initialState: State
   private let uuid: String = UUID().uuidString
 
-  init() {
-    initialState = State()
+  init(isEnabled: Bool) {
+    initialState = State(isEnabled: isEnabled)
   }
 
   func mutate(action: Action) -> Observable<Mutation> {
