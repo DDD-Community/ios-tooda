@@ -198,8 +198,8 @@ extension HomeReactor {
           case let .editNode(note):
             return self.editNoteEventBusMutaion(note)
 
-          default:
-            return .empty()
+          case let .deleteNote(note):
+            return self.deleteNoteEventBusMutation(note)
           }
         }
     )
@@ -262,6 +262,24 @@ extension HomeReactor {
     var notebooks = self.currentState.notebooks
     notebooks[index].noteCount += 1
     notebooks[index].updatedAt = note.updatedAt
+
+    return .just(
+      .setNotebooks(notebooks)
+    )
+  }
+
+  private func deleteNoteEventBusMutation(_ note: Note) -> Observable<Mutation> {
+    guard let index = self.currentState.notebooks.firstIndex(where: {
+      $0.year == note.createdAt?.year && $0.month == note.createdAt?.month
+    }) else { return .empty() }
+
+    var notebooks = self.currentState.notebooks
+    if notebooks[index].noteCount >= 2 {
+      notebooks[index].noteCount -= 1
+      notebooks[index].updatedAt = Date()
+    } else {
+      notebooks.remove(at: index)
+    }
 
     return .just(
       .setNotebooks(notebooks)
