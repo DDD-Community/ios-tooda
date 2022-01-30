@@ -65,6 +65,8 @@ final class NoteDetailTitleCell: BaseTableViewCell {
   // MARK: - Internal methods
   
   func configure(title: String?, date: String?) {
+    super.configure()
+    
     if let title = title {
       titleLabel.attributedText = title.styled(with: Font.title)
     }
