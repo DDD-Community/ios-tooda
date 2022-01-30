@@ -433,22 +433,26 @@ extension CreateNoteViewController {
   private func generateEditableSwipeConfigure(at indexPath: IndexPath) -> UISwipeActionsConfiguration? {
     switch dataSource[indexPath] {
       case .stock:
-        let delete = self.deleteCellAction(at: indexPath)
-        
-        let edit = self.editCellAction(at: indexPath)
-        
-        let swipeActionConfig = UISwipeActionsConfiguration(actions: [delete, edit])
-        swipeActionConfig.performsFirstActionWithFullSwipe = false
-        return swipeActionConfig
+        return self.generateSwipeAction(indexPath: indexPath, name: "종목")
+      case .link:
+        return self.generateSwipeAction(indexPath: indexPath, name: "링크")
       default:
         return nil
     }
   }
   
-  private func deleteCellAction(at indexPath: IndexPath) -> UIContextualAction {
+  private func generateSwipeAction(indexPath: IndexPath, name: String) -> UISwipeActionsConfiguration? {
+    let delete = self.deleteCellAction(at: indexPath, name: name)
+    let edit = self.editCellAction(at: indexPath)
+    let swipeActionConfig = UISwipeActionsConfiguration(actions: [delete, edit])
+    swipeActionConfig.performsFirstActionWithFullSwipe = false
+    return swipeActionConfig
+  }
+  
+  private func deleteCellAction(at indexPath: IndexPath, name: String) -> UIContextualAction {
     let action = UIContextualAction(style: .destructive, title: "삭제") { [weak self] _, _, completionHandler in
       
-      let alertController = UIAlertController(title: nil, message: "종목을 삭제하시겠습니까?", preferredStyle: .alert)
+      let alertController = UIAlertController(title: nil, message: "\(name)을(를) 삭제하시겠습니까?", preferredStyle: .alert)
       
       let ok = UIAlertAction(title: "확인", style: .destructive, handler: { _ in
         self?.rxNoteItemDeleteRelay.accept(indexPath)
