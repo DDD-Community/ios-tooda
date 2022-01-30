@@ -72,8 +72,8 @@ extension SearchResultReactor {
           id: 1,
           title: "전기차 관련 ",
           content: "#전기차  G전자는 자동차 업체는 아니기 때문에, 유명 완성차 업체에 납품을 할 때 중요한 트랙 레코드가 많진 않아요. 반면 마그나는 수십 개 자동차 업체에 부품을 납품한 회사니깐 이 둘이 합치면 시너지를 낼 수 있을 까라 ",
-          createdAt: "2021-05-19T06:41:45.051Z",
-          updatedAt: "2021-05-19T06:41:45.051Z",
+          createdAt: Date(),
+          updatedAt: Date(),
           sticker: .angry,
           noteStocks: [
             .init(
@@ -92,8 +92,8 @@ extension SearchResultReactor {
           id: 2,
           title: "전기차 관련 ",
           content: "#전기차  G전자는 자동차 업체는 아니기 때문에, 유명 완성차 업체에 납품을 할 때 중요한 트랙 레코드가 많진 않아요. 반면 마그나는 수십 개 자동차 업체에 부품을 납품한 회사니깐 이 둘이 합치면 시너지를 낼 수 있을 까라 ",
-          createdAt: "2021-05-19T06:41:45.051Z",
-          updatedAt: "2021-05-19T06:41:45.051Z",
+          createdAt: Date(),
+          updatedAt: Date(),
           sticker: .thinking,
           noteStocks: [
             .init(
@@ -112,8 +112,8 @@ extension SearchResultReactor {
           id: 3,
           title: "전기차 관련 ",
           content: "#전기차  G전자는 자동차 업체는 아니기 때문에, 유명 완성차 업체에 납품을 할 때 중요한 트랙 레코드가 많진 않아요. 반면 마그나는 수십 개 자동차 업체에 부품을 납품한 회사니깐 이 둘이 합치면 시너지를 낼 수 있을 까라 ",
-          createdAt: "2021-05-19T06:41:45.051Z",
-          updatedAt: "2021-05-19T06:41:45.051Z",
+          createdAt: Date(),
+          updatedAt: Date(),
           sticker: .sad,
           noteStocks: [
             .init(
