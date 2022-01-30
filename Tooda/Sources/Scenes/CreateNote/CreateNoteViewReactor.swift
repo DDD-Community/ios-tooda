@@ -197,14 +197,11 @@ final class CreateNoteViewReactor: Reactor {
         .take(self.linkItemMaxCount)
         .map { Action.linkURLDidAdded($0) },
       self.addStickerCompletionRelay
-        .map { Action.stckerDidPicked($0) }
-        .debounce(.milliseconds(300), scheduler: MainScheduler.asyncInstance),
+        .map { Action.stckerDidPicked($0) },
       self.stockItemEditCompletionRelay
-        .map { Action.stockItemDidUpdated($0) }
-        .debounce(.microseconds(300), scheduler: MainScheduler.asyncInstance),
+        .map { Action.stockItemDidUpdated($0) },
       self.updateStickerCompletionRelay
         .map { Action.updateStikcerDidPicked($0) }
-        .debounce(.microseconds(300), scheduler: MainScheduler.asyncInstance)
     )
   }
 
