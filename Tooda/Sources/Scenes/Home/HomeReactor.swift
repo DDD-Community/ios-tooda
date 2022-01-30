@@ -18,6 +18,7 @@ final class HomeReactor: Reactor {
   struct Dependency {
     let service: NetworkingProtocol
     let coordinator: AppCoordinatorType
+    let noteEventBus: Observable<NoteEventBus.Event>
   }
 
 

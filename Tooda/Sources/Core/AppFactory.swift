@@ -34,7 +34,8 @@ final class AppFactory: AppFactoryType {
       let reactor = HomeReactor(
         dependency: .init(
           service: self.dependency.appInject.resolve(NetworkingProtocol.self),
-          coordinator: self.dependency.appInject.resolve(AppCoordinatorType.self)
+          coordinator: self.dependency.appInject.resolve(AppCoordinatorType.self),
+          noteEventBus: NoteEventBus.event.asObservable()
         )
       )
       return HomeViewController(reactor: reactor)
