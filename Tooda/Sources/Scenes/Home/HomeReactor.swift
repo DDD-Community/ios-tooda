@@ -182,6 +182,77 @@ extension HomeReactor {
 }
 
 
+// MARK: - Transform
+
+extension HomeReactor {
+
+  func transform(mutation: Observable<Mutation>) -> Observable<Mutation> {
+    return Observable.merge(
+      mutation,
+      self.dependency.noteEventBus
+        .flatMap { event -> Observable<Mutation> in
+          switch event {
+          case let .createNote(note):
+            return self.createNoteEventBusMutaion(note)
+
+          default:
+            return .empty()
+          }
+        }
+    )
+  }
+
+  private func createNoteEventBusMutaion(_ note: Note) -> Observable<Mutation> {
+    guard let newNoteYear = note.createdAt?.year,
+          let newNoteMonth = note.createdAt?.month else { return .empty() }
+
+    if self.currentState.notebooks.isEmpty {
+      return .just(
+        .setNotebooks([
+          .init(
+            year: newNoteYear,
+            month: newNoteMonth,
+            noteCount: 1,
+            createdAt: note.createdAt,
+            updatedAt: note.updatedAt,
+            stickers: note.sticker == nil ? [] : [note.sticker!]
+          )
+        ])
+      )
+    }
+
+    if let index = self.currentState.notebooks.firstIndex(where: {
+      $0.year == newNoteYear && $0.month == newNoteMonth
+    }) {
+      var notebooks = self.currentState.notebooks
+      notebooks[index].noteCount += 1
+      notebooks[index].updatedAt = note.updatedAt
+      if notebooks[index].stickers.count < 3,
+         let sticker = note.sticker {
+        notebooks[index].stickers.append(sticker)
+      }
+      return .just(
+        .setNotebooks(notebooks)
+      )
+    }
+
+    // NOTE: 오늘만 생성했을 때만 가능한 로직
+    var notebooks = self.currentState.notebooks
+    notebooks.append(.init(
+      year: newNoteYear,
+      month: newNoteMonth,
+      noteCount: 1,
+      createdAt: note.createdAt,
+      updatedAt: note.updatedAt,
+      stickers: note.sticker == nil ? [] : [note.sticker!]
+    ))
+    return .just(
+      .setNotebooks(notebooks)
+    )
+  }
+}
+
+
 // MARK: - Reduce
 
 extension HomeReactor {
