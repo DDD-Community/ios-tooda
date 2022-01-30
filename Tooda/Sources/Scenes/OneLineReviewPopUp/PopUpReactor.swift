@@ -115,15 +115,15 @@ extension PopUpReactor {
   }
   
   private func didTapBottonButtonMutation() -> Observable<Mutation> {
-    if let selectedSticker = currentState.selectedSticker,
-      case let .list(relay) = dependency.type {
-        relay.accept(selectedSticker)
-    }
-    
     dependency.coordinator.close(
       style: .dismiss,
       animated: false,
-      completion: nil
+      completion: { [weak self] in
+        if let selectedSticker = self?.currentState.selectedSticker,
+           case let .list(relay) = self?.dependency.type {
+          relay.accept(selectedSticker)
+        }
+      }
     )
     
     return Observable<Mutation>.empty()
