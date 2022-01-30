@@ -29,6 +29,7 @@ enum AppImage: String {
   case stickerThinking = "sticker_thinking"
 
   case login = "login"
+  case iconAppleLogin = "icon_apple_logo"
   case iconDownGray = "icon_down_gray"
   case iconArrowRightGray = "icon_arrow_right_gray"
   case closeBlack = "close_black"

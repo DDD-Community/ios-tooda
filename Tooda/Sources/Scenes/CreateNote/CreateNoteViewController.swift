@@ -108,12 +108,20 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
                                                target: nil,
                                                action: nil)
   
-  private let registerButton = BaseButton(width: 53, height: 28).then {
+  private let registerButton = BaseButton(
+    width: 53,
+    height: 28,
+    type: .base
+  ).then {
     $0.setButtonTitle(with: "등록", style: TextStyle.body2Bold(color: UIColor.white))
     $0.configureShadow(color: .clear, x: 0, y: 0, blur: 0, spread: 0)
   }
   
-  private let updateButton = BaseButton(width: 53, height: 28).then {
+  private let updateButton = BaseButton(
+    width: 53,
+    height: 28,
+    type: .base
+  ).then {
     $0.setButtonTitle(with: "수정", style: TextStyle.body2Bold(color: UIColor.white))
     $0.configureShadow(color: .clear, x: 0, y: 0, blur: 0, spread: 0)
   }
