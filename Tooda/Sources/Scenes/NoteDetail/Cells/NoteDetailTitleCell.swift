@@ -16,7 +16,9 @@ final class NoteDetailTitleCell: BaseTableViewCell {
   
   // MARK: - UI Components
 
-  private let titleLabel = UILabel()
+  private let titleLabel = UILabel().then {
+    $0.numberOfLines = 0
+  }
   
   private let dateLabel = UILabel()
   
