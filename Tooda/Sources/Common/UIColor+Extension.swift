@@ -99,7 +99,7 @@ extension UIColor {
   }
   
   class var gray6: UIColor {
-    return .init(hex: "#383C43")
+    return .init(hex: "#FCFDFE")
   }
   
   class var mainGreen: UIColor {
