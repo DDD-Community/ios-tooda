@@ -22,14 +22,13 @@ final class CreateNoteViewReactor: Reactor {
   
   let scheduler: Scheduler = MainScheduler.asyncInstance
 
-  class Dependency {
+  struct Dependency {
     let service: NetworkingProtocol
     let coordinator: AppCoordinatorType
     let authorization: AppAuthorizationType
     let linkPreviewService: LinkPreViewServiceType
     let createDiarySectionFactory: CreateNoteSectionType?
     let modifiableNoteSectionFactory: ModifiableNoteSectionType?
-    weak var updateCompletionRelay: PublishRelay<Note>?
     
     init(
       service: NetworkingProtocol,
@@ -37,8 +36,7 @@ final class CreateNoteViewReactor: Reactor {
       authorization: AppAuthorizationType,
       linkPreviewService: LinkPreViewServiceType,
       createDiarySectionFactory: CreateNoteSectionType?,
-      modifiableNoteSectionFactory: ModifiableNoteSectionType?,
-      updateCompletionRelay: PublishRelay<Note>?
+      modifiableNoteSectionFactory: ModifiableNoteSectionType?
     ) {
       self.service = service
       self.coordinator = coordinator
@@ -46,7 +44,6 @@ final class CreateNoteViewReactor: Reactor {
       self.linkPreviewService = linkPreviewService
       self.createDiarySectionFactory = createDiarySectionFactory
       self.modifiableNoteSectionFactory = modifiableNoteSectionFactory
-      self.updateCompletionRelay = updateCompletionRelay
     }
   }
 
@@ -86,6 +83,10 @@ final class CreateNoteViewReactor: Reactor {
     var shouldReigsterButtonEnabled: Bool = false
   }
   
+  struct Payload {
+    var updateCompletionRelay: PublishRelay<Note>?
+  }
+  
   private var noteRequestDTO: NoteRequestDTO = NoteRequestDTO()
 
   let initialState: State
@@ -96,6 +97,8 @@ final class CreateNoteViewReactor: Reactor {
 
   let dependency: Dependency
   
+  private let payload: Payload
+  
   // MARK: Global Events
   
   private let addStockCompletionRelay: PublishRelay<NoteStock> = PublishRelay()
@@ -105,9 +108,10 @@ final class CreateNoteViewReactor: Reactor {
   
   private let stockItemEditCompletionRelay: PublishRelay<NoteStock> = PublishRelay()
   
-  init(dependency: Dependency, modifiableNote: NoteRequestDTO?) {
+  init(dependency: Dependency, modifiableNote: NoteRequestDTO?, payload: Payload) {
     self.dependency = dependency
     self.initialState = State()
+    self.payload = payload
     
     if let modifiableNote = modifiableNote {
       self.noteRequestDTO = modifiableNote
@@ -410,7 +414,7 @@ extension CreateNoteViewReactor {
       .asObservable()
       .flatMap { [weak self] note -> Observable<Mutation> in
         if "\(note.id)".isNotEmpty {
-          self?.dependency.updateCompletionRelay?.accept(note)
+          self?.payload.updateCompletionRelay?.accept(note)
           return self?.dismissView() ?? .empty()
         } else {
           return .empty()

@@ -48,10 +48,10 @@ final class AppFactory: AppFactoryType {
           linkPreviewService:
             self.dependency.appInject.resolve(LinkPreViewServiceType.self),
           createDiarySectionFactory: createDiarySectionFactory,
-          modifiableNoteSectionFactory: nil,
-          updateCompletionRelay: nil
+          modifiableNoteSectionFactory: nil
         ),
-        modifiableNote: nil
+        modifiableNote: nil,
+        payload: .init(updateCompletionRelay: nil)
       )
         
       let viewController = CreateNoteViewController(dateString: today, reactor: reactor, mode: .add)
@@ -68,10 +68,10 @@ final class AppFactory: AppFactoryType {
             linkPreviewService:
               self.dependency.appInject.resolve(LinkPreViewServiceType.self),
             createDiarySectionFactory: nil,
-            modifiableNoteSectionFactory: modifiableNoteSectionFactory,
-            updateCompletionRelay: updateCompletionRelay
+            modifiableNoteSectionFactory: modifiableNoteSectionFactory
           ),
-          modifiableNote: note
+          modifiableNote: note,
+          payload: .init(updateCompletionRelay: nil)
         )
         
         let viewController = CreateNoteViewController(dateString: dateString, reactor: reactor, mode: .update)
