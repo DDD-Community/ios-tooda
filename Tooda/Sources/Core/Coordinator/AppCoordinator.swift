@@ -187,9 +187,9 @@ extension AppCoordinator {
   }
   
   private func popViewControllerWhenNavigtionWrapped(_ currentViewController: UIViewController, _ animated: Bool) {
-    if let navigationController = currentViewController as? UINavigationController, let lastViewController = navigationController.viewControllers.last {
-      self.currentViewController = lastViewController
+    if let navigationController = currentViewController as? UINavigationController {
       navigationController.popViewController(animated: animated)
+      self.currentViewController = navigationController.viewControllers.last
     }
   }
   
