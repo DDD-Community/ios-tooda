@@ -62,7 +62,7 @@ final class CreateNoteViewReactor: Reactor {
     case updateButtonDidTapped
     case stckerDidPicked(Sticker)
     case updateStikcerDidPicked(Sticker)
-    case stockItemDidDeleted(IndexPath)
+    case noteItemDidDeleted(IndexPath)
     case showStockItemEditView(IndexPath)
     case stockItemDidUpdated(NoteStock)
   }
@@ -150,8 +150,8 @@ final class CreateNoteViewReactor: Reactor {
         return self.addStickerAndAddNote(sticker)
     case .updateStikcerDidPicked(let sticker):
         return self.addStickerAndUpdateNote(sticker)
-    case .stockItemDidDeleted(let indexPath):
-        return self.stockItemDidDeleted(indexPath.row)
+    case .noteItemDidDeleted(let indexPath):
+        return self.noteItemDidDeleted(indexPath)
     case .showStockItemEditView(let index):
         return self.showStockItemEditView(index)
     case .stockItemDidUpdated(let stock):
@@ -463,14 +463,31 @@ extension CreateNoteViewReactor {
 // MARK: - StockItem Edit & Delete
 
 extension CreateNoteViewReactor {
-  private func stockItemDidDeleted(_ row: Int) -> Observable<Mutation> {
+  private func noteItemDidDeleted(_ indexPath: IndexPath) -> Observable<Mutation> {
+    
+    guard let section = self.currentState.sections[safe: indexPath.section],
+          let sectionItem = section.items[safe: indexPath.row] else { return .empty() }
     
     var requestNote = self.currentState.requestNote
-    requestNote.stocks.remove(at: row)
+    
+    var changedMutation: Observable<Mutation>
+    
+    let row = indexPath.row
+    
+    switch sectionItem {
+      case .stock:
+        requestNote.stocks.remove(at: row)
+        changedMutation = .just(.stockItemDidDeleted(row))
+      case .link:
+        requestNote.links.remove(at: row)
+        changedMutation = .just(.linkItemDidDeleted(row))
+      case .addStock, .content, .image:
+        changedMutation = .empty()
+    }
     
     return Observable.concat([
       .just(.requestNoteDataDidChanged(requestNote)),
-      .just(.stockItemDidDeleted(row))
+      changedMutation
     ])
   }
   

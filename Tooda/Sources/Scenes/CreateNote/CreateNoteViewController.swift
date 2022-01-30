@@ -36,7 +36,7 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
   
   let rxAddStockDidTapRelay: PublishRelay<Void> = PublishRelay()
   
-  private let rxStockItemDeleteRelay: PublishRelay<IndexPath> = PublishRelay()
+  private let rxNoteItemDeleteRelay: PublishRelay<IndexPath> = PublishRelay()
   
   private let rxStockItemDidEditRelay: PublishRelay<IndexPath> = PublishRelay()
   
@@ -287,8 +287,8 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
       .bind(to: reactor.action)
       .disposed(by: self.disposeBag)
     
-    rxStockItemDeleteRelay
-      .map { Reactor.Action.stockItemDidDeleted($0) }
+    rxNoteItemDeleteRelay
+      .map { Reactor.Action.noteItemDidDeleted($0) }
       .bind(to: reactor.action)
       .disposed(by: self.disposeBag)
     
@@ -451,7 +451,7 @@ extension CreateNoteViewController {
       let alertController = UIAlertController(title: nil, message: "종목을 삭제하시겠습니까?", preferredStyle: .alert)
       
       let ok = UIAlertAction(title: "확인", style: .destructive, handler: { _ in
-        self?.rxStockItemDeleteRelay.accept(indexPath)
+        self?.rxNoteItemDeleteRelay.accept(indexPath)
       })
       
       let cancel = UIAlertAction(title: "취소", style: .default, handler: nil)
