@@ -21,6 +21,7 @@ final class NoteDetailReactor: Reactor {
   struct Dependency {
     let service: NetworkingProtocol
     let coordinator: AppCoordinatorType
+    let linkPreviewService: LinkPreViewServiceType
     let payload: Payload
   }
 
@@ -82,6 +83,26 @@ extension NoteDetailReactor {
       .map(Note.self)
       .asObservable()
       .flatMap { note -> Observable<Mutation> in
+        
+        let stockSectionItems = note.noteStocks?
+          .map { NoteStockCellReactor.init(payload: .init(name: $0.name, rate: $0.changeRate ?? 0.0)) }
+          .map { NoteDetailSectionItem.stock($0) }
+        
+        let stockSection = NoteDetailSection(
+          identity: .stock,
+          items: stockSectionItems ?? []
+        )
+        
+        let linkSectionItems = note.noteLinks?
+          .compactMap { $0.url }
+          .map { NoteLinkCellReactor.init(dependency: .init(service: self.dependency.linkPreviewService), payload: $0) }
+          .map { NoteDetailSectionItem.link($0) }
+        
+        let linkSection = NoteDetailSection(
+          identity: .link,
+          items: linkSectionItems ?? []
+        )
+        
         let sectionModels = [
           NoteDetailSection(
             identity: .header,
@@ -90,7 +111,9 @@ extension NoteDetailReactor {
               .title(note.title, note.updatedAt ?? note.createdAt),
               .content(note.content)
             ]
-          )
+          ),
+          stockSection,
+          linkSection
         ]
         return Observable<Mutation>.just(
           Mutation.setNoteDetailSectionModel(sectionModels)

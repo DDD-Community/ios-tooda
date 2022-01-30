@@ -43,12 +43,11 @@ final class NoteListViewController: BaseViewController<NoteListReactor> {
     $0.backgroundColor = .gray5
   }
   
-  private lazy var tableView = UITableView().then {
+  private let tableView = UITableView().then {
     $0.backgroundColor = .gray5
     $0.register(UITableViewCell.self)
     $0.register(NoteListCell.self)
     $0.separatorStyle = .none
-    $0.delegate = self
   }
   
   private let dismissBarButton = UIBarButtonItem(

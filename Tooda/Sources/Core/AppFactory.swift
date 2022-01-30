@@ -186,6 +186,7 @@ final class AppFactory: AppFactoryType {
         dependency: .init(
           service: self.dependency.appInject.resolve(NetworkingProtocol.self),
           coordinator: self.dependency.appInject.resolve(AppCoordinatorType.self),
+          linkPreviewService: self.dependency.appInject.resolve(LinkPreViewServiceType.self),
           payload: payload
         )
       )
