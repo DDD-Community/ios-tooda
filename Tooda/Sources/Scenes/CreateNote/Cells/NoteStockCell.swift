@@ -90,7 +90,7 @@ class NoteStockCell: BaseTableViewCell, View {
     super.setupConstraints()
     
     self.containerView.snp.makeConstraints {
-      $0.edges.equalToSuperview().inset(UIEdgeInsets(top: 10, left: 0, bottom: 0, right: 0))
+      $0.edges.equalToSuperview().inset(UIEdgeInsets(top: 10, left: 20, bottom: 0, right: 20))
     }
     
     self.titleLabel.snp.makeConstraints {

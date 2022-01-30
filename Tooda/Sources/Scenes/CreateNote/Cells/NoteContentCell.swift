@@ -90,7 +90,8 @@ class NoteContentCell: BaseTableViewCell, View {
     super.setupConstraints()
 
     titleTextFieldBackgroundView.snp.makeConstraints {
-      $0.top.left.right.width.equalToSuperview()
+      $0.top.equalToSuperview()
+      $0.leading.trailing.equalToSuperview().inset(20)
       $0.height.equalTo(43)
     }
     
@@ -100,7 +101,8 @@ class NoteContentCell: BaseTableViewCell, View {
     
     contentTextViewBackGroundView.snp.makeConstraints {
       $0.top.equalTo(titleTextFieldBackgroundView.snp.bottom).offset(10)
-      $0.left.right.bottom.width.equalToSuperview()
+      $0.leading.trailing.equalToSuperview().inset(20)
+      $0.bottom.equalToSuperview()
       $0.height.equalTo(169)
     }
     

@@ -70,7 +70,8 @@ class EmptyNoteStockCell: BaseTableViewCell, View {
     
     containerView.snp.makeConstraints {
       $0.top.equalToSuperview().offset(10)
-      $0.left.right.bottom.equalToSuperview()
+      $0.leading.trailing.equalToSuperview().inset(20)
+      $0.bottom.equalToSuperview()
     }
     
     addStockButton.snp.makeConstraints {

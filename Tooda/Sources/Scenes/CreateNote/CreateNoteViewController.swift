@@ -148,15 +148,14 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
     $0.axis = .vertical
     $0.alignment = .fill
     $0.spacing = 8.0
+    $0.backgroundColor = .white
   }
   
   private let lineView = UIView().then {
     $0.backgroundColor = .gray5
   }
   
-  private let linkContainerView = UIView().then {
-    $0.backgroundColor = .white
-  }
+  private let linkContainerView = UIView()
   
   private let linkButton = UIButton().then {
     $0.setImage(UIImage(type: .link), for: .normal)
@@ -210,8 +209,7 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
 
     tableView.snp.makeConstraints {
       $0.top.equalTo(self.view.safeAreaLayoutGuide.snp.top).offset(16)
-      $0.left.equalToSuperview().offset(14)
-      $0.right.equalToSuperview().offset(-14)
+      $0.leading.trailing.equalToSuperview()
       $0.bottom.equalTo(self.view.safeAreaLayoutGuide.snp.bottom)
     }
     

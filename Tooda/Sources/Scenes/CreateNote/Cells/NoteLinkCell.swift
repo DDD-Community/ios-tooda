@@ -126,7 +126,8 @@ class NoteLinkCell: BaseTableViewCell, View {
     
     containerStackView.snp.makeConstraints {
       $0.top.equalToSuperview().offset(10)
-      $0.leading.trailing.bottom.equalToSuperview()
+      $0.leading.trailing.equalToSuperview().inset(20)
+      $0.bottom.equalToSuperview()
     }
     
     thumnailView.snp.makeConstraints {
