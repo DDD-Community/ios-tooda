@@ -16,7 +16,9 @@ final class NoteDetailTitleCell: BaseTableViewCell {
   
   // MARK: - UI Components
 
-  private let titleLabel = UILabel()
+  private let titleLabel = UILabel().then {
+    $0.numberOfLines = 0
+  }
   
   private let dateLabel = UILabel()
   
@@ -63,6 +65,8 @@ final class NoteDetailTitleCell: BaseTableViewCell {
   // MARK: - Internal methods
   
   func configure(title: String?, date: String?) {
+    super.configure()
+    
     if let title = title {
       titleLabel.attributedText = title.styled(with: Font.title)
     }
