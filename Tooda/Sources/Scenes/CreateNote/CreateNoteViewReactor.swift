@@ -447,13 +447,23 @@ extension CreateNoteViewReactor {
       .map(Note.self)
       .asObservable()
       .flatMap { [weak self] note -> Observable<Mutation> in
-        if "\(note.id)".isNotEmpty {
-          self?.payload.updateCompletionRelay?.accept(note)
-          return self?.dismissView() ?? .empty()
-        } else {
-          return .empty()
-        }
+        return self?.dimissViewWithUpdateCompletion(note) ?? .empty()
       }
+  }
+  
+  private func dimissViewWithUpdateCompletion(_ note: Note) -> Observable<Mutation> {
+    
+    guard "\(note.id)".isNotEmpty else { return .empty() }
+    
+    self.dependency.coordinator.close(
+      style: .dismiss,
+      animated: true,
+      completion: { [weak self] in
+        self?.payload.updateCompletionRelay?.accept(note)
+      }
+    )
+    
+    return .empty()
   }
 }
 

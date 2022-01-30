@@ -71,7 +71,7 @@ final class AppFactory: AppFactoryType {
             modifiableNoteSectionFactory: modifiableNoteSectionFactory
           ),
           modifiableNote: note,
-          payload: .init(updateCompletionRelay: nil)
+          payload: .init(updateCompletionRelay: updateCompletionRelay)
         )
         
         let viewController = CreateNoteViewController(dateString: dateString, reactor: reactor, mode: .update)

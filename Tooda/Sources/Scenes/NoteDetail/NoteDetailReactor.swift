@@ -69,8 +69,6 @@ final class NoteDetailReactor: Reactor {
       action,
       self.noteUpdateCompletionRelay
         .map { _ in Action.loadData }
-        .debug()
-        .debounce(.milliseconds(300), scheduler: MainScheduler.asyncInstance)
     )
   }
 }
