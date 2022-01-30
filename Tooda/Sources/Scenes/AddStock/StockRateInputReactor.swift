@@ -22,6 +22,7 @@ final class StockRateInputReactor: Reactor {
     case selectedRateDidChanged(StockChangeState)
     case addButtonDidChanged(Bool)
     case rateDidChanged(Float?)
+    case stockDidAdded(NoteStock)
   }
   
   struct State {
@@ -29,6 +30,7 @@ final class StockRateInputReactor: Reactor {
     var selectedRate: StockChangeState = .even
     var rateInput: Float?
     var buttonDidChanged: Bool = true
+    var stock: NoteStock?
   }
   
   struct Payload {
@@ -78,6 +80,8 @@ final class StockRateInputReactor: Reactor {
         newState.buttonDidChanged = enabled
       case .rateDidChanged(let rate):
         newState.rateInput = rate
+      case .stockDidAdded(let stock):
+        newState.stock = stock
     }
     
     return newState
@@ -94,7 +98,14 @@ extension StockRateInputReactor {
   }
   
   private func viewDidDismiss() -> Observable<Mutation> {
-    self.dependency.coordinator.close(style: .dismiss, animated: true, completion: nil)
+    
+    self.dependency.coordinator.close(style: .dismiss,
+                                      animated: true,
+                                      completion: { [weak self] in
+      if let noteStock = self?.currentState.stock {
+        self?.payload.completion.accept(noteStock)
+      }
+    })
     
     return .empty()
   }
@@ -121,15 +132,12 @@ extension StockRateInputReactor {
     
     let changeRate = self.generateRateMutifiler() * (self.currentState.rateInput ?? 0.0)
     
-    // TODO: 전달 Payload 데이터를 변경할 예정이에요.
     let noteStock = NoteStock(id: 0,
                               name: self.currentState.name,
                               change: self.currentState.selectedRate,
                               changeRate: changeRate)
     
-    self.payload.completion.accept(noteStock)
-    
-    return .empty()
+    return .just(.stockDidAdded(noteStock))
   }
   
   private func generateRateMutifiler() -> Float {
