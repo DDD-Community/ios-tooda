@@ -334,7 +334,8 @@ extension CreateNoteViewReactor {
     
     return .concat([
       .just(.requestNoteDataDidChanged(requestNote)),
-      .just(.fetchStockSection(sectionItem))
+      .just(.fetchStockSection(sectionItem)),
+      self.emptyStockItemDidChanged(by: requestNote.stocks.count)
     ])
   }
   
@@ -500,6 +501,8 @@ extension CreateNoteViewReactor {
     
     return Observable.concat([
       .just(.requestNoteDataDidChanged(requestNote)),
+      .just(.stockItemDidDeleted(row)),
+      self.emptyStockItemDidChanged(by: requestNote.stocks.count)
       changedMutation
     ])
   }
