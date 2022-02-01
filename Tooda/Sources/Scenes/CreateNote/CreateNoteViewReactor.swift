@@ -408,7 +408,7 @@ self.dependency.coordinator.transition(
   
   private func registNoteAndDismissView() -> Observable<Mutation> {
     return self.dependency.service.request(NoteAPI.create(dto: self.currentState.requestNote))
-      .map(Note.self)
+      .toodaMap(Note.self)
       .asObservable()
       .map { String($0.id) }
       .flatMap { [weak self] noteID -> Observable<Mutation> in
@@ -447,7 +447,7 @@ extension CreateNoteViewReactor {
   
   private func updateNoteAndDismissView() -> Observable<Mutation> {
     return self.dependency.service.request(NoteAPI.update(dto: self.currentState.requestNote))
-      .map(Note.self)
+      .toodaMap(Note.self)
       .asObservable()
       .flatMap { [weak self] note -> Observable<Mutation> in
         return self?.dimissViewWithUpdateCompletion(note) ?? .empty()
