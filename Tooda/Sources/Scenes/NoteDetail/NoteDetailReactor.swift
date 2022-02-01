@@ -97,7 +97,7 @@ extension NoteDetailReactor {
   
   private func loadDataMutation() -> Observable<Mutation> {
     return dependency.service.request(NoteAPI.detail(id: initialState.noteID))
-      .map(Note.self)
+      .toodaMap(Note.self)
       .asObservable()
       .flatMap { note -> Observable<Mutation> in
         
@@ -152,7 +152,7 @@ extension NoteDetailReactor {
                                         images: note.noteImages.map { $0.imageURL },
                                         sticker: note.sticker ?? .wow)
     
-    let dateString = note.createdAt?.convertToDate()?.string(.dot) ?? ""
+    let dateString = note.createdAt?.string(.dot) ?? ""
     
     self.dependency.coordinator.transition(to: .modifyNote(dateString: dateString,
                                                            note: noteRequestDTO,

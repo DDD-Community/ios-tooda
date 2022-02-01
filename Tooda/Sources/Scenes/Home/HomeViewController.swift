@@ -239,7 +239,7 @@ final class HomeViewController: BaseViewController<HomeReactor> {
     self.monthTitleButton.snp.makeConstraints {
       $0.top.equalTo(self.view.safeAreaLayoutGuide.snp.top).offset(57.0)
       $0.centerX.equalToSuperview()
-      $0.size.equalTo(CGSize(width: 136.0, height: 39.0))
+      $0.size.equalTo(CGSize(width: 140.0, height: 39.0))
     }
 
     self.noteCountLabel.snp.makeConstraints {

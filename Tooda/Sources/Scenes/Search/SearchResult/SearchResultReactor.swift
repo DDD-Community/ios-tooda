@@ -61,7 +61,7 @@ extension SearchResultReactor {
   func mutate(action: Action) -> Observable<Mutation> {
     switch action {
     case let .search(text):
-      return self.mockSearchResult()
+      return self.loadSearchResult(text: text)
     }
   }
 
@@ -136,9 +136,9 @@ extension SearchResultReactor {
   private func loadSearchResult(text: String) -> Observable<Mutation> {
     return self.dependency.networking
       .request(SearchAPI.search(query: text, limit: Const.searchLimitCount))
-      .map([Note].self)
+      .toodaMap(SearchNoteResponse.self)
       .asObservable()
-      .map { Mutation.setSearchResult($0) }
+      .map { Mutation.setSearchResult($0.notes) }
   }
 }
 
