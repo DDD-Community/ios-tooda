@@ -71,11 +71,6 @@ final class CreateNoteViewReactor: Reactor {
     var shouldReigsterButtonEnabled: Bool = false
     var requestNote: NoteRequestDTO = NoteRequestDTO()
   }
-  
-  // FIXME: Global Event 추가로 제거 예정이에요.
-  struct Payload {
-    var updateCompletionRelay: PublishRelay<Note>?
-  }
 
   let initialState: State
   
@@ -84,8 +79,6 @@ final class CreateNoteViewReactor: Reactor {
   private var lastEditableStockCellIndexPath: IndexPath?
 
   let dependency: Dependency
-  
-  private let payload: Payload
   
   // MARK: Global Events
   
@@ -96,7 +89,7 @@ final class CreateNoteViewReactor: Reactor {
   
   private let stockItemEditCompletionRelay: PublishRelay<NoteStock> = PublishRelay()
   
-  init(dependency: Dependency, modifiableNote: NoteRequestDTO?, payload: Payload) {
+  init(dependency: Dependency, modifiableNote: NoteRequestDTO?) {
     self.dependency = dependency
     
     if let requestNote = modifiableNote {
@@ -104,8 +97,6 @@ final class CreateNoteViewReactor: Reactor {
     } else {
       self.initialState = State()
     }
-    
-    self.payload = payload
   }
 
   func mutate(action: Action) -> Observable<Mutation> {
@@ -419,9 +410,7 @@ self.dependency.coordinator.transition(
     self.dependency.coordinator.close(
       style: .dismiss,
       animated: true,
-      completion: { [weak self] in
-        self?.payload.updateCompletionRelay?.accept(note)
-      }
+      completion: nil
     )
     
     return .empty()
@@ -470,9 +459,7 @@ extension CreateNoteViewReactor {
     self.dependency.coordinator.close(
       style: .dismiss,
       animated: true,
-      completion: { [weak self] in
-        self?.payload.updateCompletionRelay?.accept(note)
-      }
+      completion: nil
     )
     
     return .empty()
