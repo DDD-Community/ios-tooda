@@ -418,6 +418,7 @@ self.dependency.coordinator.transition(
       animated: true,
       completion: { [weak self] in
         self?.payload.updateCompletionRelay?.accept(note)
+        self?.dependency.noteEventBus.onNext(.createNote(note))
       }
     )
     
