@@ -36,6 +36,7 @@ final class SearchResultReactor: Reactor {
 
   enum Mutation {
     case setSearchResult([Note])
+    case createNote(Note)
   }
 
   struct State {
@@ -144,6 +145,28 @@ extension SearchResultReactor {
 }
 
 
+// MARK: - Transform
+
+extension SearchResultReactor {
+
+  func transform(mutation: Observable<Mutation>) -> Observable<Mutation> {
+    return Observable.merge(
+      mutation,
+      self.dependency.noteEventBus
+        .flatMap { event -> Observable<Mutation> in
+          switch event {
+          case let .createNote(note):
+            return .just(.createNote(note))
+
+          default:
+            return .empty()
+          }
+        }
+    )
+  }
+}
+
+
 // MARK: - Reduce
 
 extension SearchResultReactor {
@@ -154,6 +177,12 @@ extension SearchResultReactor {
     switch mutation {
     case let .setSearchResult(notes):
       newState.notes = notes
+
+    case let .createNote(note):
+      newState.notes.append(note)
+
+    default:
+      break
     }
 
     return newState
