@@ -60,6 +60,7 @@ extension Date {
     case dotMonth = "yyyy.MM"
     case slash = "yyyy/MM/dd"
     case hyphen = "yyyy-MM-dd"
+    case weekAndTime = "yyyy-MM-dd (EE) HH:mm"
   }
 
   func string(_ type: DateFormatType = .base) -> String {
