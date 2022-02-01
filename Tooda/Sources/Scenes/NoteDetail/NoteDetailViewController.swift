@@ -45,6 +45,13 @@ final class NoteDetailViewController: BaseViewController<NoteDetailReactor> {
       
       return UITableViewCell()
     case .image:
+      
+      if case let .image(data) = item {
+        let cell = tableView.dequeue(NoteDetailImageCell.self, indexPath: indexPath)
+        cell.configure(data: data)
+        return cell
+      }
+      
       return UITableViewCell()
     case .link:
         if case let .link(reactor) = item {
@@ -73,16 +80,16 @@ final class NoteDetailViewController: BaseViewController<NoteDetailReactor> {
   private let tableView = UITableView().then {
     $0.separatorStyle = .none
     $0.backgroundColor = .white
-    $0.estimatedRowHeight = UITableView.automaticDimension
+    $0.rowHeight = UITableView.automaticDimension
     $0.alwaysBounceHorizontal = false
     $0.allowsSelection = false
-    $0.estimatedRowHeight = UITableView.automaticDimension
     $0.register(UITableViewCell.self)
     $0.register(NoteStickerCell.self)
     $0.register(NoteDetailTitleCell.self)
     $0.register(NoteDetailTextContentCell.self)
     $0.register(NoteStockCell.self)
     $0.register(NoteLinkCell.self)
+    $0.register(NoteDetailImageCell.self)
   }
   
   private let moreDetailButton = UIBarButtonItem().then {
