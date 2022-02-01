@@ -9,8 +9,8 @@ import Foundation
 
 struct NoteRequestDTO {
   var id: String?
-  var updatedAt: String?
-  var createdAt: String?
+  var updatedAt: Date?
+  var createdAt: Date?
   var title: String
   var content: String
   var stocks: [NoteStock]

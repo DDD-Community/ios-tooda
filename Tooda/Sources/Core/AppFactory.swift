@@ -138,7 +138,8 @@ final class AppFactory: AppFactoryType {
         dependency: .init(
           service: self.dependency.appInject.resolve(NetworkingProtocol.self),
           coordinator: self.dependency.appInject.resolve(AppCoordinatorType.self),
-          payload: payload
+          payload: payload,
+          noteEventBus: NoteEventBus.event.asObservable()
         )
       )
       let viewController = NoteListViewController(reactor: reactor)
