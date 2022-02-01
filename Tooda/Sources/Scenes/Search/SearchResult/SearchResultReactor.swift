@@ -37,6 +37,7 @@ final class SearchResultReactor: Reactor {
   enum Mutation {
     case setSearchResult([Note])
     case createNote(Note)
+    case editNote(Note)
   }
 
   struct State {
@@ -158,6 +159,9 @@ extension SearchResultReactor {
           case let .createNote(note):
             return .just(.createNote(note))
 
+          case let .editNode(note):
+            return .just(.editNote(note))
+
           default:
             return .empty()
           }
@@ -180,6 +184,12 @@ extension SearchResultReactor {
 
     case let .createNote(note):
       newState.notes.append(note)
+
+    case let .editNote(note):
+      guard let index = newState.notes.firstIndex(where: {
+        $0.id == note.id
+      }) else { break }
+      newState.notes[index] = note
 
     default:
       break
