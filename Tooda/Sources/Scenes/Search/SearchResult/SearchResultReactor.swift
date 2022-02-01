@@ -38,6 +38,7 @@ final class SearchResultReactor: Reactor {
     case setSearchResult([Note])
     case createNote(Note)
     case editNote(Note)
+    case deleteNote(Note)
   }
 
   struct State {
@@ -162,8 +163,8 @@ extension SearchResultReactor {
           case let .editNode(note):
             return .just(.editNote(note))
 
-          default:
-            return .empty()
+          case let .deleteNote(note):
+            return .just(.deleteNote(note))
           }
         }
     )
@@ -191,8 +192,11 @@ extension SearchResultReactor {
       }) else { break }
       newState.notes[index] = note
 
-    default:
-      break
+    case let .deleteNote(note):
+      guard let index = newState.notes.firstIndex(where: {
+        $0.id == note.id
+      }) else { break }
+      newState.notes.remove(at: index)
     }
 
     return newState
