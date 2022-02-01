@@ -130,6 +130,8 @@ final class NoteDetailViewController: BaseViewController<NoteDetailReactor> {
   // MARK: Bind
 
   override func bind(reactor: NoteDetailReactor) {
+    
+    self.tableView.rx.setDelegate(self).disposed(by: self.disposeBag)
 
     // Action
     self.rx.viewDidLoad
@@ -202,4 +204,21 @@ final class NoteDetailViewController: BaseViewController<NoteDetailReactor> {
 
   }
   
+}
+
+// MARK: - Extensions
+
+extension NoteDetailViewController: UITableViewDelegate {
+  func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+    switch dataSource[indexPath] {
+      case .title, .content, .link, .sticker, .stock:
+        return UITableView.automaticDimension
+      case .image(let data):
+        guard let image = UIImage(data: data) else { return UITableView.automaticDimension }
+        
+        let resizedImage = image.resizeImage(width: tableView.frame.width - NoteDetailImageCell.Metric.margin - NoteDetailImageCell.Metric.margin)
+        
+        return NoteDetailImageCell.Metric.margin + resizedImage.size.height
+    }
+  }
 }
