@@ -17,6 +17,7 @@ final class SearchResultReactor: Reactor {
 
   struct Dependency {
     let networking: NetworkingProtocol
+    let noteEventBus: Observable<NoteEventBus.Event>
   }
 
 
