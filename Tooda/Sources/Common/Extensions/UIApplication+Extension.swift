@@ -9,6 +9,14 @@
 import UIKit
 
 extension UIApplication {
+  static var keyWindow: UIWindow? {
+    return shared.connectedScenes
+            .filter({$0.activationState == .foregroundActive})
+            .compactMap({$0 as? UIWindowScene})
+            .first?.windows
+            .filter({$0.isKeyWindow}).first
+  }
+  
   var statusBarUIView: UIView? {
     let tag = 38482458385
     if let statusBar = windows.first?.viewWithTag(tag) {
