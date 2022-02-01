@@ -10,6 +10,7 @@ import Foundation
 
 import ReactorKit
 import RxSwift
+import Then
 
 final class NoteListReactor: Reactor {
   
@@ -48,9 +49,10 @@ final class NoteListReactor: Reactor {
     let service: NetworkingProtocol
     let coordinator: AppCoordinatorType
     let payload: Payload
+    let noteEventBus: Observable<NoteEventBus.Event>
   }
   
-  struct State {
+  struct State: Then {
     var noteListModel: [NoteListModel]
     var isEmpty: Bool?
     let fetchWindowSize: Int = 15
@@ -82,6 +84,26 @@ final class NoteListReactor: Reactor {
 // MARK: - Mutate
 
 extension NoteListReactor {
+  
+  func transform(mutation: Observable<Mutation>) -> Observable<Mutation> {
+    return Observable.merge(
+      mutation,
+      dependency.noteEventBus
+        .flatMap { [weak self] event -> Observable<Mutation> in
+          guard let self = self else { return Observable<Mutation>.empty() }
+          switch event {
+          case let .createNote(note):
+            return self.addNoteListMutation(note: note)
+
+          case let .editNode(note):
+            return self.modifyNoteListMutation(note: note)
+
+          case let .deleteNote(note):
+            return self.deleteNoteListMutation(note: note)
+          }
+        }
+    )
+  }
   
   func mutate(action: Action) -> Observable<Mutation> {
     switch action {
@@ -126,6 +148,30 @@ extension NoteListReactor {
       completion: nil
     )
     return Observable<Mutation>.empty()
+  }
+  
+  private func addNoteListMutation(note: Note) -> Observable<Mutation> {
+    guard var noteListModel = currentState.noteListModel.first else { return Observable.empty() }
+    noteListModel.items.insert(note, at: 0)
+    
+    return Observable.just(Mutation.setNoteListModel([noteListModel]))
+  }
+  
+  private func deleteNoteListMutation(note: Note) -> Observable<Mutation> {
+    guard var noteListModel = currentState.noteListModel.first else { return Observable.empty() }
+    let notes = noteListModel.items.filter { $0.id != note.id }
+    noteListModel.items = notes
+    
+    return Observable.just(Mutation.setNoteListModel([noteListModel]))
+  }
+  
+  private func modifyNoteListMutation(note: Note) -> Observable<Mutation> {
+    guard var noteListModel = currentState.noteListModel.first else { return Observable.empty() }
+    if let index = noteListModel.items.firstIndex(where: { $0.id == note.id }) {
+      noteListModel.items[index] = note
+    }
+    
+    return Observable.just(Mutation.setNoteListModel([noteListModel]))
   }
   
   private func loadMutation() -> Observable<Mutation> {
@@ -208,8 +254,9 @@ extension NoteListReactor {
 extension NoteListReactor {
   
   func reduce(state: State, mutation: Mutation) -> State {
-    var newState = state
-    newState.isEmpty = nil
+    var newState = state.with {
+      $0.isEmpty = nil
+    }
     
     switch mutation {
     case let .setNoteListModel(model):
