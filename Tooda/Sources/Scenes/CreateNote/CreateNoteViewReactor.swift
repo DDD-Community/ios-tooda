@@ -29,22 +29,7 @@ final class CreateNoteViewReactor: Reactor {
     let linkPreviewService: LinkPreViewServiceType
     let createDiarySectionFactory: CreateNoteSectionType?
     let modifiableNoteSectionFactory: ModifiableNoteSectionType?
-    
-    init(
-      service: NetworkingProtocol,
-      coordinator: AppCoordinatorType,
-      authorization: AppAuthorizationType,
-      linkPreviewService: LinkPreViewServiceType,
-      createDiarySectionFactory: CreateNoteSectionType?,
-      modifiableNoteSectionFactory: ModifiableNoteSectionType?
-    ) {
-      self.service = service
-      self.coordinator = coordinator
-      self.authorization = authorization
-      self.linkPreviewService = linkPreviewService
-      self.createDiarySectionFactory = createDiarySectionFactory
-      self.modifiableNoteSectionFactory = modifiableNoteSectionFactory
-    }
+    let noteEventBus: PublishSubject<NoteEventBus.Event>
   }
 
   enum Action {
