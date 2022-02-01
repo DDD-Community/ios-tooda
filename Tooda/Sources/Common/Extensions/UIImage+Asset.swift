@@ -40,6 +40,7 @@ enum AppImage: String {
   case iconNegativeEmoji = "icon_negative_emoji"
   case iconPositiveEmoji = "icon_positive_emoji"
   case iconCrossSymbol = "icon_cross_symbol"
+  case iconImagePlaceHolder = "icon_image_placeHolder"
   
   case closeButton = "cancel"
   case moreButton = "more"
