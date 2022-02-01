@@ -395,18 +395,33 @@ self.dependency.coordinator.transition(
     ])
   }
   
+  // FIXME: 진수님 작업 완료되면 .map에 커스텀 JsonDecoder를 변경할게요!
   private func registNoteAndDismissView() -> Observable<Mutation> {
     return self.dependency.service.request(NoteAPI.create(dto: self.currentState.requestNote))
       .toodaMap(Note.self)
       .asObservable()
-      .map { String($0.id) }
-      .flatMap { [weak self] noteID -> Observable<Mutation> in
-        if noteID.isNotEmpty {
-          return self?.dismissView() ?? .empty()
+      .flatMap { [weak self] note -> Observable<Mutation> in
+        if "\(note.id)".isNotEmpty {
+          return self?.dimissViewWithAddCompletion(note) ?? .empty()
         } else {
           return .empty()
         }
       }
+  }
+  
+  private func dimissViewWithAddCompletion(_ note: Note) -> Observable<Mutation> {
+    
+    guard "\(note.id)".isNotEmpty else { return .empty() }
+    
+    self.dependency.coordinator.close(
+      style: .dismiss,
+      animated: true,
+      completion: { [weak self] in
+        self?.payload.updateCompletionRelay?.accept(note)
+      }
+    )
+    
+    return .empty()
   }
 }
 
