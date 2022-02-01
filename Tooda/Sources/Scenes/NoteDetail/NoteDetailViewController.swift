@@ -155,6 +155,7 @@ final class NoteDetailViewController: BaseViewController<NoteDetailReactor> {
       .disposed(by: self.disposeBag)
     
     reactor.state
+      .observe(on: MainScheduler.asyncInstance)
       .map { $0.sectionModel }
       .bind(to: tableView.rx.items(dataSource: dataSource))
       .disposed(by: disposeBag)
