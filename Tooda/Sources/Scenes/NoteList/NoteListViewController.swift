@@ -68,6 +68,10 @@ final class NoteListViewController: BaseViewController<NoteListReactor> {
     $0.setImage(UIImage(type: .addNewNoteButton)?.withRenderingMode(.alwaysOriginal), for: .normal)
   }
   
+  private let loadingIndicator = UIActivityIndicatorView(style: .large).then {
+    $0.hidesWhenStopped = true
+  }
+  
   // MARK: - Con(De)structor
   
   init(reactor: NoteListReactor) {
@@ -112,6 +116,24 @@ final class NoteListViewController: BaseViewController<NoteListReactor> {
       .disposed(by: disposeBag)
     
     reactor.state
+      .map { $0.isLoading }
+      .skip(1)
+      .asDriver(onErrorJustReturn: false)
+      .drive(onNext: { [weak self] isLoading in
+        guard let self = self else { return }
+        if isLoading {
+          if !self.loadingIndicator.isAnimating {
+            self.loadingIndicator.startAnimating()
+          }
+        } else {
+          if self.loadingIndicator.isAnimating {
+            self.loadingIndicator.stopAnimating()
+          }
+        }
+      })
+      .disposed(by: disposeBag)
+    
+    reactor.state
       .map { $0.isEmpty }
       .compactMap { $0 }
       .asDriver(onErrorJustReturn: false)
@@ -145,6 +167,9 @@ final class NoteListViewController: BaseViewController<NoteListReactor> {
       .drive { [weak self] dateInfo in
         guard let self = self else { return }
         self.setNavigationTitle(year: dateInfo.year, month: dateInfo.month)
+        self.addNoteButton.isHidden =
+          (Date().year == dateInfo.year && Date().month == dateInfo.month)
+          ? false : true
       }
       .disposed(by: disposeBag)
   }
@@ -156,10 +181,12 @@ final class NoteListViewController: BaseViewController<NoteListReactor> {
     navigationItem.rightBarButtonItem = searchBarButton
     navigationController?.navigationBar.backgroundColor = .white
     UIApplication.shared.statusBarUIView?.backgroundColor = .white
+    
     view.addSubviews(
       emptyDefaultView,
       tableView,
-      addNoteButton
+      addNoteButton,
+      loadingIndicator
     )
   }
   
@@ -179,6 +206,11 @@ final class NoteListViewController: BaseViewController<NoteListReactor> {
       $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).inset(6)
       $0.width.height.equalTo(108)
     }
+    
+    loadingIndicator.snp.makeConstraints {
+      $0.edges.equalToSuperview()
+    }
+    loadingIndicator.startAnimating()
     
     setupEmptyBackgroundView()
   }
