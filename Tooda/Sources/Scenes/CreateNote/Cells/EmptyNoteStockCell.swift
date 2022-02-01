@@ -23,15 +23,14 @@ class EmptyNoteStockCell: BaseTableViewCell, View {
   var disposeBag: DisposeBag = DisposeBag()
   
   let containerView = UIView().then {
-    $0.layer.borderColor = Constants.baseColor?.cgColor
+    $0.backgroundColor = UIColor.gray6
+    $0.layer.borderColor = UIColor.gray4.cgColor
     $0.layer.borderWidth = 1.0
     $0.layer.masksToBounds = true
   }
   
   let titleLabel = UILabel().then {
-    $0.text = "종목 기록하기"
-    $0.textColor = UIColor(type: .gray2)
-    $0.font = UIFont.systemFont(ofSize: 13, weight: .bold)
+    $0.attributedText = "종목 기록하기".styled(with: TextStyle.body(color: UIColor.gray2))
     $0.sizeToFit()
   }
   

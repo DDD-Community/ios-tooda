@@ -63,6 +63,7 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
         
       cell.rx.didTapAddStock
         .debounce(.milliseconds(500), scheduler: MainScheduler.instance)
+        .filter { reactor.initialState.isEnabled }
         .subscribe(onNext: { [weak self] in
           self?.rxAddStockDidTapRelay.accept($0)
         })

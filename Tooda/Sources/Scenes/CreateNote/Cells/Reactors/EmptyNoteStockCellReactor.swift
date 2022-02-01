@@ -18,14 +18,15 @@ final class EmptyNoteStockCellReactor: Reactor {
   }
 
   struct State {
-
+    var isEnabled: Bool
   }
 
   let initialState: State
   private let uuid: String = UUID().uuidString
 
-  init() {
-    initialState = State()
+  init(itemCount: Int = 0) {
+    let isEnabled = itemCount < EmptyNoteStockCellReactor.itemMaxCount
+    initialState = State(isEnabled: isEnabled)
   }
 
   func mutate(action: Action) -> Observable<Mutation> {
@@ -36,6 +37,8 @@ final class EmptyNoteStockCellReactor: Reactor {
     var newState = state
     return newState
   }
+  
+  static let itemMaxCount: Int = 5
 }
 
 extension EmptyNoteStockCellReactor: Hashable {
