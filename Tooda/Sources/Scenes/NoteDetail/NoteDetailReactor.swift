@@ -125,7 +125,7 @@ extension NoteDetailReactor {
             identity: .header,
             items: [
               .sticker(note.sticker ?? Sticker.wow),
-              .title(note.title, note.updatedAt?.string() ?? note.createdAt?.string()),
+              .title(note.title, note.updatedAt ?? note.createdAt),
               .content(note.content)
             ]
           ),
@@ -143,8 +143,8 @@ extension NoteDetailReactor {
     guard let note = self.currentState.note else { return }
     
     let noteRequestDTO = NoteRequestDTO(id: "\(note.id)",
-                                        updatedAt: note.updatedAt?.string(),
-                                        createdAt: note.createdAt?.string(),
+                                        updatedAt: note.updatedAt,
+                                        createdAt: note.createdAt,
                                         title: note.title,
                                         content: note.content,
                                         stocks: note.noteStocks?.map { $0 } ?? [],
