@@ -138,8 +138,7 @@ final class NoteListCell: BaseTableViewCell {
     selectionStyle = .none
     emojiImageView.image = note.sticker?.image
     titleLabel.attributedText = note.title.styled(with: Font.title)
-    if let dateString = note.createdAt,
-       let date = dateString.convertToDate(),
+    if let date = note.createdAt,
        let weekName = Date.WeekDay(rawValue: date.weekday)?.name {
       
       recordDateLabel.attributedText = "\(date.string(.dot)) (\(weekName)) \(date.hour):\(date.minute) 기록".styled(with: Font.recordDate)
