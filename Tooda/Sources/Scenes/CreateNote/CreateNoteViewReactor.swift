@@ -452,6 +452,7 @@ extension CreateNoteViewReactor {
       animated: true,
       completion: { [weak self] in
         self?.payload.updateCompletionRelay?.accept(note)
+        self?.dependency.noteEventBus.onNext(.editNode(note))
       }
     )
     
