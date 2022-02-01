@@ -29,6 +29,6 @@ enum NoteDetailSectionItem {
   case title(String, Date?)
   case content(String)
   case stock(NoteStockCellReactor)
-  case image(String)
+  case image(Data)
   case link(NoteLinkCellReactor)
 }

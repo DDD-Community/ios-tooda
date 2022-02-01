@@ -139,6 +139,22 @@ extension NoteDetailReactor {
       }
   }
   
+  private func loadImageMutation(images: [NoteImage]) -> Observable<Mutation> {
+    return Observable.create { observer in
+      DispatchQueue.global(qos: .background).async {
+        let imageSectionItems = images
+          .compactMap { URL(string: $0.imageURL) }
+          .compactMap { try? Data(contentsOf: $0) }
+          .map { NoteDetailSectionItem.image($0) }
+        
+        observer.onNext(.appendImageSection(imageSectionItems))
+        observer.onCompleted()
+      }
+      
+      return Disposables.create()
+    }
+  }
+  
   private func editNote() {
     guard let note = self.currentState.note else { return }
     
