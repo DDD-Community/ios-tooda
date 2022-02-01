@@ -72,6 +72,7 @@ final class CreateNoteViewReactor: Reactor {
     var requestNote: NoteRequestDTO = NoteRequestDTO()
   }
   
+  // FIXME: Global Event 추가로 제거 예정이에요.
   struct Payload {
     var updateCompletionRelay: PublishRelay<Note>?
   }
@@ -413,12 +414,13 @@ self.dependency.coordinator.transition(
     
     guard "\(note.id)".isNotEmpty else { return .empty() }
     
+    self.dependency.noteEventBus.onNext(.createNote(note))
+    
     self.dependency.coordinator.close(
       style: .dismiss,
       animated: true,
       completion: { [weak self] in
         self?.payload.updateCompletionRelay?.accept(note)
-        self?.dependency.noteEventBus.onNext(.createNote(note))
       }
     )
     
@@ -463,12 +465,13 @@ extension CreateNoteViewReactor {
     
     guard "\(note.id)".isNotEmpty else { return .empty() }
     
+    self.dependency.noteEventBus.onNext(.editNode(note))
+    
     self.dependency.coordinator.close(
       style: .dismiss,
       animated: true,
       completion: { [weak self] in
         self?.payload.updateCompletionRelay?.accept(note)
-        self?.dependency.noteEventBus.onNext(.editNode(note))
       }
     )
     
