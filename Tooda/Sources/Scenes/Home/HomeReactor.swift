@@ -260,7 +260,6 @@ extension HomeReactor {
     }) else { return .empty() }
 
     var notebooks = self.currentState.notebooks
-    notebooks[index].noteCount += 1
     notebooks[index].updatedAt = note.updatedAt
 
     return .just(
