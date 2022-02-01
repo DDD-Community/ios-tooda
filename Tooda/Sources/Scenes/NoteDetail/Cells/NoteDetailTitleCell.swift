@@ -64,7 +64,7 @@ final class NoteDetailTitleCell: BaseTableViewCell {
   
   // MARK: - Internal methods
   
-  func configure(title: String?, date: String?) {
+  func configure(title: String?, date: Date?) {
     super.configure()
     
     if let title = title {
@@ -72,7 +72,7 @@ final class NoteDetailTitleCell: BaseTableViewCell {
     }
     
     if let dateString = date {
-      dateLabel.attributedText = dateString.styled(with: Font.dateInfo)
+      dateLabel.attributedText = dateString.string(.dot).styled(with: Font.dateInfo)
     }
   }
 }
