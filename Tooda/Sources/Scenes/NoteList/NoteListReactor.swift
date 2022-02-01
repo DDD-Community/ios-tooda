@@ -183,7 +183,7 @@ extension NoteListReactor {
         month: initialState.dateInfo.month
         )
       )
-      .map(NoteListDTO.self)
+      .toodaMap(NoteListDTO.self)
       .catchAndReturn(NoteListDTO(cursor: nil, noteList: []))
       .asObservable()
       .flatMap { noteDTO -> Observable<Mutation> in
@@ -232,7 +232,7 @@ extension NoteListReactor {
         month: dependency.payload.month
         )
       )
-      .map(NoteListDTO.self)
+      .toodaMap(NoteListDTO.self)
       .asObservable()
       .flatMap { noteDTO -> Observable<Mutation> in
         guard let noteList = noteDTO.noteList else {
