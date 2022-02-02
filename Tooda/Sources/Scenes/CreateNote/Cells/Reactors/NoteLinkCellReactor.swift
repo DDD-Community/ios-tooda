@@ -35,7 +35,8 @@ final class NoteLinkCellReactor: Reactor {
 
   let initialState: State
   private let dependency: Dependency
-  private let payload: String
+  
+  let payload: String
   
   private let uuid: String = UUID().uuidString
 

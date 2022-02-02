@@ -10,6 +10,7 @@ import UIKit
 
 import Then
 import ReactorKit
+import RxSwift
 import SnapKit
 
 class NoteLinkCell: BaseTableViewCell, View {
@@ -87,6 +88,8 @@ class NoteLinkCell: BaseTableViewCell, View {
     $0.numberOfLines = Const.labelLineNumbers
   }
   
+  let button = UIButton()
+  
   // MARK: Cell Life Cycle
   
   func configure(reactor: Reactor) {
@@ -102,7 +105,7 @@ class NoteLinkCell: BaseTableViewCell, View {
   override func configureUI() {
     super.configureUI()
     
-    self.contentView.addSubviews(containerStackView, indcatorView)
+    self.contentView.addSubviews(containerStackView, button, indcatorView)
     
     [thumnailView, lineView, infoStackView].forEach {
       self.containerStackView.addArrangedSubview($0)
@@ -129,6 +132,10 @@ class NoteLinkCell: BaseTableViewCell, View {
       $0.leading.trailing.equalToSuperview().inset(20)
       $0.bottom.equalToSuperview()
     }
+    
+    button.snp.makeConstraints {
+      $0.edges.equalToSuperview()
+    }   
     
     thumnailView.snp.makeConstraints {
       $0.size.equalTo(Metric.imageViewSize)
@@ -198,6 +205,17 @@ extension NoteLinkCell {
       self.indcatorView.startAnimating()
     } else {
       self.indcatorView.stopAnimating()
+    }
+  }
+}
+
+// MARK: - Reactive Extension
+
+extension Reactive where Base: NoteLinkCell {
+  var itemDidTapped: Observable<String> {
+    return self.base.button.rx.tap.flatMap { [weak base] _ -> Observable<String> in
+      let urlString = base?.reactor?.payload ?? ""
+      return .just(urlString)
     }
   }
 }
