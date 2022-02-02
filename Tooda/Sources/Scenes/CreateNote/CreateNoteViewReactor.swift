@@ -379,7 +379,15 @@ extension CreateNoteViewReactor {
 extension CreateNoteViewReactor {
   private func linkButtonDidTapped() -> Observable<Mutation> {
     
-    self.dependency.coordinator.transition(to: .popUp(type: .textInput(self.addLinkURLCompletionRelay)), using: .modal, animated: false)
+    let maxItemCount: Int = 2
+    
+    if self.currentState.sections[NoteSection.Identity.link.rawValue].items.count < maxItemCount {
+      self.dependency.coordinator.transition(to: .popUp(type: .textInput(self.addLinkURLCompletionRelay)),
+                                             using: .modal,
+                                             animated: false)
+    } else {
+      return .just(.present(.showAlert("링크는 최대 \(maxItemCount)개까지 등록 가능합니다.")))
+    }
     
     return .empty()
   }
