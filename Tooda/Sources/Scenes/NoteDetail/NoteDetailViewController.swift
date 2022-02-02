@@ -45,6 +45,13 @@ final class NoteDetailViewController: BaseViewController<NoteDetailReactor> {
       
       return UITableViewCell()
     case .image:
+      
+      if case let .image(data) = item {
+        let cell = tableView.dequeue(NoteDetailImageCell.self, indexPath: indexPath)
+        cell.configure(data: data)
+        return cell
+      }
+      
       return UITableViewCell()
     case .link:
         if case let .link(reactor) = item {
@@ -73,16 +80,15 @@ final class NoteDetailViewController: BaseViewController<NoteDetailReactor> {
   private let tableView = UITableView().then {
     $0.separatorStyle = .none
     $0.backgroundColor = .white
-    $0.estimatedRowHeight = UITableView.automaticDimension
     $0.alwaysBounceHorizontal = false
     $0.allowsSelection = false
-    $0.estimatedRowHeight = UITableView.automaticDimension
     $0.register(UITableViewCell.self)
     $0.register(NoteStickerCell.self)
     $0.register(NoteDetailTitleCell.self)
     $0.register(NoteDetailTextContentCell.self)
     $0.register(NoteStockCell.self)
     $0.register(NoteLinkCell.self)
+    $0.register(NoteDetailImageCell.self)
   }
   
   private let moreDetailButton = UIBarButtonItem().then {
@@ -123,6 +129,8 @@ final class NoteDetailViewController: BaseViewController<NoteDetailReactor> {
   // MARK: Bind
 
   override func bind(reactor: NoteDetailReactor) {
+    
+    self.tableView.rx.setDelegate(self).disposed(by: self.disposeBag)
 
     // Action
     self.rx.viewDidLoad
@@ -148,6 +156,7 @@ final class NoteDetailViewController: BaseViewController<NoteDetailReactor> {
       .disposed(by: self.disposeBag)
     
     reactor.state
+      .observe(on: MainScheduler.asyncInstance)
       .map { $0.sectionModel }
       .bind(to: tableView.rx.items(dataSource: dataSource))
       .disposed(by: disposeBag)
@@ -194,4 +203,21 @@ final class NoteDetailViewController: BaseViewController<NoteDetailReactor> {
 
   }
   
+}
+
+// MARK: - Extensions
+
+extension NoteDetailViewController: UITableViewDelegate {
+  func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+    switch dataSource[indexPath] {
+      case .title, .content, .link, .sticker, .stock:
+        return UITableView.automaticDimension
+      case .image(let data):
+        guard let image = UIImage(data: data) else { return UITableView.automaticDimension }
+        
+        let resizedImage = image.resizeImage(width: tableView.frame.width - NoteDetailImageCell.Metric.margin - NoteDetailImageCell.Metric.margin)
+        
+        return NoteDetailImageCell.Metric.margin + resizedImage.size.height
+    }
+  }
 }

@@ -37,6 +37,7 @@ final class NoteDetailReactor: Reactor {
   enum Mutation {
     case setNoteDetailSectionModel([NoteDetailSection])
     case fetchNote(Note)
+    case appendImageSection([NoteDetailSectionItem])
   }
 
   struct State {
@@ -87,6 +88,7 @@ extension NoteDetailReactor {
   
   private func loadDataMutation() -> Observable<Mutation> {
     return dependency.service.request(NoteAPI.detail(id: initialState.noteID))
+      .subscribe(on: ConcurrentDispatchQueueScheduler(qos: .userInitiated))
       .toodaMap(Note.self)
       .asObservable()
       .flatMap { note -> Observable<Mutation> in
@@ -120,13 +122,31 @@ extension NoteDetailReactor {
             ]
           ),
           stockSection,
-          linkSection
+          linkSection,
+          NoteDetailSection(identity: .image, items: [])
         ]
         return Observable<Mutation>.concat([
           .just(Mutation.setNoteDetailSectionModel(sectionModels)),
+          self.loadImageMutation(images: note.noteImages),
           .just(Mutation.fetchNote(note))
         ])
       }
+  }
+  
+  private func loadImageMutation(images: [NoteImage]) -> Observable<Mutation> {
+    return Observable.create { observer in
+      DispatchQueue.global(qos: .background).async {
+        let imageSectionItems = images
+          .compactMap { URL(string: $0.imageURL) }
+          .compactMap { try? Data(contentsOf: $0) }
+          .map { NoteDetailSectionItem.image($0) }
+        
+        observer.onNext(.appendImageSection(imageSectionItems))
+        observer.onCompleted()
+      }
+      
+      return Disposables.create()
+    }
   }
   
   private func editNote() {
@@ -163,6 +183,8 @@ extension NoteDetailReactor {
       newState.sectionModel = sectionModel
     case let .fetchNote(note):
       newState.note = note
+    case let .appendImageSection(sectionItems):
+      newState.sectionModel[NoteDetailSection.Identity.image.rawValue].items = sectionItems
     }
     
     return newState
