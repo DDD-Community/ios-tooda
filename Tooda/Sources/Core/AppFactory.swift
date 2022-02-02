@@ -49,10 +49,10 @@ final class AppFactory: AppFactoryType {
           linkPreviewService:
             self.dependency.appInject.resolve(LinkPreViewServiceType.self),
           createDiarySectionFactory: createDiarySectionFactory,
-          modifiableNoteSectionFactory: nil
+          modifiableNoteSectionFactory: nil,
+          noteEventBus: NoteEventBus.event
         ),
-        modifiableNote: nil,
-        payload: .init(updateCompletionRelay: nil)
+        modifiableNote: nil
       )
         
       let viewController = CreateNoteViewController(dateString: today, reactor: reactor, mode: .add)
@@ -60,7 +60,7 @@ final class AppFactory: AppFactoryType {
       navigationController.modalPresentationStyle = .overFullScreen
       return navigationController
         
-    case .modifyNote(let dateString, let note, let updateCompletionRelay):
+    case .modifyNote(let dateString, let note):
         let reactor = CreateNoteViewReactor(
           dependency: .init(
             service: self.dependency.appInject.resolve(NetworkingProtocol.self),
@@ -69,10 +69,10 @@ final class AppFactory: AppFactoryType {
             linkPreviewService:
               self.dependency.appInject.resolve(LinkPreViewServiceType.self),
             createDiarySectionFactory: nil,
-            modifiableNoteSectionFactory: modifiableNoteSectionFactory
+            modifiableNoteSectionFactory: modifiableNoteSectionFactory,
+            noteEventBus: NoteEventBus.event
           ),
-          modifiableNote: note,
-          payload: .init(updateCompletionRelay: updateCompletionRelay)
+          modifiableNote: note
         )
         
         let viewController = CreateNoteViewController(dateString: dateString, reactor: reactor, mode: .update)

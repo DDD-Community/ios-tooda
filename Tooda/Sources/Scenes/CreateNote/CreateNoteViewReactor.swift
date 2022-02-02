@@ -29,22 +29,7 @@ final class CreateNoteViewReactor: Reactor {
     let linkPreviewService: LinkPreViewServiceType
     let createDiarySectionFactory: CreateNoteSectionType?
     let modifiableNoteSectionFactory: ModifiableNoteSectionType?
-    
-    init(
-      service: NetworkingProtocol,
-      coordinator: AppCoordinatorType,
-      authorization: AppAuthorizationType,
-      linkPreviewService: LinkPreViewServiceType,
-      createDiarySectionFactory: CreateNoteSectionType?,
-      modifiableNoteSectionFactory: ModifiableNoteSectionType?
-    ) {
-      self.service = service
-      self.coordinator = coordinator
-      self.authorization = authorization
-      self.linkPreviewService = linkPreviewService
-      self.createDiarySectionFactory = createDiarySectionFactory
-      self.modifiableNoteSectionFactory = modifiableNoteSectionFactory
-    }
+    let noteEventBus: PublishSubject<NoteEventBus.Event>
   }
 
   enum Action {
@@ -86,10 +71,6 @@ final class CreateNoteViewReactor: Reactor {
     var shouldReigsterButtonEnabled: Bool = false
     var requestNote: NoteRequestDTO = NoteRequestDTO()
   }
-  
-  struct Payload {
-    var updateCompletionRelay: PublishRelay<Note>?
-  }
 
   let initialState: State
   
@@ -98,8 +79,6 @@ final class CreateNoteViewReactor: Reactor {
   private var lastEditableStockCellIndexPath: IndexPath?
 
   let dependency: Dependency
-  
-  private let payload: Payload
   
   // MARK: Global Events
   
@@ -110,7 +89,7 @@ final class CreateNoteViewReactor: Reactor {
   
   private let stockItemEditCompletionRelay: PublishRelay<NoteStock> = PublishRelay()
   
-  init(dependency: Dependency, modifiableNote: NoteRequestDTO?, payload: Payload) {
+  init(dependency: Dependency, modifiableNote: NoteRequestDTO?) {
     self.dependency = dependency
     
     if let requestNote = modifiableNote {
@@ -118,8 +97,6 @@ final class CreateNoteViewReactor: Reactor {
     } else {
       self.initialState = State()
     }
-    
-    self.payload = payload
   }
 
   func mutate(action: Action) -> Observable<Mutation> {
@@ -410,18 +387,33 @@ self.dependency.coordinator.transition(
     ])
   }
   
+  // FIXME: 진수님 작업 완료되면 .map에 커스텀 JsonDecoder를 변경할게요!
   private func registNoteAndDismissView() -> Observable<Mutation> {
     return self.dependency.service.request(NoteAPI.create(dto: self.currentState.requestNote))
       .toodaMap(Note.self)
       .asObservable()
-      .map { String($0.id) }
-      .flatMap { [weak self] noteID -> Observable<Mutation> in
-        if noteID.isNotEmpty {
-          return self?.dismissView() ?? .empty()
+      .flatMap { [weak self] note -> Observable<Mutation> in
+        if "\(note.id)".isNotEmpty {
+          return self?.dimissViewWithAddCompletion(note) ?? .empty()
         } else {
           return .empty()
         }
       }
+  }
+  
+  private func dimissViewWithAddCompletion(_ note: Note) -> Observable<Mutation> {
+    
+    guard "\(note.id)".isNotEmpty else { return .empty() }
+    
+    self.dependency.noteEventBus.onNext(.createNote(note))
+    
+    self.dependency.coordinator.close(
+      style: .dismiss,
+      animated: true,
+      completion: nil
+    )
+    
+    return .empty()
   }
 }
 
@@ -462,12 +454,12 @@ extension CreateNoteViewReactor {
     
     guard "\(note.id)".isNotEmpty else { return .empty() }
     
+    self.dependency.noteEventBus.onNext(.editNode(note))
+    
     self.dependency.coordinator.close(
       style: .dismiss,
       animated: true,
-      completion: { [weak self] in
-        self?.payload.updateCompletionRelay?.accept(note)
-      }
+      completion: nil
     )
     
     return .empty()
