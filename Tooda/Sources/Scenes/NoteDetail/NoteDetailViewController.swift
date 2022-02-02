@@ -18,7 +18,7 @@ final class NoteDetailViewController: BaseViewController<NoteDetailReactor> {
   
   typealias Section = RxTableViewSectionedReloadDataSource<NoteDetailSection>
   
-  lazy var dataSource: Section = Section(configureCell: { section, tableView, indexPath, item -> UITableViewCell in
+  lazy var dataSource: Section = Section(configureCell: { [weak self] section, tableView, indexPath, item -> UITableViewCell in
     guard let sectionType = section.sectionModels[safe: indexPath.section]?.identity else {
       return UITableViewCell()
     }
@@ -57,6 +57,13 @@ final class NoteDetailViewController: BaseViewController<NoteDetailReactor> {
         if case let .link(reactor) = item {
           let cell = tableView.dequeue(NoteLinkCell.self, indexPath: indexPath)
           cell.configure(reactor: reactor)
+          
+          cell.rx.itemDidTapped
+            .subscribe(onNext: { [weak self] in
+              self?.linkItemCellDidTappedRelay.accept($0)
+            })
+            .disposed(by: cell.disposeBag)
+          
           return cell
         }
         
@@ -74,6 +81,8 @@ final class NoteDetailViewController: BaseViewController<NoteDetailReactor> {
   
   
   private let editNoteButtonRelay: PublishRelay<Void> = PublishRelay()
+  
+  private let linkItemCellDidTappedRelay: PublishRelay<String> = PublishRelay()
   
   // MARK: UI Properties
   
@@ -152,6 +161,11 @@ final class NoteDetailViewController: BaseViewController<NoteDetailReactor> {
     
     self.editNoteButtonRelay
       .map { NoteDetailReactor.Action.editNote }
+      .bind(to: reactor.action)
+      .disposed(by: self.disposeBag)
+    
+    self.linkItemCellDidTappedRelay
+      .map { NoteDetailReactor.Action.linkItemDidTapped($0) }
       .bind(to: reactor.action)
       .disposed(by: self.disposeBag)
     
