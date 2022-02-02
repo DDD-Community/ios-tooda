@@ -80,7 +80,6 @@ final class NoteDetailViewController: BaseViewController<NoteDetailReactor> {
   private let tableView = UITableView().then {
     $0.separatorStyle = .none
     $0.backgroundColor = .white
-    $0.rowHeight = UITableView.automaticDimension
     $0.alwaysBounceHorizontal = false
     $0.allowsSelection = false
     $0.register(UITableViewCell.self)
