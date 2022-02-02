@@ -93,8 +93,6 @@ final class CreateNoteViewReactor: Reactor {
 
   let initialState: State
   
-  private let linkItemMaxCount: Int = 2
-  
   private var lastEditableStockCellIndexPath: IndexPath?
 
   let dependency: Dependency
@@ -205,7 +203,6 @@ final class CreateNoteViewReactor: Reactor {
       self.addStockCompletionRelay
         .map { Action.stockItemDidAdded($0) },
       self.addLinkURLCompletionRelay
-        .take(self.linkItemMaxCount)
         .map { Action.linkURLDidAdded($0) },
       self.addStickerCompletionRelay
         .map { Action.stckerDidPicked($0) },
