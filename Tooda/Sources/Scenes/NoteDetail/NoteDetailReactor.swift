@@ -32,6 +32,7 @@ final class NoteDetailReactor: Reactor {
     case loadData
     case back
     case editNote
+    case linkItemDidTapped(String)
   }
 
   enum Mutation {
@@ -93,6 +94,8 @@ extension NoteDetailReactor {
       case .editNote:
         self.editNote()
         return .empty()
+    case .linkItemDidTapped(let urlString):
+      return linkItemDidTapped(urlString)
     }
   }
   
@@ -178,6 +181,17 @@ extension NoteDetailReactor {
                                                            note: noteRequestDTO,
                                                            updateCompletonRelay: self.noteUpdateCompletionRelay),
                                            using: .modal, animated: true, completion: nil)
+  }
+  
+  private func linkItemDidTapped(_ urlString: String) -> Observable<Mutation> {
+    guard let url = URL(string: urlString) else { return .empty() }
+    
+    self.dependency.coordinator.transition(to: .inAppBrowser(url: url),
+                                           using: .modal,
+                                           animated: true,
+                                           completion: nil)
+    
+    return .empty()
   }
 }
 
