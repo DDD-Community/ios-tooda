@@ -28,7 +28,7 @@ class NoteImageCell: BaseTableViewCell, View {
     switch item {
       case .empty(let reactor):
         let cell = collectionView.dequeue(EmptyNoteImageItemCell.self, indexPath: indexPath)
-        cell.configure(reactor: reactor)
+        cell.configure()
         
         if let relay = self?.cellItemDidTapRelay {
           cell.rx.addImageButtonDidTap

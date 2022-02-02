@@ -28,7 +28,7 @@ extension NoteSection: AnimatableSectionModelType {
 
 enum NoteSectionItem: Hashable {
   case content(NoteContentCellReactor)
-  case addStock(EmptyNoteStockCellReactor)
+  case addStock
   case stock(NoteStockCellReactor)
   case image(NoteImageCellReactor)
   case link(NoteLinkCellReactor)

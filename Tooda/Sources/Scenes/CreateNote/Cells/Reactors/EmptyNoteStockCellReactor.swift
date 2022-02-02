@@ -8,6 +8,7 @@
 
 import ReactorKit
 
+@available(*, deprecated, message: "종목 기록하기 Cell의 Reactor는 곧 제거될 예정이에요.")
 final class EmptyNoteStockCellReactor: Reactor {
   enum Action {
 

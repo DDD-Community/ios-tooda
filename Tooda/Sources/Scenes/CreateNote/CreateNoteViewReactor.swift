@@ -575,9 +575,7 @@ extension CreateNoteViewReactor {
     var sectionItems: [NoteSectionItem] = []
     
     if count < itemMaxCount {
-      let reactor = EmptyNoteStockCellReactor(itemCount: count)
-      let sectionItem = NoteSectionItem.addStock(reactor)
-      sectionItems.append(sectionItem)
+      sectionItems.append(NoteSectionItem.addStock)
     }
     
     return .just(.fetchEmptyStockItem(sectionItems))
@@ -599,7 +597,7 @@ let createDiarySectionFactory: CreateNoteSectionType = { authorization, coordina
   let contentSectionItem: NoteSectionItem = NoteSectionItem.content(contentReactor)
   
   let addStockReactor: EmptyNoteStockCellReactor = EmptyNoteStockCellReactor()
-  let addStockSectionItem: NoteSectionItem = NoteSectionItem.addStock(addStockReactor)
+  let addStockSectionItem: NoteSectionItem = NoteSectionItem.addStock
   
   let imageReactor: NoteImageCellReactor = NoteImageCellReactor(dependency: .init(factory: noteImageSectionFactory))
   let imageSectionItem: NoteSectionItem = NoteSectionItem.image(imageReactor)
@@ -657,7 +655,7 @@ let modifiableNoteSectionFactory: (NoteRequestDTO, LinkPreViewServiceType) -> [N
   }
   
   let addStockReactor: EmptyNoteStockCellReactor = EmptyNoteStockCellReactor(itemCount: note.stocks.count)
-  let addStockSectionItem: NoteSectionItem = NoteSectionItem.addStock(addStockReactor)
+  let addStockSectionItem: NoteSectionItem = NoteSectionItem.addStock
   
   let imageReactor: NoteImageCellReactor = NoteImageCellReactor(
     dependency: .init(
