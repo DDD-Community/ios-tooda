@@ -509,7 +509,6 @@ extension CreateNoteViewReactor {
     
     return Observable.concat([
       .just(.requestNoteDataDidChanged(requestNote)),
-      .just(.stockItemDidDeleted(row)),
       self.emptyStockItemDidChanged(by: requestNote.stocks.count),
       changedMutation
     ])
