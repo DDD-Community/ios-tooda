@@ -77,7 +77,7 @@ final class CreateNoteViewReactor: Reactor {
     case stockItemDidDeleted(Int)
     case linkItemDidDeleted(Int)
     case requestNoteDataDidChanged(NoteRequestDTO)
-    case fetchEmptyStockItem(NoteSectionItem)
+    case fetchEmptyStockItem([NoteSectionItem])
   }
 
   struct State: Then {
@@ -192,8 +192,8 @@ final class CreateNoteViewReactor: Reactor {
       newState.sections[NoteSection.Identity.link.rawValue].items.remove(at: row)
     case .requestNoteDataDidChanged(let data):
       newState.requestNote = data
-    case .fetchEmptyStockItem(let sectionItem):
-      newState.sections[NoteSection.Identity.addStock.rawValue].items = [sectionItem]
+    case .fetchEmptyStockItem(let sectionItems):
+      newState.sections[NoteSection.Identity.addStock.rawValue].items = sectionItems
     }
 
     return newState
@@ -569,9 +569,18 @@ extension CreateNoteViewReactor {
 
 extension CreateNoteViewReactor {
   private func emptyStockItemDidChanged(by count: Int) -> Observable<Mutation> {
-    let reactor = EmptyNoteStockCellReactor(itemCount: count)
-    let sectionItem = NoteSectionItem.addStock(reactor)
-    return .just(.fetchEmptyStockItem(sectionItem))
+    
+    let itemMaxCount = 5
+    
+    var sectionItems: [NoteSectionItem] = []
+    
+    if count < itemMaxCount {
+      let reactor = EmptyNoteStockCellReactor(itemCount: count)
+      let sectionItem = NoteSectionItem.addStock(reactor)
+      sectionItems.append(sectionItem)
+    }
+    
+    return .just(.fetchEmptyStockItem(sectionItems))
   }
 }
 
