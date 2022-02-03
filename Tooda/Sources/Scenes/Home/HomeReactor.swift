@@ -40,6 +40,7 @@ final class HomeReactor: Reactor {
     case setNotebooks([NotebookMeta])
     case selectNotebook(notebookIndex: Int?)
     case makeException(State.Exception)
+    case setLoading(Bool)
   }
   
   struct State {
@@ -55,6 +56,7 @@ final class HomeReactor: Reactor {
     // ViewModels
     var notebookViewModels: [NotebookCell.ViewModel]
     var exception: Exception?
+    var isLoading: Bool
   }
 
   // MARK: Constants
@@ -79,7 +81,8 @@ final class HomeReactor: Reactor {
       selectedNotobook: nil,
       selectedIndex: nil,
       notebookViewModels: [],
-      exception: nil
+      exception: nil,
+      isLoading: false
     )
   }()
 
@@ -111,7 +114,10 @@ extension HomeReactor {
   func mutate(action: Action) -> Observable<Mutation> {
     switch action {
     case .load:
-      return self.loadMutation()
+      return Observable<Mutation>.concat([
+        .just(Mutation.setLoading(true)),
+        self.loadMutation()
+      ])
 
     case let .paging(index):
       return Observable<Mutation>.just(.selectNotebook(notebookIndex: index))
@@ -146,7 +152,12 @@ extension HomeReactor {
       .toodaMap([NotebookMeta].self)
       .catchAndReturn([])
       .asObservable()
-      .map { Mutation.setNotebooks($0) }
+      .flatMap {
+        return Observable<Mutation>.concat([
+          .just(.setLoading(false)),
+          .just(.setNotebooks($0))
+        ])
+      }
   }
 
   private func pickDateMutation(_ date: Date) -> Observable<Mutation> {
@@ -159,24 +170,32 @@ extension HomeReactor {
         )
       )
     } else {
-      return self.dependency.service.request(
-        NotebookAPI.meta(
-          year: date.year
+      return Observable<Mutation>.concat([
+        .just(.setLoading(true)),
+        self.dependency.service.request(
+          NotebookAPI.meta(
+            year: date.year
+          )
         )
-      )
-        .map([NotebookMeta].self)
-        .catchAndReturn([])
-        .asObservable()
-        .flatMap { books -> Observable<Mutation> in
-          guard let index = books.firstIndex(where: { $0.month == date.month })
-          else {
-            return .just(.makeException(.emptyNoteAlert))
+          .map([NotebookMeta].self)
+          .catchAndReturn([])
+          .asObservable()
+          .flatMap { books -> Observable<Mutation> in
+            guard let index = books.firstIndex(where: { $0.month == date.month })
+            else {
+              return Observable<Mutation>.concat([
+                .just(.setLoading(false)),
+                .just(.makeException(.emptyNoteAlert))
+              ])
+            }
+            return Observable<Mutation>.concat([
+              .just(.setLoading(false)),
+              .just(.setNotebooks(books)),
+              .just(.selectNotebook(notebookIndex: index))
+            ])
           }
-          return Observable<Mutation>.concat([
-            .just(.setNotebooks(books)),
-            .just(.selectNotebook(notebookIndex: index))
-          ])
-        }
+      ])
+
     }
   }
 }
@@ -313,6 +332,9 @@ extension HomeReactor {
 
     case let .makeException(exception):
       newState.exception = exception
+
+    case let .setLoading(isLoading):
+      newState.isLoading = isLoading
     }
 
     return newState
