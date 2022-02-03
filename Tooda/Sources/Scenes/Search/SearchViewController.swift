@@ -32,6 +32,7 @@ final class SearchViewController: BaseViewController<SearchReactor> {
   private let searchBar = UISearchBar().then {
     $0.searchTextPositionAdjustment = .init(horizontal: 5.0, vertical: 0.0)
     $0.searchTextField.attributedPlaceholder = "전체 노트 중 검색".styled(with: Font.placeholder)
+    $0.searchTextField.typingAttributes = Font.searchText
   }
 
 
@@ -83,9 +84,7 @@ final class SearchViewController: BaseViewController<SearchReactor> {
       .asObservable()
       .do(onNext: { [weak self] text in
         guard let self = self else { return }
-        self.searchBar.searchTextField.attributedText = text.styled(
-          with: Font.searchText
-        )
+        self.searchBar.text = text
         self.searchBar.resignFirstResponder()
         self.moveToResultViewController()
       })
@@ -133,10 +132,6 @@ final class SearchViewController: BaseViewController<SearchReactor> {
 // MARK: - UISearchBarDelegate
 
 extension SearchViewController: UISearchBarDelegate {
-
-  func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-    self.searchBar.searchTextField.attributedText = searchText.styled(with: Font.searchText)
-  }
 
   func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
     self.moveToRecentViewController()
