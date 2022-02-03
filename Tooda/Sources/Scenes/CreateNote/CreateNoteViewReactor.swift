@@ -17,7 +17,7 @@ final class CreateNoteViewReactor: Reactor {
   enum ViewPresentType {
     case showAlert(String)
     case showPermission(String)
-    case showPhotoPicker
+    case showImageSourceActionSheetView
   }
   
   let scheduler: Scheduler = MainScheduler.asyncInstance
@@ -230,7 +230,7 @@ final class CreateNoteViewReactor: Reactor {
           return .just(.present(.showAlert("이미지는 최대 3개까지 등록 가능합니다.")))
         }
         
-        return .just(.present(.showPhotoPicker))
+        return .just(.present(.showImageSourceActionSheetView))
       case .item:
         imageCellReactor.action.onNext(.removeImage(indexPath))
         

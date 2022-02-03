@@ -329,7 +329,7 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
     
     reactor.state
       .compactMap { $0.presentType }
-      .asDriver(onErrorJustReturn: .showPhotoPicker)
+      .asDriver(onErrorJustReturn: .showImageSourceActionSheetView)
       .drive(onNext: { [weak self] in
         self?.present(by: $0)
       }).disposed(by: self.disposeBag)
@@ -372,8 +372,9 @@ extension CreateNoteViewController {
         self.showAlert(message: message)
       case .showPermission(let message):
         self.showAlertAndOpenAppSetting(message: message)
-      case .showPhotoPicker:
-        self.showPhotoPicker()
+      case .showImageSourceActionSheetView:
+        self.showImageActonSheetView()
+      case .showImagePickerView(let pickerType):
     }
   }
   
@@ -400,7 +401,7 @@ extension CreateNoteViewController {
     self.present(alertController, animated: true, completion: nil)
   }
   
-  private func showPhotoPicker() {
+  private func showImageActonSheetView() {
     let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
     
     let cancel = UIAlertAction(title: "취소", style: .cancel, handler: nil)
