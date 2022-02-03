@@ -18,6 +18,7 @@ final class SearchResultReactor: Reactor {
   struct Dependency {
     let networking: NetworkingProtocol
     let noteEventBus: Observable<NoteEventBus.Event>
+    let coordinator: AppCoordinatorType
   }
 
 
@@ -32,6 +33,7 @@ final class SearchResultReactor: Reactor {
 
   enum Action {
     case search(text: String)
+    case didTapNote(index: Int)
   }
 
   enum Mutation {
@@ -66,6 +68,10 @@ extension SearchResultReactor {
     switch action {
     case let .search(text):
       return self.loadSearchResult(text: text)
+
+    case let .didTapNote(index):
+      self.pushNoteList(index: index)
+      return .empty()
     }
   }
 
@@ -200,5 +206,24 @@ extension SearchResultReactor {
     }
 
     return newState
+  }
+}
+
+
+// MARK: - Routing
+
+extension SearchResultReactor {
+
+  private func pushNoteList(index: Int) {
+    guard let note = self.currentState.notes[safe: index] else { return }
+
+    self.dependency.coordinator.transition(
+      to: .noteDetail(payload: .init(
+        id: note.id
+      )),
+      using: .push,
+      animated: true,
+      completion: nil
+    )
   }
 }

@@ -88,6 +88,11 @@ final class SearchResultViewController: BaseViewController<SearchResultReactor> 
       .bind(to: reactor.action)
       .disposed(by: self.disposeBag)
 
+    self.tableView.rx.itemSelected
+      .map { SearchResultReactor.Action.didTapNote(index: $0.item) }
+      .bind(to: reactor.action)
+      .disposed(by: self.disposeBag)
+
     // State
 
     reactor.state
