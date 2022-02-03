@@ -50,17 +50,27 @@ final class SearchResultViewController: BaseViewController<SearchResultReactor> 
     $0.isHidden = true
   }
 
+  private let indicatorView = UIActivityIndicatorView(style: .large).then {
+    $0.hidesWhenStopped = true
+    $0.color = .mainGreen
+  }
+
 
   // MARK: Configuring
 
   override func configureUI() {
+    super.configureUI()
+
     self.view.do {
       $0.addSubview(self.tableView)
       $0.addSubview(self.emptyView)
+      $0.addSubview(self.indicatorView)
     }
   }
 
   override func configureConstraints() {
+    super.configureConstraints()
+
     self.tableView.snp.makeConstraints {
       $0.top.equalTo(self.view.safeAreaLayoutGuide.snp.top)
       $0.bottom.equalTo(self.view.keyboardLayoutGuide.snp.top)
@@ -73,6 +83,11 @@ final class SearchResultViewController: BaseViewController<SearchResultReactor> 
       $0.bottom.equalToSuperview()
       $0.left.equalTo(self.view.safeAreaLayoutGuide.snp.left)
       $0.right.equalTo(self.view.safeAreaLayoutGuide.snp.right)
+    }
+
+    self.indicatorView.snp.makeConstraints {
+      $0.centerX.equalToSuperview()
+      $0.centerY.equalToSuperview()
     }
   }
 
@@ -97,6 +112,7 @@ final class SearchResultViewController: BaseViewController<SearchResultReactor> 
 
     reactor.state
       .map { $0.notes }
+      .distinctUntilChanged()
       .do(onNext: { [weak self] items in
         let isItemsEmpty = items.isEmpty
         self?.tableView.isHidden = isItemsEmpty
@@ -108,5 +124,32 @@ final class SearchResultViewController: BaseViewController<SearchResultReactor> 
       )) { _, note, cell in
         cell.configure(with: note)
       }.disposed(by: self.disposeBag)
+
+    reactor.state
+      .map { $0.isLoading }
+      .distinctUntilChanged()
+      .subscribe(onNext: { [weak self] isLoading in
+        if isLoading {
+          self?.startIndicator()
+        } else {
+          self?.stopIndicator()
+        }
+      }).disposed(by: self.disposeBag)
+  }
+}
+
+
+// MARK: - Internal
+
+extension SearchResultViewController {
+
+  private func startIndicator() {
+    self.indicatorView.startAnimating()
+    self.view.isUserInteractionEnabled = false
+  }
+
+  private func stopIndicator() {
+    self.indicatorView.stopAnimating()
+    self.view.isUserInteractionEnabled = true
   }
 }

@@ -41,10 +41,12 @@ final class SearchResultReactor: Reactor {
     case createNote(Note)
     case editNote(Note)
     case deleteNote(Note)
+    case setLoading(Bool)
   }
 
   struct State {
     var notes: [Note]
+    var isLoading: Bool
   }
 
 
@@ -52,7 +54,10 @@ final class SearchResultReactor: Reactor {
 
   private let dependency: Dependency
 
-  let initialState: State = State(notes: [])
+  let initialState: State = State(
+    notes: [],
+    isLoading: false
+  )
 
   init(dependency: Dependency) {
     self.dependency = dependency
@@ -67,7 +72,10 @@ extension SearchResultReactor {
   func mutate(action: Action) -> Observable<Mutation> {
     switch action {
     case let .search(text):
-      return self.loadSearchResult(text: text)
+      return Observable<Mutation>.concat([
+        .just(Mutation.setLoading(true)),
+        self.loadSearchResult(text: text)
+      ])
 
     case let .didTapNote(index):
       self.pushNoteList(index: index)
@@ -148,7 +156,12 @@ extension SearchResultReactor {
       .request(SearchAPI.search(query: text, limit: Const.searchLimitCount))
       .toodaMap(SearchNoteResponse.self)
       .asObservable()
-      .map { Mutation.setSearchResult($0.notes) }
+      .flatMap {
+        return Observable<Mutation>.concat([
+          .just(.setLoading(false)),
+          .just(.setSearchResult($0.notes) )
+        ])
+      }
   }
 }
 
@@ -203,6 +216,9 @@ extension SearchResultReactor {
         $0.id == note.id
       }) else { break }
       newState.notes.remove(at: index)
+
+    case let .setLoading(isLoading):
+      newState.isLoading = isLoading
     }
 
     return newState
