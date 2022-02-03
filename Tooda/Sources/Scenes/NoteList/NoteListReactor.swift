@@ -34,6 +34,7 @@ final class NoteListReactor: Reactor {
     case dismiss
     case pagnationLoad(willDisplayIndex: Int)
     case addNoteButtonTap
+    case searchButtonTap
     case noteCellTap(index: Int)
   }
   
@@ -117,6 +118,8 @@ extension NoteListReactor {
       return routeToCreateNote()
     case let .noteCellTap(selectedIndex):
       return routeToNoteDetail(selectedIndex: selectedIndex)
+    case .searchButtonTap:
+      return routeToSearch()
     }
   }
   
@@ -150,6 +153,16 @@ extension NoteListReactor {
     return Observable<Mutation>.empty()
   }
   
+  private func routeToSearch() -> Observable<Mutation> {
+    self.dependency.coordinator.transition(
+      to: .search,
+      using: .push,
+      animated: true,
+      completion: nil
+    )
+    return Observable<Mutation>.empty()
+  }
+  
   private func addNoteListMutation(note: Note) -> Observable<Mutation> {
     guard var noteListModel = currentState.noteListModel.first else { return Observable.empty() }
     noteListModel.items.insert(note, at: 0)
@@ -175,6 +188,13 @@ extension NoteListReactor {
   }
   
   private func loadMutation() -> Observable<Mutation> {
+    return Observable<Mutation>.concat([
+      Observable.just(Mutation.setIsLoading(true)),
+      loadInitialDataMutation()
+    ])
+  }
+  
+  private func loadInitialDataMutation() -> Observable<Mutation> {
     return dependency.service.request(
       NoteAPI.monthlyList(
         limit: initialState.fetchWindowSize,
@@ -190,11 +210,11 @@ extension NoteListReactor {
         guard let noteList = noteDTO.noteList else {
           return Observable<Mutation>.empty()
         }
+        
         if noteList.isEmpty {
           return Observable<Mutation>.concat([
-            Observable.just(Mutation.setIsLoading(true)),
-            Observable.just(Mutation.setIsEmpty(true)),
-            Observable.just(Mutation.setIsLoading(false))
+            Observable.just(Mutation.setIsLoading(false)),
+            Observable.just(Mutation.setIsEmpty(true))
           ])
         } else {
           let noteListModelMutation = Mutation.setNoteListModel(
@@ -206,11 +226,10 @@ extension NoteListReactor {
             ]
           )
           return Observable<Mutation>.concat([
-            Observable.just(Mutation.setIsLoading(true)),
+            Observable.just(Mutation.setIsLoading(false)),
             Observable.just(Mutation.setIsEmpty(false)),
             Observable.just(noteListModelMutation),
-            Observable.just(Mutation.setNextCursor(noteDTO.cursor)),
-            Observable.just(Mutation.setIsLoading(false))
+            Observable.just(Mutation.setNextCursor(noteDTO.cursor))
           ])
         }
     }
@@ -223,6 +242,14 @@ extension NoteListReactor {
       currentState.cursor != nil else {
       return Observable<Mutation>.empty()
     }
+    
+    return Observable<Mutation>.concat([
+      Observable.just(Mutation.setIsLoading(true)),
+      pagnationLoadDataMutation(nextDisplayIndex: nextDisplayIndex)
+    ])
+  }
+  
+  private func pagnationLoadDataMutation(nextDisplayIndex: Int) -> Observable<Mutation> {
     
     return dependency.service.request(
       NoteAPI.monthlyList(
@@ -240,10 +267,9 @@ extension NoteListReactor {
         }
         
         return Observable<Mutation>.concat([
-          Observable.just(Mutation.setIsLoading(true)),
+          Observable.just(Mutation.setIsLoading(false)),
           Observable.just(Mutation.setNextCursor(noteDTO.cursor)),
-          Observable.just(Mutation.setPagnationLoadedNotes(noteList)),
-          Observable.just(Mutation.setIsLoading(false))
+          Observable.just(Mutation.setPagnationLoadedNotes(noteList))
         ])
     }
   }
