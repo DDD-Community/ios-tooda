@@ -177,6 +177,14 @@ final class NoteListViewController: BaseViewController<NoteListReactor> {
           ? false : true
       }
       .disposed(by: disposeBag)
+    
+    reactor.state.map { $0.snackBarInfo }
+      .asDriver(onErrorJustReturn: nil)
+      .compactMap { $0 }
+      .drive { info in
+        SnackBarManager.shared.display(type: info.type, title: info.title)
+    }
+    .disposed(by: disposeBag)
   }
   
   // MARK: - configureUI

@@ -10,6 +10,7 @@ import Foundation
 
 import ReactorKit
 import RxSwift
+import RxCocoa
 import Then
 
 final class NoteListReactor: Reactor {
@@ -44,6 +45,7 @@ final class NoteListReactor: Reactor {
     case setNextCursor(Int?)
     case setNoteListModel([NoteListModel])
     case setPagnationLoadedNotes([Note])
+    case setSnackBarInfo(SnackBarEventBus.SnackBarInfo)
   }
   
   struct Dependency {
@@ -61,6 +63,7 @@ final class NoteListReactor: Reactor {
     var isLoading: Bool = false
     var cursor: Int?
     var dateInfo: DateInfo
+    var snackBarInfo: SnackBarEventBus.SnackBarInfo?
   }
   
   init(dependency: Dependency) {
@@ -70,6 +73,8 @@ final class NoteListReactor: Reactor {
   // MARK: Properties
   
   let dependency: Dependency
+  
+  private let snackBarMutationStream = PublishRelay<SnackBarEventBus.SnackBarInfo>()
   
   lazy var initialState: State = State(
     noteListModel: [],
@@ -89,6 +94,8 @@ extension NoteListReactor {
   func transform(mutation: Observable<Mutation>) -> Observable<Mutation> {
     return Observable.merge(
       mutation,
+      snackBarMutationStream.asObservable()
+        .map { Mutation.setSnackBarInfo($0)},
       dependency.noteEventBus
         .flatMap { [weak self] event -> Observable<Mutation> in
           guard let self = self else { return Observable<Mutation>.empty() }
@@ -204,7 +211,15 @@ extension NoteListReactor {
         )
       )
       .toodaMap(NoteListDTO.self)
-      .catchAndReturn(NoteListDTO(cursor: nil, noteList: []))
+      .catch({ [weak self] _ in
+        self?.snackBarMutationStream.accept(
+          (type: .negative,
+           title: "네트워크 연결에 실패했습니다 :(")
+        )
+        return Single.just(
+          NoteListDTO(cursor: nil, noteList: [])
+        )
+      })
       .asObservable()
       .flatMap { noteDTO -> Observable<Mutation> in
         guard let noteList = noteDTO.noteList else {
@@ -260,6 +275,15 @@ extension NoteListReactor {
         )
       )
       .toodaMap(NoteListDTO.self)
+      .catch({ [weak self] _ in
+        self?.snackBarMutationStream.accept(
+          (type: .negative,
+           title: "네트워크 연결에 실패했습니다 :(")
+        )
+        return Single.just(
+          NoteListDTO(cursor: nil, noteList: [])
+        )
+      })
       .asObservable()
       .flatMap { noteDTO -> Observable<Mutation> in
         guard let noteList = noteDTO.noteList else {
@@ -282,6 +306,7 @@ extension NoteListReactor {
   func reduce(state: State, mutation: Mutation) -> State {
     var newState = state.with {
       $0.isEmpty = nil
+      $0.snackBarInfo = nil
     }
     
     switch mutation {
@@ -298,6 +323,8 @@ extension NoteListReactor {
         model.items.append(contentsOf: notes)
         newState.noteListModel = [model]
       }
+    case let .setSnackBarInfo(info):
+      newState.snackBarInfo = info
     }
     
     return newState
