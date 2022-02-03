@@ -46,6 +46,8 @@ class NoteLinkCell: BaseTableViewCell, View {
     $0.translatesAutoresizingMaskIntoConstraints = false
   }
   
+  private let placeHolderView = ImagePlaceHolderView(image: UIImage(type: .iconImagePlaceHolder))
+  
   private let thumnailView = UIImageView().then {
     $0.contentMode = .scaleAspectFill
     $0.clipsToBounds = true
@@ -111,6 +113,10 @@ class NoteLinkCell: BaseTableViewCell, View {
       self.containerStackView.addArrangedSubview($0)
     }
     
+    [placeHolderView].forEach {
+      self.thumnailView.addSubview($0)
+    }
+    
     [titleStackView, descriptionLabel, canonicalLabel].forEach {
       self.infoStackView.addArrangedSubview($0)
     }
@@ -139,6 +145,10 @@ class NoteLinkCell: BaseTableViewCell, View {
     
     thumnailView.snp.makeConstraints {
       $0.size.equalTo(Metric.imageViewSize)
+    }
+    
+    placeHolderView.snp.makeConstraints {
+      $0.edges.equalToSuperview()
     }
     
     lineView.snp.makeConstraints {
@@ -187,6 +197,16 @@ extension NoteLinkCell {
   private func fetchLinkData(_ response: LinkPreviewResponse?) {
     guard let response = response else {
       return
+    }
+    
+    
+    DispatchQueue.main.async { [weak self] in
+      if let url = response.imageURL {
+        self?.thumnailView.image = url.urlImage
+        self?.placeHolderView.isHidden = true
+      } else {
+        self?.placeHolderView.isHidden = false
+      }
     }
     
     self.thumnailView.image = response.imageURL?.urlImage
