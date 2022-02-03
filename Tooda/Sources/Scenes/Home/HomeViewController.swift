@@ -154,7 +154,7 @@ final class HomeViewController: BaseViewController<HomeReactor> {
       .disposed(by: self.disposeBag)
 
     self.notebookCollectionView.rx.itemSelected
-      .map { HomeReactor.Action.presentNotelist(notebookIndex: $0.item) }
+      .map { HomeReactor.Action.didTapNotebook(index: $0.item) }
       .bind(to: reactor.action)
       .disposed(by: self.disposeBag)
 
