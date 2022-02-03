@@ -28,7 +28,7 @@ class NoteImageCell: BaseTableViewCell, View {
     switch item {
       case .empty(let reactor):
         let cell = collectionView.dequeue(EmptyNoteImageItemCell.self, indexPath: indexPath)
-        cell.configure(reactor: reactor)
+        cell.configure()
         
         if let relay = self?.cellItemDidTapRelay {
           cell.rx.addImageButtonDidTap
@@ -98,7 +98,7 @@ class NoteImageCell: BaseTableViewCell, View {
     collectionView.snp.makeConstraints {
       $0.top.equalToSuperview().offset(10)
       $0.leading.trailing.equalToSuperview().inset(20)
-      $0.bottom.equalToSuperview()
+      $0.bottom.equalToSuperview().offset(-60)
       $0.height.equalTo(Constants.baseItemValue)
     }
   }

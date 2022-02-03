@@ -13,9 +13,7 @@ import ReactorKit
 import SnapKit
 import RxCocoa
 
-class EmptyNoteImageItemCell: BaseCollectionViewCell, View {
-  typealias Reactor = EmptyNoteImageItemCellReactor
-  
+class EmptyNoteImageItemCell: BaseCollectionViewCell {
   var disposeBag: DisposeBag = DisposeBag()
   
   let containerView = UIView().then {
@@ -25,15 +23,6 @@ class EmptyNoteImageItemCell: BaseCollectionViewCell, View {
   }
   
   let addImageButton = UIButton()
-  
-  func configure(reactor: Reactor) {
-    super.configure()
-    self.reactor = reactor
-  }
-  
-  func bind(reactor: Reactor) {
-    
-  }
   
   // MARK: Cell Life Cycle
   

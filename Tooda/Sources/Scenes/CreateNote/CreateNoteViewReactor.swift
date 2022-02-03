@@ -62,7 +62,7 @@ final class CreateNoteViewReactor: Reactor {
     case stockItemDidDeleted(Int)
     case linkItemDidDeleted(Int)
     case requestNoteDataDidChanged(NoteRequestDTO)
-    case fetchEmptyStockItem(NoteSectionItem)
+    case fetchEmptyStockItem([NoteSectionItem])
   }
 
   struct State: Then {
@@ -73,8 +73,6 @@ final class CreateNoteViewReactor: Reactor {
   }
 
   let initialState: State
-  
-  private let linkItemMaxCount: Int = 2
   
   private var lastEditableStockCellIndexPath: IndexPath?
 
@@ -169,8 +167,8 @@ final class CreateNoteViewReactor: Reactor {
       newState.sections[NoteSection.Identity.link.rawValue].items.remove(at: row)
     case .requestNoteDataDidChanged(let data):
       newState.requestNote = data
-    case .fetchEmptyStockItem(let sectionItem):
-      newState.sections[NoteSection.Identity.addStock.rawValue].items = [sectionItem]
+    case .fetchEmptyStockItem(let sectionItems):
+      newState.sections[NoteSection.Identity.addStock.rawValue].items = sectionItems
     }
 
     return newState
@@ -182,7 +180,6 @@ final class CreateNoteViewReactor: Reactor {
       self.addStockCompletionRelay
         .map { Action.stockItemDidAdded($0) },
       self.addLinkURLCompletionRelay
-        .take(self.linkItemMaxCount)
         .map { Action.linkURLDidAdded($0) },
       self.addStickerCompletionRelay
         .map { Action.stckerDidPicked($0) },
@@ -356,7 +353,15 @@ extension CreateNoteViewReactor {
 extension CreateNoteViewReactor {
   private func linkButtonDidTapped() -> Observable<Mutation> {
     
-    self.dependency.coordinator.transition(to: .popUp(type: .textInput(self.addLinkURLCompletionRelay)), using: .modal, animated: false)
+    let maxItemCount: Int = 2
+    
+    if self.currentState.sections[NoteSection.Identity.link.rawValue].items.count < maxItemCount {
+      self.dependency.coordinator.transition(to: .popUp(type: .textInput(self.addLinkURLCompletionRelay)),
+                                             using: .modal,
+                                             animated: false)
+    } else {
+      return .just(.present(.showAlert("링크는 최대 \(maxItemCount)개까지 등록 가능합니다.")))
+    }
     
     return .empty()
   }
@@ -493,7 +498,6 @@ extension CreateNoteViewReactor {
     
     return Observable.concat([
       .just(.requestNoteDataDidChanged(requestNote)),
-      .just(.stockItemDidDeleted(row)),
       self.emptyStockItemDidChanged(by: requestNote.stocks.count),
       changedMutation
     ])
@@ -553,9 +557,16 @@ extension CreateNoteViewReactor {
 
 extension CreateNoteViewReactor {
   private func emptyStockItemDidChanged(by count: Int) -> Observable<Mutation> {
-    let reactor = EmptyNoteStockCellReactor(itemCount: count)
-    let sectionItem = NoteSectionItem.addStock(reactor)
-    return .just(.fetchEmptyStockItem(sectionItem))
+    
+    let itemMaxCount = 5
+    
+    var sectionItems: [NoteSectionItem] = []
+    
+    if count < itemMaxCount {
+      sectionItems.append(NoteSectionItem.addStock)
+    }
+    
+    return .just(.fetchEmptyStockItem(sectionItems))
   }
 }
 
@@ -574,7 +585,7 @@ let createDiarySectionFactory: CreateNoteSectionType = { authorization, coordina
   let contentSectionItem: NoteSectionItem = NoteSectionItem.content(contentReactor)
   
   let addStockReactor: EmptyNoteStockCellReactor = EmptyNoteStockCellReactor()
-  let addStockSectionItem: NoteSectionItem = NoteSectionItem.addStock(addStockReactor)
+  let addStockSectionItem: NoteSectionItem = NoteSectionItem.addStock
   
   let imageReactor: NoteImageCellReactor = NoteImageCellReactor(dependency: .init(factory: noteImageSectionFactory))
   let imageSectionItem: NoteSectionItem = NoteSectionItem.image(imageReactor)
@@ -632,7 +643,7 @@ let modifiableNoteSectionFactory: (NoteRequestDTO, LinkPreViewServiceType) -> [N
   }
   
   let addStockReactor: EmptyNoteStockCellReactor = EmptyNoteStockCellReactor(itemCount: note.stocks.count)
-  let addStockSectionItem: NoteSectionItem = NoteSectionItem.addStock(addStockReactor)
+  let addStockSectionItem: NoteSectionItem = NoteSectionItem.addStock
   
   let imageReactor: NoteImageCellReactor = NoteImageCellReactor(
     dependency: .init(

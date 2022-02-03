@@ -57,13 +57,12 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
         .disposed(by: cell.disposeBag)
         
       return cell
-    case .addStock(let reactor):
+    case .addStock:
       let cell = tableView.dequeue(EmptyNoteStockCell.self, indexPath: indexPath)
-      cell.configure(reactor: reactor)
+      cell.configure()
         
       cell.rx.didTapAddStock
         .debounce(.milliseconds(500), scheduler: MainScheduler.instance)
-        .filter { reactor.initialState.isEnabled }
         .subscribe(onNext: { [weak self] in
           self?.rxAddStockDidTapRelay.accept($0)
         })
