@@ -14,6 +14,22 @@ import RxDataSources
 import ReactorKit
 import SnapKit
 
+enum ImagePickerType {
+  case photo
+  case camera
+}
+
+extension UIImagePickerController.SourceType {
+  var soureType: ImagePickerType {
+    switch self {
+      case .camera:
+        return .camera
+      case .photoLibrary, .savedPhotosAlbum:
+        return .photo
+    }
+  }
+}
+
 // TODO: 노트 등록이 아닌 입력과 관련된 이름으로 변경해요.
 class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
   typealias Reactor = CreateNoteViewReactor
