@@ -18,6 +18,7 @@ final class CreateNoteViewReactor: Reactor {
     case showAlert(String)
     case showPermission(String)
     case showImageSourceActionSheetView
+    case showImagePickerView(ImagePickerType)
   }
   
   let scheduler: Scheduler = MainScheduler.asyncInstance
@@ -103,7 +104,7 @@ final class CreateNoteViewReactor: Reactor {
     case .initializeForm:
       return .just(Mutation.initializeForm(makeSections()))
     case .didSelectedImageItem(let index):
-      return checkAuthorizationAndSelectedItem(indexPath: index)
+        return didSelectedImageItem(index)
     case .uploadImage(let data):
       return self.uploadImage(data)
         .flatMap { [weak self] imageURL -> Observable<Mutation> in
@@ -245,21 +246,32 @@ final class CreateNoteViewReactor: Reactor {
   
   
   private func imagePickerDidTapped(_ pickerType: ImagePickerType) -> Observable<Mutation> {
-    
-    
-    return .empty()
+    switch pickerType {
+      case .photo:
+        return showPhotoPickerIfNeeded()
+      case .camera:
+        return showCameraPickerIfNeeded()
+    }
   }
   
-  private func checkAuthorizationAndSelectedItem(indexPath: IndexPath) -> Observable<Mutation> {
-    let service = self.dependency.authorization
-    
-    return service.photoLibrary.flatMap { [weak self] status -> Observable<Mutation> in
+  private func showPhotoPickerIfNeeded() -> Observable<Mutation> {
+    return self.dependency.authorization.photoLibrary.flatMap { status -> Observable<Mutation> in
       switch status {
         case .authorized:
-          guard let mutation = self?.didSelectedImageItem(indexPath) else { return .empty() }
-          return mutation
+          return .just(.present(.showImagePickerView(.photo)))
         default:
-          return .just(.present(.showPermission("테스트")))
+          return .just(.present(.showPermission("앨범에서 사진을 선택하기 위해 권한 설정이 필요합니다.")))
+      }
+    }
+  }
+  
+  private func showCameraPickerIfNeeded() -> Observable<Mutation> {
+    return self.dependency.authorization.camera.flatMap { status -> Observable<Mutation> in
+      switch status {
+        case .authorized:
+          return .just(.present(.showImagePickerView(.camera)))
+        default:
+          return .just(.present(.showPermission("사진을 촬영하기 위해 권한 설정이 필요합니다.")))
       }
     }
   }

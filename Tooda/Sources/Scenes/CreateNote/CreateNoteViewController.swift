@@ -375,6 +375,16 @@ extension CreateNoteViewController {
       case .showImageSourceActionSheetView:
         self.showImageActonSheetView()
       case .showImagePickerView(let pickerType):
+        self.showImagePickerView(by: pickerType)
+    }
+  }
+  
+  private func showImagePickerView(by pickerType: ImagePickerType) {
+    switch pickerType {
+      case .photo:
+        self.showPickView(by: .photoLibrary)
+      case .camera:
+        self.showPickView(by: .camera)
     }
   }
   
