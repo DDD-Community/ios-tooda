@@ -352,7 +352,7 @@ extension HomeReactor {
             return "\(day)"
           }()
 
-          let isPlaceholder = item.createdAt == nil
+          let isPlaceholder = item.updatedAt == nil
 
           let backgroundImage: UIImage? = {
             if isPlaceholder {
@@ -384,7 +384,7 @@ extension HomeReactor {
     guard let selectedNotebook = self.currentState.notebooks[safe: index] else {
       return
     }
-    if selectedNotebook.createdAt == nil {
+    if selectedNotebook.updatedAt == nil {
       self.presentCreateNote(nil)
     } else {
       self.presentNoteList(notebook: selectedNotebook)
