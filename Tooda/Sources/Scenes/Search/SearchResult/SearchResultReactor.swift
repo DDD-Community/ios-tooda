@@ -17,6 +17,7 @@ final class SearchResultReactor: Reactor {
 
   struct Dependency {
     let networking: NetworkingProtocol
+    let noteEventBus: Observable<NoteEventBus.Event>
   }
 
 
@@ -35,6 +36,9 @@ final class SearchResultReactor: Reactor {
 
   enum Mutation {
     case setSearchResult([Note])
+    case createNote(Note)
+    case editNote(Note)
+    case deleteNote(Note)
   }
 
   struct State {
@@ -143,6 +147,31 @@ extension SearchResultReactor {
 }
 
 
+// MARK: - Transform
+
+extension SearchResultReactor {
+
+  func transform(mutation: Observable<Mutation>) -> Observable<Mutation> {
+    return Observable.merge(
+      mutation,
+      self.dependency.noteEventBus
+        .flatMap { event -> Observable<Mutation> in
+          switch event {
+          case let .createNote(note):
+            return .just(.createNote(note))
+
+          case let .editNode(note):
+            return .just(.editNote(note))
+
+          case let .deleteNote(note):
+            return .just(.deleteNote(note))
+          }
+        }
+    )
+  }
+}
+
+
 // MARK: - Reduce
 
 extension SearchResultReactor {
@@ -153,6 +182,21 @@ extension SearchResultReactor {
     switch mutation {
     case let .setSearchResult(notes):
       newState.notes = notes
+
+    case let .createNote(note):
+      newState.notes.append(note)
+
+    case let .editNote(note):
+      guard let index = newState.notes.firstIndex(where: {
+        $0.id == note.id
+      }) else { break }
+      newState.notes[index] = note
+
+    case let .deleteNote(note):
+      guard let index = newState.notes.firstIndex(where: {
+        $0.id == note.id
+      }) else { break }
+      newState.notes.remove(at: index)
     }
 
     return newState
