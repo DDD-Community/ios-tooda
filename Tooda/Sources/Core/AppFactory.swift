@@ -180,7 +180,8 @@ final class AppFactory: AppFactoryType {
       let reactor = SearchResultReactor(
         dependency: .init(
           networking: self.dependency.appInject.resolve(NetworkingProtocol.self),
-          noteEventBus: NoteEventBus.event.asObservable()
+          noteEventBus: NoteEventBus.event.asObservable(),
+          coordinator: self.dependency.appInject.resolve(AppCoordinatorType.self)
         )
       )
 
