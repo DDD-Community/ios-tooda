@@ -166,6 +166,7 @@ final class HomeViewController: BaseViewController<HomeReactor> {
     // State
     self.reactor?.state
       .map { $0.notebookViewModels }
+      .distinctUntilChanged()
       .bind(to: self.notebookCollectionView.rx.items(
         cellIdentifier: Const.notebookCellIdentifier,
         cellType: NotebookCell.self
@@ -176,6 +177,7 @@ final class HomeViewController: BaseViewController<HomeReactor> {
     reactor.state
       .filter { $0.selectedNotobook != nil }
       .map { $0.selectedNotobook! }
+      .distinctUntilChanged()
       .subscribe(onNext: { [weak self] notebook in
         self?.monthTitleButton.setAttributedTitle(
           Date(year: notebook.year, month: notebook.month, day: 1)
@@ -203,6 +205,7 @@ final class HomeViewController: BaseViewController<HomeReactor> {
 
     reactor.state
       .map { $0.exception }
+      .distinctUntilChanged()
       .subscribe(onNext: { [weak self] exception in
         switch exception {
         case .emptyNoteAlert:
@@ -219,6 +222,7 @@ final class HomeViewController: BaseViewController<HomeReactor> {
 
     reactor.state
       .map { $0.isLoading }
+      .distinctUntilChanged()
       .subscribe(onNext: { [weak self] isLoading in
         if isLoading {
           self?.startIndicator()

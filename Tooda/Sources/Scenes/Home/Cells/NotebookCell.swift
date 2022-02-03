@@ -33,7 +33,7 @@ class NotebookCell: UICollectionViewCell {
 
   // MARK: ViewModel
 
-  struct ViewModel {
+  struct ViewModel: Equatable {
     let month: String
     let backgroundImage: UIImage?
     let historyDate: String?

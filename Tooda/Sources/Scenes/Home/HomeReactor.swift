@@ -44,7 +44,7 @@ final class HomeReactor: Reactor {
   }
   
   struct State {
-    enum Exception {
+    enum Exception: Int, Equatable {
       case emptyNoteAlert
     }
 
