@@ -12,6 +12,7 @@ import ReactorKit
 import RxSwift
 import RxCocoa
 import Firebase
+import Then
 
 final class LoginReactor: Reactor {
   
@@ -22,6 +23,7 @@ final class LoginReactor: Reactor {
     let coordinator: AppCoordinatorType
     let localPersistanceManager: LocalPersistanceManagerType
     let socialLoginService: SocialLoginServiceType
+    let snackBarEventBus: Observable<SnackBarEventBus.SnackBarInfo>
   }
   
   enum Action {
@@ -31,10 +33,12 @@ final class LoginReactor: Reactor {
   enum Mutation {
     case setAppToken(token: AppToken)
     case setIsAuthorized(isAuthorized: Bool)
+    case setSnackBarInfo(SnackBarEventBus.SnackBarInfo)
   }
   
-  struct State {
+  struct State: Then {
     var isAuthorized: Bool
+    var snackBarInfo: SnackBarEventBus.SnackBarInfo?
   }
   
   // MARK: - Properties
@@ -80,8 +84,11 @@ extension LoginReactor {
           .flatMap { [weak self] token -> Observable<Mutation> in
             guard let self = self else { return Observable.empty() }
             if token.accessToken == nil {
-              // TODO: 에러처리
-              return Observable.empty()
+              return Observable.just(
+                Mutation.setSnackBarInfo(
+                  (type: .negative, title: "앗, 문제가 있네요. 다시 시도해보세요!")
+                )
+              )
             } else {
               return Observable<Mutation>.concat([
                 Observable<Mutation>.just(Mutation.setAppToken(token: token)),
@@ -113,15 +120,28 @@ extension LoginReactor {
     let signInMutation = dependency.socialLoginService.tokenProvider.flatMap { [weak self] result -> Observable<Mutation> in
       guard let self = self else { return mutation }
       if result.error != nil {
-        // TODO: 에러처리
+        return Observable.just(
+          Mutation.setSnackBarInfo(
+            (type: .negative, title: "앗, 문제가 있네요. 다시 시도해보세요!")
+          )
+        )
       }
       return self.signInMutation(with: result.token ?? "")
     }
-    return Observable.merge(mutation, signInMutation)
+    
+    let snackBarMutation = dependency.snackBarEventBus.map { Mutation.setSnackBarInfo($0)}
+    
+    return Observable.merge(
+      mutation,
+      signInMutation,
+      snackBarMutation
+    )
   }
 
   func reduce(state: State, mutation: Mutation) -> State {
-    var newState = state
+    var newState = state.with {
+      $0.snackBarInfo = nil
+    }
     
     switch mutation {
     case let .setAppToken(token):
@@ -131,6 +151,8 @@ extension LoginReactor {
       )
     case let .setIsAuthorized(isAuthorized):
       newState.isAuthorized = isAuthorized
+    case let .setSnackBarInfo(info):
+      newState.snackBarInfo = info
     }
 
     return newState

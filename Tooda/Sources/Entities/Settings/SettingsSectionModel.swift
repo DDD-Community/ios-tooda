@@ -18,12 +18,30 @@ struct SettingsSectionModel {
       case logOut
       case dropOut
       
+      var alertConfirm: String {
+        switch self {
+        case .logOut:
+          return "로그아웃"
+        case .dropOut:
+          return "탈퇴"
+        }
+      }
+      
       var alertTitle: String {
         switch self {
         case .logOut:
-          return "로그아웃 하시겠습니까?"
+          return "로그아웃"
         case .dropOut:
-          return "탈퇴하시겠습니까?"
+          return "잠깐! ✋"
+        }
+      }
+      
+      var alertDescription: String {
+        switch self {
+        case .logOut:
+          return "지금 로그아웃 할까요?"
+        case .dropOut:
+          return "탈퇴 시 모든 기록이 사라지고,복구가\n불가능해요. 그래도 탈퇴하시겠어요?"
         }
       }
     }

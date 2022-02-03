@@ -27,9 +27,11 @@ final class SettingsInfoCell: BaseTableViewCell {
   
   // MARK: - Internal methods
   
-  func configure(with title: String) {
+  func configure(with title: String, shouldArrowHidden: Bool) {
     super.configure()
     titleLabel.attributedText = title.styled(with: Font.title)
+    
+    trailingImageView.isHidden = shouldArrowHidden
   }
   
   // MARK: - configureUI

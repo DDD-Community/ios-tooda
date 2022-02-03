@@ -57,7 +57,10 @@ final class SettingsViewController: BaseViewController<SettingsReactor> {
     case .appInfo, .account:
       let infoCell = tableView.dequeue(SettingsInfoCell.self, indexPath: indexPath)
       if case let .plain(info) = item {
-        infoCell.configure(with: info.title)
+        infoCell.configure(
+          with: info.title,
+          shouldArrowHidden: sectionType == .account
+        )
       }
       return infoCell
     }
@@ -122,8 +125,8 @@ final class SettingsViewController: BaseViewController<SettingsReactor> {
         guard let self = self else { return .empty() }
         let actions = [
           UIAlertController.AlertAction(
-            title: "확인",
-            style: .default
+            title: action.alertConfirm,
+            style: .destructive
           ),
           UIAlertController.AlertAction(
             title: "취소",
@@ -133,7 +136,7 @@ final class SettingsViewController: BaseViewController<SettingsReactor> {
         return UIAlertController.present(
           in: self,
           title: action.alertTitle,
-          message: nil,
+          message: action.alertDescription,
           style: .alert,
           actions: actions
         )

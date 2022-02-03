@@ -86,8 +86,8 @@ final class AppFactory: AppFactoryType {
           service: self.dependency.appInject.resolve(NetworkingProtocol.self),
           coordinator: self.dependency.appInject.resolve(AppCoordinatorType.self),
           localPersistanceManager: self.dependency.appInject.resolve(LocalPersistanceManagerType.self),
-          socialLoginService: self.dependency.appInject.resolve(SocialLoginServiceType.self)
-          
+          socialLoginService: self.dependency.appInject.resolve(SocialLoginServiceType.self),
+          snackBarEventBus: SnackBarEventBus.event.asObservable()
         )
       )
       return LoginViewController(reactor: reactor)
