@@ -7,7 +7,7 @@
 
 import UIKit
 
-class ImagePlaceHolderView: UIView {
+final class ImagePlaceHolderView: UIView {
   
   // MARK: - UI Properties
   
