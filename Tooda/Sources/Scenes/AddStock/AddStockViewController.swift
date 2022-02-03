@@ -58,7 +58,7 @@ final class AddStockViewController: BaseViewController<AddStockReactor> {
   }
   
   private lazy var searchField = UITextField().then {
-    $0.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
+    $0.typingAttributes = Font.searchField
   }
   
   private let tableView = UITableView().then {
@@ -226,11 +226,6 @@ final class AddStockViewController: BaseViewController<AddStockReactor> {
       $0.bottom.equalToSuperview().offset(-24)
       $0.height.equalTo(Metric.nextButtonHeight)
     }
-  }
-  
-  @objc
-  func textFieldDidChange(textField: UITextField) {
-    textField.attributedText = textField.text?.styled(with: Font.searchField)
   }
 }
 
