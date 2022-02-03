@@ -50,6 +50,7 @@ final class CreateNoteViewReactor: Reactor {
     case noteItemDidDeleted(IndexPath)
     case showStockItemEditView(IndexPath)
     case stockItemDidUpdated(NoteStock)
+    case imagePickerDidTapped(ImagePickerType)
   }
 
   enum Mutation {
@@ -134,6 +135,8 @@ final class CreateNoteViewReactor: Reactor {
         return self.stockItemDidUpdated(stock)
     case .dismissView:
         return dismissView()
+    case .imagePickerDidTapped(let pickerType):
+        return imagePickerDidTapped(pickerType)
     default:
       return .empty()
     }
@@ -236,6 +239,13 @@ final class CreateNoteViewReactor: Reactor {
         
         return .just(.requestNoteDataDidChanged(requestNote))
     }
+    
+    return .empty()
+  }
+  
+  
+  private func imagePickerDidTapped(_ pickerType: ImagePickerType) -> Observable<Mutation> {
+    
     
     return .empty()
   }

@@ -58,6 +58,8 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
   
   private let rxCombinedTextDidChangedRelay: PublishRelay<(title: String, content: String)> = PublishRelay()
   
+  private let rxImagePickedTypeRleay: PublishRelay<UIImagePickerController.SourceType> = PublishRelay()
+  
   // MARK: Properties
   lazy var dataSource: Section = Section(configureCell: { [weak self] _, tableView, indexPath, item -> UITableViewCell in
     switch item {
@@ -303,6 +305,12 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
       .bind(to: reactor.action)
       .disposed(by: self.disposeBag)
     
+    rxImagePickedTypeRleay
+      .map { $0.soureType }
+      .map { Reactor.Action.imagePickerDidTapped($0) }
+      .bind(to: reactor.action)
+      .disposed(by: self.disposeBag)
+    
     rxNoteItemDeleteRelay
       .map { Reactor.Action.noteItemDidDeleted($0) }
       .bind(to: reactor.action)
@@ -397,10 +405,10 @@ extension CreateNoteViewController {
     
     let cancel = UIAlertAction(title: "취소", style: .cancel, handler: nil)
     let camera = UIAlertAction(title: "카메라", style: .default) { [weak self] _ in
-      self?.showPickView(by: .camera)
+      self?.rxImagePickedTypeRleay.accept(.camera)
     }
     let album = UIAlertAction(title: "앨범", style: .default) { [weak self] _ in
-      self?.showPickView(by: .photoLibrary)
+      self?.rxImagePickedTypeRleay.accept(.photoLibrary)
     }
     
     alert.addAction(cancel)
