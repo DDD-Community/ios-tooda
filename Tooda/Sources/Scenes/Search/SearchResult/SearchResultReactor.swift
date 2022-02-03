@@ -47,6 +47,7 @@ final class SearchResultReactor: Reactor {
   struct State {
     var notes: [Note]
     var isLoading: Bool
+    var isEmptyViewHidden: Bool
   }
 
 
@@ -56,7 +57,8 @@ final class SearchResultReactor: Reactor {
 
   let initialState: State = State(
     notes: [],
-    isLoading: false
+    isLoading: false,
+    isEmptyViewHidden: true
   )
 
   init(dependency: Dependency) {
@@ -201,9 +203,11 @@ extension SearchResultReactor {
     switch mutation {
     case let .setSearchResult(notes):
       newState.notes = notes
+      newState.isEmptyViewHidden = !notes.isEmpty
 
     case let .createNote(note):
       newState.notes.append(note)
+      newState.isEmptyViewHidden = !newState.notes.isEmpty
 
     case let .editNote(note):
       guard let index = newState.notes.firstIndex(where: {
@@ -216,6 +220,7 @@ extension SearchResultReactor {
         $0.id == note.id
       }) else { break }
       newState.notes.remove(at: index)
+      newState.isEmptyViewHidden = !newState.notes.isEmpty
 
     case let .setLoading(isLoading):
       newState.isLoading = isLoading

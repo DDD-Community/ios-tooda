@@ -113,11 +113,6 @@ final class SearchResultViewController: BaseViewController<SearchResultReactor> 
     reactor.state
       .map { $0.notes }
       .distinctUntilChanged()
-      .do(onNext: { [weak self] items in
-        let isItemsEmpty = items.isEmpty
-        self?.tableView.isHidden = isItemsEmpty
-        self?.emptyView.isHidden = !isItemsEmpty
-      })
       .bind(to: self.tableView.rx.items(
         cellIdentifier: NoteListCell.reuseIdentifier,
         cellType: NoteListCell.self
@@ -134,6 +129,14 @@ final class SearchResultViewController: BaseViewController<SearchResultReactor> 
         } else {
           self?.stopIndicator()
         }
+      }).disposed(by: self.disposeBag)
+
+    reactor.state
+      .map { $0.isEmptyViewHidden }
+      .distinctUntilChanged()
+      .subscribe(onNext: { [weak self] isEmptyViewHidden in
+        self?.tableView.isHidden = !isEmptyViewHidden
+        self?.emptyView.isHidden = isEmptyViewHidden
       }).disposed(by: self.disposeBag)
   }
 }
