@@ -28,12 +28,12 @@ final class HomeReactor: Reactor {
     case load
     case paging(index: Int)
     case pickDate(_ date: Date)
+    case didTapNotebook(index: Int)
 
     // routing
     case pushSearch
     case pushSettings
     case presentCreateNote(dateString: String)
-    case presentNotelist(notebookIndex: Int)
   }
 
   enum Mutation {
@@ -131,8 +131,8 @@ extension HomeReactor {
       presentCreateNote(today)
       return Observable<Mutation>.empty()
 
-    case let .presentNotelist(notebookIndex):
-      self.presentNoteList(index: notebookIndex)
+    case let .didTapNotebook(notebookIndex):
+      self.didTapNotebook(index: notebookIndex)
       return Observable<Mutation>.empty()
     }
   }
@@ -143,7 +143,7 @@ extension HomeReactor {
         year: date.year
       )
     )
-      .map([NotebookMeta].self)
+      .toodaMap([NotebookMeta].self)
       .catchAndReturn([])
       .asObservable()
       .map { Mutation.setNotebooks($0) }
@@ -352,7 +352,7 @@ extension HomeReactor {
             return "\(day)"
           }()
 
-          let isPlaceholder = item.createdAt == nil
+          let isPlaceholder = item.updatedAt == nil
 
           let backgroundImage: UIImage? = {
             if isPlaceholder {
@@ -380,6 +380,17 @@ extension HomeReactor {
 
 extension HomeReactor {
 
+  private func didTapNotebook(index: Int) {
+    guard let selectedNotebook = self.currentState.notebooks[safe: index] else {
+      return
+    }
+    if selectedNotebook.updatedAt == nil {
+      self.presentCreateNote(nil)
+    } else {
+      self.presentNoteList(notebook: selectedNotebook)
+    }
+  }
+
   private func pushSearch() {
     self.dependency.coordinator.transition(
       to: .search,
@@ -398,21 +409,21 @@ extension HomeReactor {
     )
   }
   
-  private func presentCreateNote(_ dateString: String) {
+  private func presentCreateNote(_ dateString: String?) {
+    let todayString = dateString ?? Date().string(.dot)
     self.dependency.coordinator.transition(
-      to: .createNote(dateString: dateString),
+      to: .createNote(dateString: todayString),
       using: .modal,
       animated: true,
       completion: nil
     )
   }
 
-  private func presentNoteList(index: Int) {
-    guard let selectedNotebook = self.currentState.notebooks[safe: index] else { return }
+  private func presentNoteList(notebook: NotebookMeta) {
     self.dependency.coordinator.transition(
       to: .noteList(payload: .init(
-        year: selectedNotebook.year,
-        month: selectedNotebook.month
+        year: notebook.year,
+        month: notebook.month
       )),
       using: .modal,
       animated: true,
