@@ -6,6 +6,7 @@
 //  Copyright © 2021 DTS. All rights reserved.
 //
 
+import AVFoundation
 import Foundation
 import Photos
 
@@ -16,6 +17,7 @@ protocol AppAuthorizationType {
   var pushStatus: Observable<AuthorizationStatus> { get }
   var requestPush: Observable<Bool> { get }
   var photoLibrary: Observable<AuthorizationStatus> { get }
+  var camera: Observable<AuthorizationStatus> { get }
 }
 
 enum AuthorizationStatus {
@@ -101,6 +103,33 @@ class RxAuthorization: AppAuthorizationType {
               observer.onCompleted()
           }
         })
+      }
+      
+      return Disposables.create()
+    }
+  }
+  
+  var camera: Observable<AuthorizationStatus> {
+    return Observable.create { observer in
+      let status = AVCaptureDevice.authorizationStatus(for: .video)
+      
+      switch status {
+        case .notDetermined:
+          AVCaptureDevice.requestAccess(for: .video, completionHandler: { granted in
+            if granted {
+              observer.onNext(.authorized)
+            } else {
+              observer.onNext(.denied)
+            }
+            
+            observer.onCompleted()
+          })
+        case .restricted, .denied:
+          observer.onNext(.denied)
+          observer.onCompleted()
+        case .authorized:
+          observer.onNext(.authorized)
+          observer.onCompleted()
       }
       
       return Disposables.create()
