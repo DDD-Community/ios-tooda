@@ -32,6 +32,17 @@ extension StockChangeState {
       case .rise:
         return UIColor.subRed
       case .even:
+        return UIColor.gray1
+      case .fall:
+        return UIColor.subBlue
+    }
+  }
+
+  var borderColor: UIColor {
+    switch self {
+      case .rise:
+        return UIColor.subRed
+      case .even:
         return UIColor.gray2
       case .fall:
         return UIColor.subBlue
