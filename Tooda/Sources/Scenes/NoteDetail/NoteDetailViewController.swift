@@ -164,6 +164,11 @@ final class NoteDetailViewController: BaseViewController<NoteDetailReactor> {
       .bind(to: reactor.action)
       .disposed(by: self.disposeBag)
     
+    self.deleteNoteButtonRelay
+      .map { NoteDetailReactor.Action.deleteNote }
+      .bind(to: reactor.action)
+      .disposed(by: self.disposeBag)
+    
     self.linkItemCellDidTappedRelay
       .map { NoteDetailReactor.Action.linkItemDidTapped($0) }
       .bind(to: reactor.action)
