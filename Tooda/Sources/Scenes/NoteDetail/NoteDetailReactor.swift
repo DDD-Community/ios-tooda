@@ -32,6 +32,7 @@ final class NoteDetailReactor: Reactor {
     case loadData
     case back
     case editNote
+    case deleteNote
     case linkItemDidTapped(String)
   }
 
@@ -84,6 +85,8 @@ extension NoteDetailReactor {
       case .editNote:
         self.editNote()
         return .empty()
+    case .deleteNote:
+      return deleteNoteMutation()
     case .linkItemDidTapped(let urlString):
       return linkItemDidTapped(urlString)
     }
@@ -170,6 +173,22 @@ extension NoteDetailReactor {
     self.dependency.coordinator.transition(to: .modifyNote(dateString: dateString,
                                                            note: noteRequestDTO),
                                            using: .modal, animated: true, completion: nil)
+  }
+  
+  private func deleteNoteMutation() -> Observable<Mutation> {
+    let noteID = "\(self.currentState.noteID)"
+    return self.dependency.service.request(NoteAPI.delete(id: noteID))
+      .asObservable()
+      .flatMap { [weak self] _ -> Observable<Mutation> in
+        
+        self?.dependency.coordinator.close(
+          style: .pop,
+          animated: true,
+          completion: nil
+        )
+        
+        return .empty()
+      }
   }
   
   private func linkItemDidTapped(_ urlString: String) -> Observable<Mutation> {
