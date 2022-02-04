@@ -14,6 +14,12 @@ import RxRelay
 // TODO: 노트 등록이 아닌 입력과 관련된 이름으로 변경해요.
 final class CreateNoteViewReactor: Reactor {
   
+  private enum Const {
+    static let stockMaxCount: Int = 5
+    static let linkMaxCount: Int = 2
+    static let imageMaxCount: Int = 3
+  }
+  
   enum ViewPresentType {
     case showAlert(String)
     case showPermission(String)
@@ -227,8 +233,8 @@ final class CreateNoteViewReactor: Reactor {
     
     switch imageSectionItem {
       case .empty:
-        guard imageCellReactor.currentState.sections[NoteImageSection.Identity.item.rawValue].items.count < 3 else {
-          return .just(.present(.showAlert("이미지는 최대 3개까지 등록 가능합니다.")))
+        guard imageCellReactor.currentState.sections[NoteImageSection.Identity.item.rawValue].items.count < Const.imageMaxCount else {
+          return .just(.present(.showAlert("이미지는 최대 \(Const.imageMaxCount)개까지 등록 가능합니다.")))
         }
         
         return .just(.present(.showImageSourceActionSheetView))
@@ -375,7 +381,7 @@ extension CreateNoteViewReactor {
 extension CreateNoteViewReactor {
   private func linkButtonDidTapped() -> Observable<Mutation> {
     
-    let maxItemCount: Int = 2
+    let maxItemCount: Int = Const.linkMaxCount
     
     if self.currentState.sections[NoteSection.Identity.link.rawValue].items.count < maxItemCount {
       self.dependency.coordinator.transition(to: .popUp(type: .textInput(self.addLinkURLCompletionRelay)),
@@ -580,7 +586,7 @@ extension CreateNoteViewReactor {
 extension CreateNoteViewReactor {
   private func emptyStockItemDidChanged(by count: Int) -> Observable<Mutation> {
     
-    let itemMaxCount = 5
+    let itemMaxCount = Const.stockMaxCount
     
     var sectionItems: [NoteSectionItem] = []
     
