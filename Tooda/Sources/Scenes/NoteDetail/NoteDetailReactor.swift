@@ -23,6 +23,8 @@ final class NoteDetailReactor: Reactor {
     let service: NetworkingProtocol
     let coordinator: AppCoordinatorType
     let linkPreviewService: LinkPreViewServiceType
+    let noteEventBus: PublishSubject<NoteEventBus.Event>
+    // TODO: Payload는 별도로 분리해요.
     let payload: Payload
   }
 
@@ -181,7 +183,12 @@ extension NoteDetailReactor {
       .asObservable()
       .flatMap { [weak self] _ -> Observable<Mutation> in
         
-        self?.dependency.coordinator.close(
+        guard let self = self,
+                let note = self.currentState.note else { return .empty() }
+        
+        self.dependency.noteEventBus.onNext(.deleteNote(note))
+        
+        self.dependency.coordinator.close(
           style: .pop,
           animated: true,
           completion: nil
