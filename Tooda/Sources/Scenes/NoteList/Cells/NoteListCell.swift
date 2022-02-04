@@ -14,6 +14,10 @@ final class NoteListCell: BaseTableViewCell {
   
   // MARK: - Constants
   
+  enum Constants {
+    static let sideMargins: CGFloat = 80
+  }
+  
   enum Font {
     static let title = TextStyle.subTitleBold(color: .gray1)
     static let recordDate = TextStyle.captionBold(color: .gray3)
@@ -57,6 +61,7 @@ final class NoteListCell: BaseTableViewCell {
   private let mainImageView = UIImageView().then {
     $0.contentMode = .scaleAspectFit
     $0.layer.cornerRadius = 8
+    $0.clipsToBounds = true
   }
   
   private let imageCountLabel = MarginLabel(
@@ -167,14 +172,23 @@ final class NoteListCell: BaseTableViewCell {
   private func updateImages(images: [NoteImage]) {
     
     if images.isEmpty {
-      mainImageView.snp.makeConstraints {
+      mainImageView.snp.remakeConstraints {
         $0.top.equalTo(descriptionLabel.snp.bottom).offset(0)
         $0.bottom.equalToSuperview().inset(0)
       }
     } else {
-      mainImageView.snp.makeConstraints {
-        $0.top.equalTo(descriptionLabel.snp.bottom).offset(16)
-        $0.bottom.equalToSuperview().inset(24)
+      if let width = images.first?.width,
+         let height = images.first?.height {
+        let ratio: CGFloat = (UIScreen.main.bounds.width - Constants.sideMargins) / CGFloat(width)
+        
+        let calculatedHeight = CGFloat(height) * ratio
+        
+        mainImageView.snp.remakeConstraints {
+          $0.leading.trailing.equalToSuperview().inset(20)
+          $0.top.equalTo(descriptionLabel.snp.bottom).offset(16)
+          $0.bottom.equalToSuperview().inset(24)
+          $0.height.equalTo(calculatedHeight)
+        }
       }
     }
     
