@@ -77,6 +77,7 @@ final class NoteListViewController: BaseViewController<NoteListReactor> {
   init(reactor: NoteListReactor) {
     super.init()
     self.reactor = reactor
+    bindUI()
   }
   
   required init?(coder: NSCoder) {
@@ -192,8 +193,6 @@ final class NoteListViewController: BaseViewController<NoteListReactor> {
   override func configureUI() {
     navigationItem.leftBarButtonItem = dismissBarButton
     navigationItem.rightBarButtonItem = searchBarButton
-    navigationController?.navigationBar.backgroundColor = .white
-    UIApplication.shared.statusBarUIView?.backgroundColor = .white
     
     view.addSubviews(
       emptyDefaultView,
@@ -229,6 +228,23 @@ final class NoteListViewController: BaseViewController<NoteListReactor> {
   }
   
   // MARK: Private
+  
+  private func bindUI() {
+    rx.viewWillAppear
+      .take(1)
+      .asDriver(onErrorJustReturn: true)
+      .drive { [weak self] _ in
+        guard let navigationBar = self?
+                .navigationController?
+                .navigationBar else { return }
+        
+        AppApppearance.updateNavigaionBarAppearance(
+          navigationBar,
+          with: .normal
+        )
+      }
+      .disposed(by: disposeBag)
+  }
   
   private func setNavigationTitle(year: Int, month: Int) {
     titleLabel.text = "\(year)년 \(month)월"
