@@ -93,7 +93,7 @@ final class NoteImageCellReactor: Reactor {
   
   private func addImageSectionItem(imageURL: String) -> Observable<Mutation> {
     // Todo: NoteImage 모델은 상세에서만 쓰일것 같아 ItemReactor 모델 추후변경 예정
-    let item = NoteImage.init(id: 0, url: imageURL)
+    let item = NoteImage.init(id: 0, imageURL: imageURL)
     let reactor = NoteImageItemCellReactor(item: item)
     let sectionItem = NoteImageSectionItem.item(reactor)
     

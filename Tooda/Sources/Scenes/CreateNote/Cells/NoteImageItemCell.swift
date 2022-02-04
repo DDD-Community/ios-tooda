@@ -43,7 +43,7 @@ class NoteImageItemCell: BaseCollectionViewCell, View {
   func bind(reactor: Reactor) {
     reactor.state
       .map { $0.item }
-      .asDriver(onErrorJustReturn: .init())
+      .asDriver(onErrorJustReturn: .init(id: 0, imageURL: "", width: nil, height: nil))
       .drive(onNext: { [weak self] in
         self?.fetchImage(urlString: $0.imageURL)
       }).disposed(by: self.disposeBag)
