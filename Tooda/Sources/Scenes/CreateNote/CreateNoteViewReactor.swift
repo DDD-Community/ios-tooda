@@ -341,16 +341,20 @@ extension CreateNoteViewReactor {
     ])
   }
   
-  private func makeLinkSectionItem(_ url: String) -> Observable<Mutation> {
+  private func makeLinkSectionItem(_ urlString: String) -> Observable<Mutation> {
+    
+    //FIXME: URL 관련 안내 Alert을 보여줘야 할것 같은데 present 관련 이슈가 좀 있어서 추후에 처리할게요.
+    guard URL(string: urlString) != nil else { return .empty() }
+    
     let linkReactor = NoteLinkCellReactor(dependency: .init(
       service: self.dependency.linkPreviewService),
-                                          payload: url
+                                          payload: urlString
     )
     
     let linkSectionItem: NoteSectionItem = NoteSectionItem.link(linkReactor)
     
     var requestNote = self.currentState.requestNote
-    requestNote.links.append(url)
+    requestNote.links.append(urlString)
     
     return .concat([
       .just(.requestNoteDataDidChanged(requestNote)),
