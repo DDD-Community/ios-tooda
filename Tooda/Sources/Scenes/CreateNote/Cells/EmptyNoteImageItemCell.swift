@@ -16,11 +16,12 @@ import RxCocoa
 class EmptyNoteImageItemCell: BaseCollectionViewCell {
   var disposeBag: DisposeBag = DisposeBag()
   
-  let containerView = UIView().then {
-    $0.backgroundColor = UIColor(type: .gray3)
-    $0.layer.cornerRadius = 8.0
-    $0.layer.masksToBounds = true
-  }
+	let placeHolderView = ImagePlaceHolderView(image: UIImage(type: .iconAddImagePlaceHolder)).then {
+		$0.layer.borderColor = UIColor.gray4.cgColor
+		$0.layer.borderWidth = 1.0
+		$0.layer.cornerRadius = 8.0
+		$0.layer.masksToBounds = true
+	}
   
   let addImageButton = UIButton()
   
@@ -34,17 +35,15 @@ class EmptyNoteImageItemCell: BaseCollectionViewCell {
   override func configureUI() {
     super.configureUI()
     
-    [containerView].forEach {
+    [placeHolderView, addImageButton].forEach {
       self.contentView.addSubview($0)
     }
-    
-    containerView.addSubviews(addImageButton)
   }
   
   override func setupConstraints() {
     super.setupConstraints()
     
-    containerView.snp.makeConstraints {
+    placeHolderView.snp.makeConstraints {
       $0.edges.equalToSuperview()
     }
     
