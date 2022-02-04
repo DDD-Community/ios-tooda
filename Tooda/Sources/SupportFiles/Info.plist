@@ -24,6 +24,8 @@
 	<string>$(APP_VERSION)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>&apos;tooda&apos;가 사진을 게시글에 첨부하기 위해 카메라 권한을 사용하도록 허용합니다.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>&apos;tooda&apos;가 사진을 게시글에 첨부하기 위해 사진 라이브러리에 접근하도록 허용합니다.</string>
 	<key>NSPhotoLibraryUsageDescription</key>

@@ -14,6 +14,22 @@ import RxDataSources
 import ReactorKit
 import SnapKit
 
+enum ImagePickerType {
+  case photo
+  case camera
+}
+
+extension UIImagePickerController.SourceType {
+  var soureType: ImagePickerType {
+    switch self {
+      case .camera:
+        return .camera
+      case .photoLibrary, .savedPhotosAlbum:
+        return .photo
+    }
+  }
+}
+
 // TODO: 노트 등록이 아닌 입력과 관련된 이름으로 변경해요.
 class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
   typealias Reactor = CreateNoteViewReactor
@@ -41,6 +57,8 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
   private let rxStockItemDidEditRelay: PublishRelay<IndexPath> = PublishRelay()
   
   private let rxCombinedTextDidChangedRelay: PublishRelay<(title: String, content: String)> = PublishRelay()
+  
+  private let rxImagePickedTypeRelay: PublishRelay<UIImagePickerController.SourceType> = PublishRelay()
   
   // MARK: Properties
   lazy var dataSource: Section = Section(configureCell: { [weak self] _, tableView, indexPath, item -> UITableViewCell in
@@ -287,6 +305,12 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
       .bind(to: reactor.action)
       .disposed(by: self.disposeBag)
     
+    rxImagePickedTypeRelay
+      .map { $0.soureType }
+      .map { Reactor.Action.imagePickerDidTapped($0) }
+      .bind(to: reactor.action)
+      .disposed(by: self.disposeBag)
+    
     rxNoteItemDeleteRelay
       .map { Reactor.Action.noteItemDidDeleted($0) }
       .bind(to: reactor.action)
@@ -305,7 +329,7 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
     
     reactor.state
       .compactMap { $0.presentType }
-      .asDriver(onErrorJustReturn: .showPhotoPicker)
+      .asDriver(onErrorJustReturn: .showImageSourceActionSheetView)
       .drive(onNext: { [weak self] in
         self?.present(by: $0)
       }).disposed(by: self.disposeBag)
@@ -348,8 +372,19 @@ extension CreateNoteViewController {
         self.showAlert(message: message)
       case .showPermission(let message):
         self.showAlertAndOpenAppSetting(message: message)
-      case .showPhotoPicker:
-        self.showPhotoPicker()
+      case .showImageSourceActionSheetView:
+        self.showImageActonSheetView()
+      case .showImagePickerView(let pickerType):
+        self.showImagePickerView(by: pickerType)
+    }
+  }
+  
+  private func showImagePickerView(by pickerType: ImagePickerType) {
+    switch pickerType {
+      case .photo:
+        self.showPickView(by: .photoLibrary)
+      case .camera:
+        self.showPickView(by: .camera)
     }
   }
   
@@ -376,15 +411,15 @@ extension CreateNoteViewController {
     self.present(alertController, animated: true, completion: nil)
   }
   
-  private func showPhotoPicker() {
+  private func showImageActonSheetView() {
     let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
     
     let cancel = UIAlertAction(title: "취소", style: .cancel, handler: nil)
     let camera = UIAlertAction(title: "카메라", style: .default) { [weak self] _ in
-      self?.showPickView(by: .camera)
+      self?.rxImagePickedTypeRelay.accept(.camera)
     }
     let album = UIAlertAction(title: "앨범", style: .default) { [weak self] _ in
-      self?.showPickView(by: .photoLibrary)
+      self?.rxImagePickedTypeRelay.accept(.photoLibrary)
     }
     
     alert.addAction(cancel)
