@@ -473,12 +473,12 @@ extension CreateNoteViewReactor {
     
     return Observable.concat([
       .just(.requestNoteDataDidChanged(requestNote)),
-      self.updateNoteAndDismissView()
+      self.updateNoteAndDismissView(requestNote)
     ])
   }
   
-  private func updateNoteAndDismissView() -> Observable<Mutation> {
-    return self.dependency.service.request(NoteAPI.update(dto: self.currentState.requestNote))
+  private func updateNoteAndDismissView(_ requestNote: NoteRequestDTO) -> Observable<Mutation> {
+    return self.dependency.service.request(NoteAPI.update(dto: requestNote))
       .toodaMap(Note.self)
       .asObservable()
       .flatMap { [weak self] note -> Observable<Mutation> in
