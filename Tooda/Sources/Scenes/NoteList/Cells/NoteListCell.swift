@@ -173,8 +173,9 @@ final class NoteListCell: BaseTableViewCell {
     
     if images.isEmpty {
       mainImageView.snp.remakeConstraints {
+        $0.leading.trailing.equalToSuperview().inset(20)
         $0.top.equalTo(descriptionLabel.snp.bottom).offset(0)
-        $0.bottom.equalToSuperview().inset(0)
+        $0.bottom.equalToSuperview().inset(24)
       }
     } else {
       if let width = images.first?.width,
