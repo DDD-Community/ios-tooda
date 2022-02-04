@@ -25,6 +25,7 @@ class StockRateInputViewController: BaseViewController<StockRateInputReactor> {
     static let title = TextStyle.titleBold(color: .gray1)
     static let descprtion = TextStyle.body(color: .gray3)
     static let searchField = TextStyle.body(color: .gray1)
+    static let searchFieldPlaceholder = TextStyle.body(color: .gray3)
     static let symbol = TextStyle.subTitleBold(color: .gray1)
     static let addButton = TextStyle.subTitleBold(color: .white)
   }
@@ -86,9 +87,9 @@ class StockRateInputViewController: BaseViewController<StockRateInputReactor> {
   }
   
   private lazy var textField = UITextField().then {
-    $0.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
     $0.keyboardType = .decimalPad
-    $0.placeholder = "상승률/하락률"
+    $0.attributedPlaceholder = "상승률/하락률".styled(with: Font.searchFieldPlaceholder)
+    $0.typingAttributes = Font.searchField
   }
   
   private let percentLabel = UILabel().then {
@@ -255,11 +256,6 @@ class StockRateInputViewController: BaseViewController<StockRateInputReactor> {
       .drive(onNext: { [weak self] in
         self?.textFieldVisiblityDidChanged(by: $0)
       }).disposed(by: self.disposeBag)
-  }
-  
-  @objc
-  func textFieldDidChange(textField: UITextField) {
-    textField.attributedText = textField.text?.styled(with: Font.searchField)
   }
 }
 
