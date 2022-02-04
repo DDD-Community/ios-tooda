@@ -41,10 +41,13 @@ final class SearchResultReactor: Reactor {
     case createNote(Note)
     case editNote(Note)
     case deleteNote(Note)
+    case setLoading(Bool)
   }
 
   struct State {
     var notes: [Note]
+    var isLoading: Bool
+    var isEmptyViewHidden: Bool
   }
 
 
@@ -52,7 +55,11 @@ final class SearchResultReactor: Reactor {
 
   private let dependency: Dependency
 
-  let initialState: State = State(notes: [])
+  let initialState: State = State(
+    notes: [],
+    isLoading: false,
+    isEmptyViewHidden: true
+  )
 
   init(dependency: Dependency) {
     self.dependency = dependency
@@ -67,7 +74,10 @@ extension SearchResultReactor {
   func mutate(action: Action) -> Observable<Mutation> {
     switch action {
     case let .search(text):
-      return self.loadSearchResult(text: text)
+      return Observable<Mutation>.concat([
+        .just(Mutation.setLoading(true)),
+        self.loadSearchResult(text: text)
+      ])
 
     case let .didTapNote(index):
       self.pushNoteList(index: index)
@@ -75,80 +85,17 @@ extension SearchResultReactor {
     }
   }
 
-  private func mockSearchResult() -> Observable<Mutation> {
-    return Observable<Mutation>.just(
-      .setSearchResult([
-        Note(
-          id: 1,
-          title: "전기차 관련 ",
-          content: "#전기차  G전자는 자동차 업체는 아니기 때문에, 유명 완성차 업체에 납품을 할 때 중요한 트랙 레코드가 많진 않아요. 반면 마그나는 수십 개 자동차 업체에 부품을 납품한 회사니깐 이 둘이 합치면 시너지를 낼 수 있을 까라 ",
-          createdAt: Date(),
-          updatedAt: Date(),
-          sticker: .angry,
-          noteStocks: [
-            .init(
-              id: 1,
-              name: "테슬라"
-            ),
-            .init(
-              id: 2,
-              name: "애플"
-            )
-          ],
-          noteLinks: [],
-          noteImages: []
-        ),
-        Note(
-          id: 2,
-          title: "전기차 관련 ",
-          content: "#전기차  G전자는 자동차 업체는 아니기 때문에, 유명 완성차 업체에 납품을 할 때 중요한 트랙 레코드가 많진 않아요. 반면 마그나는 수십 개 자동차 업체에 부품을 납품한 회사니깐 이 둘이 합치면 시너지를 낼 수 있을 까라 ",
-          createdAt: Date(),
-          updatedAt: Date(),
-          sticker: .thinking,
-          noteStocks: [
-            .init(
-              id: 1,
-              name: "테슬라"
-            ),
-            .init(
-              id: 2,
-              name: "애플"
-            )
-          ],
-          noteLinks: [],
-          noteImages: []
-        ),
-        Note(
-          id: 3,
-          title: "전기차 관련 ",
-          content: "#전기차  G전자는 자동차 업체는 아니기 때문에, 유명 완성차 업체에 납품을 할 때 중요한 트랙 레코드가 많진 않아요. 반면 마그나는 수십 개 자동차 업체에 부품을 납품한 회사니깐 이 둘이 합치면 시너지를 낼 수 있을 까라 ",
-          createdAt: Date(),
-          updatedAt: Date(),
-          sticker: .sad,
-          noteStocks: [
-            .init(
-              id: 1,
-              name: "테슬라"
-            ),
-            .init(
-              id: 2,
-              name: "애플"
-            )
-          ],
-          noteLinks: [],
-          noteImages: []
-        )
-      ])
-    )
-  }
-
-  // TODO: 목데이터가 없어서 keep
   private func loadSearchResult(text: String) -> Observable<Mutation> {
     return self.dependency.networking
       .request(SearchAPI.search(query: text, limit: Const.searchLimitCount))
       .toodaMap(SearchNoteResponse.self)
       .asObservable()
-      .map { Mutation.setSearchResult($0.notes) }
+      .flatMap {
+        return Observable<Mutation>.concat([
+          .just(.setLoading(false)),
+          .just(.setSearchResult($0.notes) )
+        ])
+      }
   }
 }
 
@@ -188,9 +135,11 @@ extension SearchResultReactor {
     switch mutation {
     case let .setSearchResult(notes):
       newState.notes = notes
+      newState.isEmptyViewHidden = !notes.isEmpty
 
     case let .createNote(note):
       newState.notes.append(note)
+      newState.isEmptyViewHidden = !newState.notes.isEmpty
 
     case let .editNote(note):
       guard let index = newState.notes.firstIndex(where: {
@@ -203,6 +152,10 @@ extension SearchResultReactor {
         $0.id == note.id
       }) else { break }
       newState.notes.remove(at: index)
+      newState.isEmptyViewHidden = !newState.notes.isEmpty
+
+    case let .setLoading(isLoading):
+      newState.isLoading = isLoading
     }
 
     return newState

@@ -81,6 +81,11 @@ final class HomeViewController: BaseViewController<HomeReactor> {
   
   private let noteGuideView = CreateNoteGuideView(frame: .zero)
 
+  private let indicatorView = UIActivityIndicatorView(style: .large).then {
+    $0.hidesWhenStopped = true
+    $0.color = .mainGreen
+  }
+
 
   // MARK: Custom Action
 
@@ -161,6 +166,7 @@ final class HomeViewController: BaseViewController<HomeReactor> {
     // State
     self.reactor?.state
       .map { $0.notebookViewModels }
+      .distinctUntilChanged()
       .bind(to: self.notebookCollectionView.rx.items(
         cellIdentifier: Const.notebookCellIdentifier,
         cellType: NotebookCell.self
@@ -171,6 +177,7 @@ final class HomeViewController: BaseViewController<HomeReactor> {
     reactor.state
       .filter { $0.selectedNotobook != nil }
       .map { $0.selectedNotobook! }
+      .distinctUntilChanged()
       .subscribe(onNext: { [weak self] notebook in
         self?.monthTitleButton.setAttributedTitle(
           Date(year: notebook.year, month: notebook.month, day: 1)
@@ -198,6 +205,7 @@ final class HomeViewController: BaseViewController<HomeReactor> {
 
     reactor.state
       .map { $0.exception }
+      .distinctUntilChanged()
       .subscribe(onNext: { [weak self] exception in
         switch exception {
         case .emptyNoteAlert:
@@ -209,6 +217,17 @@ final class HomeViewController: BaseViewController<HomeReactor> {
 
         case .none:
           return
+        }
+      }).disposed(by: self.disposeBag)
+
+    reactor.state
+      .map { $0.isLoading }
+      .distinctUntilChanged()
+      .subscribe(onNext: { [weak self] isLoading in
+        if isLoading {
+          self?.startIndicator()
+        } else {
+          self?.stopIndicator()
         }
       }).disposed(by: self.disposeBag)
   }
@@ -224,6 +243,7 @@ final class HomeViewController: BaseViewController<HomeReactor> {
       $0.addSubview(self.noteCountLabel)
       $0.addSubview(self.notebookCollectionView)
       $0.addSubview(self.noteGuideView)
+      $0.addSubview(self.indicatorView)
     }
 
     self.monthTitleButton.addTarget(
@@ -231,7 +251,7 @@ final class HomeViewController: BaseViewController<HomeReactor> {
       action: #selector(didTapMonthTitle),
       for: .touchUpInside
     )
-    
+
     self.noteGuideView.delegate = self
   }
 
@@ -256,6 +276,11 @@ final class HomeViewController: BaseViewController<HomeReactor> {
     
     self.noteGuideView.snp.makeConstraints {
       $0.leading.trailing.bottom.equalToSuperview()
+    }
+
+    self.indicatorView.snp.makeConstraints {
+      $0.centerX.equalToSuperview()
+      $0.centerY.equalToSuperview()
     }
   }
   
@@ -328,6 +353,16 @@ extension HomeViewController {
     self.presentDatePickerAlert(onConfirm: { [weak self] date in
       self?.rxPickDate.accept(date)
     })
+  }
+
+  private func startIndicator() {
+    self.indicatorView.startAnimating()
+    self.view.isUserInteractionEnabled = false
+  }
+
+  private func stopIndicator() {
+    self.indicatorView.stopAnimating()
+    self.view.isUserInteractionEnabled = true
   }
 }
 

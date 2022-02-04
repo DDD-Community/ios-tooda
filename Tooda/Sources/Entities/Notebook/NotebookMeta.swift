@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct NotebookMeta: Codable {
+struct NotebookMeta: Codable, Equatable {
 
   var year: Int
   var month: Int
