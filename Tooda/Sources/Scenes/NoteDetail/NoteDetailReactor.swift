@@ -24,8 +24,6 @@ final class NoteDetailReactor: Reactor {
     let coordinator: AppCoordinatorType
     let linkPreviewService: LinkPreViewServiceType
     let noteEventBus: PublishSubject<NoteEventBus.Event>
-    // TODO: Payload는 별도로 분리해요.
-    let payload: Payload
   }
 
   // MARK: Reactor
@@ -60,11 +58,14 @@ final class NoteDetailReactor: Reactor {
   private let dependency: Dependency
 
   let initialState: State
+  
+  let payload: Payload
 
-  init(dependency: Dependency) {
+  init(dependency: Dependency, payload: Payload) {
     self.dependency = dependency
+    self.payload = payload
     self.initialState =
-      State.generateInitialState(noteID: dependency.payload.id)
+      State.generateInitialState(noteID: payload.id)
   }
 }
 
