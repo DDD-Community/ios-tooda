@@ -16,7 +16,12 @@ import RxCocoa
 class EmptyNoteImageItemCell: BaseCollectionViewCell {
   var disposeBag: DisposeBag = DisposeBag()
   
-  let placeHolderView = ImagePlaceHolderView(image: UIImage(type: .iconAddImagePlaceHolder))
+	let placeHolderView = ImagePlaceHolderView(image: UIImage(type: .iconAddImagePlaceHolder)).then {
+		$0.layer.borderColor = UIColor.gray4.cgColor
+		$0.layer.borderWidth = 1.0
+		$0.layer.cornerRadius = 8.0
+		$0.layer.masksToBounds = true
+	}
   
   let addImageButton = UIButton()
   
