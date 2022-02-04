@@ -246,6 +246,6 @@ extension AddStockViewController {
   }
   
   private func textFieldTextDidChanged(by keyword: String) {
-    self.searchField.attributedText = keyword.styled(with: Font.searchField)
+    self.searchField.text = keyword
   }
 }
