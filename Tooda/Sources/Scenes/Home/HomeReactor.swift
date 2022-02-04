@@ -370,8 +370,9 @@ extension HomeReactor {
           ).day
 
           let historyDate: String? = {
-            guard let day = day, day > 0 else { return nil }
-            return "\(day)"
+            guard let day = day, day >= 0 else { return nil }
+            guard day > 0 else { return "오늘 살펴봤어요." }
+            return "\(day)일 전에 살펴봤어요"
           }()
 
           let isPlaceholder = item.updatedAt == nil
