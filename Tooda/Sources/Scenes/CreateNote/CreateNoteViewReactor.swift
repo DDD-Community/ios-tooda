@@ -420,13 +420,12 @@ self.dependency.coordinator.transition(
     
     return Observable.concat([
       .just(.requestNoteDataDidChanged(requestNote)),
-      self.registNoteAndDismissView()
+      self.registNoteAndDismissView(requestNote)
     ])
   }
   
-  // FIXME: 진수님 작업 완료되면 .map에 커스텀 JsonDecoder를 변경할게요!
-  private func registNoteAndDismissView() -> Observable<Mutation> {
-    return self.dependency.service.request(NoteAPI.create(dto: self.currentState.requestNote))
+  private func registNoteAndDismissView(_ requestNote: NoteRequestDTO) -> Observable<Mutation> {
+    return self.dependency.service.request(NoteAPI.create(dto: requestNote))
       .toodaMap(Note.self)
       .asObservable()
       .flatMap { [weak self] note -> Observable<Mutation> in
