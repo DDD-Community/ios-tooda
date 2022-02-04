@@ -69,6 +69,7 @@ final class NoteListCell: BaseTableViewCell {
   ).then {
     $0.layer.cornerRadius = 8
     $0.backgroundColor = .white
+    $0.clipsToBounds = true
   }
   
   // MARK: - Overridden: ParentClass
