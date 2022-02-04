@@ -73,7 +73,7 @@ final class SearchResultViewController: BaseViewController<SearchResultReactor> 
 
     self.tableView.snp.makeConstraints {
       $0.top.equalTo(self.view.safeAreaLayoutGuide.snp.top)
-      $0.bottom.equalTo(self.view.keyboardLayoutGuide.snp.top)
+      $0.bottom.equalToSuperview()
       $0.left.equalTo(self.view.safeAreaLayoutGuide.snp.left)
       $0.right.equalTo(self.view.safeAreaLayoutGuide.snp.right)
     }

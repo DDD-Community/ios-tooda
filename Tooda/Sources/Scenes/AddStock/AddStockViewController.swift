@@ -132,19 +132,19 @@ final class AddStockViewController: BaseViewController<AddStockReactor> {
     // Action
     
     self.closeBarButton.rx.tap
-      .debounce(.milliseconds(500), scheduler: MainScheduler.instance)
+      .debounce(.milliseconds(100), scheduler: MainScheduler.instance)
       .map { Reactor.Action.dismiss }
       .bind(to: reactor.action)
       .disposed(by: self.disposeBag)
     
     self.searchField.rx.text.orEmpty
-      .debounce(.milliseconds(300), scheduler: MainScheduler.instance)
+      .debounce(.milliseconds(100), scheduler: MainScheduler.instance)
       .map { Reactor.Action.searchTextDidChanged($0) }
       .bind(to: reactor.action)
       .disposed(by: self.disposeBag)
     
     self.nextButton.rx.tap
-      .debounce(.milliseconds(300), scheduler: MainScheduler.instance)
+      .debounce(.milliseconds(100), scheduler: MainScheduler.instance)
       .map { [weak self] _ in self?.searchField.text ?? "" }
       .map { Reactor.Action.nextButtonDidTapped(name: $0) }
       .bind(to: reactor.action)
@@ -246,6 +246,6 @@ extension AddStockViewController {
   }
   
   private func textFieldTextDidChanged(by keyword: String) {
-    self.searchField.attributedText = keyword.styled(with: Font.searchField)
+    self.searchField.text = keyword
   }
 }

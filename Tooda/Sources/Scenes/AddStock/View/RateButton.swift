@@ -15,7 +15,7 @@ final class RateButton: UIButton {
   }
   
   private enum Const {
-    static let disabledColor = UIColor.gray2
+    static let disabledColor = UIColor.gray4
   }
   
   let stockState: StockChangeState
@@ -56,6 +56,6 @@ final class RateButton: UIButton {
   }
   
   private func buttonLayerDidChanged(by isSelected: Bool) {
-    self.layer.borderColor = isSelected ? self.stockState.titleColor.cgColor : Const.disabledColor.cgColor
+    self.layer.borderColor = isSelected ? self.stockState.borderColor.cgColor : Const.disabledColor.cgColor
   }
 }

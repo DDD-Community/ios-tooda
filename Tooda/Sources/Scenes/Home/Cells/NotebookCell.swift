@@ -26,7 +26,6 @@ class NotebookCell: UICollectionViewCell {
   private enum Text {
     static let monthTitle = "{month}월"
     static let titleSuffix = "의 투다"
-    static let historyDate = "{day}일 전에 살펴봤어요."
     static let emptyHistoryDate = "새로운 기록을 남겨보세요"
   }
 
@@ -173,11 +172,10 @@ class NotebookCell: UICollectionViewCell {
       self.stickers[$0.offset].image = $0.element
     }
 
-    guard let historyDate = viewModel.historyDate else {
+    if let historyDate = viewModel.historyDate {
+      self.historyDateLabel.attributedText = historyDate.styled(with: Font.historyDate)
+    } else {
       self.historyDateLabel.attributedText = Text.emptyHistoryDate.styled(with: Font.emptyHistoryDate)
-      return
     }
-    self.historyDateLabel.attributedText = Text.historyDate.styled(with: Font.historyDate)
-      .replace(key: "day", value: historyDate)
   }
 }

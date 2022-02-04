@@ -80,7 +80,7 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
       cell.configure()
         
       cell.rx.didTapAddStock
-        .debounce(.milliseconds(500), scheduler: MainScheduler.instance)
+        .debounce(.milliseconds(100), scheduler: MainScheduler.instance)
         .subscribe(onNext: { [weak self] in
           self?.rxAddStockDidTapRelay.accept($0)
         })
