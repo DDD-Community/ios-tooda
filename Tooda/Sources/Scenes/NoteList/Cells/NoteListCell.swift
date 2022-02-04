@@ -93,6 +93,11 @@ final class NoteListCell: BaseTableViewCell {
     mainImageView.addSubview(imageCountLabel)
   }
   
+  override func prepareForReuse() {
+    super.prepareForReuse()
+    mainImageView.image = nil
+  }
+  
   override func setupConstraints() {
     super.setupConstraints()
     cardView.snp.makeConstraints {
@@ -194,6 +199,9 @@ final class NoteListCell: BaseTableViewCell {
       }
     }
     
-    mainImageView.image = images.first?.imageURL.urlImage
+    if let urlString = images.first?.imageURL,
+       let url = URL(string: urlString) {
+      mainImageView.load(url: url)
+    }
   }
 }
