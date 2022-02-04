@@ -46,7 +46,10 @@ class NoteLinkCell: BaseTableViewCell, View {
     $0.translatesAutoresizingMaskIntoConstraints = false
   }
   
-  private let placeHolderView = ImagePlaceHolderView(image: UIImage(type: .iconImagePlaceHolder))
+  private let placeHolderView = ImagePlaceHolderView(image: UIImage(type: .iconImagePlaceHolder)).then {
+    $0.layer.borderColor = nil
+    $0.layer.masksToBounds = true
+  }
   
   private let thumnailView = UIImageView().then {
     $0.contentMode = .scaleAspectFill
