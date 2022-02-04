@@ -89,6 +89,7 @@ extension NoteImageItemCell {
 }
 
 extension String {
+  @available(iOS, deprecated, message: "성능 이슈가 심해서 비동기 처리하는 로직을 사용할 예정이에요.")
   var urlImage: UIImage? {
     guard let url = URL(string: self),
           let data = try? Data(contentsOf: url),
