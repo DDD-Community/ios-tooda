@@ -18,6 +18,7 @@ final class NoteListCell: BaseTableViewCell {
     static let title = TextStyle.subTitleBold(color: .gray1)
     static let recordDate = TextStyle.captionBold(color: .gray3)
     static let description = TextStyle.bodyBold(color: .gray1)
+    static let imageCount = TextStyle.caption(color: .gray2)
   }
   
   // MARK: - UI Components
@@ -62,6 +63,7 @@ final class NoteListCell: BaseTableViewCell {
     edgeInsets: UIEdgeInsets(horizontal: 8, vertical: 2)
   ).then {
     $0.layer.cornerRadius = 8
+    $0.backgroundColor = .white
   }
   
   // MARK: - Overridden: ParentClass
@@ -147,6 +149,13 @@ final class NoteListCell: BaseTableViewCell {
     linkImageView.isHidden = note.noteLinks?.first == nil ? true : false
     descriptionLabel.attributedText = note.content.styled(with: Font.description)
     updateImages(images: note.noteImages)
+    
+    if note.noteImages.count > 1 {
+      imageCountLabel.isHidden = false
+      imageCountLabel.attributedText = "+ \(note.noteImages.count)".styled(with: Font.imageCount)
+    } else {
+      imageCountLabel.isHidden = true
+    }
     
     DispatchQueue.main.async {
       self.descriptionLabel.setExpandActionIfPossible("더보기")

@@ -100,6 +100,11 @@ final class NoteListViewController: BaseViewController<NoteListReactor> {
       .bind(to: reactor.action)
       .disposed(by: disposeBag)
     
+    searchBarButton.rx.tap
+      .map { _ in NoteListReactor.Action.searchButtonTap }
+      .bind(to: reactor.action)
+      .disposed(by: disposeBag)
+    
     dismissBarButton.rx.tap
       .map { _ in NoteListReactor.Action.dismiss }
       .bind(to: reactor.action)
