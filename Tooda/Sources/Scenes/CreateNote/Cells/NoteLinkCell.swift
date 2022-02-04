@@ -198,18 +198,14 @@ extension NoteLinkCell {
     guard let response = response else {
       return
     }
+		
+		if let url = response.imageURL, let image = url.urlImage {
+			self.thumnailView.image = image
+			self.placeHolderView.isHidden = true
+		} else {
+			self.placeHolderView.isHidden = false
+		}
     
-    
-    DispatchQueue.main.async { [weak self] in
-      if let url = response.imageURL {
-        self?.thumnailView.image = url.urlImage
-        self?.placeHolderView.isHidden = true
-      } else {
-        self?.placeHolderView.isHidden = false
-      }
-    }
-    
-    self.thumnailView.image = response.imageURL?.urlImage
     self.titleLabel.attributedText = response.title?.styled(with: Font.title)
     self.canonicalLabel.attributedText = response.canonicalUrl?.styled(with: Font.caption)
     self.descriptionLabel.attributedText = response.description?.styled(with: Font.caption)
