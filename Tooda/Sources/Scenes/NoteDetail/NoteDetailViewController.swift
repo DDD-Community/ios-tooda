@@ -79,7 +79,7 @@ final class NoteDetailViewController: BaseViewController<NoteDetailReactor> {
     }
   })
   
-  
+  private let deleteNoteButtonRelay: PublishRelay<Void> = PublishRelay()
   private let editNoteButtonRelay: PublishRelay<Void> = PublishRelay()
   
   private let linkItemCellDidTappedRelay: PublishRelay<String> = PublishRelay()
@@ -164,6 +164,11 @@ final class NoteDetailViewController: BaseViewController<NoteDetailReactor> {
       .bind(to: reactor.action)
       .disposed(by: self.disposeBag)
     
+    self.deleteNoteButtonRelay
+      .map { NoteDetailReactor.Action.deleteNote }
+      .bind(to: reactor.action)
+      .disposed(by: self.disposeBag)
+    
     self.linkItemCellDidTappedRelay
       .map { NoteDetailReactor.Action.linkItemDidTapped($0) }
       .bind(to: reactor.action)
@@ -190,7 +195,9 @@ final class NoteDetailViewController: BaseViewController<NoteDetailReactor> {
           UIAlertAction(
             title: "노트 삭제",
             style: .destructive,
-            handler: nil
+            handler: { [weak self] _ in
+              self?.deleteActionSheetDidTapped()
+            }
           )
         )
         
@@ -215,6 +222,23 @@ final class NoteDetailViewController: BaseViewController<NoteDetailReactor> {
     }
     .disposed(by: disposeBag)
 
+  }
+  
+  private func deleteActionSheetDidTapped() {
+    let alertController = UIAlertController(title: "정말 삭제할까요?",
+                                            message: "한 번 삭제하면 되돌릴 수 없어요.",
+                                            preferredStyle: .alert)
+    
+    let ok = UIAlertAction(title: "확인", style: .destructive, handler: { [weak self] _ in
+      self?.deleteNoteButtonRelay.accept(())
+    })
+    
+    let cancel = UIAlertAction(title: "취소", style: .default, handler: nil)
+    
+    alertController.addAction(cancel)
+    alertController.addAction(ok)
+    
+    self.present(alertController, animated: true, completion: nil)
   }
   
 }

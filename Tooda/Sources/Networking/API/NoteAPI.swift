@@ -32,7 +32,7 @@ extension NoteAPI: BaseAPI {
       case .addImage:
         return "diary/image"
       case .delete(let id):
-        return "/diary/\(id)"
+        return "diary/\(id)"
       case .update(let dto):
         return "diary/\(dto.id ?? "")"
       case .detail(let id):

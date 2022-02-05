@@ -23,7 +23,7 @@ final class NoteDetailReactor: Reactor {
     let service: NetworkingProtocol
     let coordinator: AppCoordinatorType
     let linkPreviewService: LinkPreViewServiceType
-    let payload: Payload
+    let noteEventBus: PublishSubject<NoteEventBus.Event>
   }
 
   // MARK: Reactor
@@ -32,6 +32,7 @@ final class NoteDetailReactor: Reactor {
     case loadData
     case back
     case editNote
+    case deleteNote
     case linkItemDidTapped(String)
   }
 
@@ -57,11 +58,14 @@ final class NoteDetailReactor: Reactor {
   private let dependency: Dependency
 
   let initialState: State
+  
+  let payload: Payload
 
-  init(dependency: Dependency) {
+  init(dependency: Dependency, payload: Payload) {
     self.dependency = dependency
+    self.payload = payload
     self.initialState =
-      State.generateInitialState(noteID: dependency.payload.id)
+      State.generateInitialState(noteID: payload.id)
   }
 }
 
@@ -84,6 +88,8 @@ extension NoteDetailReactor {
       case .editNote:
         self.editNote()
         return .empty()
+    case .deleteNote:
+      return deleteNoteMutation()
     case .linkItemDidTapped(let urlString):
       return linkItemDidTapped(urlString)
     }
@@ -170,6 +176,27 @@ extension NoteDetailReactor {
     self.dependency.coordinator.transition(to: .modifyNote(dateString: dateString,
                                                            note: noteRequestDTO),
                                            using: .modal, animated: true, completion: nil)
+  }
+  
+  private func deleteNoteMutation() -> Observable<Mutation> {
+    let noteID = "\(self.currentState.noteID)"
+    return self.dependency.service.request(NoteAPI.delete(id: noteID))
+      .asObservable()
+      .flatMap { [weak self] _ -> Observable<Mutation> in
+        
+        guard let self = self,
+                let note = self.currentState.note else { return .empty() }
+        
+        self.dependency.noteEventBus.onNext(.deleteNote(note))
+        
+        self.dependency.coordinator.close(
+          style: .pop,
+          animated: true,
+          completion: nil
+        )
+        
+        return .empty()
+      }
   }
   
   private func linkItemDidTapped(_ urlString: String) -> Observable<Mutation> {
