@@ -38,14 +38,10 @@ final class NoteDetailImageCell: BaseTableViewCell {
     
     self.indicatorView.startAnimating()
     
-    DispatchQueue.global(qos: .background).async {
-      guard let image = UIImage(data: data) else { return }
-      
-      DispatchQueue.main.async { [weak self] in
-        self?.imageContainerView.image = image
-        self?.indicatorView.stopAnimating()
-      }
-    }
+    guard let image = UIImage(data: data) else { return }
+    self.imageContainerView.image = image
+    
+    self.indicatorView.stopAnimating()
   }
   
   override func setupConstraints() {

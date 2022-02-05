@@ -341,16 +341,20 @@ extension CreateNoteViewReactor {
     ])
   }
   
-  private func makeLinkSectionItem(_ url: String) -> Observable<Mutation> {
+  private func makeLinkSectionItem(_ urlString: String) -> Observable<Mutation> {
+    
+    //FIXME: URL 관련 안내 Alert을 보여줘야 할것 같은데 present 관련 이슈가 좀 있어서 추후에 처리할게요.
+    guard URL(string: urlString) != nil else { return .empty() }
+    
     let linkReactor = NoteLinkCellReactor(dependency: .init(
       service: self.dependency.linkPreviewService),
-                                          payload: url
+                                          payload: urlString
     )
     
     let linkSectionItem: NoteSectionItem = NoteSectionItem.link(linkReactor)
     
     var requestNote = self.currentState.requestNote
-    requestNote.links.append(url)
+    requestNote.links.append(urlString)
     
     return .concat([
       .just(.requestNoteDataDidChanged(requestNote)),
@@ -416,13 +420,12 @@ self.dependency.coordinator.transition(
     
     return Observable.concat([
       .just(.requestNoteDataDidChanged(requestNote)),
-      self.registNoteAndDismissView()
+      self.registNoteAndDismissView(requestNote)
     ])
   }
   
-  // FIXME: 진수님 작업 완료되면 .map에 커스텀 JsonDecoder를 변경할게요!
-  private func registNoteAndDismissView() -> Observable<Mutation> {
-    return self.dependency.service.request(NoteAPI.create(dto: self.currentState.requestNote))
+  private func registNoteAndDismissView(_ requestNote: NoteRequestDTO) -> Observable<Mutation> {
+    return self.dependency.service.request(NoteAPI.create(dto: requestNote))
       .toodaMap(Note.self)
       .asObservable()
       .flatMap { [weak self] note -> Observable<Mutation> in
@@ -470,12 +473,12 @@ extension CreateNoteViewReactor {
     
     return Observable.concat([
       .just(.requestNoteDataDidChanged(requestNote)),
-      self.updateNoteAndDismissView()
+      self.updateNoteAndDismissView(requestNote)
     ])
   }
   
-  private func updateNoteAndDismissView() -> Observable<Mutation> {
-    return self.dependency.service.request(NoteAPI.update(dto: self.currentState.requestNote))
+  private func updateNoteAndDismissView(_ requestNote: NoteRequestDTO) -> Observable<Mutation> {
+    return self.dependency.service.request(NoteAPI.update(dto: requestNote))
       .toodaMap(Note.self)
       .asObservable()
       .flatMap { [weak self] note -> Observable<Mutation> in

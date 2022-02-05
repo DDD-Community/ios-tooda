@@ -226,6 +226,7 @@ class StockRateInputViewController: BaseViewController<StockRateInputReactor> {
       .disposed(by: self.disposeBag)
     
     self.textField.rx.text.orEmpty
+      .skip(1)
       .map { Float($0) }
       .distinctUntilChanged()
       .map { Reactor.Action.textFieldDidChanged($0) }

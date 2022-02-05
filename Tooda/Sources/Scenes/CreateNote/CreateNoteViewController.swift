@@ -468,18 +468,19 @@ extension CreateNoteViewController {
   private func generateEditableSwipeConfigure(at indexPath: IndexPath) -> UISwipeActionsConfiguration? {
     switch dataSource[indexPath] {
       case .stock:
-        return self.generateSwipeAction(indexPath: indexPath, name: "종목")
+        let delete = self.deleteCellAction(at: indexPath, name: "종목")
+        let edit = self.editCellAction(at: indexPath)
+        return self.generateSwipeAction(actions: [delete, edit])
       case .link:
-        return self.generateSwipeAction(indexPath: indexPath, name: "링크")
+        let delete = self.deleteCellAction(at: indexPath, name: "링크")
+        return self.generateSwipeAction(actions: [delete])
       default:
         return nil
     }
   }
   
-  private func generateSwipeAction(indexPath: IndexPath, name: String) -> UISwipeActionsConfiguration? {
-    let delete = self.deleteCellAction(at: indexPath, name: name)
-    let edit = self.editCellAction(at: indexPath)
-    let swipeActionConfig = UISwipeActionsConfiguration(actions: [delete, edit])
+  private func generateSwipeAction(actions: [UIContextualAction]) -> UISwipeActionsConfiguration? {
+    let swipeActionConfig = UISwipeActionsConfiguration(actions: actions)
     swipeActionConfig.performsFirstActionWithFullSwipe = false
     return swipeActionConfig
   }
