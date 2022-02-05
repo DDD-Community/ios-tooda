@@ -48,6 +48,10 @@ final class NoteListViewController: BaseViewController<NoteListReactor> {
     $0.register(UITableViewCell.self)
     $0.register(NoteListCell.self)
     $0.separatorStyle = .none
+    $0.contentInset = UIEdgeInsets(
+      horizontal: 0,
+      vertical: 20
+    )
   }
   
   private let dismissBarButton = UIBarButtonItem(
@@ -238,10 +242,7 @@ final class NoteListViewController: BaseViewController<NoteListReactor> {
                 .navigationController?
                 .navigationBar else { return }
         
-        AppApppearance.updateNavigaionBarAppearance(
-          navigationBar,
-          with: .normal
-        )
+        self?.configureNavigationBar(with: navigationBar)
       }
       .disposed(by: disposeBag)
   }
@@ -249,6 +250,16 @@ final class NoteListViewController: BaseViewController<NoteListReactor> {
   private func setNavigationTitle(year: Int, month: Int) {
     titleLabel.text = "\(year)년 \(month)월"
     navigationItem.titleView = titleLabel
+  }
+  
+  private func configureNavigationBar(with navigationBar: UINavigationBar) {
+    
+    navigationBar.do {
+      $0.setBackgroundImage(UIImage(), for: .default)
+      $0.shadowImage = UIImage()
+      $0.barTintColor = .white
+      $0.isTranslucent = false
+    }
   }
   
   private func setupEmptyBackgroundView() {
