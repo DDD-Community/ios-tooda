@@ -74,7 +74,9 @@ extension UILabel {
   }
   
   var truncationIndex: Int? {
-    guard let text = text, isTruncatedText else {
+    guard let text = text,
+          text.count > 5,
+          isTruncatedText else {
       return nil
     }
     let attributes: [NSAttributedString.Key: UIFont] = [.font: font]

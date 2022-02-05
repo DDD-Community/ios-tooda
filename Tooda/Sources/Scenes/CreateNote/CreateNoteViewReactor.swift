@@ -677,7 +677,7 @@ let modifiableNoteSectionFactory: (NoteRequestDTO, LinkPreViewServiceType) -> [N
     dependency: .init(
       factory: noteImageSectionFactory
     ),
-    images: note.images.map { NoteImage(id: 0, url: $0) }
+    images: note.images.map { NoteImage(id: 0, imageURL: $0) }
   )
   
   let imageSectionItem: NoteSectionItem = NoteSectionItem.image(imageReactor)

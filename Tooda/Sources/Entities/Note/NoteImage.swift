@@ -11,27 +11,12 @@ import Foundation
 struct NoteImage: Codable {
 	var id: Int
 	var imageURL: String
+  var width: Int?
+  var height: Int?
 	
 	private enum CodingKeys: String, CodingKey {
 		case id = "id"
 		case imageURL = "image"
+    case width, height
 	}
-	
-	init(from decoder: Decoder) throws {
-		let values = try decoder.container(keyedBy: CodingKeys.self)
-		id = try values.decode(Int.self, forKey: .id)
-		imageURL = try values.decode(String.self, forKey: .imageURL)
-	}
-}
-
-extension NoteImage {
-  init() {
-    self.id = 0
-    self.imageURL = ""
-  }
-
-  init(id: Int, url: String) {
-    self.id = id
-    self.imageURL = url
-  }
 }
