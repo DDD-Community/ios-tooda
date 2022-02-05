@@ -147,6 +147,10 @@ extension SettingsReactor {
       shouldNavigationWrapped: false
     )
     
+    SnackBarEventBus.event.onNext(
+      (type: .negative, title: "로그아웃 되었어요!")
+    )
+    
     return Observable<Mutation>.empty()
   }
   
@@ -162,6 +166,10 @@ extension SettingsReactor {
         self.dependency.coordinator.start(
           from: .login,
           shouldNavigationWrapped: false
+        )
+        
+        SnackBarEventBus.event.onNext(
+          (type: .negative, title: "탈퇴가 완료되었어요 :(")
         )
         
         return Observable<Mutation>.empty()
