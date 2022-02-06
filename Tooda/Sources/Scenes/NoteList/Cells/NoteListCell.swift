@@ -21,7 +21,7 @@ final class NoteListCell: BaseTableViewCell {
   enum Font {
     static let title = TextStyle.subTitleBold(color: .gray1)
     static let recordDate = TextStyle.captionBold(color: .gray3)
-    static let description = TextStyle.bodyBold(color: .gray1)
+    static let description = TextStyle.body(color: .gray1)
     static let imageCount = TextStyle.caption(color: .gray2)
   }
   
