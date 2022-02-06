@@ -166,7 +166,7 @@ class NotebookCell: UICollectionViewCell {
           .replace(key: "month", value: viewModel.month),
         Text.titleSuffix.styled(with: viewModel.isPlaceholder ? Font.emptyTitle : Font.title)
       ]
-    )
+    ).alignment(with: .left)
     self.backgroundImageView.image = viewModel.backgroundImage
     viewModel.stickers.enumerated().forEach {
       self.stickers[$0.offset].image = $0.element
