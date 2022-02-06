@@ -168,10 +168,6 @@ final class NoteListCell: BaseTableViewCell {
       
       imageCountLabel.isHidden = true
     }
-    
-    DispatchQueue.main.async {
-      self.descriptionLabel.setExpandActionIfPossible("더보기")
-    }
   }
   
   // MARK: - Private methods
