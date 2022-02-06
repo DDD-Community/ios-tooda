@@ -16,7 +16,7 @@ final class PopUpViewController: BaseViewController<PopUpReactor> {
   // MARK: - Constants
   
   private enum Constants {
-    static let minimumKeyboardMargin: CGFloat = 30.0
+    static let minimumKeyboardMarginRatio: CGFloat = 0.2
   }
   
   private enum Font {
@@ -158,20 +158,21 @@ final class PopUpViewController: BaseViewController<PopUpReactor> {
       .compactMap { $0 }
       .drive(onNext: { [weak self] keyboardFrame in
         guard let self = self else { return }
-        let inputPopUpFrame = self.textInputPopUpView.frame
-        let interFrame = inputPopUpFrame.intersection(keyboardFrame)
-        self.updatePopUpLayout(with: interFrame)
+        self.updatePopUpLayout(with: keyboardFrame)
       })
       .disposed(by: disposeBag)
   }
   
   // MARK: - Private methods
   
-  private func updatePopUpLayout(with intersection: CGRect) {
-    var margin: CGFloat = Constants.minimumKeyboardMargin
-    margin += intersection.height
+  private func updatePopUpLayout(with keyboardFrame: CGRect) {
+    let margin: CGFloat = keyboardFrame.height * Constants.minimumKeyboardMarginRatio
     textInputPopUpView.snp.updateConstraints {
       $0.centerY.equalToSuperview().offset(-margin)
+    }
+    
+    UIView.animate(withDuration: 0.2) {
+      self.view.layoutIfNeeded()
     }
   }
   
