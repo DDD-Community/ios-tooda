@@ -8,6 +8,7 @@
 
 import UIKit
 
+import Mantis
 import RxViewController
 import RxCocoa
 import RxDataSources
@@ -432,11 +433,12 @@ extension CreateNoteViewController {
     let vc = UIImagePickerController()
     vc.sourceType = by
     vc.delegate = self
-    vc.allowsEditing = true
     
     present(vc, animated: true, completion: nil)
   }
 }
+
+// MARK: - Image Picker Delegates
 
 extension CreateNoteViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
   func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
@@ -445,11 +447,30 @@ extension CreateNoteViewController: UIImagePickerControllerDelegate, UINavigatio
   
   func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
     
-    if let image = info[.editedImage] as? UIImage, let imageData = image.jpegData(compressionQuality: 1.0) {
-      self.imagePickerDataSelectedRelay.accept(imageData)
-    }
-    
     picker.dismiss(animated: true, completion: nil)
+    
+    if let image = info[.originalImage] as? UIImage {
+      let viewController = Mantis.cropViewController(image: image)
+      viewController.delegate = self
+      viewController.modalPresentationStyle = .overFullScreen
+      
+      self.present(viewController, animated: true)
+    }
+  }
+}
+
+extension CreateNoteViewController: CropViewControllerDelegate {
+  func cropViewControllerDidCrop(_ cropViewController: CropViewController, cropped: UIImage, transformation: Transformation, cropInfo: CropInfo) {
+    
+    if let croppedData = cropped.jpegData(compressionQuality: 1.0) {
+      cropViewController.dismiss(animated: true, completion: { [weak self] in
+        self?.imagePickerDataSelectedRelay.accept(croppedData)
+      })
+    }
+  }
+  
+  func cropViewControllerDidCancel(_ cropViewController: CropViewController, original: UIImage) {
+    cropViewController.dismiss(animated: true, completion: nil)
   }
 }
 
