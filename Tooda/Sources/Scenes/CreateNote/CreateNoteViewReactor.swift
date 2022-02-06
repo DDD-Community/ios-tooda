@@ -371,11 +371,12 @@ extension CreateNoteViewReactor {
   }
   
   private func makeLinkSectionItem(_ urlString: String) -> Observable<Mutation> {
-    
-    // FIXME: 키보드를 내린후에 Alert을 호출하도록 해요.
     guard URL(string: urlString) != nil else {
-      return .just(.present(.showAlert(title: "추가할 수 없는 URL이에요.",
+      return .concat([
+        .just(.shouldKeyboardDismissed(true)),
+        .just(.present(.showAlert(title: "추가할 수 없는 URL이에요.",
                                        message: "정확한 URL을 다시 입력해주세요.")))
+      ])
     }
     
     let linkReactor = NoteLinkCellReactor(dependency: .init(
