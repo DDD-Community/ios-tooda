@@ -35,7 +35,7 @@ extension Sticker {
       return UIImage(type: .stickerThinking)
 
     case .chicken:
-      return UIImage(type: .stickerThinking)
+      return UIImage(type: .stickerChicken)
 
     case .pencil:
       return UIImage(type: .stickerPencil)
