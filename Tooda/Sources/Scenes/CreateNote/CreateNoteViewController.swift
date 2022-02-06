@@ -236,7 +236,7 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
     tableView.snp.makeConstraints {
       $0.top.equalTo(self.view.safeAreaLayoutGuide.snp.top).offset(16)
       $0.leading.trailing.equalToSuperview()
-      $0.bottom.equalTo(self.view.safeAreaLayoutGuide.snp.bottom)
+      $0.bottom.equalTo(self.view.keyboardLayoutGuide.snp.top).offset(-(8 + Metric.linkButtonSize + 1))
     }
     
     linkStackView.snp.makeConstraints {
