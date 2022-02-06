@@ -119,13 +119,7 @@ class BaseProjectFactory: ProjectFactory {
               ],
              xcconfig: .relativeToRoot("\(projectName)/Sources/SupportFiles/Configuration/\(testAppinfo.configValue).xcconfig")),
       .release(name: .configuration("Release"),
-               settings: [
-                "Release": "\(releaseAppInfo.configValue)",
-                "CODE_SIGN_IDENTITY": "Apple Distribution",
-                "PROVISIONING_PROFILE_SPECIFIER": "match AppStore com.tooda",
-                "CODE_SIGN_STYLE": "Manual",
-                "DEVELOPMENT_TEAM": "67SBNF2QS6"
-               ],
+               settings: ["Release": "\(releaseAppInfo.configValue)"],
                xcconfig: .relativeToRoot("\(projectName)/Sources/SupportFiles/Configuration/\(releaseAppInfo.configValue).xcconfig"))
     ])
   }
