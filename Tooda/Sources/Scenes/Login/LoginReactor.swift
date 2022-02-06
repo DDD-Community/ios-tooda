@@ -23,7 +23,7 @@ final class LoginReactor: Reactor {
     let coordinator: AppCoordinatorType
     let localPersistanceManager: LocalPersistanceManagerType
     let socialLoginService: SocialLoginServiceType
-    let snackBarEventBus: Observable<SnackBarEventBus.SnackBarInfo>
+    let snackBarEventBus: Observable<SnackBarManager.SnackBarInfo>
   }
   
   enum Action {
@@ -33,12 +33,12 @@ final class LoginReactor: Reactor {
   enum Mutation {
     case setAppToken(token: AppToken)
     case setIsAuthorized(isAuthorized: Bool)
-    case setSnackBarInfo(SnackBarEventBus.SnackBarInfo)
+    case setSnackBarInfo(SnackBarManager.SnackBarInfo)
   }
   
   struct State: Then {
     var isAuthorized: Bool
-    var snackBarInfo: SnackBarEventBus.SnackBarInfo?
+    var snackBarInfo: SnackBarManager.SnackBarInfo?
   }
   
   // MARK: - Properties
@@ -85,9 +85,10 @@ extension LoginReactor {
             guard let self = self else { return Observable.empty() }
             if token.accessToken == nil {
               return Observable.just(
-                Mutation.setSnackBarInfo(
-                  (type: .negative, title: "앗, 문제가 있네요. 다시 시도해보세요!")
-                )
+                Mutation.setSnackBarInfo(.init(
+                  title: "앗, 문제가 있네요. 다시 시도해보세요!",
+                  type: .negative
+                ))
               )
             } else {
               return Observable<Mutation>.concat([
@@ -121,9 +122,10 @@ extension LoginReactor {
       guard let self = self else { return mutation }
       if result.error != nil {
         return Observable.just(
-          Mutation.setSnackBarInfo(
-            (type: .negative, title: "앗, 문제가 있네요. 다시 시도해보세요!")
-          )
+          Mutation.setSnackBarInfo(.init(
+            title: "앗, 문제가 있네요. 다시 시도해보세요!",
+            type: .negative
+          ))
         )
       }
       return self.signInMutation(with: result.token ?? "")

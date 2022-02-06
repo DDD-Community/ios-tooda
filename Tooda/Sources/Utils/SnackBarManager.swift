@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-enum SnackBarType {
+enum SnackBarType: Equatable {
   case positive
   case negative
   
@@ -32,6 +32,11 @@ enum SnackBarType {
 }
 
 final class SnackBarManager {
+
+  struct SnackBarInfo: Equatable {
+    let title: String
+    let type: SnackBarType
+  }
   
   // MARK: - Constants
   

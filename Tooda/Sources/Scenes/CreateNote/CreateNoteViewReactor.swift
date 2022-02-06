@@ -73,7 +73,7 @@ final class CreateNoteViewReactor: Reactor {
     case linkItemDidDeleted(Int)
     case requestNoteDataDidChanged(NoteRequestDTO)
     case fetchEmptyStockItem([NoteSectionItem])
-    case setSnackBarInfo(SnackBarEventBus.SnackBarInfo)
+    case setSnackBarInfo(SnackBarManager.SnackBarInfo)
     case shouldKeyboardDismissed(Bool)
   }
 
@@ -82,7 +82,7 @@ final class CreateNoteViewReactor: Reactor {
     var presentType: ViewPresentType?
     var shouldReigsterButtonEnabled: Bool = false
     var requestNote: NoteRequestDTO = NoteRequestDTO()
-    var snackBarInfo: SnackBarEventBus.SnackBarInfo?
+    var snackBarInfo: SnackBarManager.SnackBarInfo?
     var shouldKeyboardDismissed: Bool?
   }
   
@@ -107,7 +107,7 @@ final class CreateNoteViewReactor: Reactor {
   
   private let stockItemEditCompletionRelay: PublishRelay<NoteStock> = PublishRelay()
   
-  private let snackBarMutationStream = PublishRelay<SnackBarEventBus.SnackBarInfo>()
+  private let snackBarMutationStream = PublishRelay<SnackBarManager.SnackBarInfo>()
   
   init(dependency: Dependency, modifiableNote: NoteRequestDTO?, payload: Payload?) {
     self.dependency = dependency
@@ -458,10 +458,10 @@ self.dependency.coordinator.transition(
     return self.dependency.service.request(NoteAPI.create(dto: requestNote))
       .toodaMap(Note?.self)
       .catch({ [weak self] _ in
-        self?.snackBarMutationStream.accept(
-          (type: .negative,
-           title: Const.networkingErrorMessage)
-        )
+        self?.snackBarMutationStream.accept(.init(
+          title: Const.networkingErrorMessage,
+          type: .negative
+        ))
         return Single.just(nil)
       })
       .asObservable()
@@ -522,10 +522,10 @@ extension CreateNoteViewReactor {
     return self.dependency.service.request(NoteAPI.update(dto: requestNote))
       .toodaMap(Note?.self)
       .catch({ [weak self] _ in
-        self?.snackBarMutationStream.accept(
-          (type: .negative,
-           title: Const.networkingErrorMessage)
-        )
+        self?.snackBarMutationStream.accept(.init(
+          title: Const.networkingErrorMessage,
+          type: .negative
+        ))
         return Single.just(nil)
       })
       .asObservable()
