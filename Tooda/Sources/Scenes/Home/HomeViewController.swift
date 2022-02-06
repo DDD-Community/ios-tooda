@@ -93,6 +93,7 @@ final class HomeViewController: BaseViewController<HomeReactor> {
   private let rxPickDate = PublishRelay<Date>()
   private let rxNoteGuideViewTap = PublishRelay<String>()
 
+
   // MARK: Initializing
 
   init(reactor: HomeReactor) {
@@ -124,8 +125,9 @@ final class HomeViewController: BaseViewController<HomeReactor> {
     self.notebookCollectionView.rx.setDelegate(self).disposed(by: self.disposeBag)
 
     // Action
-    Observable<Void>.just(())
-      .map { HomeReactor.Action.load }
+
+    rx.viewDidLoad
+      .map { _ in HomeReactor.Action.load }
       .bind(to: reactor.action)
       .disposed(by: self.disposeBag)
 
@@ -205,7 +207,6 @@ final class HomeViewController: BaseViewController<HomeReactor> {
 
     reactor.state
       .map { $0.exception }
-      .distinctUntilChanged()
       .subscribe(onNext: { [weak self] exception in
         switch exception {
         case .emptyNoteAlert:
@@ -214,6 +215,9 @@ final class HomeViewController: BaseViewController<HomeReactor> {
               self?.rxPickDate.accept(date)
             })
           })
+
+        case let .snackbar(info):
+          SnackBarManager.shared.display(info: info)
 
         case .none:
           return
