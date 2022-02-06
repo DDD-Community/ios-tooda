@@ -78,6 +78,7 @@ final class CreateNoteViewReactor: Reactor {
     var presentType: ViewPresentType?
     var shouldReigsterButtonEnabled: Bool = false
     var requestNote: NoteRequestDTO = NoteRequestDTO()
+    var snackBarInfo: SnackBarEventBus.SnackBarInfo?
   }
   
   struct Payload {
@@ -163,6 +164,7 @@ final class CreateNoteViewReactor: Reactor {
       $0.shouldReigsterButtonEnabled = state.shouldReigsterButtonEnabled
       $0.presentType = nil
       $0.requestNote = state.requestNote
+      $0.snackBarInfo = nil
     }
     
     switch mutation {
