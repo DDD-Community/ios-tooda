@@ -448,8 +448,16 @@ self.dependency.coordinator.transition(
   
   private func registNoteAndDismissView(_ requestNote: NoteRequestDTO) -> Observable<Mutation> {
     return self.dependency.service.request(NoteAPI.create(dto: requestNote))
-      .toodaMap(Note.self)
+      .toodaMap(Note?.self)
+      .catch({ [weak self] _ in
+        self?.snackBarMutationStream.accept(
+          (type: .negative,
+           title: "네트워크 연결에 실패했습니다 :(")
+        )
+        return Single.just(nil)
+      })
       .asObservable()
+      .compactMap { $0 }
       .flatMap { [weak self] note -> Observable<Mutation> in
         if "\(note.id)".isNotEmpty {
           return self?.dimissViewWithAddCompletion(note) ?? .empty()
@@ -503,8 +511,16 @@ extension CreateNoteViewReactor {
   
   private func updateNoteAndDismissView(_ requestNote: NoteRequestDTO) -> Observable<Mutation> {
     return self.dependency.service.request(NoteAPI.update(dto: requestNote))
-      .toodaMap(Note.self)
+      .toodaMap(Note?.self)
+      .catch({ [weak self] _ in
+        self?.snackBarMutationStream.accept(
+          (type: .negative,
+           title: "네트워크 연결에 실패했습니다 :(")
+        )
+        return Single.just(nil)
+      })
       .asObservable()
+      .compactMap { $0 }
       .flatMap { [weak self] note -> Observable<Mutation> in
         return self?.dimissViewWithUpdateCompletion(note) ?? .empty()
       }
