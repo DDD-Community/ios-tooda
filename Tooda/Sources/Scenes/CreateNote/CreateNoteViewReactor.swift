@@ -18,6 +18,8 @@ final class CreateNoteViewReactor: Reactor {
     static let stockMaxCount: Int = 5
     static let linkMaxCount: Int = 2
     static let imageMaxCount: Int = 3
+    
+    static let networkingErrorMessage: String = "네트워크 연결에 실패했습니다 :("
   }
   
   enum ViewPresentType {
@@ -71,6 +73,8 @@ final class CreateNoteViewReactor: Reactor {
     case linkItemDidDeleted(Int)
     case requestNoteDataDidChanged(NoteRequestDTO)
     case fetchEmptyStockItem([NoteSectionItem])
+    case setSnackBarInfo(SnackBarEventBus.SnackBarInfo)
+    case shouldKeyboardDismissed(Bool)
   }
 
   struct State: Then {
@@ -78,6 +82,8 @@ final class CreateNoteViewReactor: Reactor {
     var presentType: ViewPresentType?
     var shouldReigsterButtonEnabled: Bool = false
     var requestNote: NoteRequestDTO = NoteRequestDTO()
+    var snackBarInfo: SnackBarEventBus.SnackBarInfo?
+    var shouldKeyboardDismissed: Bool?
   }
   
   struct Payload {
@@ -100,6 +106,8 @@ final class CreateNoteViewReactor: Reactor {
   private let updateStickerCompletionRelay: PublishRelay<Sticker> = PublishRelay()
   
   private let stockItemEditCompletionRelay: PublishRelay<NoteStock> = PublishRelay()
+  
+  private let snackBarMutationStream = PublishRelay<SnackBarEventBus.SnackBarInfo>()
   
   init(dependency: Dependency, modifiableNote: NoteRequestDTO?, payload: Payload?) {
     self.dependency = dependency
@@ -163,6 +171,8 @@ final class CreateNoteViewReactor: Reactor {
       $0.shouldReigsterButtonEnabled = state.shouldReigsterButtonEnabled
       $0.presentType = nil
       $0.requestNote = state.requestNote
+      $0.snackBarInfo = nil
+      $0.shouldKeyboardDismissed = nil
     }
     
     switch mutation {
@@ -186,6 +196,10 @@ final class CreateNoteViewReactor: Reactor {
       newState.requestNote = data
     case .fetchEmptyStockItem(let sectionItems):
       newState.sections[NoteSection.Identity.addStock.rawValue].items = sectionItems
+    case .setSnackBarInfo(let info):
+      newState.snackBarInfo = info
+    case .shouldKeyboardDismissed(let dismissed):
+      newState.shouldKeyboardDismissed = dismissed
     }
 
     return newState
@@ -204,6 +218,14 @@ final class CreateNoteViewReactor: Reactor {
         .map { Action.stockItemDidUpdated($0) },
       self.updateStickerCompletionRelay
         .map { Action.updateStikcerDidPicked($0) }
+    )
+  }
+  
+  func transform(mutation: Observable<Mutation>) -> Observable<Mutation> {
+    return Observable.merge(
+      mutation,
+      snackBarMutationStream.asObservable()
+        .map { Mutation.setSnackBarInfo($0) }
     )
   }
 
@@ -426,6 +448,7 @@ self.dependency.coordinator.transition(
     requestNote.sticker = sticker
     
     return Observable.concat([
+      .just(.shouldKeyboardDismissed(true)),
       .just(.requestNoteDataDidChanged(requestNote)),
       self.registNoteAndDismissView(requestNote)
     ])
@@ -433,8 +456,16 @@ self.dependency.coordinator.transition(
   
   private func registNoteAndDismissView(_ requestNote: NoteRequestDTO) -> Observable<Mutation> {
     return self.dependency.service.request(NoteAPI.create(dto: requestNote))
-      .toodaMap(Note.self)
+      .toodaMap(Note?.self)
+      .catch({ [weak self] _ in
+        self?.snackBarMutationStream.accept(
+          (type: .negative,
+           title: Const.networkingErrorMessage)
+        )
+        return Single.just(nil)
+      })
       .asObservable()
+      .compactMap { $0 }
       .flatMap { [weak self] note -> Observable<Mutation> in
         if "\(note.id)".isNotEmpty {
           return self?.dimissViewWithAddCompletion(note) ?? .empty()
@@ -481,6 +512,7 @@ extension CreateNoteViewReactor {
     requestNote.sticker = sticker
     
     return Observable.concat([
+      .just(.shouldKeyboardDismissed(true)),
       .just(.requestNoteDataDidChanged(requestNote)),
       self.updateNoteAndDismissView(requestNote)
     ])
@@ -488,8 +520,16 @@ extension CreateNoteViewReactor {
   
   private func updateNoteAndDismissView(_ requestNote: NoteRequestDTO) -> Observable<Mutation> {
     return self.dependency.service.request(NoteAPI.update(dto: requestNote))
-      .toodaMap(Note.self)
+      .toodaMap(Note?.self)
+      .catch({ [weak self] _ in
+        self?.snackBarMutationStream.accept(
+          (type: .negative,
+           title: Const.networkingErrorMessage)
+        )
+        return Single.just(nil)
+      })
       .asObservable()
+      .compactMap { $0 }
       .flatMap { [weak self] note -> Observable<Mutation> in
         return self?.dimissViewWithUpdateCompletion(note) ?? .empty()
       }
