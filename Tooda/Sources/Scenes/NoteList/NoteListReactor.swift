@@ -76,6 +76,8 @@ final class NoteListReactor: Reactor {
   
   private let snackBarMutationStream = PublishRelay<SnackBarEventBus.SnackBarInfo>()
   
+  private let moveToDetailViewMutationStream = PublishRelay<Int>()
+  
   lazy var initialState: State = State(
     noteListModel: [],
     isEmpty: false,
@@ -141,7 +143,7 @@ extension NoteListReactor {
   
   private func routeToCreateNote() -> Observable<Mutation> {
     dependency.coordinator.transition(
-      to: .createNote(dateString: "\(currentState.dateInfo.year).\(currentState.dateInfo.month)"),
+      to: .createNote(dateString: "\(currentState.dateInfo.year).\(currentState.dateInfo.month)", routeToDetailRelay: moveToDetailViewMutationStream),
       using: .modal,
       animated: true,
       completion: nil

@@ -10,6 +10,7 @@ import Foundation
 
 import ReactorKit
 import RxSwift
+import RxRelay
 
 final class HomeReactor: Reactor {
 
@@ -72,6 +73,8 @@ final class HomeReactor: Reactor {
 
   private var notebookImages: [UIImage?] = []
   private var placeholderNotebookImage: UIImage?
+  
+  private let routeToDetailViewRelay = PublishRelay<Int>()
   
   let initialState: State = {
     let currentDate = Date()
@@ -435,7 +438,7 @@ extension HomeReactor {
   private func presentCreateNote(_ dateString: String?) {
     let todayString = dateString ?? Date().string(.dot)
     self.dependency.coordinator.transition(
-      to: .createNote(dateString: todayString),
+      to: .createNote(dateString: todayString, routeToDetailRelay: self.routeToDetailViewRelay),
       using: .modal,
       animated: true,
       completion: nil

@@ -40,7 +40,7 @@ final class AppFactory: AppFactoryType {
       )
       return HomeViewController(reactor: reactor)
 
-    case .createNote(let today):
+    case .createNote(let today, let routeToDetailRelay):
       let reactor = CreateNoteViewReactor(
         dependency: .init(
           service: self.dependency.appInject.resolve(NetworkingProtocol.self),
@@ -52,7 +52,8 @@ final class AppFactory: AppFactoryType {
           modifiableNoteSectionFactory: nil,
           noteEventBus: NoteEventBus.event
         ),
-        modifiableNote: nil
+        modifiableNote: nil,
+        payload: .init(routeToDetailRelay: routeToDetailRelay)
       )
         
       let viewController = CreateNoteViewController(dateString: today, reactor: reactor, mode: .add)
@@ -72,7 +73,8 @@ final class AppFactory: AppFactoryType {
             modifiableNoteSectionFactory: modifiableNoteSectionFactory,
             noteEventBus: NoteEventBus.event
           ),
-          modifiableNote: note
+          modifiableNote: note,
+          payload: nil
         )
         
         let viewController = CreateNoteViewController(dateString: dateString, reactor: reactor, mode: .update)

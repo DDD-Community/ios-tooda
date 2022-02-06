@@ -15,7 +15,7 @@ import RxRelay
 enum Scene {
   case login
   case home
-  case createNote(dateString: String)
+  case createNote(dateString: String, routeToDetailRelay: PublishRelay<Int>?)
   case modifyNote(dateString: String, note: NoteRequestDTO)
   case settings
   case addStock(completion: PublishRelay<NoteStock>)
