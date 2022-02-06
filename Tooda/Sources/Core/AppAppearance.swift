@@ -32,9 +32,9 @@ final class AppApppearance {
     
     var isTranslucent: Bool {
       switch self {
-      case .clear, .white:
+      case .white:
         return false
-      case .normal:
+      case .normal, .clear:
         return true
       }
     }
