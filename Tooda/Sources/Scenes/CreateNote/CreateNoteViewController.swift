@@ -383,8 +383,8 @@ extension CreateNoteViewController {
 extension CreateNoteViewController {
   func present(by: Reactor.ViewPresentType) {
     switch by {
-      case .showAlert(let message):
-        self.showAlert(message: message)
+      case .showAlert(let title, let message):
+        self.showAlert(title: title, message: message)
       case .showPermission(let message):
         self.showAlertAndOpenAppSetting(message: message)
       case .showImageSourceActionSheetView:
@@ -403,8 +403,8 @@ extension CreateNoteViewController {
     }
   }
   
-  func showAlert(message: String?) {
-    let alertController = UIAlertController(title: nil, message: message, preferredStyle: .alert)
+  func showAlert(title: String?, message: String?) {
+    let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
     
     let ok = UIAlertAction.init(title: "확인", style: .default, handler: nil)
     

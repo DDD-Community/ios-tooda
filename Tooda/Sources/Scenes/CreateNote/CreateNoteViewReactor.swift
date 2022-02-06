@@ -23,7 +23,7 @@ final class CreateNoteViewReactor: Reactor {
   }
   
   enum ViewPresentType {
-    case showAlert(String)
+    case showAlert(title: String?, message: String)
     case showPermission(String)
     case showImageSourceActionSheetView
     case showImagePickerView(ImagePickerType)
@@ -263,7 +263,7 @@ final class CreateNoteViewReactor: Reactor {
     switch imageSectionItem {
       case .empty:
         guard imageCellReactor.currentState.sections[NoteImageSection.Identity.item.rawValue].items.count < Const.imageMaxCount else {
-          return .just(.present(.showAlert("이미지는 최대 \(Const.imageMaxCount)개까지 등록 가능합니다.")))
+          return .just(.present(.showAlert(title: "사진은 최대 \(Const.imageMaxCount)개까지\n추가할 수 있어요.", message: "사진을 추가하시려면 기존 사진을\n삭제 후 추가해주세요.")))
         }
         
         return .just(.present(.showImageSourceActionSheetView))
@@ -421,7 +421,8 @@ extension CreateNoteViewReactor {
                                              using: .modal,
                                              animated: false)
     } else {
-      return .just(.present(.showAlert("링크는 최대 \(maxItemCount)개까지 등록 가능합니다.")))
+      return .just(.present(.showAlert(title: "링크는 최대 \(maxItemCount)개까지\n추가할 수 있어요.",
+                                      message: "링크를 추가하시려면 기존 링크를\n삭제 후 추가해주세요.")))
     }
     
     return .empty()
