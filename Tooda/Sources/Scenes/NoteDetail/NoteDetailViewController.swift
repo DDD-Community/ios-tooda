@@ -179,6 +179,14 @@ final class NoteDetailViewController: BaseViewController<NoteDetailReactor> {
       .map { $0.sectionModel }
       .bind(to: tableView.rx.items(dataSource: dataSource))
       .disposed(by: disposeBag)
+
+    reactor.state
+      .map { $0.snackbarInfo }
+      .asDriver(onErrorJustReturn: nil)
+      .drive(onNext: { snackbarInfo in
+        guard let snackbarInfo = snackbarInfo else { return }
+        SnackBarManager.shared.display(info: snackbarInfo)
+      }).disposed(by: self.disposeBag)
   }
   
   private func bindUI() {
