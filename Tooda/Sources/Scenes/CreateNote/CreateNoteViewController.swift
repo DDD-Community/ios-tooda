@@ -45,6 +45,11 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
   private enum Metric {
     static let linkButtonSize: CGFloat = 20.0
   }
+  
+  private let indicatorView = UIActivityIndicatorView(style: .large).then {
+    $0.hidesWhenStopped = true
+    $0.color = .mainGreen
+  }
 
   // MARK: Custom Action
   
@@ -219,7 +224,7 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
 
     self.view.backgroundColor = .white
 
-    [tableView, linkStackView].forEach {
+    [tableView, linkStackView, indicatorView].forEach {
       self.view.addSubview($0)
     }
     
@@ -253,6 +258,10 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
       $0.centerY.equalToSuperview()
       $0.leading.equalToSuperview().offset(20)
       $0.size.equalTo(Metric.linkButtonSize)
+    }
+    
+    self.indicatorView.snp.makeConstraints {
+      $0.center.equalToSuperview()
     }
   }
 
@@ -375,6 +384,16 @@ extension CreateNoteViewController {
   @objc
   private func contentViewDidTap(_ sender: Any?) {
     self.view.endEditing(true)
+  }
+  
+  private func startIndicator() {
+    self.indicatorView.startAnimating()
+    self.view.isUserInteractionEnabled = false
+  }
+  
+  private func stopIndicator() {
+    self.indicatorView.stopAnimating()
+    self.view.isUserInteractionEnabled = true
   }
 }
 
