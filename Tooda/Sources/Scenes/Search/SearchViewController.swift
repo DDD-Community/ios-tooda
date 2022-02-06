@@ -129,7 +129,7 @@ final class SearchViewController: BaseViewController<SearchReactor> {
   }
   
   private func bindUI() {
-    rx.viewWillDisappear
+    rx.viewWillAppear
       .asDriver(onErrorJustReturn: true)
       .drive { [weak self] _ in
         guard let navigationBar = self?
