@@ -160,28 +160,15 @@ final class PopUpViewController: BaseViewController<PopUpReactor> {
         guard let self = self else { return }
         let inputPopUpFrame = self.textInputPopUpView.frame
         let interFrame = inputPopUpFrame.intersection(keyboardFrame)
-        self.updatePopUpLayout(with: interFrame, isShowingUp: true)
-      })
-      .disposed(by: disposeBag)
-    
-    NotificationCenter.default.rx
-      .notification(UIResponder.keyboardWillHideNotification)
-      .map { _ -> CGRect in return CGRect.zero }
-      .asDriver(onErrorJustReturn: .zero)
-      .drive(onNext: { [weak self] keyboardFrame in
-        guard let self = self else { return }
-        self.updatePopUpLayout(with: keyboardFrame, isShowingUp: false)
+        self.updatePopUpLayout(with: interFrame)
       })
       .disposed(by: disposeBag)
   }
   
   // MARK: - Private methods
   
-  private func updatePopUpLayout(
-    with intersection: CGRect,
-    isShowingUp: Bool
-  ) {
-    var margin = isShowingUp ? Constants.minimumKeyboardMargin : 0
+  private func updatePopUpLayout(with intersection: CGRect) {
+    var margin: CGFloat = Constants.minimumKeyboardMargin
     margin += intersection.height
     textInputPopUpView.snp.updateConstraints {
       $0.centerY.equalToSuperview().offset(-margin)
