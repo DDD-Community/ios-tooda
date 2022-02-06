@@ -20,9 +20,8 @@ final class JSDatePicker: UIView {
       var years: [Int] = []
       let current = Date().year
       let min = current - 10
-      let max = current + 10
 
-      for year in min...max {
+      for year in min...current {
         years.append(year)
       }
       return years
