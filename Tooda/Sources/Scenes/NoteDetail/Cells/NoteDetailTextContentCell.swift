@@ -17,7 +17,9 @@ final class NoteDetailTextContentCell: BaseTableViewCell {
   
   // MARK: - UI Components
 
-  private let descriptionLabel = UILabel()
+  private let descriptionLabel = UILabel().then {
+    $0.numberOfLines = 0
+  }
   
   // MARK: - Con(De)structor
   
@@ -54,6 +56,7 @@ final class NoteDetailTextContentCell: BaseTableViewCell {
   // MARK: - Internal methods
   
   func configure(content: String) {
+    super.configure()
     descriptionLabel.attributedText = content.styled(with: Font.content)
   }
 }
