@@ -75,6 +75,7 @@ final class CreateNoteViewReactor: Reactor {
     case fetchEmptyStockItem([NoteSectionItem])
     case setSnackBarInfo(SnackBarManager.SnackBarInfo)
     case shouldKeyboardDismissed(Bool)
+    case setLoading(Bool)
   }
 
   struct State: Then {
@@ -84,6 +85,7 @@ final class CreateNoteViewReactor: Reactor {
     var requestNote: NoteRequestDTO = NoteRequestDTO()
     var snackBarInfo: SnackBarManager.SnackBarInfo?
     var shouldKeyboardDismissed: Bool?
+    var isLoading: Bool = false
   }
   
   struct Payload {
@@ -127,10 +129,14 @@ final class CreateNoteViewReactor: Reactor {
     case .didSelectedImageItem(let index):
         return didSelectedImageItem(index)
     case .uploadImage(let data):
-      return self.uploadImage(data)
-        .flatMap { [weak self] imageURL -> Observable<Mutation> in
-          return self?.fetchImageSection(with: imageURL) ?? .empty()
-      }
+      return Observable.concat([
+        .just(Mutation.setLoading(true)),
+        self.uploadImage(data)
+          .flatMap { [weak self] imageURL -> Observable<Mutation> in
+            return self?.fetchImageSection(with: imageURL) ?? .empty()
+          },
+        .just(Mutation.setLoading(false))
+      ])
     case .showAddStockView:
       return presentAddStockView()
     case .stockItemDidAdded(let stock):
@@ -173,6 +179,7 @@ final class CreateNoteViewReactor: Reactor {
       $0.requestNote = state.requestNote
       $0.snackBarInfo = nil
       $0.shouldKeyboardDismissed = nil
+      $0.isLoading = false
     }
     
     switch mutation {
@@ -200,6 +207,8 @@ final class CreateNoteViewReactor: Reactor {
       newState.snackBarInfo = info
     case .shouldKeyboardDismissed(let dismissed):
       newState.shouldKeyboardDismissed = dismissed
+    case .setLoading(let isLoading):
+      newState.isLoading = isLoading
     }
 
     return newState
@@ -460,24 +469,29 @@ self.dependency.coordinator.transition(
   }
   
   private func registNoteAndDismissView(_ requestNote: NoteRequestDTO) -> Observable<Mutation> {
-    return self.dependency.service.request(NoteAPI.create(dto: requestNote))
-      .toodaMap(Note?.self)
-      .catch({ [weak self] _ in
-        self?.snackBarMutationStream.accept(.init(
-          title: Const.networkingErrorMessage,
-          type: .negative
-        ))
-        return Single.just(nil)
-      })
-      .asObservable()
-      .compactMap { $0 }
-      .flatMap { [weak self] note -> Observable<Mutation> in
-        if "\(note.id)".isNotEmpty {
-          return self?.dimissViewWithAddCompletion(note) ?? .empty()
-        } else {
-          return .empty()
-        }
-      }
+    
+    return Observable.concat([
+      .just(.setLoading(true)),
+      self.dependency.service.request(NoteAPI.create(dto: requestNote))
+        .toodaMap(Note?.self)
+        .catch({ [weak self] _ in
+          self?.snackBarMutationStream.accept(.init(
+            title: Const.networkingErrorMessage,
+            type: .negative
+          ))
+          return Single.just(nil)
+        })
+        .asObservable()
+        .compactMap { $0 }
+        .flatMap { [weak self] note -> Observable<Mutation> in
+          if "\(note.id)".isNotEmpty {
+            return self?.dimissViewWithAddCompletion(note) ?? .empty()
+          } else {
+            return .empty()
+          }
+        },
+      .just(.setLoading(false))
+    ])
   }
   
   private func dimissViewWithAddCompletion(_ note: Note) -> Observable<Mutation> {
@@ -524,20 +538,24 @@ extension CreateNoteViewReactor {
   }
   
   private func updateNoteAndDismissView(_ requestNote: NoteRequestDTO) -> Observable<Mutation> {
-    return self.dependency.service.request(NoteAPI.update(dto: requestNote))
-      .toodaMap(Note?.self)
-      .catch({ [weak self] _ in
-        self?.snackBarMutationStream.accept(.init(
-          title: Const.networkingErrorMessage,
-          type: .negative
-        ))
-        return Single.just(nil)
-      })
-      .asObservable()
-      .compactMap { $0 }
-      .flatMap { [weak self] note -> Observable<Mutation> in
-        return self?.dimissViewWithUpdateCompletion(note) ?? .empty()
-      }
+    return Observable.concat([
+      .just(.setLoading(true)),
+      self.dependency.service.request(NoteAPI.update(dto: requestNote))
+        .toodaMap(Note?.self)
+        .catch({ [weak self] _ in
+          self?.snackBarMutationStream.accept(.init(
+            title: Const.networkingErrorMessage,
+            type: .negative
+          ))
+          return Single.just(nil)
+        })
+        .asObservable()
+        .compactMap { $0 }
+        .flatMap { [weak self] note -> Observable<Mutation> in
+          return self?.dimissViewWithUpdateCompletion(note) ?? .empty()
+        },
+      .just(.setLoading(false))
+    ])
   }
   
   private func dimissViewWithUpdateCompletion(_ note: Note) -> Observable<Mutation> {

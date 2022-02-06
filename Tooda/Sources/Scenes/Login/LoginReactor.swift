@@ -31,7 +31,6 @@ final class LoginReactor: Reactor {
   }
   
   enum Mutation {
-    case setAppToken(token: AppToken)
     case setIsAuthorized(isAuthorized: Bool)
     case setSnackBarInfo(SnackBarManager.SnackBarInfo)
   }
@@ -92,13 +91,22 @@ extension LoginReactor {
               )
             } else {
               return Observable<Mutation>.concat([
-                Observable<Mutation>.just(Mutation.setAppToken(token: token)),
+                self.setAppToken(token: token),
                 Observable<Mutation>.just(Mutation.setIsAuthorized(isAuthorized: true)),
                 self.routeToHomeMutation()
               ])
             }
           }
       }
+  }
+  
+  private func setAppToken(token: AppToken) -> Observable<Mutation> {
+    dependency.localPersistanceManager.setObject(
+      value: token,
+      forKey: .appToken
+    )
+    
+    return .empty()
   }
   
   private func routeToHomeMutation() -> Observable<Mutation> {
@@ -146,11 +154,6 @@ extension LoginReactor {
     }
     
     switch mutation {
-    case let .setAppToken(token):
-      dependency.localPersistanceManager.setObject(
-        value: token,
-        forKey: .appToken
-      )
     case let .setIsAuthorized(isAuthorized):
       newState.isAuthorized = isAuthorized
     case let .setSnackBarInfo(info):

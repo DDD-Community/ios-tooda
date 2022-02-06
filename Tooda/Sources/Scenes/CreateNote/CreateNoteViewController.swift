@@ -45,6 +45,11 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
   private enum Metric {
     static let linkButtonSize: CGFloat = 20.0
   }
+  
+  private let indicatorView = UIActivityIndicatorView(style: .large).then {
+    $0.hidesWhenStopped = true
+    $0.color = .mainGreen
+  }
 
   // MARK: Custom Action
   
@@ -219,7 +224,7 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
 
     self.view.backgroundColor = .white
 
-    [tableView, linkStackView].forEach {
+    [tableView, linkStackView, indicatorView].forEach {
       self.view.addSubview($0)
     }
     
@@ -253,6 +258,10 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
       $0.centerY.equalToSuperview()
       $0.leading.equalToSuperview().offset(20)
       $0.size.equalTo(Metric.linkButtonSize)
+    }
+    
+    self.indicatorView.snp.makeConstraints {
+      $0.center.equalToSuperview()
     }
   }
 
@@ -355,6 +364,17 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
       .drive(onNext: { [weak self] in
         self?.view.endEditing($0)
       }).disposed(by: self.disposeBag)
+    
+    reactor.state
+      .map { $0.isLoading }
+      .distinctUntilChanged()
+      .subscribe(onNext: { [weak self] isLoading in
+        if isLoading {
+          self?.startIndicator()
+        } else {
+          self?.stopIndicator()
+        }
+      }).disposed(by: self.disposeBag)
   }
 }
 
@@ -375,6 +395,16 @@ extension CreateNoteViewController {
   @objc
   private func contentViewDidTap(_ sender: Any?) {
     self.view.endEditing(true)
+  }
+  
+  private func startIndicator() {
+    self.indicatorView.startAnimating()
+    self.view.isUserInteractionEnabled = false
+  }
+  
+  private func stopIndicator() {
+    self.indicatorView.stopAnimating()
+    self.view.isUserInteractionEnabled = true
   }
 }
 
@@ -477,7 +507,7 @@ extension CreateNoteViewController: UIImagePickerControllerDelegate, UINavigatio
 extension CreateNoteViewController: CropViewControllerDelegate {
   func cropViewControllerDidCrop(_ cropViewController: CropViewController, cropped: UIImage, transformation: Transformation, cropInfo: CropInfo) {
     
-    if let croppedData = cropped.jpegData(compressionQuality: 1.0) {
+    if let croppedData = cropped.jpegData(compressionQuality: 0.3) {
       cropViewController.dismiss(animated: true, completion: { [weak self] in
         self?.imagePickerDataSelectedRelay.accept(croppedData)
       })
