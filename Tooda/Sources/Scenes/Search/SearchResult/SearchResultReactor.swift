@@ -28,6 +28,10 @@ final class SearchResultReactor: Reactor {
     static let searchLimitCount: Int = 10
   }
 
+  private enum Text {
+    static let networkingErrorMessage = "네트워크 연결에 실패했습니다 :("
+  }
+
 
   // MARK: Reactor
 
@@ -42,12 +46,14 @@ final class SearchResultReactor: Reactor {
     case editNote(Note)
     case deleteNote(Note)
     case setLoading(Bool)
+    case setSnackbarInfo(SnackBarManager.SnackBarInfo)
   }
 
   struct State {
     var notes: [Note]
     var isLoading: Bool
     var isEmptyViewHidden: Bool
+    var snackbarInfo: SnackBarManager.SnackBarInfo?
   }
 
 
@@ -55,10 +61,13 @@ final class SearchResultReactor: Reactor {
 
   private let dependency: Dependency
 
+  private let snackbarEvent = PublishSubject<SnackBarManager.SnackBarInfo>()
+
   let initialState: State = State(
     notes: [],
     isLoading: false,
-    isEmptyViewHidden: true
+    isEmptyViewHidden: true,
+    snackbarInfo: nil
   )
 
   init(dependency: Dependency) {
@@ -89,6 +98,13 @@ extension SearchResultReactor {
     return self.dependency.networking
       .request(SearchAPI.search(query: text, limit: Const.searchLimitCount))
       .toodaMap(SearchNoteResponse.self)
+      .catch { [weak self] error in
+        self?.snackbarEvent.onNext(.init(
+          title: Text.networkingErrorMessage,
+          type: .negative
+        ))
+        return .error(error)
+      }
       .asObservable()
       .flatMap {
         return Observable<Mutation>.concat([
@@ -119,6 +135,13 @@ extension SearchResultReactor {
           case let .deleteNote(note):
             return .just(.deleteNote(note))
           }
+        },
+      self.snackbarEvent.asObservable()
+        .flatMap {
+          Observable<Mutation>.concat([
+            .just(.setSnackbarInfo($0)),
+            .just(.setLoading(false))
+          ])
         }
     )
   }
@@ -131,6 +154,7 @@ extension SearchResultReactor {
 
   func reduce(state: State, mutation: Mutation) -> State {
     var newState = state
+    newState.snackbarInfo = nil
 
     switch mutation {
     case let .setSearchResult(notes):
@@ -156,6 +180,9 @@ extension SearchResultReactor {
 
     case let .setLoading(isLoading):
       newState.isLoading = isLoading
+
+    case let .setSnackbarInfo(info):
+      newState.snackbarInfo = info
     }
 
     return newState
