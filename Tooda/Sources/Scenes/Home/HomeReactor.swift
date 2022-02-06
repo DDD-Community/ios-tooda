@@ -46,8 +46,9 @@ final class HomeReactor: Reactor {
   }
   
   struct State {
-    enum Exception: Int, Equatable {
+    enum Exception: Equatable {
       case emptyNoteAlert
+      case snackbar(SnackBarManager.SnackBarInfo)
     }
 
     // Entities
@@ -68,6 +69,10 @@ final class HomeReactor: Reactor {
     static let notebookImagesCount: Int = 7
   }
 
+  private enum Text {
+    static let networkingErrorMessage = "네트워크 연결에 실패했습니다 :("
+  }
+
 
   // MARK: Properties
 
@@ -77,6 +82,7 @@ final class HomeReactor: Reactor {
   private var placeholderNotebookImage: UIImage?
   
   private let routeToDetailViewRelay = PublishRelay<Int>()
+  private let snackbarEvent = PublishSubject<SnackBarManager.SnackBarInfo>()
   
   let initialState: State = {
     let currentDate = Date()
@@ -156,7 +162,13 @@ extension HomeReactor {
       )
     )
       .toodaMap([NotebookMeta].self)
-      .catchAndReturn([])
+      .catch { [weak self] error in
+        self?.snackbarEvent.onNext(.init(
+          title: Text.networkingErrorMessage,
+          type: .negative
+        ))
+        return .error(error)
+      }
       .asObservable()
       .flatMap {
         return Observable<Mutation>.concat([
@@ -185,10 +197,17 @@ extension HomeReactor {
           )
         )
           .toodaMap([NotebookMeta].self)
-          .catchAndReturn([])
+          .catch { [weak self] error in
+            self?.snackbarEvent.onNext(.init(
+              title: Text.networkingErrorMessage,
+              type: .negative
+            ))
+            return .error(error)
+          }
           .asObservable()
           .flatMap { books -> Observable<Mutation> in
-            guard let index = books.firstIndex(where: { $0.month == date.month })
+            guard let index = books.firstIndex(where: { $0.month == date.month }),
+                  date.month == Date().month
             else {
               return Observable<Mutation>.concat([
                 .just(.setLoading(false)),
@@ -232,6 +251,13 @@ extension HomeReactor {
       self.routeToDetailViewRelay
         .flatMap { id -> Observable<Mutation> in
           return self.routeToDetailViewMutation(id)
+        },
+      self.snackbarEvent.asObservable()
+        .flatMap {
+          Observable<Mutation>.concat([
+            .just(.makeException(.snackbar($0))),
+            .just(.setLoading(false))
+          ])
         }
     )
   }
