@@ -23,6 +23,7 @@ target 'Tooda' do
   # Comment the next line if you don't want to use dynamic frameworks
   shared_pods
   pod 'SwiftLint'
+  pod 'Mantis', '~> 1.9.0'
   pod 'netfox', configuration: %w(Debug)
 end
 
