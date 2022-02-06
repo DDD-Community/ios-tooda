@@ -364,6 +364,17 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
       .drive(onNext: { [weak self] in
         self?.view.endEditing($0)
       }).disposed(by: self.disposeBag)
+    
+    reactor.state
+      .map { $0.isLoading }
+      .distinctUntilChanged()
+      .subscribe(onNext: { [weak self] isLoading in
+        if isLoading {
+          self?.startIndicator()
+        } else {
+          self?.stopIndicator()
+        }
+      }).disposed(by: self.disposeBag)
   }
 }
 

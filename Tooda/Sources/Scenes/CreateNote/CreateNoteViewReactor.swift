@@ -75,6 +75,7 @@ final class CreateNoteViewReactor: Reactor {
     case fetchEmptyStockItem([NoteSectionItem])
     case setSnackBarInfo(SnackBarManager.SnackBarInfo)
     case shouldKeyboardDismissed(Bool)
+    case setLoading(Bool)
   }
 
   struct State: Then {
@@ -84,6 +85,7 @@ final class CreateNoteViewReactor: Reactor {
     var requestNote: NoteRequestDTO = NoteRequestDTO()
     var snackBarInfo: SnackBarManager.SnackBarInfo?
     var shouldKeyboardDismissed: Bool?
+    var isLoading: Bool = false
   }
   
   struct Payload {
@@ -173,6 +175,7 @@ final class CreateNoteViewReactor: Reactor {
       $0.requestNote = state.requestNote
       $0.snackBarInfo = nil
       $0.shouldKeyboardDismissed = nil
+      $0.isLoading = false
     }
     
     switch mutation {
@@ -200,6 +203,8 @@ final class CreateNoteViewReactor: Reactor {
       newState.snackBarInfo = info
     case .shouldKeyboardDismissed(let dismissed):
       newState.shouldKeyboardDismissed = dismissed
+    case .setLoading(let isLoading):
+      newState.isLoading = isLoading
     }
 
     return newState
