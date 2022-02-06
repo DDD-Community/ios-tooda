@@ -130,14 +130,14 @@ extension PopUpReactor {
   }
   
   private func didAddTextInputMutation(textInput: String) -> Observable<Mutation> {
-    if case let .textInput(relay) = dependency.type {
-        relay.accept(textInput)
-    }
-    
     dependency.coordinator.close(
       style: .dismiss,
       animated: false,
-      completion: nil
+      completion: { [weak self] in
+        if case let .textInput(relay) = self?.dependency.type {
+          relay.accept(textInput)
+        }
+      }
     )
     
     return Observable<Mutation>.empty()
