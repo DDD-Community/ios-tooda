@@ -177,7 +177,7 @@ extension HomeReactor {
             year: date.year
           )
         )
-          .map([NotebookMeta].self)
+          .toodaMap([NotebookMeta].self)
           .catchAndReturn([])
           .asObservable()
           .flatMap { books -> Observable<Mutation> in
