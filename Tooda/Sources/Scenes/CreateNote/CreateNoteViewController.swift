@@ -339,6 +339,14 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
       .drive(onNext: { [weak self] in
         self?.registerButton.setOnOff(isOn: $0)
       }).disposed(by: self.disposeBag)
+    
+    reactor.state.map { $0.snackBarInfo }
+      .asDriver(onErrorJustReturn: nil)
+      .compactMap { $0 }
+      .drive { info in
+        SnackBarManager.shared.display(type: info.type, title: info.title)
+      }
+      .disposed(by: disposeBag)
   }
 }
 

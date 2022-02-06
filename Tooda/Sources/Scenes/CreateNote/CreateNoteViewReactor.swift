@@ -18,6 +18,8 @@ final class CreateNoteViewReactor: Reactor {
     static let stockMaxCount: Int = 5
     static let linkMaxCount: Int = 2
     static let imageMaxCount: Int = 3
+    
+    static let networkingErrorMessage: String = "네트워크 연결에 실패했습니다 :("
   }
   
   enum ViewPresentType {
@@ -452,7 +454,7 @@ self.dependency.coordinator.transition(
       .catch({ [weak self] _ in
         self?.snackBarMutationStream.accept(
           (type: .negative,
-           title: "네트워크 연결에 실패했습니다 :(")
+           title: Const.networkingErrorMessage)
         )
         return Single.just(nil)
       })
@@ -515,7 +517,7 @@ extension CreateNoteViewReactor {
       .catch({ [weak self] _ in
         self?.snackBarMutationStream.accept(
           (type: .negative,
-           title: "네트워크 연결에 실패했습니다 :(")
+           title: Const.networkingErrorMessage)
         )
         return Single.just(nil)
       })
