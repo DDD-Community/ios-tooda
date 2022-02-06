@@ -154,7 +154,7 @@ final class NoteListCell: BaseTableViewCell {
     if let date = note.createdAt,
        let weekName = Date.WeekDay(rawValue: date.weekday)?.name {
       
-      recordDateLabel.attributedText = "\(date.string(.dot)) (\(weekName)) \(date.hour):\(date.minute) 기록".styled(with: Font.recordDate)
+      recordDateLabel.attributedText = "\(date.string(.dot)) (\(weekName)) \(String(format: "%02d:%02d 기록", date.hour, date.minute))".styled(with: Font.recordDate)
     }
     
     linkImageView.isHidden = note.noteLinks?.first == nil ? true : false

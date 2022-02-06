@@ -11,7 +11,7 @@ import Foundation
 extension Date {
   
   enum WeekDay: Int {
-    case sunday = 0
+    case sunday = 1
     case monday
     case tuesday
     case wednesday
