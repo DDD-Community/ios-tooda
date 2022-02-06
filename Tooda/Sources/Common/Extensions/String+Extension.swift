@@ -11,7 +11,7 @@ extension String {
   
   func convertToDate() -> Date? {
     let dateFormatter = DateFormatter()
-    dateFormatter.dateFormat = Date.DateFormatType.server.rawValue
+    dateFormatter.dateFormat = Date.DateFormatType.base.rawValue
     return dateFormatter.date(from: self)
   }
 }
