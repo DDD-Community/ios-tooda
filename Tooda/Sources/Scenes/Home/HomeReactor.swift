@@ -54,7 +54,7 @@ final class HomeReactor: Reactor {
     var notebooks: [NotebookMeta]
     var selectedNotobook: NotebookMeta?
     var selectedIndex: Int?
-    var selectedDate: Date?
+    var selectedDate: Date
 
     // ViewModels
     var notebookViewModels: [NotebookCell.ViewModel]
@@ -85,6 +85,7 @@ final class HomeReactor: Reactor {
       notebooks: [],
       selectedNotobook: nil,
       selectedIndex: nil,
+      selectedDate: currentDate,
       notebookViewModels: [],
       exception: nil,
       isLoading: false
@@ -166,7 +167,7 @@ extension HomeReactor {
   }
 
   private func pickDateMutation(_ date: Date) -> Observable<Mutation> {
-    if date.year == self.currentState.selectedDate?.year {
+    if date.year == self.currentState.selectedDate.year {
       return Observable<Mutation>.from([
         .selectNotebook(
           notebookIndex: self.currentState.notebooks.firstIndex(where: {
