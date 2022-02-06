@@ -507,7 +507,7 @@ extension CreateNoteViewController: UIImagePickerControllerDelegate, UINavigatio
 extension CreateNoteViewController: CropViewControllerDelegate {
   func cropViewControllerDidCrop(_ cropViewController: CropViewController, cropped: UIImage, transformation: Transformation, cropInfo: CropInfo) {
     
-    if let croppedData = cropped.jpegData(compressionQuality: 1.0) {
+    if let croppedData = cropped.jpegData(compressionQuality: 0.3) {
       cropViewController.dismiss(animated: true, completion: { [weak self] in
         self?.imagePickerDataSelectedRelay.accept(croppedData)
       })

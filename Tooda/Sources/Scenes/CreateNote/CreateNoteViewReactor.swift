@@ -129,10 +129,14 @@ final class CreateNoteViewReactor: Reactor {
     case .didSelectedImageItem(let index):
         return didSelectedImageItem(index)
     case .uploadImage(let data):
-      return self.uploadImage(data)
-        .flatMap { [weak self] imageURL -> Observable<Mutation> in
-          return self?.fetchImageSection(with: imageURL) ?? .empty()
-      }
+      return Observable.concat([
+        .just(Mutation.setLoading(true)),
+        self.uploadImage(data)
+          .flatMap { [weak self] imageURL -> Observable<Mutation> in
+            return self?.fetchImageSection(with: imageURL) ?? .empty()
+          },
+        .just(Mutation.setLoading(false))
+      ])
     case .showAddStockView:
       return presentAddStockView()
     case .stockItemDidAdded(let stock):
