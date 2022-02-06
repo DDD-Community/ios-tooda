@@ -24,7 +24,7 @@ final class AppApppearance {
       case .white:
         return .white
       case .clear:
-        return nil
+        return .clear
       case .normal:
         return nil
       }
@@ -65,24 +65,49 @@ final class AppApppearance {
   static func configureAppearance() {
     let navigationbar = UINavigationBar.appearance()
     let style: NavigationBarStyle = .clear
-    
+
+    let appearance = UINavigationBarAppearance().then {
+      $0.configureWithTransparentBackground()
+      $0.backgroundColor = style.barTintColor
+      $0.backgroundImage = style.backgroundImage
+      $0.shadowImage = style.shadowImage
+      $0.setBackIndicatorImage(style.backButtonImage, transitionMaskImage: style.backButtonImage)
+    }
+
+    navigationbar.standardAppearance = appearance
+    navigationbar.scrollEdgeAppearance = appearance
     navigationbar.tintColor = style.tintColor
-    navigationbar.setBackgroundImage(style.backgroundImage, for: .default)
-    navigationbar.shadowImage = style.shadowImage
-    navigationbar.backItem?.title = ""
-    navigationbar.backIndicatorImage = style.backButtonImage
-    navigationbar.backIndicatorTransitionMaskImage = style.backButtonImage
-    navigationbar.isTranslucent = style.isTranslucent
-    navigationbar.barTintColor = style.barTintColor
+
+//    navigationbar.tintColor = style.tintColor
+//    navigationbar.setBackgroundImage(style.backgroundImage, for: .default)
+//    navigationbar.shadowImage = style.shadowImage
+//    navigationbar.backItem?.title = ""
+//    navigationbar.backIndicatorImage = style.backButtonImage
+//    navigationbar.backIndicatorTransitionMaskImage = style.backButtonImage
+//    navigationbar.isTranslucent = style.isTranslucent
+//    navigationbar.barTintColor = style.barTintColor
   }
   
   static func updateNavigaionBarAppearance(_ navigationbar: UINavigationBar?, with style: NavigationBarStyle) {
+
+    let appearance = UINavigationBarAppearance().then {
+      $0.configureWithTransparentBackground()
+      $0.backgroundColor = style.barTintColor
+      $0.backgroundImage = style.backgroundImage
+      $0.shadowImage = style.shadowImage
+      $0.setBackIndicatorImage(style.backButtonImage, transitionMaskImage: style.backButtonImage)
+    }
+
+    navigationbar?.standardAppearance = appearance
+    navigationbar?.scrollEdgeAppearance = appearance
     navigationbar?.tintColor = style.tintColor
-    navigationbar?.setBackgroundImage(style.backgroundImage, for: .default)
-    navigationbar?.shadowImage = style.shadowImage
-    navigationbar?.backIndicatorImage = style.backButtonImage
-    navigationbar?.backIndicatorTransitionMaskImage = style.backButtonImage
-    navigationbar?.isTranslucent = style.isTranslucent
-    navigationbar?.barTintColor = style.barTintColor
+
+//    navigationbar?.tintColor = style.tintColor
+//    navigationbar?.setBackgroundImage(style.backgroundImage, for: .default)
+//    navigationbar?.shadowImage = style.shadowImage
+//    navigationbar?.backIndicatorImage = style.backButtonImage
+//    navigationbar?.backIndicatorTransitionMaskImage = style.backButtonImage
+//    navigationbar?.isTranslucent = style.isTranslucent
+//    navigationbar?.barTintColor = style.barTintColor
   }
 }
