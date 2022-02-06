@@ -223,6 +223,10 @@ extension HomeReactor {
           case let .deleteNote(note):
             return self.deleteNoteEventBusMutation(note)
           }
+        },
+      self.routeToDetailViewRelay
+        .flatMap { id -> Observable<Mutation> in
+          return self.routeToDetailViewMutation(id)
         }
     )
   }
@@ -305,6 +309,15 @@ extension HomeReactor {
     return .just(
       .setNotebooks(notebooks)
     )
+  }
+  
+  private func routeToDetailViewMutation(_ id: Int) -> Observable<Mutation> {
+    self.dependency.coordinator.transition(to: .noteDetail(payload: .init(id: id)),
+                                           using: .push,
+                                           animated: true,
+                                           completion: nil)
+    
+    return .empty()
   }
 }
 

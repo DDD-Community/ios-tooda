@@ -111,6 +111,10 @@ extension NoteListReactor {
           case let .deleteNote(note):
             return self.deleteNoteListMutation(note: note)
           }
+        },
+      moveToDetailViewMutationStream
+        .flatMap { id -> Observable<Mutation> in
+          return self.routeToNoteDetail(id: id)
         }
     )
   }
@@ -160,6 +164,15 @@ extension NoteListReactor {
       completion: nil
     )
     return Observable<Mutation>.empty()
+  }
+  
+  private func routeToNoteDetail(id: Int) -> Observable<Mutation> {
+    self.dependency.coordinator.transition(to: .noteDetail(payload: .init(id: id)),
+                                           using: .push,
+                                           animated: true,
+                                           completion: nil)
+    
+    return .empty()
   }
   
   private func routeToSearch() -> Observable<Mutation> {
