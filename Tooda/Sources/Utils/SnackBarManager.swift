@@ -61,6 +61,10 @@ final class SnackBarManager {
   private init() { }
   
   // MARK: - Internal methods
+
+  func display(info: SnackBarInfo) {
+    self.display(type: info.type, title: info.title)
+  }
   
   func display(type: SnackBarType, title: String) {
     guard let keyWindow = UIApplication.keyWindow,
