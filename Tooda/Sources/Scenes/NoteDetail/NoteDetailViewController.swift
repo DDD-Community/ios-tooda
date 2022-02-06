@@ -182,6 +182,29 @@ final class NoteDetailViewController: BaseViewController<NoteDetailReactor> {
   }
   
   private func bindUI() {
+    rx.viewWillAppear
+      .asDriver(onErrorJustReturn: true)
+      .drive { [weak self] _ in
+        guard let navigationBar = self?
+                .navigationController?
+                .navigationBar else { return }
+        
+        AppApppearance.updateNavigaionBarAppearance(navigationBar, with: .white)
+      }
+      .disposed(by: disposeBag)
+    
+    rx.viewWillDisappear
+      .asDriver(onErrorJustReturn: true)
+      .drive { [weak self] _ in
+        guard let navigationBar = self?
+                .navigationController?
+                .navigationBar else { return }
+        
+        AppApppearance.updateNavigaionBarAppearance(navigationBar, with: .clear)
+        
+      }
+      .disposed(by: disposeBag)
+    
     moreDetailButton.rx.tap.asDriver()
       .drive { [weak self] _ in
         guard let self = self else { return }

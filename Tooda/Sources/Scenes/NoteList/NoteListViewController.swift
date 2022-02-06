@@ -214,7 +214,8 @@ final class NoteListViewController: BaseViewController<NoteListReactor> {
     }
     
     tableView.snp.makeConstraints {
-      $0.edges.equalToSuperview()
+      $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+      $0.leading.trailing.bottom.equalToSuperview()
     }
     
     addNoteButton.snp.makeConstraints {
@@ -235,14 +236,24 @@ final class NoteListViewController: BaseViewController<NoteListReactor> {
   
   private func bindUI() {
     rx.viewWillAppear
-      .take(1)
       .asDriver(onErrorJustReturn: true)
       .drive { [weak self] _ in
         guard let navigationBar = self?
                 .navigationController?
                 .navigationBar else { return }
         
-        self?.configureNavigationBar(with: navigationBar)
+        AppApppearance.updateNavigaionBarAppearance(navigationBar, with: .white)
+      }
+      .disposed(by: disposeBag)
+    
+    rx.viewWillDisappear
+      .asDriver(onErrorJustReturn: true)
+      .drive { [weak self] _ in
+        guard let navigationBar = self?
+                .navigationController?
+                .navigationBar else { return }
+        
+        AppApppearance.updateNavigaionBarAppearance(navigationBar, with: .clear)
       }
       .disposed(by: disposeBag)
   }
