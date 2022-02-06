@@ -46,21 +46,27 @@ final class SettingsReactor: Reactor {
             SettingsItem.plain(
               PlainSettingsInfo(
                 title: "공지사항",
-                url: URL(string: "https://bit.ly/3ncoDLu")
+                url: URL(string: "https://bit.ly/tooda-notice")
               )
             ),
             SettingsItem.plain(
               PlainSettingsInfo(
                 title: "자주 묻는 질문",
-                url: URL(string: "https://bit.ly/3r4LNoc")
+                url: URL(string: "https://bit.ly/tooda-faq")
               )
             ),
             SettingsItem.plain(
               PlainSettingsInfo(
                 title: "약관 및 정책",
-                url: URL(string: "https://bit.ly/3ratAFw")
+                url: URL(string: "https://bit.ly/tooda-terms")
               )
-            )
+            ),
+            SettingsItem.plain(
+              PlainSettingsInfo(
+                title: "만든 사람들",
+                url: URL(string: "https://bit.ly/tooda-members")
+              )
+            ),
           ]
         ),
         SettingsSectionModel(
