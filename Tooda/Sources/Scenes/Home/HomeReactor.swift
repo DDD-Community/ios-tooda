@@ -10,6 +10,7 @@ import Foundation
 
 import ReactorKit
 import RxSwift
+import RxRelay
 
 final class HomeReactor: Reactor {
 
@@ -72,6 +73,8 @@ final class HomeReactor: Reactor {
 
   private var notebookImages: [UIImage?] = []
   private var placeholderNotebookImage: UIImage?
+  
+  private let routeToDetailViewRelay = PublishRelay<Int>()
   
   let initialState: State = {
     let currentDate = Date()
@@ -220,6 +223,10 @@ extension HomeReactor {
           case let .deleteNote(note):
             return self.deleteNoteEventBusMutation(note)
           }
+        },
+      self.routeToDetailViewRelay
+        .flatMap { id -> Observable<Mutation> in
+          return self.routeToDetailViewMutation(id)
         }
     )
   }
@@ -302,6 +309,15 @@ extension HomeReactor {
     return .just(
       .setNotebooks(notebooks)
     )
+  }
+  
+  private func routeToDetailViewMutation(_ id: Int) -> Observable<Mutation> {
+    self.dependency.coordinator.transition(to: .noteDetail(payload: .init(id: id)),
+                                           using: .push,
+                                           animated: true,
+                                           completion: nil)
+    
+    return .empty()
   }
 }
 
@@ -435,7 +451,7 @@ extension HomeReactor {
   private func presentCreateNote(_ dateString: String?) {
     let todayString = dateString ?? Date().string(.dot)
     self.dependency.coordinator.transition(
-      to: .createNote(dateString: todayString),
+      to: .createNote(dateString: todayString, routeToDetailRelay: self.routeToDetailViewRelay),
       using: .modal,
       animated: true,
       completion: nil

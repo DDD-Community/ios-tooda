@@ -79,12 +79,18 @@ final class CreateNoteViewReactor: Reactor {
     var shouldReigsterButtonEnabled: Bool = false
     var requestNote: NoteRequestDTO = NoteRequestDTO()
   }
+  
+  struct Payload {
+    var routeToDetailRelay: PublishRelay<Int>?
+  }
 
   let initialState: State
   
   private var lastEditableStockCellIndexPath: IndexPath?
 
   let dependency: Dependency
+  
+  let payload: Payload?
   
   // MARK: Global Events
   
@@ -95,8 +101,9 @@ final class CreateNoteViewReactor: Reactor {
   
   private let stockItemEditCompletionRelay: PublishRelay<NoteStock> = PublishRelay()
   
-  init(dependency: Dependency, modifiableNote: NoteRequestDTO?) {
+  init(dependency: Dependency, modifiableNote: NoteRequestDTO?, payload: Payload?) {
     self.dependency = dependency
+    self.payload = payload
     
     if let requestNote = modifiableNote {
       self.initialState = State(requestNote: requestNote)
@@ -446,7 +453,9 @@ self.dependency.coordinator.transition(
     self.dependency.coordinator.close(
       style: .dismiss,
       animated: true,
-      completion: nil
+      completion: { [weak self] in
+        self?.payload?.routeToDetailRelay?.accept(note.id)
+      }
     )
     
     return .empty()

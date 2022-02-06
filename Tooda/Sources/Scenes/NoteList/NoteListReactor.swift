@@ -76,6 +76,8 @@ final class NoteListReactor: Reactor {
   
   private let snackBarMutationStream = PublishRelay<SnackBarEventBus.SnackBarInfo>()
   
+  private let moveToDetailViewMutationStream = PublishRelay<Int>()
+  
   lazy var initialState: State = State(
     noteListModel: [],
     isEmpty: false,
@@ -109,6 +111,10 @@ extension NoteListReactor {
           case let .deleteNote(note):
             return self.deleteNoteListMutation(note: note)
           }
+        },
+      moveToDetailViewMutationStream
+        .flatMap { id -> Observable<Mutation> in
+          return self.routeToNoteDetail(id: id)
         }
     )
   }
@@ -141,7 +147,7 @@ extension NoteListReactor {
   
   private func routeToCreateNote() -> Observable<Mutation> {
     dependency.coordinator.transition(
-      to: .createNote(dateString: "\(currentState.dateInfo.year).\(currentState.dateInfo.month)"),
+      to: .createNote(dateString: "\(currentState.dateInfo.year).\(currentState.dateInfo.month)", routeToDetailRelay: moveToDetailViewMutationStream),
       using: .modal,
       animated: true,
       completion: nil
@@ -158,6 +164,15 @@ extension NoteListReactor {
       completion: nil
     )
     return Observable<Mutation>.empty()
+  }
+  
+  private func routeToNoteDetail(id: Int) -> Observable<Mutation> {
+    self.dependency.coordinator.transition(to: .noteDetail(payload: .init(id: id)),
+                                           using: .push,
+                                           animated: true,
+                                           completion: nil)
+    
+    return .empty()
   }
   
   private func routeToSearch() -> Observable<Mutation> {
