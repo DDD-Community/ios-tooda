@@ -236,44 +236,30 @@ extension HomeReactor {
   }
 
   private func createNoteEventBusMutaion(_ note: Note) -> Observable<Mutation> {
-    guard let newNoteYear = note.createdAt?.year,
-          newNoteYear == self.currentState.selectedDate?.year else { return .empty() }
+    guard note.createdAt?.year == self.currentState.selectedDate.year else { return .empty() }
 
     return Observable<Mutation>.concat([
       .just(Mutation.setLoading(true)),
-      self.loadMutation()
+      self.loadMutation(date: self.currentState.selectedDate)
     ])
   }
 
   private func editNoteEventBusMutaion(_ note: Note) -> Observable<Mutation> {
-    guard let index = self.currentState.notebooks.firstIndex(where: {
-      $0.year == note.createdAt?.year && $0.month == note.createdAt?.month
-    }) else { return .empty() }
+    guard note.createdAt?.year == self.currentState.selectedDate.year else { return .empty() }
 
-    var notebooks = self.currentState.notebooks
-    notebooks[index].updatedAt = note.updatedAt
-
-    return .just(
-      .setNotebooks(notebooks)
-    )
+    return Observable<Mutation>.concat([
+      .just(Mutation.setLoading(true)),
+      self.loadMutation(date: self.currentState.selectedDate)
+    ])
   }
 
   private func deleteNoteEventBusMutation(_ note: Note) -> Observable<Mutation> {
-    guard let index = self.currentState.notebooks.firstIndex(where: {
-      $0.year == note.createdAt?.year && $0.month == note.createdAt?.month
-    }) else { return .empty() }
+    guard note.createdAt?.year == self.currentState.selectedDate.year else { return .empty() }
 
-    var notebooks = self.currentState.notebooks
-    if notebooks[index].noteCount >= 2 {
-      notebooks[index].noteCount -= 1
-      notebooks[index].updatedAt = Date()
-    } else {
-      notebooks.remove(at: index)
-    }
-
-    return .just(
-      .setNotebooks(notebooks)
-    )
+    return Observable<Mutation>.concat([
+      .just(Mutation.setLoading(true)),
+      self.loadMutation(date: self.currentState.selectedDate)
+    ])
   }
   
   private func routeToDetailViewMutation(_ id: Int) -> Observable<Mutation> {
