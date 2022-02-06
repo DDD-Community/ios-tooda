@@ -20,7 +20,7 @@ func appBundleID() -> String {
 }
 
 func baseUrl() -> String {
-  "http://15.164.46.210:3000/"
+  "https://api.tooda.tk/"
 }
 
 func deviceUUID() -> String? {
