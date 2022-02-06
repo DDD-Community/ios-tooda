@@ -173,7 +173,6 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
   private let linkStackView = UIStackView().then {
     $0.axis = .vertical
     $0.alignment = .fill
-    $0.spacing = 8.0
     $0.backgroundColor = .white
   }
   
@@ -251,7 +250,7 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
     linkButton.snp.makeConstraints {
       $0.top.equalToSuperview().offset(8)
       $0.centerY.equalToSuperview()
-      $0.leading.equalToSuperview().offset(14)
+      $0.leading.equalToSuperview().offset(20)
       $0.size.equalTo(Metric.linkButtonSize)
     }
   }
