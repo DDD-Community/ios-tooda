@@ -53,7 +53,6 @@ extension Date {
   }
 
   enum DateFormatType: String {
-    case server = "yyyy-MM-dd'T'HH:mm:ss.SSS"
     case base = "yyyy-MM-dd'T'HH:mm:ss'Z'"
     case ko = "yyyy년 MM월 dd일"
     case dot = "yyyy.MM.dd"

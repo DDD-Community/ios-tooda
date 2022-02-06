@@ -12,12 +12,7 @@ extension PrimitiveSequence where Trait == SingleTrait, Element == Response {
 
   func toodaMap<D: Decodable>(_ type: D.Type) -> Single<D> {
     let decoder = JSONDecoder()
-    let dateFormatter = DateFormatter().then {
-      $0.dateFormat = Date.DateFormatType.server.rawValue
-      $0.locale = Locale.current
-      $0.timeZone = TimeZone.current
-    }
-    decoder.dateDecodingStrategy = .formatted(dateFormatter)
+    decoder.dateDecodingStrategy = .iso8601
 
     return self.map(
       type,
