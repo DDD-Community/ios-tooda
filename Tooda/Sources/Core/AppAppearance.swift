@@ -13,14 +13,26 @@ final class AppApppearance {
   enum NavigationBarStyle {
     case normal
     case clear
+    case white
     
     var tintColor: UIColor {
       return .black
     }
     
+    var barTintColor: UIColor? {
+      switch self {
+      case .white:
+        return .white
+      case .clear:
+        return nil
+      case .normal:
+        return nil
+      }
+    }
+    
     var isTranslucent: Bool {
       switch self {
-      case .clear:
+      case .clear, .white:
         return false
       case .normal:
         return true
@@ -33,7 +45,7 @@ final class AppApppearance {
     
     var shadowImage: UIImage? {
       switch self {
-      case .clear:
+      case .clear, .white:
         return UIImage()
       case .normal:
         return nil
@@ -42,7 +54,7 @@ final class AppApppearance {
     
     var backgroundImage: UIImage? {
       switch self {
-      case .clear:
+      case .clear, .white:
         return UIImage()
       case .normal:
         return nil
@@ -60,6 +72,8 @@ final class AppApppearance {
     navigationbar.backItem?.title = ""
     navigationbar.backIndicatorImage = style.backButtonImage
     navigationbar.backIndicatorTransitionMaskImage = style.backButtonImage
+    navigationbar.isTranslucent = style.isTranslucent
+    navigationbar.barTintColor = style.barTintColor
   }
   
   static func updateNavigaionBarAppearance(_ navigationbar: UINavigationBar?, with style: NavigationBarStyle) {
@@ -68,5 +82,7 @@ final class AppApppearance {
     navigationbar?.shadowImage = style.shadowImage
     navigationbar?.backIndicatorImage = style.backButtonImage
     navigationbar?.backIndicatorTransitionMaskImage = style.backButtonImage
+    navigationbar?.isTranslucent = style.isTranslucent
+    navigationbar?.barTintColor = style.barTintColor
   }
 }

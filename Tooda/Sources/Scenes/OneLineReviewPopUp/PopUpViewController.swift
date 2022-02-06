@@ -15,6 +15,10 @@ final class PopUpViewController: BaseViewController<PopUpReactor> {
   
   // MARK: - Constants
   
+  private enum Constants {
+    static let minimumKeyboardMarginRatio: CGFloat = 0.2
+  }
+  
   private enum Font {
     static let popupTitle = TextStyle.subTitleBold(color: .gray1)
     static let bottomButtonTitle = TextStyle.subTitleBold(color: .white)
@@ -50,6 +54,7 @@ final class PopUpViewController: BaseViewController<PopUpReactor> {
   init(reactor: PopUpReactor) {
     super.init()
     self.reactor = reactor
+    bindUI()
   }
   
   required init?(coder: NSCoder) {
@@ -91,7 +96,8 @@ final class PopUpViewController: BaseViewController<PopUpReactor> {
     
     textInputPopUpView.snp.makeConstraints {
       $0.width.equalTo(315)
-      $0.center.equalToSuperview()
+      $0.centerY.equalToSuperview().offset(0)
+      $0.centerX.equalToSuperview()
     }
   }
   
@@ -141,7 +147,34 @@ final class PopUpViewController: BaseViewController<PopUpReactor> {
       .disposed(by: disposeBag)
   }
   
+  private func bindUI() {
+    NotificationCenter.default.rx
+      .notification(UIResponder.keyboardWillChangeFrameNotification)
+      .map { notification -> CGRect? in
+        let rectValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue
+        return rectValue?.cgRectValue
+      }
+      .asDriver(onErrorJustReturn: nil)
+      .compactMap { $0 }
+      .drive(onNext: { [weak self] keyboardFrame in
+        guard let self = self else { return }
+        self.updatePopUpLayout(with: keyboardFrame)
+      })
+      .disposed(by: disposeBag)
+  }
+  
   // MARK: - Private methods
+  
+  private func updatePopUpLayout(with keyboardFrame: CGRect) {
+    let margin: CGFloat = keyboardFrame.height * Constants.minimumKeyboardMarginRatio
+    textInputPopUpView.snp.updateConstraints {
+      $0.centerY.equalToSuperview().offset(-margin)
+    }
+    
+    UIView.animate(withDuration: 0.2) {
+      self.view.layoutIfNeeded()
+    }
+  }
   
   private func showPopUpView() {
     guard let type = reactor?.dependency.type else { return }

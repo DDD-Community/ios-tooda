@@ -58,6 +58,7 @@ final class SearchViewController: BaseViewController<SearchReactor> {
 
   override func viewDidLoad() {
     super.viewDidLoad()
+    bindUI()
     self.view.backgroundColor = .white
     self.searchBar.becomeFirstResponder()
   }
@@ -125,6 +126,30 @@ final class SearchViewController: BaseViewController<SearchReactor> {
     imageView.tintColor = .gray3
 
     self.searchBar.searchTextField.leftView = imageView
+  }
+  
+  private func bindUI() {
+    rx.viewWillDisappear
+      .asDriver(onErrorJustReturn: true)
+      .drive { [weak self] _ in
+        guard let navigationBar = self?
+                .navigationController?
+                .navigationBar else { return }
+        
+        AppApppearance.updateNavigaionBarAppearance(navigationBar, with: .white)
+      }
+      .disposed(by: disposeBag)
+    
+    rx.viewWillDisappear
+      .asDriver(onErrorJustReturn: true)
+      .drive { [weak self] _ in
+        guard let navigationBar = self?
+                .navigationController?
+                .navigationBar else { return }
+        
+        AppApppearance.updateNavigaionBarAppearance(navigationBar, with: .clear)
+      }
+      .disposed(by: disposeBag)
   }
 }
 

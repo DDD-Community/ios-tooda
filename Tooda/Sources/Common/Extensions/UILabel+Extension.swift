@@ -66,7 +66,7 @@ extension UILabel {
           let lastIndex = truncationIndex else {
       return nil
     }
-    let visibleTextRange = NSRange(location: 0, length: lastIndex + 3)
+    let visibleTextRange = NSRange(location: 0, length: lastIndex)
     guard let range = Range(visibleTextRange, in: labelText) else {
       return nil
     }

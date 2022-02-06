@@ -78,7 +78,7 @@ extension NSAttributedString {
       return self
     }
 
-    styleAttribute.alignment = .center
+    styleAttribute.alignment = alignment
     var attributes = mutableAttr.attributes(at: 0, effectiveRange: nil)
     attributes.updateValue(styleAttribute, forKey: .paragraphStyle)
     mutableAttr.setAttributes(attributes, range: .init(mutableAttr.string) ?? .init())

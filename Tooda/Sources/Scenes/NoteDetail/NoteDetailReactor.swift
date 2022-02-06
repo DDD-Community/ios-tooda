@@ -50,6 +50,8 @@ final class NoteDetailReactor: Reactor {
     static func generateInitialState(noteID: Int) -> State {
       return State(sectionModel: [], noteID: noteID)
     }
+    
+    
   }
 
 
@@ -95,45 +97,78 @@ extension NoteDetailReactor {
     }
   }
   
+  func transform(mutation: Observable<Mutation>) -> Observable<Mutation> {
+    return Observable.merge(
+      mutation,
+      dependency.noteEventBus
+        .flatMap { [weak self] event -> Observable<Mutation> in
+          guard let self = self else { return Observable<Mutation>.empty() }
+          switch event {
+          case let .editNode(note):
+            return self.applyModifiedNoteMutation(with: note)
+          default:
+            return Observable<Mutation>.empty()
+          }
+        }
+    )
+  }
+  
+  private func generateSectionModels(with note: Note) -> [NoteDetailSection] {
+    let stockSectionItems = note.noteStocks?
+      .map { NoteStockCellReactor.init(payload: .init(name: $0.name, rate: $0.changeRate ?? 0.0)) }
+      .map { NoteDetailSectionItem.stock($0) }
+    
+    let stockSection = NoteDetailSection(
+      identity: .stock,
+      items: stockSectionItems ?? []
+    )
+    
+    let linkSectionItems = note.noteLinks?
+      .compactMap { $0.url }
+      .map { NoteLinkCellReactor.init(dependency: .init(service: dependency.linkPreviewService), payload: $0) }
+      .map { NoteDetailSectionItem.link($0) }
+    
+    let linkSection = NoteDetailSection(
+      identity: .link,
+      items: linkSectionItems ?? []
+    )
+    
+    return [
+      NoteDetailSection(
+        identity: .header,
+        items: [
+          .sticker(note.sticker ?? Sticker.wow),
+          .title(note.title, note.updatedAt ?? note.createdAt),
+          .content(note.content)
+        ]
+      ),
+      stockSection,
+      linkSection,
+      NoteDetailSection(identity: .image, items: [])
+    ]
+  }
+  
+  private func applyModifiedNoteMutation(with note: Note) -> Observable<Mutation> {
+    
+    let sectionModels = generateSectionModels(with: note)
+    
+    return Observable<Mutation>.concat([
+      .just(Mutation.setNoteDetailSectionModel(sectionModels)),
+      self.loadImageMutation(images: note.noteImages),
+      .just(Mutation.fetchNote(note))
+    ])
+  }
+  
   private func loadDataMutation() -> Observable<Mutation> {
     return dependency.service.request(NoteAPI.detail(id: initialState.noteID))
       .subscribe(on: ConcurrentDispatchQueueScheduler(qos: .userInitiated))
       .toodaMap(Note.self)
       .asObservable()
-      .flatMap { note -> Observable<Mutation> in
+      .flatMap { [weak self] note -> Observable<Mutation> in
+        guard let self = self else { return Observable<Mutation>.empty() }
         
-        let stockSectionItems = note.noteStocks?
-          .map { NoteStockCellReactor.init(payload: .init(name: $0.name, rate: $0.changeRate ?? 0.0)) }
-          .map { NoteDetailSectionItem.stock($0) }
+        let sectionModels = self.generateSectionModels(with: note)
         
-        let stockSection = NoteDetailSection(
-          identity: .stock,
-          items: stockSectionItems ?? []
-        )
-        
-        let linkSectionItems = note.noteLinks?
-          .compactMap { $0.url }
-          .map { NoteLinkCellReactor.init(dependency: .init(service: self.dependency.linkPreviewService), payload: $0) }
-          .map { NoteDetailSectionItem.link($0) }
-        
-        let linkSection = NoteDetailSection(
-          identity: .link,
-          items: linkSectionItems ?? []
-        )
-        
-        let sectionModels = [
-          NoteDetailSection(
-            identity: .header,
-            items: [
-              .sticker(note.sticker ?? Sticker.wow),
-              .title(note.title, note.updatedAt ?? note.createdAt),
-              .content(note.content)
-            ]
-          ),
-          stockSection,
-          linkSection,
-          NoteDetailSection(identity: .image, items: [])
-        ]
         return Observable<Mutation>.concat([
           .just(Mutation.setNoteDetailSectionModel(sectionModels)),
           self.loadImageMutation(images: note.noteImages),

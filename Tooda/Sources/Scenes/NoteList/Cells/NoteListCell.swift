@@ -158,18 +158,15 @@ final class NoteListCell: BaseTableViewCell {
     }
     
     linkImageView.isHidden = note.noteLinks?.first == nil ? true : false
-    descriptionLabel.attributedText = note.content.styled(with: Font.description)
+    descriptionLabel.attributedText = note.content.styled(with: Font.description).alignment(with: .left)
     updateImages(images: note.noteImages)
     
     if note.noteImages.count > 1 {
       imageCountLabel.isHidden = false
       imageCountLabel.attributedText = "+ \(note.noteImages.count)".styled(with: Font.imageCount)
     } else {
+      
       imageCountLabel.isHidden = true
-    }
-    
-    DispatchQueue.main.async {
-      self.descriptionLabel.setExpandActionIfPossible("더보기")
     }
   }
   
