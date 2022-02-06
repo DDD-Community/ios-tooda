@@ -347,6 +347,13 @@ class CreateNoteViewController: BaseViewController<CreateNoteViewReactor> {
         SnackBarManager.shared.display(type: info.type, title: info.title)
       }
       .disposed(by: disposeBag)
+    
+    reactor.state
+      .compactMap { $0.shouldKeyboardDismissed }
+      .asDriver(onErrorJustReturn: false)
+      .drive(onNext: { [weak self] in
+        self?.view.endEditing($0)
+      }).disposed(by: self.disposeBag)
   }
 }
 

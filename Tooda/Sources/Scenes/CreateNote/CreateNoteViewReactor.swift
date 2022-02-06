@@ -74,6 +74,7 @@ final class CreateNoteViewReactor: Reactor {
     case requestNoteDataDidChanged(NoteRequestDTO)
     case fetchEmptyStockItem([NoteSectionItem])
     case setSnackBarInfo(SnackBarEventBus.SnackBarInfo)
+    case shouldKeyboardDismissed(Bool)
   }
 
   struct State: Then {
@@ -82,6 +83,7 @@ final class CreateNoteViewReactor: Reactor {
     var shouldReigsterButtonEnabled: Bool = false
     var requestNote: NoteRequestDTO = NoteRequestDTO()
     var snackBarInfo: SnackBarEventBus.SnackBarInfo?
+    var shouldKeyboardDismissed: Bool?
   }
   
   struct Payload {
@@ -170,6 +172,7 @@ final class CreateNoteViewReactor: Reactor {
       $0.presentType = nil
       $0.requestNote = state.requestNote
       $0.snackBarInfo = nil
+      $0.shouldKeyboardDismissed = nil
     }
     
     switch mutation {
@@ -195,6 +198,8 @@ final class CreateNoteViewReactor: Reactor {
       newState.sections[NoteSection.Identity.addStock.rawValue].items = sectionItems
     case .setSnackBarInfo(let info):
       newState.snackBarInfo = info
+    case .shouldKeyboardDismissed(let dismissed):
+      newState.shouldKeyboardDismissed = dismissed
     }
 
     return newState
@@ -443,6 +448,7 @@ self.dependency.coordinator.transition(
     requestNote.sticker = sticker
     
     return Observable.concat([
+      .just(.shouldKeyboardDismissed(true)),
       .just(.requestNoteDataDidChanged(requestNote)),
       self.registNoteAndDismissView(requestNote)
     ])
@@ -506,6 +512,7 @@ extension CreateNoteViewReactor {
     requestNote.sticker = sticker
     
     return Observable.concat([
+      .just(.shouldKeyboardDismissed(true)),
       .just(.requestNoteDataDidChanged(requestNote)),
       self.updateNoteAndDismissView(requestNote)
     ])
