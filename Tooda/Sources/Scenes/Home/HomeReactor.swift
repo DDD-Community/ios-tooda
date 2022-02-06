@@ -38,6 +38,7 @@ final class HomeReactor: Reactor {
 
   enum Mutation {
     case setNotebooks([NotebookMeta])
+    case setDate(Date)
     case selectNotebook(notebookIndex: Int?)
     case makeException(State.Exception)
     case setLoading(Bool)
@@ -52,6 +53,7 @@ final class HomeReactor: Reactor {
     var notebooks: [NotebookMeta]
     var selectedNotobook: NotebookMeta?
     var selectedIndex: Int?
+    var selectedDate: Date?
 
     // ViewModels
     var notebookViewModels: [NotebookCell.ViewModel]
@@ -161,14 +163,15 @@ extension HomeReactor {
   }
 
   private func pickDateMutation(_ date: Date) -> Observable<Mutation> {
-    if date.year == Date().year {
-      return Observable<Mutation>.just(
+    if date.year == self.currentState.selectedDate?.year {
+      return Observable<Mutation>.from([
         .selectNotebook(
           notebookIndex: self.currentState.notebooks.firstIndex(where: {
             $0.year == date.year && $0.month == date.month
           })
-        )
-      )
+        ),
+        .setDate(date)
+      ])
     } else {
       return Observable<Mutation>.concat([
         .just(.setLoading(true)),
@@ -190,6 +193,7 @@ extension HomeReactor {
             }
             return Observable<Mutation>.concat([
               .just(.setLoading(false)),
+              .just(.setDate(date)),
               .just(.setNotebooks(books)),
               .just(.selectNotebook(notebookIndex: index))
             ])
@@ -312,6 +316,7 @@ extension HomeReactor {
 
   func reduce(state: State, mutation: Mutation) -> State {
     var newState = state
+    newState.exception = nil
 
     switch mutation {
     case let .setNotebooks(metas):
@@ -319,6 +324,9 @@ extension HomeReactor {
       newState.notebooks = addedMetas
       newState.notebookViewModels = self.mappingToNoteBooks(metas: addedMetas)
       newState.selectedNotobook = newState.notebooks[safe: 0]
+
+    case let .setDate(date):
+      newState.selectedDate = date
 
     case let .selectNotebook(notebookIndex):
       guard let notebookIndex = notebookIndex,
