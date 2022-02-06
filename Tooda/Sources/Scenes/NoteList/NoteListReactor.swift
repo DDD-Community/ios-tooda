@@ -186,10 +186,24 @@ extension NoteListReactor {
   }
   
   private func addNoteListMutation(note: Note) -> Observable<Mutation> {
-    guard var noteListModel = currentState.noteListModel.first else { return Observable.empty() }
-    noteListModel.items.insert(note, at: 0)
     
-    return Observable.just(Mutation.setNoteListModel([noteListModel]))
+    if var noteListModel = currentState.noteListModel.first {
+      noteListModel.items.insert(note, at: 0)
+      return Observable.just(Mutation.setNoteListModel([noteListModel]))
+    } else {
+      let mutation = Mutation.setNoteListModel(
+        [
+          NoteListModel(
+            identity: Constants.sectionIdentifier,
+            items: [note]
+          )
+        ]
+      )
+      return Observable<Mutation>.concat([
+        Observable.just(Mutation.setIsEmpty(false)),
+        Observable.just(mutation)
+      ])
+    }
   }
   
   private func deleteNoteListMutation(note: Note) -> Observable<Mutation> {
@@ -197,7 +211,15 @@ extension NoteListReactor {
     let notes = noteListModel.items.filter { $0.id != note.id }
     noteListModel.items = notes
     
-    return Observable.just(Mutation.setNoteListModel([noteListModel]))
+    var mutation: Mutation
+    
+    if notes.isEmpty {
+      mutation = Mutation.setIsEmpty(true)
+    } else {
+      mutation = Mutation.setNoteListModel([noteListModel])
+    }
+    
+    return Observable.just(mutation)
   }
   
   private func modifyNoteListMutation(note: Note) -> Observable<Mutation> {
