@@ -184,7 +184,7 @@ final class PopUpViewController: BaseViewController<PopUpReactor> {
     var margin = isShowingUp ? Constants.minimumKeyboardMargin : 0
     margin += intersection.height
     textInputPopUpView.snp.updateConstraints {
-      $0.centerY.equalToSuperview().offset(margin)
+      $0.centerY.equalToSuperview().offset(-margin)
     }
   }
   
