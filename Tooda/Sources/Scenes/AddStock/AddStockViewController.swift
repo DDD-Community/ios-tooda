@@ -59,6 +59,7 @@ final class AddStockViewController: BaseViewController<AddStockReactor> {
   
   private lazy var searchField = UITextField().then {
     $0.typingAttributes = Font.searchField
+    $0.attributedPlaceholder = "종목명 입력".styled(with: TextStyle.body(color: UIColor.gray3))
   }
   
   private let tableView = UITableView().then {
