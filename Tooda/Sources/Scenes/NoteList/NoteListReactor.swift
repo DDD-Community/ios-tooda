@@ -45,7 +45,7 @@ final class NoteListReactor: Reactor {
     case setNextCursor(Int?)
     case setNoteListModel([NoteListModel])
     case setPagnationLoadedNotes([Note])
-    case setSnackBarInfo(SnackBarEventBus.SnackBarInfo)
+    case setSnackBarInfo(SnackBarManager.SnackBarInfo)
   }
   
   struct Dependency {
@@ -63,7 +63,7 @@ final class NoteListReactor: Reactor {
     var isLoading: Bool = false
     var cursor: Int?
     var dateInfo: DateInfo
-    var snackBarInfo: SnackBarEventBus.SnackBarInfo?
+    var snackBarInfo: SnackBarManager.SnackBarInfo?
   }
   
   init(dependency: Dependency) {
@@ -74,7 +74,7 @@ final class NoteListReactor: Reactor {
   
   let dependency: Dependency
   
-  private let snackBarMutationStream = PublishRelay<SnackBarEventBus.SnackBarInfo>()
+  private let snackBarMutationStream = PublishRelay<SnackBarManager.SnackBarInfo>()
   
   private let moveToDetailViewMutationStream = PublishRelay<Int>()
   
@@ -227,10 +227,10 @@ extension NoteListReactor {
       )
       .toodaMap(NoteListDTO.self)
       .catch({ [weak self] _ in
-        self?.snackBarMutationStream.accept(
-          (type: .negative,
-           title: "네트워크 연결에 실패했습니다 :(")
-        )
+        self?.snackBarMutationStream.accept(.init(
+          title: "네트워크 연결에 실패했습니다 :(",
+          type: .negative
+        ))
         return Single.just(
           NoteListDTO(cursor: nil, noteList: [])
         )
@@ -291,10 +291,10 @@ extension NoteListReactor {
       )
       .toodaMap(NoteListDTO.self)
       .catch({ [weak self] _ in
-        self?.snackBarMutationStream.accept(
-          (type: .negative,
-           title: "네트워크 연결에 실패했습니다 :(")
-        )
+        self?.snackBarMutationStream.accept(.init(
+          title: "네트워크 연결에 실패했습니다 :(",
+          type: .negative
+        ))
         return Single.just(
           NoteListDTO(cursor: nil, noteList: [])
         )

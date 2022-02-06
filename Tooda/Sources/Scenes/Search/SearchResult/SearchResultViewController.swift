@@ -138,6 +138,14 @@ final class SearchResultViewController: BaseViewController<SearchResultReactor> 
         self?.tableView.isHidden = !isEmptyViewHidden
         self?.emptyView.isHidden = isEmptyViewHidden
       }).disposed(by: self.disposeBag)
+
+    reactor.state
+      .map { $0.snackbarInfo }
+      .asDriver(onErrorJustReturn: nil)
+      .drive(onNext: { snackbarInfo in
+        guard let snackbarInfo = snackbarInfo else { return }
+        SnackBarManager.shared.display(info: snackbarInfo)
+      }).disposed(by: self.disposeBag)
   }
 }
 

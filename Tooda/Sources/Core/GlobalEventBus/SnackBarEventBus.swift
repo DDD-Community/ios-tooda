@@ -8,8 +8,6 @@
 import RxSwift
 
 enum SnackBarEventBus {
-  
-  typealias SnackBarInfo = (type: SnackBarType, title: String)
 
-  static let event = PublishSubject<SnackBarInfo>()
+  static let event = PublishSubject<SnackBarManager.SnackBarInfo>()
 }

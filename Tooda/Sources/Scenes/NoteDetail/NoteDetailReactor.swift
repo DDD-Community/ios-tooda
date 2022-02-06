@@ -26,6 +26,12 @@ final class NoteDetailReactor: Reactor {
     let noteEventBus: PublishSubject<NoteEventBus.Event>
   }
 
+  // MARK: Constant
+
+  private enum Text {
+    static let networkingErrorMessage = "네트워크 연결에 실패했습니다 :("
+  }
+
   // MARK: Reactor
 
   enum Action {
@@ -40,12 +46,14 @@ final class NoteDetailReactor: Reactor {
     case setNoteDetailSectionModel([NoteDetailSection])
     case fetchNote(Note)
     case appendImageSection([NoteDetailSectionItem])
+    case setSnackbarInfo(SnackBarManager.SnackBarInfo)
   }
 
   struct State {
     var sectionModel: [NoteDetailSection]
     let noteID: Int
     var note: Note?
+    var snackbarInfo: SnackBarManager.SnackBarInfo?
     
     static func generateInitialState(noteID: Int) -> State {
       return State(sectionModel: [], noteID: noteID)
@@ -62,6 +70,8 @@ final class NoteDetailReactor: Reactor {
   let initialState: State
   
   let payload: Payload
+
+  private let snackbarEvent = PublishSubject<SnackBarManager.SnackBarInfo>()
 
   init(dependency: Dependency, payload: Payload) {
     self.dependency = dependency
@@ -163,6 +173,13 @@ extension NoteDetailReactor {
     return dependency.service.request(NoteAPI.detail(id: initialState.noteID))
       .subscribe(on: ConcurrentDispatchQueueScheduler(qos: .userInitiated))
       .toodaMap(Note.self)
+      .catch { [weak self] error in
+        self?.snackbarEvent.onNext(.init(
+          title: Text.networkingErrorMessage,
+          type: .negative
+        ))
+        return .error(error)
+      }
       .asObservable()
       .flatMap { [weak self] note -> Observable<Mutation> in
         guard let self = self else { return Observable<Mutation>.empty() }
@@ -216,6 +233,13 @@ extension NoteDetailReactor {
   private func deleteNoteMutation() -> Observable<Mutation> {
     let noteID = "\(self.currentState.noteID)"
     return self.dependency.service.request(NoteAPI.delete(id: noteID))
+      .catch { [weak self] error in
+        self?.snackbarEvent.onNext(.init(
+          title: Text.networkingErrorMessage,
+          type: .negative
+        ))
+        return .error(error)
+      }
       .asObservable()
       .flatMap { [weak self] _ -> Observable<Mutation> in
         
@@ -253,6 +277,7 @@ extension NoteDetailReactor {
 
   func reduce(state: State, mutation: Mutation) -> State {
     var newState = state
+    newState.snackbarInfo = nil
 
     switch mutation {
     case let .setNoteDetailSectionModel(sectionModel):
@@ -261,6 +286,8 @@ extension NoteDetailReactor {
       newState.note = note
     case let .appendImageSection(sectionItems):
       newState.sectionModel[NoteDetailSection.Identity.image.rawValue].items = sectionItems
+    case let .setSnackbarInfo(info):
+      newState.snackbarInfo = info
     }
     
     return newState

@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-enum SnackBarType {
+enum SnackBarType: Equatable {
   case positive
   case negative
   
@@ -32,6 +32,11 @@ enum SnackBarType {
 }
 
 final class SnackBarManager {
+
+  struct SnackBarInfo: Equatable {
+    let title: String
+    let type: SnackBarType
+  }
   
   // MARK: - Constants
   
@@ -56,6 +61,10 @@ final class SnackBarManager {
   private init() { }
   
   // MARK: - Internal methods
+
+  func display(info: SnackBarInfo) {
+    self.display(type: info.type, title: info.title)
+  }
   
   func display(type: SnackBarType, title: String) {
     guard let keyWindow = UIApplication.keyWindow,
