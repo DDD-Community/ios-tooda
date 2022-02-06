@@ -71,6 +71,7 @@ final class CreateNoteViewReactor: Reactor {
     case linkItemDidDeleted(Int)
     case requestNoteDataDidChanged(NoteRequestDTO)
     case fetchEmptyStockItem([NoteSectionItem])
+    case setSnackBarInfo(SnackBarEventBus.SnackBarInfo)
   }
 
   struct State: Then {
@@ -101,6 +102,8 @@ final class CreateNoteViewReactor: Reactor {
   private let updateStickerCompletionRelay: PublishRelay<Sticker> = PublishRelay()
   
   private let stockItemEditCompletionRelay: PublishRelay<NoteStock> = PublishRelay()
+  
+  private let snackBarMutationStream = PublishRelay<SnackBarEventBus.SnackBarInfo>()
   
   init(dependency: Dependency, modifiableNote: NoteRequestDTO?, payload: Payload?) {
     self.dependency = dependency
@@ -188,6 +191,8 @@ final class CreateNoteViewReactor: Reactor {
       newState.requestNote = data
     case .fetchEmptyStockItem(let sectionItems):
       newState.sections[NoteSection.Identity.addStock.rawValue].items = sectionItems
+    case .setSnackBarInfo(let info):
+      newState.snackBarInfo = info
     }
 
     return newState
@@ -206,6 +211,14 @@ final class CreateNoteViewReactor: Reactor {
         .map { Action.stockItemDidUpdated($0) },
       self.updateStickerCompletionRelay
         .map { Action.updateStikcerDidPicked($0) }
+    )
+  }
+  
+  func transform(mutation: Observable<Mutation>) -> Observable<Mutation> {
+    return Observable.merge(
+      mutation,
+      snackBarMutationStream.asObservable()
+        .map { Mutation.setSnackBarInfo($0) }
     )
   }
 
