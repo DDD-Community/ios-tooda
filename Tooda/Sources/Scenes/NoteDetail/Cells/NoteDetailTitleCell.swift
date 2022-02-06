@@ -71,8 +71,9 @@ final class NoteDetailTitleCell: BaseTableViewCell {
       titleLabel.attributedText = title.styled(with: Font.title)
     }
     
-    if let dateString = date {
-      dateLabel.attributedText = dateString.string(.dot).styled(with: Font.dateInfo)
+    if let date = date, let weekName = Date.WeekDay(rawValue: date.weekday)?.name {
+      dateLabel.attributedText = "\(date.string(.dot)) (\(weekName)) \(String(format: "%02d:%02d 기록", date.hour, date.minute))"
+        .styled(with: Font.dateInfo)
     }
   }
 }
