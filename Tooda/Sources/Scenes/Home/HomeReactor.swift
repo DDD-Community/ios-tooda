@@ -339,7 +339,12 @@ extension HomeReactor {
       let addedMetas = self.addCurrentNotebookIfNeeded(metas: metas)
       newState.notebooks = addedMetas
       newState.notebookViewModels = self.mappingToNoteBooks(metas: addedMetas)
-      newState.selectedNotobook = newState.notebooks[safe: 0]
+      let currentDate = Date()
+      let selectedIndex = addedMetas.firstIndex(where: {
+        $0.year == currentDate.year && $0.month == currentDate.month
+      }) ?? 0
+      newState.selectedNotobook = newState.notebooks[safe: selectedIndex]
+      newState.selectedIndex = selectedIndex
 
     case let .setDate(date):
       newState.selectedDate = date
