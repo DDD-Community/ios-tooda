@@ -39,6 +39,7 @@ final class HomeReactor: Reactor {
 
   enum Mutation {
     case setNotebooks([NotebookMeta])
+    case setDate(Date)
     case selectNotebook(notebookIndex: Int?)
     case makeException(State.Exception)
     case setLoading(Bool)
@@ -53,6 +54,7 @@ final class HomeReactor: Reactor {
     var notebooks: [NotebookMeta]
     var selectedNotobook: NotebookMeta?
     var selectedIndex: Int?
+    var selectedDate: Date?
 
     // ViewModels
     var notebookViewModels: [NotebookCell.ViewModel]
@@ -164,14 +166,15 @@ extension HomeReactor {
   }
 
   private func pickDateMutation(_ date: Date) -> Observable<Mutation> {
-    if date.year == Date().year {
-      return Observable<Mutation>.just(
+    if date.year == self.currentState.selectedDate?.year {
+      return Observable<Mutation>.from([
         .selectNotebook(
           notebookIndex: self.currentState.notebooks.firstIndex(where: {
             $0.year == date.year && $0.month == date.month
           })
-        )
-      )
+        ),
+        .setDate(date)
+      ])
     } else {
       return Observable<Mutation>.concat([
         .just(.setLoading(true)),
@@ -180,7 +183,7 @@ extension HomeReactor {
             year: date.year
           )
         )
-          .map([NotebookMeta].self)
+          .toodaMap([NotebookMeta].self)
           .catchAndReturn([])
           .asObservable()
           .flatMap { books -> Observable<Mutation> in
@@ -193,6 +196,7 @@ extension HomeReactor {
             }
             return Observable<Mutation>.concat([
               .just(.setLoading(false)),
+              .just(.setDate(date)),
               .just(.setNotebooks(books)),
               .just(.selectNotebook(notebookIndex: index))
             ])
@@ -328,6 +332,7 @@ extension HomeReactor {
 
   func reduce(state: State, mutation: Mutation) -> State {
     var newState = state
+    newState.exception = nil
 
     switch mutation {
     case let .setNotebooks(metas):
@@ -335,6 +340,9 @@ extension HomeReactor {
       newState.notebooks = addedMetas
       newState.notebookViewModels = self.mappingToNoteBooks(metas: addedMetas)
       newState.selectedNotobook = newState.notebooks[safe: 0]
+
+    case let .setDate(date):
+      newState.selectedDate = date
 
     case let .selectNotebook(notebookIndex):
       guard let notebookIndex = notebookIndex,
@@ -379,14 +387,17 @@ extension HomeReactor {
     viewModels.append(
       contentsOf:
         metas.enumerated().map { (index, item) in
-          let day = Calendar.current.dateComponents(
-            [.day],
-            from: item.updatedAt ?? Date(),
-            to: Date()
-          ).day
-
           let historyDate: String? = {
-            guard let day = day, day >= 0 else { return nil }
+            guard let updateAt = item.updatedAt,
+                  let day = Calendar.current.dateComponents(
+                    [.day],
+                    from: updateAt,
+                    to: Date()
+                  ).day,
+                  day >= 0
+            else {
+              return nil
+            }
             guard day > 0 else { return "오늘 살펴봤어요." }
             return "\(day)일 전에 살펴봤어요"
           }()
