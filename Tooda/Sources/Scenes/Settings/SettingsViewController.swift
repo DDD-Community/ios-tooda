@@ -89,6 +89,7 @@ final class SettingsViewController: BaseViewController<SettingsReactor> {
     $0.register(SettingsTableFooterView.self)
     $0.delegate = self
     $0.separatorStyle = .none
+    $0.bounces = false
     $0.tableFooterView = tableFooterView
   }
   
