@@ -7,16 +7,31 @@
 
 import UIKit
 
+fileprivate let imageCache = NSCache<NSString, UIImage>().then {
+  $0.countLimit = 1000
+}
+
 extension UIImageView {
+  
   func load(url: URL) {
-    URLSession.shared.dataTask(with: url) { data, _, error in
-      guard let data = data, error == nil else {
-        return
-      }
-      
-      DispatchQueue.main.async { [weak self] in
-        self?.image = UIImage(data: data)
-      }
-    }.resume()
+    if let image = imageCache.object(forKey: url.lastPathComponent as NSString) {
+      self.image = image
+    } else {
+      URLSession.shared.dataTask(with: url) { data, _, error in
+        guard let data = data, error == nil,
+              let image = UIImage(data: data) else {
+          return
+        }
+        
+        imageCache.setObject(
+          image,
+          forKey: url.lastPathComponent as NSString
+        )
+        
+        DispatchQueue.main.async { [weak self] in
+          self?.image = image
+        }
+      }.resume()
+    }
   }
 }
