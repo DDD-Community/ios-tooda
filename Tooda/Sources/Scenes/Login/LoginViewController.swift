@@ -92,8 +92,8 @@ final class LoginViewController: BaseViewController<LoginReactor> {
     )
     
     mainImageView.snp.makeConstraints {
-      $0.leading.equalToSuperview().offset(79)
-      $0.top.equalToSuperview().offset(114)
+      $0.centerX.equalToSuperview().offset(8)
+      $0.centerY.equalToSuperview().offset(-45)
       $0.width.equalTo(243)
       $0.height.equalTo(515)
     }
