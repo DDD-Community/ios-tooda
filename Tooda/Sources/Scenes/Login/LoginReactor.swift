@@ -11,15 +11,17 @@ import Foundation
 import ReactorKit
 import RxSwift
 import RxCocoa
+import RxFlow
 import Firebase
 import Then
 
-final class LoginReactor: Reactor {
+final class LoginReactor: Reactor, Stepper {
   
   // MARK: - Constants
   
   struct Dependency {
     let service: NetworkingProtocol
+    @available(*, deprecated, message: "RxFlow로 대체될 예정이에요.")
     let coordinator: AppCoordinatorType
     let localPersistanceManager: LocalPersistanceManagerType
     let socialLoginService: SocialLoginServiceType
@@ -47,6 +49,9 @@ final class LoginReactor: Reactor {
   private let disposeBag = DisposeBag()
   
   let initialState: State = State(isAuthorized: false)
+  
+  // MARK: - Stepper
+  var steps: PublishRelay<Step> = .init()
   
   // MARK: - Con(De)structor
   
@@ -121,6 +126,10 @@ extension LoginReactor {
       from: .home,
       shouldNavigationWrapped: true
     )
+    
+    
+    // TODO: 화면 연결이 끝나면 코디네이터 코드를 제거하고 아래 코드로 대체해요.
+//    steps.accept(ToodaStep.loginIsCompleted)
     
     return Observable<Mutation>.empty()
   }
