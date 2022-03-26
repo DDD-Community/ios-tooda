@@ -17,6 +17,7 @@ def shared_pods
   pod 'RxViewController'
   pod 'SwiftLinkPreview', '~> 3.4.0'
   pod 'UITextView+Placeholder', '~> 1.2'
+  pod 'RxFlow'
 end
 
 target 'Tooda' do
