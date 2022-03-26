@@ -9,11 +9,14 @@ import Foundation
 import RxFlow
 
 enum ToodaStep: Step {
-	// Global
-	case alert(message: String)
-	case dismiss
-	
-	// Login
-	case loginIsRequired
-	case loginIsCompleted
+  // Global
+  case alert(message: String)
+  case dismiss
+  
+  // Login
+  case loginIsRequired
+  case loginIsCompleted
+  
+  // Home
+  case homeIsRequired
 }
