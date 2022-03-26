@@ -50,9 +50,21 @@ final class AppFlow: Flow {
     }
   }
   
-  // TODO: LoginFlow를 연결할 예정이에요.
   private func coordinateToLogin() -> FlowContributors {
-    return .none
+    let loginFlow = LoginFlow(with: .init(appInject: self.dependency.appInject))
+    
+    Flows.use(loginFlow, when: .created) { [unowned self] root in
+      self.rootWindow.rootViewController = root
+    }
+    
+    let nextStep = OneStepper(withSingleStep: ToodaStep.loginIsRequired)
+    
+    return .one(
+      flowContributor: .contribute(
+        withNextPresentable: loginFlow,
+        withNextStepper: nextStep
+      )
+    )
   }
   
   // TODO: HomeFlow를 연결할 예정이에요.
