@@ -12,7 +12,7 @@ import ReactorKit
 import RxSwift
 import RxCocoa
 import RxFlow
-import Firebase
+import FirebaseAnalytics
 import Then
 
 final class LoginReactor: Reactor, Stepper {
@@ -115,8 +115,8 @@ extension LoginReactor {
   }
   
   private func routeToHomeMutation() -> Observable<Mutation> {
-    FirebaseAnalytics.Analytics.logEvent(
-        AnalyticsEventLogin,
+    Analytics.logEvent(
+      AnalyticsEventLogin,
       parameters: [
         AnalyticsParameterSuccess: 1
       ]
