@@ -67,8 +67,20 @@ final class AppFlow: Flow {
     )
   }
   
-  // TODO: HomeFlow를 연결할 예정이에요.
   private func coordinateToHome() -> FlowContributors {
-    return .none
+    let homeFlow = HomeFlow(with: .init(appInject: self.dependency.appInject))
+    
+    Flows.use(homeFlow, when: .created) { [unowned self] root in
+      self.rootWindow.rootViewController = root
+    }
+    
+    let nextStep = OneStepper(withSingleStep: ToodaStep.homeIsRequired)
+    
+    return .one(
+      flowContributor: .contribute(
+        withNextPresentable: homeFlow,
+        withNextStepper: nextStep
+      )
+    )
   }
 }
