@@ -8,11 +8,16 @@
 import UIKit
 
 import Swinject
+import RxFlow
+import RxSwift
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
   
   private let appInject = AppInject(container: Container())
   var window: UIWindow?
+  
+  private let coordinator: FlowCoordinator = .init()
+  private let disposeBag: DisposeBag = .init()
   
   func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
     
@@ -32,13 +37,17 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
       from: determineInitialScene(),
       shouldNavigationWrapped: true
     )
+    
+    // FIXME: 코디네이팅 연결이 완료되었을 때 주석을 해제해요.
+//    self.coordinatorLogStart()
+//    self.coordinateToAppFlow(with: scene)
   }
   
   func sceneDidDisconnect(_ scene: UIScene) {
-    // Called as the scene is being released by the system.
-    // This occurs shortly after the scene enters the background, or when its session is discarded.
-    // Release any resources associated with this scene that can be re-created the next time the scene connects.
-    // The scene may re-connect later, as its session was not necessarily discarded (see `application:didDiscardSceneSessions` instead).
+      // Called as the scene is being released by the system.
+      // This occurs shortly after the scene enters the background, or when its session is discarded.
+      // Release any resources associated with this scene that can be re-created the next time the scene connects.
+      // The scene may re-connect later, as its session was not necessarily discarded (see `application:didDiscardSceneSessions` instead).
   }
   
   func sceneDidBecomeActive(_ scene: UIScene) {
@@ -73,7 +82,37 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 }
 
 extension SceneDelegate {
-	private func register() {
-		self.appInject.registerCore()
-	}
+  private func register() {
+    self.appInject.registerCore()
+  }
+}
+
+// MARK: - RxFlows Extensions
+
+extension SceneDelegate {
+  private func coordinateToAppFlow(with windowScene: UIWindowScene) {
+    let window = UIWindow(windowScene: windowScene)
+    self.window = window
+    
+    let appFlow = AppFlow(with: window, dependency: .init(appInject: self.appInject))
+    
+    let appStepper = AppStepper(dependency: .init(
+      persistenceManager: self.appInject.resolve(LocalPersistanceManagerType.self)
+    ))
+    
+    coordinator.coordinate(flow: appFlow, with: appStepper)
+    
+    window.makeKeyAndVisible()
+  }
+  
+  private func coordinatorLogStart() {
+    coordinator.rx.willNavigate
+      .subscribe(onNext: { flow, step in
+        let currentFlow = "\(flow)".split(separator: ".").last ?? "no flow"
+        print("➡️ will navigate to flow = \(currentFlow) and step = \(step)")
+      })
+      .disposed(by: disposeBag)
+    
+      // FIXME: didNavigate 기능을 필요시 구현하도록 합니다.
+  }
 }
