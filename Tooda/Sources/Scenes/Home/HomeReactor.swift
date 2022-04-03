@@ -9,10 +9,11 @@
 import Foundation
 
 import ReactorKit
+import RxFlow
 import RxSwift
 import RxRelay
 
-final class HomeReactor: Reactor {
+final class HomeReactor: Reactor, Stepper {
 
   // MARK: Dependency
 
@@ -73,6 +74,8 @@ final class HomeReactor: Reactor {
     static let networkingErrorMessage = "네트워크 연결에 실패했습니다 :("
   }
 
+  // MARK: Stepper
+  var steps: PublishRelay<Step> = .init()
 
   // MARK: Properties
 

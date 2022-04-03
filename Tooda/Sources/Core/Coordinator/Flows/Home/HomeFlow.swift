@@ -54,6 +54,17 @@ final class HomeFlow: Flow {
 
 private extension HomeFlow {
   func coordinateToHome() -> FlowContributors {
-    return .none
+    let reactor = HomeReactor(
+      dependency: .init(
+        service: self.dependency.appInject.resolve(NetworkingProtocol.self),
+        coordinator: self.dependency.appInject.resolve(AppCoordinatorType.self),
+        noteEventBus: NoteEventBus.event.asObservable()
+      )
+    )
+    let viewController =  HomeViewController(reactor: reactor)
+    
+    self.rootViewController.setViewControllers([viewController], animated: true)
+    return .one(flowContributor: .contribute(withNextPresentable: viewController,
+                                             withNextStepper: reactor))
   }
 }
