@@ -70,6 +70,7 @@ extension NSAttributedString {
 
   func alignment(with alignment: NSTextAlignment) -> NSAttributedString {
     guard let mutableAttr = self.mutableCopy() as? NSMutableAttributedString,
+          string.count > 0,
           let styleAttribute = mutableAttr.attributes(
             at: 0,
             effectiveRange: nil
